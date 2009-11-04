@@ -119,7 +119,7 @@ public class MapParameterResolver extends PentahoMessenger implements IParameter
               columnIdx = md.getColumnIndex(new String[] { parameter });
             }
             if (columnIdx < 0) {
-              error(Messages.getErrorString("Template.ERROR_0005_COULD_NOT_DETERMINE_COLUMN")); //$NON-NLS-1$
+              error(Messages.getInstance().getErrorString("Template.ERROR_0005_COULD_NOT_DETERMINE_COLUMN")); //$NON-NLS-1$
               return -1;
             }
             int rowCount = rs.getRowCount();

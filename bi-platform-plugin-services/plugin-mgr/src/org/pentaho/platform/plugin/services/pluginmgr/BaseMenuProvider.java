@@ -56,7 +56,7 @@ public abstract class BaseMenuProvider implements IMenuProvider {
 		      
 		      return container;
 		  } catch (Exception e) {
-			  session.error( Messages.getErrorString("BaseMenuProvider.ERROR_0001_COULD_NOT_GET_MENU_CONTAINER") , e); //$NON-NLS-1$
+			  session.error( Messages.getInstance().getErrorString("BaseMenuProvider.ERROR_0001_COULD_NOT_GET_MENU_CONTAINER") , e); //$NON-NLS-1$
 		  }
 		  return null;
 	}
@@ -80,7 +80,7 @@ public abstract class BaseMenuProvider implements IMenuProvider {
 			    			  // apply each customization and log any failures
 			    			  MenuUtil.customizeMenu(menubar, item, getXulLoader());
 			    		  } catch (Exception e) {
-			    			  session.error( Messages.getString("BaseMenuProvider.ERROR_0004_COULD_NOT_CUSTOMIZE_MENU", item.getId(), item.getLabel() ), e); //$NON-NLS-1$
+			    			  session.error( Messages.getInstance().getString("BaseMenuProvider.ERROR_0004_COULD_NOT_CUSTOMIZE_MENU", item.getId(), item.getLabel() ), e); //$NON-NLS-1$
 			    		  }
 			    	  }
 			      }
@@ -88,7 +88,7 @@ public abstract class BaseMenuProvider implements IMenuProvider {
 		    	  return menubar;
 		      }		      
 	      }
-		  Logger.error( getClass().getName(), Messages.getErrorString("BaseMenuProvider.ERROR_0002_COULD_NOT_GET_MENUBAR") ); //$NON-NLS-1$
+		  Logger.error( getClass().getName(), Messages.getInstance().getErrorString("BaseMenuProvider.ERROR_0002_COULD_NOT_GET_MENUBAR") ); //$NON-NLS-1$
 		  return null;
 	}
 	
@@ -102,7 +102,7 @@ public abstract class BaseMenuProvider implements IMenuProvider {
 		    	  }
 		      }
 	      }
-		  Logger.error( getClass().getName(), Messages.getErrorString("BaseMenuProvider.ERROR_0003_COULD_NOT_GET_POPUP_MENU") ); //$NON-NLS-1$
+		  Logger.error( getClass().getName(), Messages.getInstance().getErrorString("BaseMenuProvider.ERROR_0003_COULD_NOT_GET_POPUP_MENU") ); //$NON-NLS-1$
 		  return null;
 	}
 	

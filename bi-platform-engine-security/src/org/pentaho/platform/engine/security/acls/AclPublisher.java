@@ -131,11 +131,11 @@ public class AclPublisher implements IAclPublisher {
       String aclStr = XmlDom4JHelper.getNodeText("@acl", defAcl, null); //$NON-NLS-1$
 
       if ((aclRole == null) && (aclUser == null)) {
-        throw new IllegalArgumentException(Messages
+        throw new IllegalArgumentException(Messages.getInstance()
             .getErrorString("AclPublisher.ERROR_0001_DEFAULT_ACL_REQUIRES_USER_OR_ROLE")); //$NON-NLS-1$
       }
       if ((aclRole != null) && (aclUser != null)) {
-        throw new IllegalArgumentException(Messages.getErrorString("AclPublisher.ERROR_0002_DEFAULT_ACL_HAS_BOTH")); //$NON-NLS-1$
+        throw new IllegalArgumentException(Messages.getInstance().getErrorString("AclPublisher.ERROR_0002_DEFAULT_ACL_HAS_BOTH")); //$NON-NLS-1$
       }
 
       int aclValue = -1; // Default to undefined

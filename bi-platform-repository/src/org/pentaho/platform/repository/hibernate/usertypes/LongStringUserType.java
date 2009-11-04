@@ -103,7 +103,7 @@ public class LongStringUserType implements UserType {
   public Object nullSafeGet(final ResultSet rs, final String[] names, final Object owner) throws HibernateException,
       SQLException {
     if (LongStringUserType.debug) {
-      LongStringUserType.log.debug(Messages.getString("LONGSTRTYPE.DEBUG_NULL_SAFE_GET")); //$NON-NLS-1$
+      LongStringUserType.log.debug(Messages.getInstance().getString("LONGSTRTYPE.DEBUG_NULL_SAFE_GET")); //$NON-NLS-1$
     }
     String longStr = rs.getString(names[0]);
     return (longStr != null) ? new StringBuffer(longStr) : null;
@@ -118,7 +118,7 @@ public class LongStringUserType implements UserType {
   public void nullSafeSet(final PreparedStatement st, final Object value, final int index) throws HibernateException,
       SQLException {
     if (LongStringUserType.debug) {
-      LongStringUserType.log.debug(Messages.getString("LONGSTRTYPE.DEBUG_NULL_SAFE_SET")); //$NON-NLS-1$
+      LongStringUserType.log.debug(Messages.getInstance().getString("LONGSTRTYPE.DEBUG_NULL_SAFE_SET")); //$NON-NLS-1$
     }
     if (value != null) {
       StringReader rdr = new StringReader(value.toString());

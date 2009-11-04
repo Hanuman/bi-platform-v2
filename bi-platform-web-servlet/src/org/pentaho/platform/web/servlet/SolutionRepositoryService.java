@@ -100,7 +100,7 @@ public class SolutionRepositoryService extends ServletBase {
       PentahoSystem.systemExitPoint();
     }
     if (ServletBase.debug) {
-      debug(Messages.getString("HttpWebService.DEBUG_WEB_SERVICE_END")); //$NON-NLS-1$
+      debug(Messages.getInstance().getString("HttpWebService.DEBUG_WEB_SERVICE_END")); //$NON-NLS-1$
     }
   }
 
@@ -114,13 +114,13 @@ public class SolutionRepositoryService extends ServletBase {
    * @throws IOException
    */
   protected void debugErrorHandler(final OutputStream outputStream, final Exception ex) throws IOException {
-    String msg = Messages.getErrorString("SolutionRepositoryService.ERROR_0001_ERROR_DURING_SERVICE_REQUEST"); //$NON-NLS-1$;
+    String msg = Messages.getInstance().getErrorString("SolutionRepositoryService.ERROR_0001_ERROR_DURING_SERVICE_REQUEST"); //$NON-NLS-1$;
     debug(msg, ex);
     WebServiceUtil.writeString(outputStream, WebServiceUtil.getErrorXml(msg), false);
   }
 
   protected void commonErrorHandler(final OutputStream outputStream, final Exception ex) throws IOException {
-    String msg = Messages.getErrorString("SolutionRepositoryService.ERROR_0001_ERROR_DURING_SERVICE_REQUEST"); //$NON-NLS-1$;
+    String msg = Messages.getInstance().getErrorString("SolutionRepositoryService.ERROR_0001_ERROR_DURING_SERVICE_REQUEST"); //$NON-NLS-1$;
     error(msg, ex);
     WebServiceUtil.writeString(outputStream, WebServiceUtil.getErrorXml(msg), false);
   }
@@ -174,7 +174,7 @@ public class SolutionRepositoryService extends ServletBase {
       String filename = parameterProvider.getStringParameter("filename", null); //$NON-NLS-1$
       String strAclXml = parameterProvider.getStringParameter("aclXml", null); //$NON-NLS-1$
       service.setAcl(solution, path, filename, strAclXml, userSession);
-      String msg = WebServiceUtil.getStatusXml(Messages.getString("AdhocWebService.ACL_UPDATE_SUCCESSFUL")); //$NON-NLS-1$
+      String msg = WebServiceUtil.getStatusXml(Messages.getInstance().getString("AdhocWebService.ACL_UPDATE_SUCCESSFUL")); //$NON-NLS-1$
       WebServiceUtil.writeString(outputStream, msg, wrapWithSOAP);
     } else if ("getAcl".equals(component)) { //$NON-NLS-1$
       String solution = parameterProvider.getStringParameter("solution", null); //$NON-NLS-1$ 
@@ -183,7 +183,7 @@ public class SolutionRepositoryService extends ServletBase {
       String aclXml = service.getAclXml(solution, path, filename, userSession);
       WebServiceUtil.writeString(outputStream, aclXml, wrapWithSOAP);
     } else {
-      throw new RuntimeException(Messages.getErrorString("HttpWebService.UNRECOGNIZED_COMPONENT_REQUEST", component)); //$NON-NLS-1$
+      throw new RuntimeException(Messages.getInstance().getErrorString("HttpWebService.UNRECOGNIZED_COMPONENT_REQUEST", component)); //$NON-NLS-1$
     }
   }
 

@@ -189,7 +189,7 @@ public class WidgetGridComponent extends XmlComponent {
       columns = (int) XmlDom4JHelper.getNodeText("widgetgrid/columns", dataActionDocument, 2); //$NON-NLS-1$
       style = XmlDom4JHelper.getNodeText("widgetgrid/style", dataActionDocument); //$NON-NLS-1$
     } catch (Exception e) {
-      error(Messages.getErrorString("WidgetGrid.ERROR_0003_DEFINITION_NOT_VALID", widgetGridDataDefinition), e); //$NON-NLS-1$
+      error(Messages.getInstance().getErrorString("WidgetGrid.ERROR_0003_DEFINITION_NOT_VALID", widgetGridDataDefinition), e); //$NON-NLS-1$
       return false;
     }
     return true;
@@ -256,12 +256,12 @@ public class WidgetGridComponent extends XmlComponent {
   protected Document createDials(final IPentahoResultSet resultSet, final WidgetDefinition widgetDefinition) {
 
     if (resultSet == null) {
-      error(Messages.getErrorString("WidgetGrid.ERROR_0001_NO_RESULTS_FROM_ACTION")); //$NON-NLS-1$
+      error(Messages.getInstance().getErrorString("WidgetGrid.ERROR_0001_NO_RESULTS_FROM_ACTION")); //$NON-NLS-1$
       return null;
     }
 
     if (valueItem == null) {
-      error(Messages.getErrorString("WidgetGrid.ERROR_0002_NO_VALUE_ITEM")); //$NON-NLS-1$
+      error(Messages.getInstance().getErrorString("WidgetGrid.ERROR_0002_NO_VALUE_ITEM")); //$NON-NLS-1$
     }
 
     // Create a document that describes the result
@@ -289,13 +289,13 @@ public class WidgetGridComponent extends XmlComponent {
 
     if (nameColumnNo == -1) {
       // we did not find the specified name column
-      error(Messages.getErrorString("WidgetGrid.ERROR_0004_NAME_COLUMN_MISSING", nameItem)); //$NON-NLS-1$
+      error(Messages.getInstance().getErrorString("WidgetGrid.ERROR_0004_NAME_COLUMN_MISSING", nameItem)); //$NON-NLS-1$
       return null;
     }
 
     if (valueColumnNo == -1) {
       // we did not find the specified name column
-      error(Messages.getErrorString("WidgetGrid.ERROR_0005_VALUE_COLUMN_MISSING", valueItem)); //$NON-NLS-1$
+      error(Messages.getInstance().getErrorString("WidgetGrid.ERROR_0005_VALUE_COLUMN_MISSING", valueItem)); //$NON-NLS-1$
       return null;
     }
 

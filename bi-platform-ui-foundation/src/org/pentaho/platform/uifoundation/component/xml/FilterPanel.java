@@ -83,7 +83,7 @@ public class FilterPanel {
         filterList.add(filterDefinition);
       }
       if (filterList.size() == 0) {
-        error = Messages.getString("FilterPanel.ERROR_0001_NO_FILTERS"); //$NON-NLS-1$
+        error = Messages.getInstance().getString("FilterPanel.ERROR_0001_NO_FILTERS"); //$NON-NLS-1$
         return;
       }
     }
@@ -119,7 +119,7 @@ public class FilterPanel {
     String strUuid = UUIDUtil.getUUIDAsString().replaceAll("-", "_"); //$NON-NLS-1$ //$NON-NLS-2$
 
     content.append("<filters xmlns:xf=\"http://www.w3.org/2002/xforms\"><id>" + strUuid + "</id><title><![CDATA[" + //$NON-NLS-1$ //$NON-NLS-2$
-        Messages.getEncodedString(name) + "]]></title><description></description><help></help>" + //$NON-NLS-1$
+        Messages.getInstance().getEncodedString(name) + "]]></title><description></description><help></help>" + //$NON-NLS-1$
         "<action><![CDATA[" + actionUrl + "]]></action>"); //$NON-NLS-1$ //$NON-NLS-2$
 
     if (error != null) {
@@ -128,7 +128,7 @@ public class FilterPanel {
       content.append("</error>"); //$NON-NLS-1$
     } else if (filterList == null) {
       content.append("<error>"); //$NON-NLS-1$
-      content.append(Messages.getString("FilterPanel.ERROR_0003_NO_FILTER_VALUES")); //$NON-NLS-1$
+      content.append(Messages.getInstance().getString("FilterPanel.ERROR_0003_NO_FILTER_VALUES")); //$NON-NLS-1$
       content.append("</error>"); //$NON-NLS-1$
     } else {
       try {
@@ -157,7 +157,7 @@ public class FilterPanel {
         XForm.completeXFormHeader(formName, xformHeader);
         content.append(xformHeader);
       } catch (Exception e) {
-        logger.error(Messages.getErrorString("FilterPanel.ERROR_0004_COULD_NOT_CREATE_CONTENT"), e); //$NON-NLS-1$
+        logger.error(Messages.getInstance().getErrorString("FilterPanel.ERROR_0004_COULD_NOT_CREATE_CONTENT"), e); //$NON-NLS-1$
       }
 
     }
@@ -168,7 +168,7 @@ public class FilterPanel {
     try {
       document = XmlDom4JHelper.getDocFromString(content.toString(), new PentahoEntityResolver());
     } catch(XmlParseException e) {
-      logger.error(Messages.getErrorString("FilterPanel.ERROR_0004_COULD_NOT_CREATE_CONTENT"), e); //$NON-NLS-1$
+      logger.error(Messages.getInstance().getErrorString("FilterPanel.ERROR_0004_COULD_NOT_CREATE_CONTENT"), e); //$NON-NLS-1$
     }
     return document;
   }

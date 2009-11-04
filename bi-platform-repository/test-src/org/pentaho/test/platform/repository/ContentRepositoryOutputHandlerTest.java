@@ -51,7 +51,7 @@ public class ContentRepositoryOutputHandlerTest extends BaseTest {
 
   public void testContentRepositoryOutputHandler() {
     startTest();
-    IPentahoSession session = new StandaloneSession(Messages.getString("BaseTest.DEBUG_JUNIT_SESSION")); //$NON-NLS-1$
+    IPentahoSession session = new StandaloneSession(Messages.getInstance().getString("BaseTest.DEBUG_JUNIT_SESSION")); //$NON-NLS-1$
     ContentRepositoryOutputHandler handler = new ContentRepositoryOutputHandler();
     handler.setActionName("HelloWorld.xaction");
     handler.setHandlerId("1231231");

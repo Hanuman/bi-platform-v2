@@ -45,7 +45,7 @@ public class IPreparedComponentTest extends BaseTest {
     info("Expected: Successful execution with object available"); //$NON-NLS-1$
     IRuntimeContext context = run("test", "ipreparedcomponents", "ipreparedcomponent_sql_available.xaction"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
     assertEquals(
-        Messages.getString("BaseTest.USER_RUNNING_ACTION_SEQUENCE"), IRuntimeContext.RUNTIME_STATUS_SUCCESS, context.getStatus()); //$NON-NLS-1$
+        Messages.getInstance().getString("BaseTest.USER_RUNNING_ACTION_SEQUENCE"), IRuntimeContext.RUNTIME_STATUS_SUCCESS, context.getStatus()); //$NON-NLS-1$
 
     IActionParameter rtn = context.getOutputParameter("prepared_component");//$NON-NLS-1$
     assertNotNull(rtn);
@@ -61,7 +61,7 @@ public class IPreparedComponentTest extends BaseTest {
     info("Expected: Successful execution with one row of data"); //$NON-NLS-1$
     IRuntimeContext context = run("test", "ipreparedcomponents", "ipreparedcomponent_sql_temptables.xaction"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
     assertEquals(
-        Messages.getString("BaseTest.USER_RUNNING_ACTION_SEQUENCE"), IRuntimeContext.RUNTIME_STATUS_SUCCESS, context.getStatus()); //$NON-NLS-1$
+        Messages.getInstance().getString("BaseTest.USER_RUNNING_ACTION_SEQUENCE"), IRuntimeContext.RUNTIME_STATUS_SUCCESS, context.getStatus()); //$NON-NLS-1$
 
     IActionParameter rtn1 = context.getOutputParameter("a_result");//$NON-NLS-1$
     assertNotNull(rtn1);
@@ -85,7 +85,7 @@ public class IPreparedComponentTest extends BaseTest {
     info("Expected: Successful execution with object available"); //$NON-NLS-1$
     IRuntimeContext context = run("test", "ipreparedcomponents", "ipreparedcomponent_sql_preparelater.xaction"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
     assertEquals(
-        Messages.getString("BaseTest.USER_RUNNING_ACTION_SEQUENCE"), IRuntimeContext.RUNTIME_STATUS_SUCCESS, context.getStatus()); //$NON-NLS-1$
+        Messages.getInstance().getString("BaseTest.USER_RUNNING_ACTION_SEQUENCE"), IRuntimeContext.RUNTIME_STATUS_SUCCESS, context.getStatus()); //$NON-NLS-1$
 
     IActionParameter rtn1 = context.getOutputParameter("prepared_component");//$NON-NLS-1$
     assertNotNull(rtn1);
@@ -116,7 +116,7 @@ public class IPreparedComponentTest extends BaseTest {
     info("Expected: Successful execution with object available"); //$NON-NLS-1$
     IRuntimeContext context = run("test", "ipreparedcomponents", "ipreparedcomponent_mdx_available.xaction"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
     assertEquals(
-        Messages.getString("BaseTest.USER_RUNNING_ACTION_SEQUENCE"), IRuntimeContext.RUNTIME_STATUS_SUCCESS, context.getStatus()); //$NON-NLS-1$
+        Messages.getInstance().getString("BaseTest.USER_RUNNING_ACTION_SEQUENCE"), IRuntimeContext.RUNTIME_STATUS_SUCCESS, context.getStatus()); //$NON-NLS-1$
 
     IActionParameter rtn = context.getOutputParameter("prepared_component");//$NON-NLS-1$
     assertNotNull(rtn);
@@ -132,7 +132,7 @@ public class IPreparedComponentTest extends BaseTest {
     info("Expected: Successful execution with object available"); //$NON-NLS-1$
     IRuntimeContext context = run("test", "ipreparedcomponents", "ipreparedcomponent_mdx_shareconn.xaction"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
     assertEquals(
-        Messages.getString("BaseTest.USER_RUNNING_ACTION_SEQUENCE"), IRuntimeContext.RUNTIME_STATUS_SUCCESS, context.getStatus()); //$NON-NLS-1$
+        Messages.getInstance().getString("BaseTest.USER_RUNNING_ACTION_SEQUENCE"), IRuntimeContext.RUNTIME_STATUS_SUCCESS, context.getStatus()); //$NON-NLS-1$
 
     IActionParameter rtn = context.getOutputParameter("prepared_component");//$NON-NLS-1$
     assertNotNull(rtn);
@@ -154,7 +154,7 @@ public class IPreparedComponentTest extends BaseTest {
     info("Expected: Successful execution with object available"); //$NON-NLS-1$
     IRuntimeContext context = run("test", "ipreparedcomponents", "ipreparedcomponent_mdx_preparelater.xaction"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
     assertEquals(
-        Messages.getString("BaseTest.USER_RUNNING_ACTION_SEQUENCE"), IRuntimeContext.RUNTIME_STATUS_SUCCESS, context.getStatus()); //$NON-NLS-1$
+        Messages.getInstance().getString("BaseTest.USER_RUNNING_ACTION_SEQUENCE"), IRuntimeContext.RUNTIME_STATUS_SUCCESS, context.getStatus()); //$NON-NLS-1$
 
     IActionParameter rtn1 = context.getOutputParameter("prepared_component");//$NON-NLS-1$
     assertNotNull(rtn1);
@@ -187,7 +187,7 @@ public class IPreparedComponentTest extends BaseTest {
     info("Expected: Successful execution with object available"); //$NON-NLS-1$
     IRuntimeContext context = run("test", "ipreparedcomponents", "ipreparedcomponent_xquery_available.xaction"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
     assertEquals(
-        Messages.getString("BaseTest.USER_RUNNING_ACTION_SEQUENCE"), IRuntimeContext.RUNTIME_STATUS_SUCCESS, context.getStatus()); //$NON-NLS-1$
+        Messages.getInstance().getString("BaseTest.USER_RUNNING_ACTION_SEQUENCE"), IRuntimeContext.RUNTIME_STATUS_SUCCESS, context.getStatus()); //$NON-NLS-1$
 
     IActionParameter rtn = context.getOutputParameter("prepared_component");//$NON-NLS-1$
     assertNotNull(rtn);
@@ -203,7 +203,7 @@ public class IPreparedComponentTest extends BaseTest {
     IRuntimeContext context = run(
         "test", "ipreparedcomponents", "ipreparedcomponent_xquery_available_error_nodocument.xaction"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
     assertEquals(
-        Messages.getString("BaseTest.USER_RUNNING_ACTION_SEQUENCE"), IRuntimeContext.RUNTIME_STATUS_FAILURE, context.getStatus()); //$NON-NLS-1$
+        Messages.getInstance().getString("BaseTest.USER_RUNNING_ACTION_SEQUENCE"), IRuntimeContext.RUNTIME_STATUS_FAILURE, context.getStatus()); //$NON-NLS-1$
 
     IActionParameter rtn = context.getOutputParameter("prepared_component");//$NON-NLS-1$
     assertNotNull(rtn);
@@ -220,7 +220,7 @@ public class IPreparedComponentTest extends BaseTest {
     IRuntimeContext context = run(
         "test", "ipreparedcomponents", "ipreparedcomponent_xquery_available_error_nopreparedcomponent.xaction"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ 
     assertEquals(
-        Messages.getString("BaseTest.USER_RUNNING_ACTION_SEQUENCE"), IRuntimeContext.RUNTIME_CONTEXT_VALIDATE_FAIL, context.getStatus()); //$NON-NLS-1$
+        Messages.getInstance().getString("BaseTest.USER_RUNNING_ACTION_SEQUENCE"), IRuntimeContext.RUNTIME_CONTEXT_VALIDATE_FAIL, context.getStatus()); //$NON-NLS-1$
 
     finishTest();
   }
@@ -230,7 +230,7 @@ public class IPreparedComponentTest extends BaseTest {
     info("Expected: Successful execution with object available"); //$NON-NLS-1$
     IRuntimeContext context = run("test", "ipreparedcomponents", "ipreparedcomponent_xquery_preparelater.xaction"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
     assertEquals(
-        Messages.getString("BaseTest.USER_RUNNING_ACTION_SEQUENCE"), IRuntimeContext.RUNTIME_STATUS_SUCCESS, context.getStatus()); //$NON-NLS-1$
+        Messages.getInstance().getString("BaseTest.USER_RUNNING_ACTION_SEQUENCE"), IRuntimeContext.RUNTIME_STATUS_SUCCESS, context.getStatus()); //$NON-NLS-1$
 
     IActionParameter rtn1 = context.getOutputParameter("prepared_component");//$NON-NLS-1$
     assertNotNull(rtn1);
@@ -262,7 +262,7 @@ public class IPreparedComponentTest extends BaseTest {
     info("Expected: Successful execution with object available"); //$NON-NLS-1$
     IRuntimeContext context = run("test", "ipreparedcomponents", "ipreparedcomponent_xquery_shareconn.xaction"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
     assertEquals(
-        Messages.getString("BaseTest.USER_RUNNING_ACTION_SEQUENCE"), IRuntimeContext.RUNTIME_STATUS_SUCCESS, context.getStatus()); //$NON-NLS-1$
+        Messages.getInstance().getString("BaseTest.USER_RUNNING_ACTION_SEQUENCE"), IRuntimeContext.RUNTIME_STATUS_SUCCESS, context.getStatus()); //$NON-NLS-1$
 
     IActionParameter rtn1 = context.getOutputParameter("prepared_component");//$NON-NLS-1$
     assertNotNull(rtn1);
@@ -281,7 +281,7 @@ public class IPreparedComponentTest extends BaseTest {
     info("Expected: Successful execution with object available"); //$NON-NLS-1$
     IRuntimeContext context = run("test", "ipreparedcomponents", "ipreparedcomponent_hql_available.xaction"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
     assertEquals(
-        Messages.getString("BaseTest.USER_RUNNING_ACTION_SEQUENCE"), IRuntimeContext.RUNTIME_STATUS_SUCCESS, context.getStatus()); //$NON-NLS-1$
+        Messages.getInstance().getString("BaseTest.USER_RUNNING_ACTION_SEQUENCE"), IRuntimeContext.RUNTIME_STATUS_SUCCESS, context.getStatus()); //$NON-NLS-1$
 
     IActionParameter rtn = context.getOutputParameter("prepared_component");//$NON-NLS-1$
     assertNotNull(rtn);
@@ -297,7 +297,7 @@ public class IPreparedComponentTest extends BaseTest {
     info("Expected: Successful execution with object available"); //$NON-NLS-1$
     IRuntimeContext context = run("test", "ipreparedcomponents", "ipreparedcomponent_hql_preparelater.xaction"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
     assertEquals(
-        Messages.getString("BaseTest.USER_RUNNING_ACTION_SEQUENCE"), IRuntimeContext.RUNTIME_STATUS_SUCCESS, context.getStatus()); //$NON-NLS-1$
+        Messages.getInstance().getString("BaseTest.USER_RUNNING_ACTION_SEQUENCE"), IRuntimeContext.RUNTIME_STATUS_SUCCESS, context.getStatus()); //$NON-NLS-1$
 
     IActionParameter rtn1 = context.getOutputParameter("prepared_component");//$NON-NLS-1$
     assertNotNull(rtn1);
@@ -329,7 +329,7 @@ public class IPreparedComponentTest extends BaseTest {
     info("Expected: Successful execution with object available"); //$NON-NLS-1$
     IRuntimeContext context = run("test", "ipreparedcomponents", "ipreparedcomponent_hql_shareconn.xaction"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
     assertEquals(
-        Messages.getString("BaseTest.USER_RUNNING_ACTION_SEQUENCE"), IRuntimeContext.RUNTIME_STATUS_SUCCESS, context.getStatus()); //$NON-NLS-1$
+        Messages.getInstance().getString("BaseTest.USER_RUNNING_ACTION_SEQUENCE"), IRuntimeContext.RUNTIME_STATUS_SUCCESS, context.getStatus()); //$NON-NLS-1$
 
     IActionParameter rtn1 = context.getOutputParameter("prepared_component");//$NON-NLS-1$
     assertNotNull(rtn1);

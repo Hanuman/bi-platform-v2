@@ -131,12 +131,12 @@ public class XQConnection implements IPentahoLoggingConnection {
       resultSet = new XQResultSet(this, exp, dynamicContext, columnTypes);
     } catch (XPathException e) {
       if (e.getException() instanceof FileNotFoundException) {
-        logger.error(Messages.getString("XQConnection.ERROR_0001_UNABLE_TO_READ", query)); //$NON-NLS-1$
+        logger.error(Messages.getInstance().getString("XQConnection.ERROR_0001_UNABLE_TO_READ", query)); //$NON-NLS-1$
       } else {
-        logger.error(Messages.getString("XQConnection.ERROR_0002_XQUERY_EXCEPTION", query), e); //$NON-NLS-1$
+        logger.error(Messages.getInstance().getString("XQConnection.ERROR_0002_XQUERY_EXCEPTION", query), e); //$NON-NLS-1$
       }
     } catch (Throwable t) {
-      logger.error(Messages.getErrorString("XQConnection.ERROR_0002_XQUERY_EXCEPTION", query), t); //$NON-NLS-1$
+      logger.error(Messages.getInstance().getErrorString("XQConnection.ERROR_0002_XQUERY_EXCEPTION", query), t); //$NON-NLS-1$
     }
     lastQuery = query;
     return resultSet;

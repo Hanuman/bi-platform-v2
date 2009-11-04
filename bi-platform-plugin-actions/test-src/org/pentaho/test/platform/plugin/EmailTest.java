@@ -64,7 +64,7 @@ public class EmailTest extends BaseTestCase {
     IRuntimeContext context = run(
         SOLUTION_PATH + "/test/email/", "text_only_email-loop.xaction", parameterProvider, outputHandler); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
     assertEquals(
-        Messages.getString("BaseTest.USER_RUNNING_ACTION_SEQUENCE"), IRuntimeContext.RUNTIME_STATUS_SUCCESS, context.getStatus()); //$NON-NLS-1$
+        Messages.getInstance().getString("BaseTest.USER_RUNNING_ACTION_SEQUENCE"), IRuntimeContext.RUNTIME_STATUS_SUCCESS, context.getStatus()); //$NON-NLS-1$
   }
 
   public void testEmailOnly() {
@@ -74,7 +74,7 @@ public class EmailTest extends BaseTestCase {
     IRuntimeContext context = run(
         SOLUTION_PATH + "/test/email/", "text_only_email.xaction", parameterProvider, outputHandler); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$        
     assertEquals(
-        Messages.getString("BaseTest.USER_RUNNING_ACTION_SEQUENCE"), IRuntimeContext.RUNTIME_STATUS_SUCCESS, context.getStatus()); //$NON-NLS-1$
+        Messages.getInstance().getString("BaseTest.USER_RUNNING_ACTION_SEQUENCE"), IRuntimeContext.RUNTIME_STATUS_SUCCESS, context.getStatus()); //$NON-NLS-1$
   }
 
   /*public void testEmailLoopProp() {
@@ -84,7 +84,7 @@ public class EmailTest extends BaseTestCase {
     IRuntimeContext context = run(
         SOLUTION_PATH + "/test/email/", "text_only_email-loop_property.xaction", parameterProvider, outputHandler); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$        
     assertEquals(
-        Messages.getString("BaseTest.USER_RUNNING_ACTION_SEQUENCE"), IRuntimeContext.RUNTIME_STATUS_SUCCESS, context.getStatus()); //$NON-NLS-1$
+        Messages.getInstance().getString("BaseTest.USER_RUNNING_ACTION_SEQUENCE"), IRuntimeContext.RUNTIME_STATUS_SUCCESS, context.getStatus()); //$NON-NLS-1$
   }*/
 
   public void testEmailHtml() {
@@ -94,7 +94,7 @@ public class EmailTest extends BaseTestCase {
     IRuntimeContext context = run(
         SOLUTION_PATH + "/test/email/", "text_html_attach_email.xaction", parameterProvider, outputHandler); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$        
     assertEquals(
-        Messages.getString("BaseTest.USER_RUNNING_ACTION_SEQUENCE"), IRuntimeContext.RUNTIME_STATUS_SUCCESS, context.getStatus()); //$NON-NLS-1$
+        Messages.getInstance().getString("BaseTest.USER_RUNNING_ACTION_SEQUENCE"), IRuntimeContext.RUNTIME_STATUS_SUCCESS, context.getStatus()); //$NON-NLS-1$
   }
 
   public static void main(String[] args) {

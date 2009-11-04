@@ -67,22 +67,22 @@ public class ResultSetCrosstabComponent extends ComponentBase {
   @Override
   protected boolean validateAction() {
     if (!isDefinedInput(ResultSetCrosstabComponent.PIVOT_COLUMN)) {
-      error(Messages.getErrorString("ResultSetCrosstabComponent.ERROR_0001_PIVOT_COLUMN_IS_REQUIRED")); //$NON-NLS-1$
+      error(Messages.getInstance().getErrorString("ResultSetCrosstabComponent.ERROR_0001_PIVOT_COLUMN_IS_REQUIRED")); //$NON-NLS-1$
       return false;
     }
     if (!isDefinedInput(ResultSetCrosstabComponent.MEASURES_COLUMN)) {
-      error(Messages.getErrorString("ResultSetCrosstabComponent.ERROR_0002_MEASURES_COLUMN_IS_REQUIRED")); //$NON-NLS-1$
+      error(Messages.getInstance().getErrorString("ResultSetCrosstabComponent.ERROR_0002_MEASURES_COLUMN_IS_REQUIRED")); //$NON-NLS-1$
       return false;
     }
     if (isDefinedInput(ResultSetCrosstabComponent.FORMAT_TYPE)) {
       if (!isDefinedInput(ResultSetCrosstabComponent.FORMAT_STRING)) {
-        error(Messages.getErrorString("ResultSetCrosstabComponent.ERROR_0003_FORMAT_PARAMETERS_BAD")); //$NON-NLS-1$
+        error(Messages.getInstance().getErrorString("ResultSetCrosstabComponent.ERROR_0003_FORMAT_PARAMETERS_BAD")); //$NON-NLS-1$
         return false;
       }
     }
     if (isDefinedInput(ResultSetCrosstabComponent.SORT_FORMAT_TYPE)) {
       if (!isDefinedInput(ResultSetCrosstabComponent.SORT_FORMAT_STRING)) {
-        error(Messages.getErrorString("ResultSetCrosstabComponent.ERROR_0004_SORT_FORMAT_PARAMETERS_BAD")); //$NON-NLS-1$
+        error(Messages.getInstance().getErrorString("ResultSetCrosstabComponent.ERROR_0004_SORT_FORMAT_PARAMETERS_BAD")); //$NON-NLS-1$
         return false;
       }
     }
@@ -154,7 +154,7 @@ public class ResultSetCrosstabComponent extends ComponentBase {
       IPentahoResultSet rSet = null;
 
       if (isDefinedInput(ResultSetCrosstabComponent.OLD_STYLE_CROSSTAB)) {
-        warn(Messages.getString("ResultSetCrosstabComponent.WARN_DEPRECATED")); //$NON-NLS-1$
+        warn(Messages.getInstance().getString("ResultSetCrosstabComponent.WARN_DEPRECATED")); //$NON-NLS-1$
         rSet = PentahoDataTransmuter.crossTab((IPentahoResultSet) resultSetObject, columnToPivot - 1,
             measuresColumn - 1, transformSortByColumn - 1, format, sortFormat, orderOutputColumns);
       } else {
@@ -190,7 +190,7 @@ public class ResultSetCrosstabComponent extends ComponentBase {
   public String getResultOutputName() {
     Set outputs = getOutputNames();
     if ((outputs == null) || (outputs.size() != 1)) {
-      error(Messages.getString("Template.ERROR_0002_OUTPUT_COUNT_WRONG")); //$NON-NLS-1$
+      error(Messages.getInstance().getString("Template.ERROR_0002_OUTPUT_COUNT_WRONG")); //$NON-NLS-1$
       return null;
     }
     String outputName = null;

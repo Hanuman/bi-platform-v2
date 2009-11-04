@@ -185,7 +185,7 @@ public class HttpWebService extends ServletBase {
         requestHandler.setSolutionName(solutionName);
 
         if (ServletBase.debug) {
-          debug(Messages.getString("HttpWebService.DEBUG_WEB_SERVICE_START")); //$NON-NLS-1$
+          debug(Messages.getInstance().getString("HttpWebService.DEBUG_WEB_SERVICE_START")); //$NON-NLS-1$
         }
         IRuntimeContext runtime = null;
         outputStream.write(SoapHelper.getSoapHeader().getBytes(LocaleHelper.getSystemEncoding()));
@@ -208,10 +208,10 @@ public class HttpWebService extends ServletBase {
       }
 
     } catch (Throwable t) {
-      error(Messages.getErrorString("HttpWebService.ERROR_0001_ERROR_DURING_WEB_SERVICE"), t); //$NON-NLS-1$
+      error(Messages.getInstance().getErrorString("HttpWebService.ERROR_0001_ERROR_DURING_WEB_SERVICE"), t); //$NON-NLS-1$
     }
     if (ServletBase.debug) {
-      debug(Messages.getString("HttpWebService.DEBUG_WEB_SERVICE_END")); //$NON-NLS-1$
+      debug(Messages.getInstance().getString("HttpWebService.DEBUG_WEB_SERVICE_END")); //$NON-NLS-1$
     }
 
   }
@@ -289,7 +289,7 @@ public class HttpWebService extends ServletBase {
         messages, this);
     if (!ok) {
       PentahoSystem.get(IMessageFormatter.class, userSession).formatErrorMessage(
-          "text/html", Messages.getString("Widget.ERROR_0001_COULD_NOT_CREATE_WIDGET"), messages, buffer); //$NON-NLS-1$ //$NON-NLS-2$
+          "text/html", Messages.getInstance().getString("Widget.ERROR_0001_COULD_NOT_CREATE_WIDGET"), messages, buffer); //$NON-NLS-1$ //$NON-NLS-2$
     }
 
     try {
@@ -330,7 +330,7 @@ public class HttpWebService extends ServletBase {
 
      if (content == null) {
      StringBuffer buffer = new StringBuffer();
-     MessageFormatHelper.formatErrorMessage("text/html", Messages.getString("Widget.ERROR_0001_COULD_NOT_CREATE_WIDGET"), messages, buffer); //$NON-NLS-1$ //$NON-NLS-2$
+     MessageFormatHelper.formatErrorMessage("text/html", Messages.getInstance().getString("Widget.ERROR_0001_COULD_NOT_CREATE_WIDGET"), messages, buffer); //$NON-NLS-1$ //$NON-NLS-2$
      content = buffer.toString();
      }
 
@@ -372,7 +372,7 @@ public class HttpWebService extends ServletBase {
         messages, this);
     if (!ok) {
       PentahoSystem.get(IMessageFormatter.class, userSession).formatErrorMessage(
-          "text/html", Messages.getString("Widget.ERROR_0001_COULD_NOT_CREATE_WIDGET"), messages, buffer); //$NON-NLS-1$ //$NON-NLS-2$
+          "text/html", Messages.getInstance().getString("Widget.ERROR_0001_COULD_NOT_CREATE_WIDGET"), messages, buffer); //$NON-NLS-1$ //$NON-NLS-2$
     }
 
     try {
@@ -423,7 +423,7 @@ public class HttpWebService extends ServletBase {
      }
      if (content == null) {
      StringBuffer buffer = new StringBuffer();
-     MessageFormatHelper.formatErrorMessage("text/html", Messages.getString("Widget.ERROR_0001_COULD_NOT_CREATE_WIDGET"), messages, buffer); //$NON-NLS-1$ //$NON-NLS-2$
+     MessageFormatHelper.formatErrorMessage("text/html", Messages.getInstance().getString("Widget.ERROR_0001_COULD_NOT_CREATE_WIDGET"), messages, buffer); //$NON-NLS-1$ //$NON-NLS-2$
      content = buffer.toString();
      }
 
@@ -454,7 +454,7 @@ public class HttpWebService extends ServletBase {
         messages, this);
     if (!ok) {
       PentahoSystem.get(IMessageFormatter.class, userSession).formatErrorMessage(
-          "text/html", Messages.getString("Widget.ERROR_0001_COULD_NOT_CREATE_WIDGET"), messages, buffer); //$NON-NLS-1$ //$NON-NLS-2$
+          "text/html", Messages.getInstance().getString("Widget.ERROR_0001_COULD_NOT_CREATE_WIDGET"), messages, buffer); //$NON-NLS-1$ //$NON-NLS-2$
     }
 
     try {
@@ -545,7 +545,7 @@ public class HttpWebService extends ServletBase {
      try {
      if (content == null) {
      StringBuffer buffer = new StringBuffer();
-     MessageFormatHelper.formatErrorMessage("text/html", Messages.getString("Widget.ERROR_0001_COULD_NOT_CREATE_WIDGET"), messages, buffer); //$NON-NLS-1$ //$NON-NLS-2$
+     MessageFormatHelper.formatErrorMessage("text/html", Messages.getInstance().getString("Widget.ERROR_0001_COULD_NOT_CREATE_WIDGET"), messages, buffer); //$NON-NLS-1$ //$NON-NLS-2$
      content = buffer.toString();
      }
      outputStream.write(SoapHelper.getSoapHeader().getBytes(LocaleHelper.getSystemEncoding()));
@@ -586,7 +586,7 @@ public class HttpWebService extends ServletBase {
      
     if (!isSecurityDetailsRequest(request)) {
       if (HttpWebService.logger.isDebugEnabled()) {
-        HttpWebService.logger.debug(Messages.getString("HttpWebService.DEBUG_MISSING_ACTION_PARAMETER")); //$NON-NLS-1$
+        HttpWebService.logger.debug(Messages.getInstance().getString("HttpWebService.DEBUG_MISSING_ACTION_PARAMETER")); //$NON-NLS-1$
       }
       doGetFixMe(request, response);
       return;
@@ -621,7 +621,7 @@ public class HttpWebService extends ServletBase {
 
       if (!"all".equalsIgnoreCase(details)) { //$NON-NLS-1$
         if (HttpWebService.logger.isWarnEnabled()) {
-          HttpWebService.logger.warn(Messages.getString("HttpWebService.WARN_MISSING_DETAILS_PARAMETER")); //$NON-NLS-1$
+          HttpWebService.logger.warn(Messages.getInstance().getString("HttpWebService.WARN_MISSING_DETAILS_PARAMETER")); //$NON-NLS-1$
         }
       }
       StringBuffer buf = new StringBuffer();
@@ -717,7 +717,7 @@ public class HttpWebService extends ServletBase {
     try {
       doc = XmlDom4JHelper.getDocFromString(xml, new PentahoEntityResolver() );
     } catch(XmlParseException e) {
-      error(Messages.getErrorString("HttpWebService.ERROR_0001_ERROR_DURING_WEB_SERVICE"), e); //$NON-NLS-1$
+      error(Messages.getInstance().getErrorString("HttpWebService.ERROR_0001_ERROR_DURING_WEB_SERVICE"), e); //$NON-NLS-1$
       return parameters;
     }
     List parameterNodes = doc.selectNodes("//SOAP-ENV:Body/*/*"); //$NON-NLS-1$

@@ -139,35 +139,35 @@ public class PivotViewComponent extends ComponentBase {
   protected boolean validateAction() {
 
     if (!isDefinedOutput(PivotViewComponent.OPTIONS)) {
-      error(Messages.getErrorString("PivotView.ERROR_0001_OPTIONS_NOT_DEFINED")); //$NON-NLS-1$
+      error(Messages.getInstance().getErrorString("PivotView.ERROR_0001_OPTIONS_NOT_DEFINED")); //$NON-NLS-1$
       return false;
     }
     if (!isDefinedOutput(PivotViewComponent.MODEL)) {
-      error(Messages.getErrorString("PivotView.ERROR_0002_MODEL_NOT_DEFIEND")); //$NON-NLS-1$
+      error(Messages.getInstance().getErrorString("PivotView.ERROR_0002_MODEL_NOT_DEFIEND")); //$NON-NLS-1$
       return false;
     }
     if (!isDefinedOutput(PivotViewComponent.CONNECTION)) {
-      error(Messages.getErrorString("PivotView.ERROR_0003_CONNECTION_NOT_DEFINED")); //$NON-NLS-1$
+      error(Messages.getInstance().getErrorString("PivotView.ERROR_0003_CONNECTION_NOT_DEFINED")); //$NON-NLS-1$
       return false;
     }
     if (!isDefinedOutput(StandardSettings.MDX_QUERY)) {
-      error(Messages.getErrorString("PivotView.ERROR_0004_MDX_NOT_DEFINED")); //$NON-NLS-1$
+      error(Messages.getInstance().getErrorString("PivotView.ERROR_0004_MDX_NOT_DEFINED")); //$NON-NLS-1$
       return false;
     }
     if (!isDefinedOutput(PivotViewComponent.TITLE)) {
-      error(Messages.getErrorString("PivotView.ERROR_0007_TITLE_NOT_DEFINED")); //$NON-NLS-1$
+      error(Messages.getInstance().getErrorString("PivotView.ERROR_0007_TITLE_NOT_DEFINED")); //$NON-NLS-1$
       return false;
     }
     if (!isDefinedInput(PivotViewComponent.MODE)) {
-      error(Messages.getErrorString("PivotView.ERROR_0005_MODE_NOT_DEFINED")); //$NON-NLS-1$
+      error(Messages.getInstance().getErrorString("PivotView.ERROR_0005_MODE_NOT_DEFINED")); //$NON-NLS-1$
       return false;
     }
     if (!isDefinedOutput(PivotViewComponent.URL)) {
-      error(Messages.getErrorString("PivotView.ERROR_0008_URL_NOT_DEFINED")); //$NON-NLS-1$
+      error(Messages.getInstance().getErrorString("PivotView.ERROR_0008_URL_NOT_DEFINED")); //$NON-NLS-1$
       return false;
     }
     if (!isDefinedInput(StandardSettings.SQL_QUERY) && !isDefinedInput(StandardSettings.QUERY_NAME)) {
-      error(Messages.getErrorString("PivotView.ERROR_0009_QUERY_NOT_DEFINED")); //$NON-NLS-1$
+      error(Messages.getInstance().getErrorString("PivotView.ERROR_0009_QUERY_NOT_DEFINED")); //$NON-NLS-1$
       return false;
     }
 
@@ -195,7 +195,7 @@ public class PivotViewComponent extends ComponentBase {
       // assume this is a redirect
       if (!isDefinedOutput(PivotViewComponent.URL)) {
         // we need the viewer output
-        error(Messages.getString("PivotView.ERROR_0006_VIEWER_NOT_DEFINED")); //$NON-NLS-1$
+        error(Messages.getInstance().getString("PivotView.ERROR_0006_VIEWER_NOT_DEFINED")); //$NON-NLS-1$
         return false;
       }
       String viewer = getInputStringValue(PivotViewComponent.VIEWER);
@@ -471,7 +471,7 @@ public class PivotViewComponent extends ComponentBase {
       query = MondrianModelComponent.getInitialQuery(model, dataSource, cube, roleName, getSession());
       
       if (query == null) {
-        error(Messages.getErrorString("PivotView.ERROR_0010_QUERY_GENERATION_FAILED")); //$NON-NLS-1$
+        error(Messages.getInstance().getErrorString("PivotView.ERROR_0010_QUERY_GENERATION_FAILED")); //$NON-NLS-1$
         return false;
       }
     }
@@ -495,7 +495,7 @@ public class PivotViewComponent extends ComponentBase {
       if (outputNames.contains(PivotViewComponent.OPTIONS)) {
         setOutputValue(PivotViewComponent.OPTIONS, options);
       } else {
-        error(Messages.getErrorString("PivotView.ERROR_0001_OPTIONS_NOT_DEFINED")); //$NON-NLS-1$
+        error(Messages.getInstance().getErrorString("PivotView.ERROR_0001_OPTIONS_NOT_DEFINED")); //$NON-NLS-1$
         return false;
       }
     }

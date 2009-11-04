@@ -43,7 +43,7 @@ public class AuditHelperTest extends BaseTest {
     OutputStream outputStream = getOutputStream("testAudit", ".html"); //$NON-NLS-1$ //$NON-NLS-2$
     SimpleOutputHandler outputHandler = new SimpleOutputHandler(outputStream, true);
     outputHandler.setOutputPreference( IOutputHandler.OUTPUT_TYPE_PARAMETERS );
-    StandaloneSession session = new StandaloneSession(Messages.getString("BaseTest.DEBUG_JUNIT_SESSION")); //$NON-NLS-1$
+    StandaloneSession session = new StandaloneSession(Messages.getInstance().getString("BaseTest.DEBUG_JUNIT_SESSION")); //$NON-NLS-1$
     
     AuditHelper.audit(null, session, "Type", "This is a message", "Values", 34, this);//$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
     assertTrue(true);

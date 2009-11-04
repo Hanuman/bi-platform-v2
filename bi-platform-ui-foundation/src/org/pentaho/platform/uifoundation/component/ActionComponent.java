@@ -107,7 +107,7 @@ public class ActionComponent extends BaseUIComponent {
               solutionName,
               actionPath,
               actionName,
-              Messages.getString("BaseTest.DEBUG_JUNIT_TEST"), false, true, instanceId, false, getParameterProviders(), outputHandler, null, urlFactory, getMessages()); //$NON-NLS-1$
+              Messages.getInstance().getString("BaseTest.DEBUG_JUNIT_TEST"), false, true, instanceId, false, getParameterProviders(), outputHandler, null, urlFactory, getMessages()); //$NON-NLS-1$
     } finally {
       if (context != null) {
         context.dispose();

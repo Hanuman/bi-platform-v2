@@ -117,7 +117,7 @@ public class SecureFilterComponent extends ComponentBase {
       } catch (Exception e) { // Catch the exception to let us test all
         // the params
         isOk = false;
-        error(Messages.getErrorString("SecureFilterComponent.ERROR_0001_PARAM_MISSING", inputName)); //$NON-NLS-1$
+        error(Messages.getInstance().getErrorString("SecureFilterComponent.ERROR_0001_PARAM_MISSING", inputName)); //$NON-NLS-1$
       }
     }
 
@@ -151,7 +151,7 @@ public class SecureFilterComponent extends ComponentBase {
         if (value instanceof String) {
           if ((selMap != null) && !selMap.hasValue((String) value)) {
             if (!entry.isOptional || !"".equals(value)) { //$NON-NLS-1$
-              error(Messages
+              error(Messages.getInstance()
                   .getErrorString(
                       "SecureFilterComponent.ERROR_0001_INVALID_SELECTION", entry.inputParam.getValue().toString(), entry.inputParam.getName())); //$NON-NLS-1$
               isOk = false;
@@ -164,7 +164,7 @@ public class SecureFilterComponent extends ComponentBase {
             for (Object element : values) {
               if (!selMap.hasValue(element.toString())) {
                 if (!entry.isOptional || !"".equals(value)) { //$NON-NLS-1$
-                  error(Messages
+                  error(Messages.getInstance()
                       .getErrorString(
                           "SecureFilterComponent.ERROR_0001_INVALID_SELECTION", entry.inputParam.getValue().toString(), entry.inputParam.getName())); //$NON-NLS-1$
                   isOk = false;
@@ -174,7 +174,7 @@ public class SecureFilterComponent extends ComponentBase {
           } // else this should be ok, we are just checking for selMap's existence
         } else {
           // we cannot validate this
-          error(Messages
+          error(Messages.getInstance()
               .getErrorString(
                   "SecureFilterComponent.ERROR_0001_INVALID_SELECTION", entry.inputParam.getValue().toString(), entry.inputParam.getName())); //$NON-NLS-1$
           isOk = false;

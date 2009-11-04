@@ -145,13 +145,13 @@ public class HibernateUtil implements IPentahoSystemEntryPoint, IPentahoSystemEx
         if (cfgFile.exists()) {
           HibernateUtil.configuration.configure(cfgFile);
         } else {
-          HibernateUtil.log.error(Messages.getErrorString("HIBUTIL.ERROR_0012_CONFIG_NOT_FOUND", configPath)); //$NON-NLS-1$
+          HibernateUtil.log.error(Messages.getInstance().getErrorString("HIBUTIL.ERROR_0012_CONFIG_NOT_FOUND", configPath)); //$NON-NLS-1$
           return false;
         }
       } else {
         // Assume defaults which means we hope Hibernate finds a configuration
         // file in a file named hibernate.cfg.xml
-        HibernateUtil.log.error(Messages.getErrorString("HIBUTIL.ERROR_0420_CONFIGURATION_ERROR_NO_HIB_CFG_FILE_SETTING" ) ); //$NON-NLS-1$
+        HibernateUtil.log.error(Messages.getInstance().getErrorString("HIBUTIL.ERROR_0420_CONFIGURATION_ERROR_NO_HIB_CFG_FILE_SETTING" ) ); //$NON-NLS-1$
         HibernateUtil.configuration.configure();
       }
       String dsName = HibernateUtil.configuration.getProperty("connection.datasource"); //$NON-NLS-1$
@@ -173,15 +173,15 @@ public class HibernateUtil implements IPentahoSystemEntryPoint, IPentahoSystemEx
        * configuration.addResource("org/pentaho/platform/repository/content/ContentItemFile.hbm.xml");//$NON-NLS-1$
        */
       if (!HibernateUtil.hibernateManaged) {
-        HibernateUtil.log.info(Messages.getString("HIBUTIL.USER_HIBERNATEUNMANAGED")); //$NON-NLS-1$
+        HibernateUtil.log.info(Messages.getInstance().getString("HIBUTIL.USER_HIBERNATEUNMANAGED")); //$NON-NLS-1$
         HibernateUtil.sessionFactory = HibernateUtil.configuration.buildSessionFactory();
       } else {
         HibernateUtil.factoryJndiName = HibernateUtil.configuration.getProperty(Environment.SESSION_FACTORY_NAME);
         if (HibernateUtil.factoryJndiName == null) {
-          HibernateUtil.log.error(Messages.getErrorString("HIBUTIL.ERROR_0013_NO_SESSION_FACTORY"));//$NON-NLS-1$
+          HibernateUtil.log.error(Messages.getInstance().getErrorString("HIBUTIL.ERROR_0013_NO_SESSION_FACTORY"));//$NON-NLS-1$
           return false;
         }
-        HibernateUtil.log.info(Messages.getString("HIBUTIL.USER_HIBERNATEMANAGED")); //$NON-NLS-1$
+        HibernateUtil.log.info(Messages.getInstance().getString("HIBUTIL.USER_HIBERNATEMANAGED")); //$NON-NLS-1$
         HibernateUtil.configuration.buildSessionFactory(); // Let hibernate Bind it
         // to JNDI...
         
@@ -203,7 +203,7 @@ public class HibernateUtil implements IPentahoSystemEntryPoint, IPentahoSystemEx
       Dialect.getDialect(HibernateUtil.configuration.getProperties());
       return true;
     } catch (Throwable ex) {
-      HibernateUtil.log.error(Messages.getErrorString("HIBUTIL.ERROR_0006_BUILD_SESSION_FACTORY"), ex); //$NON-NLS-1$
+      HibernateUtil.log.error(Messages.getInstance().getErrorString("HIBUTIL.ERROR_0006_BUILD_SESSION_FACTORY"), ex); //$NON-NLS-1$
       throw new ExceptionInInitializerError(ex);
     }
   }
@@ -309,16 +309,16 @@ public class HibernateUtil implements IPentahoSystemEntryPoint, IPentahoSystemEx
         try {
           HibernateUtil.sessionFactory = HibernateUtil.getConfiguration().buildSessionFactory();
         } catch (Exception ex) {
-          HibernateUtil.log.error(Messages.getErrorString("HIBUTIL.ERROR_0007_REBUILD_SESSION_FACTORY"), ex); //$NON-NLS-1$
-          throw new RepositoryException(Messages.getErrorString("HIBUTIL.ERROR_0007_REBUILD_SESSION_FACTORY"), ex); //$NON-NLS-1$
+          HibernateUtil.log.error(Messages.getInstance().getErrorString("HIBUTIL.ERROR_0007_REBUILD_SESSION_FACTORY"), ex); //$NON-NLS-1$
+          throw new RepositoryException(Messages.getInstance().getErrorString("HIBUTIL.ERROR_0007_REBUILD_SESSION_FACTORY"), ex); //$NON-NLS-1$
         }
       }
     } else {
       try {
         HibernateUtil.getConfiguration().buildSessionFactory();
       } catch (Exception ex) {
-        HibernateUtil.log.error(Messages.getErrorString("HIBUTIL.ERROR_0007_REBUILD_SESSION_FACTORY"), ex); //$NON-NLS-1$
-        throw new RepositoryException(Messages.getErrorString("HIBUTIL.ERROR_0007_REBUILD_SESSION_FACTORY"), ex); //$NON-NLS-1$
+        HibernateUtil.log.error(Messages.getInstance().getErrorString("HIBUTIL.ERROR_0007_REBUILD_SESSION_FACTORY"), ex); //$NON-NLS-1$
+        throw new RepositoryException(Messages.getInstance().getErrorString("HIBUTIL.ERROR_0007_REBUILD_SESSION_FACTORY"), ex); //$NON-NLS-1$
       }
     }
   }
@@ -335,8 +335,8 @@ public class HibernateUtil implements IPentahoSystemEntryPoint, IPentahoSystemEx
           HibernateUtil.sessionFactory = cfg.buildSessionFactory();
           HibernateUtil.configuration = cfg;
         } catch (Exception ex) {
-          HibernateUtil.log.error(Messages.getErrorString("HIBUTIL.ERROR_0007_REBUILD_SESSION_FACTORY"), ex); //$NON-NLS-1$
-          throw new RepositoryException(Messages.getErrorString("HIBUTIL.ERROR_0007_REBUILD_SESSION_FACTORY"), ex); //$NON-NLS-1$
+          HibernateUtil.log.error(Messages.getInstance().getErrorString("HIBUTIL.ERROR_0007_REBUILD_SESSION_FACTORY"), ex); //$NON-NLS-1$
+          throw new RepositoryException(Messages.getInstance().getErrorString("HIBUTIL.ERROR_0007_REBUILD_SESSION_FACTORY"), ex); //$NON-NLS-1$
         }
       }
     } else {
@@ -344,8 +344,8 @@ public class HibernateUtil implements IPentahoSystemEntryPoint, IPentahoSystemEx
         cfg.buildSessionFactory();
         HibernateUtil.configuration = cfg;
       } catch (Exception ex) {
-        HibernateUtil.log.error(Messages.getErrorString("HIBUTIL.ERROR_0007_REBUILD_SESSION_FACTORY"), ex); //$NON-NLS-1$
-        throw new RepositoryException(Messages.getErrorString("HIBUTIL.ERROR_0007_REBUILD_SESSION_FACTORY"), ex); //$NON-NLS-1$
+        HibernateUtil.log.error(Messages.getInstance().getErrorString("HIBUTIL.ERROR_0007_REBUILD_SESSION_FACTORY"), ex); //$NON-NLS-1$
+        throw new RepositoryException(Messages.getInstance().getErrorString("HIBUTIL.ERROR_0007_REBUILD_SESSION_FACTORY"), ex); //$NON-NLS-1$
       }
     }
   }
@@ -361,12 +361,12 @@ public class HibernateUtil implements IPentahoSystemEntryPoint, IPentahoSystemEx
     try {
       if (s == null) {
         if (HibernateUtil.debug) {
-          HibernateUtil.log.debug(Messages.getString("HIBUTIL.DEBUG_OPEN_NEW_SESSION")); //$NON-NLS-1$
+          HibernateUtil.log.debug(Messages.getInstance().getString("HIBUTIL.DEBUG_OPEN_NEW_SESSION")); //$NON-NLS-1$
         }
         if (HibernateUtil.getInterceptor() != null) {
           if (HibernateUtil.debug) {
             HibernateUtil.log
-                .debug(Messages.getString("HIBUTIL.DEBUG_USING_INTERCEPTOR") + HibernateUtil.getInterceptor().getClass()); //$NON-NLS-1$
+                .debug(Messages.getInstance().getString("HIBUTIL.DEBUG_USING_INTERCEPTOR") + HibernateUtil.getInterceptor().getClass()); //$NON-NLS-1$
           }
           s = HibernateUtil.getSessionFactory().openSession(HibernateUtil.getInterceptor());
         } else {
@@ -375,8 +375,8 @@ public class HibernateUtil implements IPentahoSystemEntryPoint, IPentahoSystemEx
         HibernateUtil.threadSession.set(s);
       }
     } catch (HibernateException ex) {
-      HibernateUtil.log.error(Messages.getErrorString("HIBUTIL.ERROR_0005_GET_SESSION"), ex); //$NON-NLS-1$
-      throw new RepositoryException(Messages.getErrorString("HIBUTIL.ERROR_0005_GET_SESSION"), ex); //$NON-NLS-1$
+      HibernateUtil.log.error(Messages.getInstance().getErrorString("HIBUTIL.ERROR_0005_GET_SESSION"), ex); //$NON-NLS-1$
+      throw new RepositoryException(Messages.getInstance().getErrorString("HIBUTIL.ERROR_0005_GET_SESSION"), ex); //$NON-NLS-1$
     }
     return s;
   }
@@ -399,15 +399,15 @@ public class HibernateUtil implements IPentahoSystemEntryPoint, IPentahoSystemEx
       HibernateUtil.threadSession.set(null);
       if ((s != null) && s.isOpen()) {
         if (HibernateUtil.debug) {
-          HibernateUtil.log.debug(Messages.getString("HIBUTIL.DEBUG_CLOSING_SESSION")); //$NON-NLS-1$
+          HibernateUtil.log.debug(Messages.getInstance().getString("HIBUTIL.DEBUG_CLOSING_SESSION")); //$NON-NLS-1$
         }
         s.close();
       }
       HibernateUtil.threadTransaction.set(null);
     } catch (HibernateException ex) {
-      HibernateUtil.log.error(Messages.getErrorString("HIBUTIL.ERROR_0009_CLOSE_SESSION"), ex); //$NON-NLS-1$
+      HibernateUtil.log.error(Messages.getInstance().getErrorString("HIBUTIL.ERROR_0009_CLOSE_SESSION"), ex); //$NON-NLS-1$
       HibernateUtil.threadTransaction.set(null);
-      throw new RepositoryException(Messages.getErrorString("HIBUTIL.ERROR_0009_CLOSE_SESSION"), ex); //$NON-NLS-1$
+      throw new RepositoryException(Messages.getInstance().getErrorString("HIBUTIL.ERROR_0009_CLOSE_SESSION"), ex); //$NON-NLS-1$
     }
 
   }
@@ -421,14 +421,14 @@ public class HibernateUtil implements IPentahoSystemEntryPoint, IPentahoSystemEx
     try {
       if (tx == null) {
         if (HibernateUtil.debug) {
-          HibernateUtil.log.debug(Messages.getString("HIBUTIL.DEBUG_START_TRANS")); //$NON-NLS-1$
+          HibernateUtil.log.debug(Messages.getInstance().getString("HIBUTIL.DEBUG_START_TRANS")); //$NON-NLS-1$
         }
         tx = HibernateUtil.getSession().beginTransaction();
         HibernateUtil.threadTransaction.set(tx);
       }
     } catch (HibernateException ex) {
-      HibernateUtil.log.error(Messages.getErrorString("HIBUTIL.ERROR_0004_START_TRANS"), ex); //$NON-NLS-1$
-      throw new RepositoryException(Messages.getErrorString("HIBUTIL.ERROR_0004_START_TRANS"), ex); //$NON-NLS-1$
+      HibernateUtil.log.error(Messages.getInstance().getErrorString("HIBUTIL.ERROR_0004_START_TRANS"), ex); //$NON-NLS-1$
+      throw new RepositoryException(Messages.getInstance().getErrorString("HIBUTIL.ERROR_0004_START_TRANS"), ex); //$NON-NLS-1$
     }
   }
 
@@ -442,18 +442,18 @@ public class HibernateUtil implements IPentahoSystemEntryPoint, IPentahoSystemEx
     try {
       if ((tx != null) && !tx.wasCommitted() && !tx.wasRolledBack()) {
         if (HibernateUtil.debug) {
-          HibernateUtil.log.debug(Messages.getString("HIBUTIL.DEBUG_COMMIT_TRANS")); //$NON-NLS-1$
+          HibernateUtil.log.debug(Messages.getInstance().getString("HIBUTIL.DEBUG_COMMIT_TRANS")); //$NON-NLS-1$
         }
         tx.commit();
       }
     } catch (HibernateException ex) {
-      HibernateUtil.log.error(Messages.getErrorString("HIBUTIL.ERROR_0008_COMMIT_TRANS"), ex); //$NON-NLS-1$
+      HibernateUtil.log.error(Messages.getInstance().getErrorString("HIBUTIL.ERROR_0008_COMMIT_TRANS"), ex); //$NON-NLS-1$
       try {
         HibernateUtil.rollbackTransaction();
       } catch (Exception e2) {
       }
       // throw new
-      // RepositoryException(Messages.getErrorString("HIBUTIL.ERROR_0008_COMMIT_TRANS"),
+      // RepositoryException(Messages.getInstance().getErrorString("HIBUTIL.ERROR_0008_COMMIT_TRANS"),
       // ex); //$NON-NLS-1$
     } finally {
       HibernateUtil.threadTransaction.set(null);
@@ -471,13 +471,13 @@ public class HibernateUtil implements IPentahoSystemEntryPoint, IPentahoSystemEx
       HibernateUtil.threadTransaction.set(null);
       if ((tx != null) && !tx.wasCommitted() && !tx.wasRolledBack()) {
         if (HibernateUtil.debug) {
-          HibernateUtil.log.debug(Messages.getString("HIBUTIL.DEBUG_ROLLBACK")); //$NON-NLS-1$
+          HibernateUtil.log.debug(Messages.getInstance().getString("HIBUTIL.DEBUG_ROLLBACK")); //$NON-NLS-1$
         }
         tx.rollback();
       }
     } catch (HibernateException ex) {
-      HibernateUtil.log.error(Messages.getErrorString("HIBUTIL.ERROR_0003_ROLLBACK"), ex); //$NON-NLS-1$
-      throw new RepositoryException(Messages.getErrorString("HIBUTIL.ERROR_0003_ROLLBACK"), ex); //$NON-NLS-1$
+      HibernateUtil.log.error(Messages.getInstance().getErrorString("HIBUTIL.ERROR_0003_ROLLBACK"), ex); //$NON-NLS-1$
+      throw new RepositoryException(Messages.getInstance().getErrorString("HIBUTIL.ERROR_0003_ROLLBACK"), ex); //$NON-NLS-1$
     } finally {
       HibernateUtil.closeSession();
     }
@@ -493,7 +493,7 @@ public class HibernateUtil implements IPentahoSystemEntryPoint, IPentahoSystemEx
    * public static void reconnect(Session session) throws RepositoryException {
    * try { session.reconnect(); threadSession.set(session); } catch
    * (HibernateException ex) {
-   * log.error(Messages.getErrorString("HIBUTIL.ERROR_0001_RECONNECT"), ex);
+   * log.error(Messages.getInstance().getErrorString("HIBUTIL.ERROR_0001_RECONNECT"), ex);
    * //$NON-NLS-1$ throw new RepositoryException(ex); } }
    */
   /**
@@ -510,8 +510,8 @@ public class HibernateUtil implements IPentahoSystemEntryPoint, IPentahoSystemEx
         session.disconnect();
       }
     } catch (HibernateException ex) {
-      HibernateUtil.log.error(Messages.getErrorString("HIBUTIL.ERROR_0002_DISCONNECT"), ex); //$NON-NLS-1$
-      throw new RepositoryException(Messages.getErrorString("HIBUTIL.ERROR_0002_DISCONNECT"), ex); //$NON-NLS-1$
+      HibernateUtil.log.error(Messages.getInstance().getErrorString("HIBUTIL.ERROR_0002_DISCONNECT"), ex); //$NON-NLS-1$
+      throw new RepositoryException(Messages.getInstance().getErrorString("HIBUTIL.ERROR_0002_DISCONNECT"), ex); //$NON-NLS-1$
     }
     return session;
   }
@@ -633,13 +633,13 @@ public class HibernateUtil implements IPentahoSystemEntryPoint, IPentahoSystemEx
    */
   public static void makePersistent(final Object obj) throws RepositoryException {
     if (HibernateUtil.debug) {
-      HibernateUtil.log.debug(Messages.getString("HIBUTIL.DEBUG_MAKE_PERSISTENT", obj.toString())); //$NON-NLS-1$
+      HibernateUtil.log.debug(Messages.getInstance().getString("HIBUTIL.DEBUG_MAKE_PERSISTENT", obj.toString())); //$NON-NLS-1$
     }
     try {
       HibernateUtil.getSession().saveOrUpdate(obj);
     } catch (HibernateException ex) {
-      HibernateUtil.log.error(Messages.getErrorString("HIBUTIL.ERROR_0010_SAVING_UPDATING"), ex); //$NON-NLS-1$
-      throw new ContentException(Messages.getErrorString("HIBUTIL.ERROR_0010_SAVING_UPDATING"), ex); //$NON-NLS-1$
+      HibernateUtil.log.error(Messages.getInstance().getErrorString("HIBUTIL.ERROR_0010_SAVING_UPDATING"), ex); //$NON-NLS-1$
+      throw new ContentException(Messages.getInstance().getErrorString("HIBUTIL.ERROR_0010_SAVING_UPDATING"), ex); //$NON-NLS-1$
     }
   }
 
@@ -652,13 +652,13 @@ public class HibernateUtil implements IPentahoSystemEntryPoint, IPentahoSystemEx
    */
   public static void makeTransient(final Object obj) throws RepositoryException {
     if (HibernateUtil.debug) {
-      HibernateUtil.log.debug(Messages.getString("HIBUTIL.DEBUG_MAKE_TRANSIENT", obj.toString())); //$NON-NLS-1$
+      HibernateUtil.log.debug(Messages.getInstance().getString("HIBUTIL.DEBUG_MAKE_TRANSIENT", obj.toString())); //$NON-NLS-1$
     }
     try {
       HibernateUtil.getSession().delete(obj);
     } catch (HibernateException ex) {
-      HibernateUtil.log.error(Messages.getErrorString("HIBUTIL.ERROR_0011_DELETING_OBJ"), ex); //$NON-NLS-1$
-      throw new ContentException(Messages.getErrorString("HIBUTIL.ERROR_0011_DELETING_OBJ"), ex); //$NON-NLS-1$
+      HibernateUtil.log.error(Messages.getInstance().getErrorString("HIBUTIL.ERROR_0011_DELETING_OBJ"), ex); //$NON-NLS-1$
+      throw new ContentException(Messages.getInstance().getErrorString("HIBUTIL.ERROR_0011_DELETING_OBJ"), ex); //$NON-NLS-1$
     }
   }
 
@@ -684,11 +684,11 @@ public class HibernateUtil implements IPentahoSystemEntryPoint, IPentahoSystemEx
    */
   public static void evict(final Object obj) {
     // if (debug)
-    // log.debug(Messages.getString("HIBUTIL.DEBUG_EVICT", obj.toString())); //$NON-NLS-1$
+    // log.debug(Messages.getInstance().getString("HIBUTIL.DEBUG_EVICT", obj.toString())); //$NON-NLS-1$
     try {
       HibernateUtil.getSession().evict(obj);
     } catch (HibernateException ex) {
-      HibernateUtil.log.error(Messages.getErrorString("HIBUTIL.ERROR_0014_EVICTING_OBJECT"), ex); //$NON-NLS-1$
+      HibernateUtil.log.error(Messages.getInstance().getErrorString("HIBUTIL.ERROR_0014_EVICTING_OBJECT"), ex); //$NON-NLS-1$
     }
 
   }

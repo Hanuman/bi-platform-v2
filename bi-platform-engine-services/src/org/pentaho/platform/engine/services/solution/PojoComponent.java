@@ -334,7 +334,7 @@ public class PojoComponent extends ComponentBase {
           inputMap.put(name, value);
         } else {
           // Supress error (For string/value replacement)
-          getLogger().warn(Messages.getString("PojoComponent.UNUSED_INPUT", name)); //$NON-NLS-1$
+          getLogger().warn(Messages.getInstance().getString("PojoComponent.UNUSED_INPUT", name)); //$NON-NLS-1$
         }
       }
     }
@@ -393,7 +393,7 @@ public class PojoComponent extends ComponentBase {
         inputMap.put(name, value);
       } else {
         // Supress error (For string/value replacement)
-        getLogger().warn(Messages.getString("PojoComponent.UNUSED_INPUT", name)); //$NON-NLS-1$
+        getLogger().warn(Messages.getInstance().getString("PojoComponent.UNUSED_INPUT", name)); //$NON-NLS-1$
       }
     }
     
@@ -553,7 +553,7 @@ public class PojoComponent extends ComponentBase {
           else if( name.startsWith( "set" ) ) { //$NON-NLS-1$
             name = name.substring( 3 ).toUpperCase();
             if (name.equals("CLASS")) { //$NON-NLS-1$
-              warn(Messages.getString("PojoComponent.CANNOT_USE_SETCLASS")); //$NON-NLS-1$
+              warn(Messages.getInstance().getString("PojoComponent.CANNOT_USE_SETCLASS")); //$NON-NLS-1$
             } else {
               if(!setMethods.containsKey(name)){
                 setMethods.put(name, new ArrayList<Method>());

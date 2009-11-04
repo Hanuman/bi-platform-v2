@@ -226,10 +226,10 @@ public class XYSeriesCollectionChartDefinition extends XYSeriesCollection implem
     } else {
       // log a deprecation warning for this property...
       XYSeriesCollectionChartDefinition.getLogger().warn(
-          Messages.getString(
+          Messages.getInstance().getString(
               "CHART.WARN_DEPRECATED_CHILD", ChartDefinition.SUBTITLE_NODE_NAME, ChartDefinition.SUBTITLES_NODE_NAME));//$NON-NLS-1$ 
       XYSeriesCollectionChartDefinition.getLogger().warn(
-          Messages.getString("CHART.WARN_PROPERTY_WILL_NOT_VALIDATE", ChartDefinition.SUBTITLE_NODE_NAME));//$NON-NLS-1$  
+          Messages.getInstance().getString("CHART.WARN_PROPERTY_WILL_NOT_VALIDATE", ChartDefinition.SUBTITLE_NODE_NAME));//$NON-NLS-1$  
     }
 
     if (subtitles != null) {
@@ -348,7 +348,7 @@ public class XYSeriesCollectionChartDefinition extends XYSeriesCollection implem
   private void setDataByColumn(final IPentahoResultSet data) {
     // TODO Make this routine MDX friendly
     if (data == null) {
-      noDataMessage = Messages.getString("CHART.USER_NO_DATA_AVAILABLE"); //$NON-NLS-1$
+      noDataMessage = Messages.getInstance().getString("CHART.USER_NO_DATA_AVAILABLE"); //$NON-NLS-1$
       return; // No data so we've got nothing to set
       // TODO come up with some sort of error strategy here.
     }
@@ -378,7 +378,7 @@ public class XYSeriesCollectionChartDefinition extends XYSeriesCollection implem
     }
 
     if ((data.getRowCount() > 0) && (this.getSeriesCount() <= 0)) {
-      noDataMessage = Messages.getString("CHART.USER_INCORRECT_DATA_FORMAT"); //$NON-NLS-1$
+      noDataMessage = Messages.getInstance().getString("CHART.USER_INCORRECT_DATA_FORMAT"); //$NON-NLS-1$
     }
 
   }
@@ -386,7 +386,7 @@ public class XYSeriesCollectionChartDefinition extends XYSeriesCollection implem
   private void setDataByRow(final IPentahoResultSet data) {
     // TODO Make this routine MDX friendly
     if (data == null) {
-      noDataMessage = Messages.getString("CHART.USER_NO_DATA_AVAILABLE"); //$NON-NLS-1$
+      noDataMessage = Messages.getInstance().getString("CHART.USER_NO_DATA_AVAILABLE"); //$NON-NLS-1$
       return; // No data so we've got nothing to set
       // TODO come up with some sort of error strategy here.
     }
@@ -401,7 +401,7 @@ public class XYSeriesCollectionChartDefinition extends XYSeriesCollection implem
       rowData = data.next();
     }
     if ((data.getRowCount() > 0) && (this.getSeriesCount() <= 0)) {
-      noDataMessage = Messages.getString("CHART.USER_INCORRECT_DATA_FORMAT"); //$NON-NLS-1$
+      noDataMessage = Messages.getInstance().getString("CHART.USER_INCORRECT_DATA_FORMAT"); //$NON-NLS-1$
     }
   }
 

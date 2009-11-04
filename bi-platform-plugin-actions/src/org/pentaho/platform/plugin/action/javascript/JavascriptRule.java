@@ -79,13 +79,13 @@ public class JavascriptRule extends ComponentBase {
 
       // get report connection setting
       if (jscriptAction.getScript() == ActionInputConstant.NULL_INPUT) {
-        error(Messages.getErrorString("JSRULE.ERROR_0001_SCRIPT_NOT_DEFINED", getActionName())); //$NON-NLS-1$
+        error(Messages.getInstance().getErrorString("JSRULE.ERROR_0001_SCRIPT_NOT_DEFINED", getActionName())); //$NON-NLS-1$
         actionValidated = false;
       }
 
       if (actionValidated) {
         if (jscriptAction.getOutputs().length <= 0) {
-          error(Messages.getString("Template.ERROR_0002_OUTPUT_COUNT_WRONG")); //$NON-NLS-1$
+          error(Messages.getInstance().getString("Template.ERROR_0002_OUTPUT_COUNT_WRONG")); //$NON-NLS-1$
           actionValidated = false;
         }
       }
@@ -104,7 +104,7 @@ public class JavascriptRule extends ComponentBase {
           oldStyleOutputs = true;
           for (int i = 1; i <= outputs.length; ++i) {
             if (jscriptAction.getInput("output" + i) == ActionInputConstant.NULL_INPUT) { //$NON-NLS-1$
-              error(Messages.getErrorString(
+              error(Messages.getInstance().getErrorString(
                   "JavascriptRule.ERROR_0006_NO_MAPPED_OUTPUTS", String.valueOf(outputs.length), String.valueOf(i))); //$NON-NLS-1$
               actionValidated = false;
               break;
@@ -114,7 +114,7 @@ public class JavascriptRule extends ComponentBase {
       }
     } else {
       actionValidated = false;
-      error(Messages.getErrorString(
+      error(Messages.getInstance().getErrorString(
           "ComponentBase.ERROR_0001_UNKNOWN_ACTION_TYPE", getActionDefinition().getElement().asXML())); //$NON-NLS-1$      
     }
 
@@ -173,7 +173,7 @@ public class JavascriptRule extends ComponentBase {
     try {
       String script = jscriptAction.getScript().getStringValue();
       if (script == null) {
-        error(Messages.getErrorString("JSRULE.ERROR_0001_SCRIPT_NOT_DEFINED", getActionName())); //$NON-NLS-1$
+        error(Messages.getInstance().getErrorString("JSRULE.ERROR_0001_SCRIPT_NOT_DEFINED", getActionName())); //$NON-NLS-1$
       } else {
         buffer.append(script);
         script = buffer.toString();
@@ -234,7 +234,7 @@ public class JavascriptRule extends ComponentBase {
 
           success = true;
         } catch (Exception e) {
-          error(Messages.getErrorString("JSRULE.ERROR_0003_EXECUTION_FAILED"), e); //$NON-NLS-1$
+          error(Messages.getInstance().getErrorString("JSRULE.ERROR_0003_EXECUTION_FAILED"), e); //$NON-NLS-1$
         }
       }
     } finally {
@@ -254,7 +254,7 @@ public class JavascriptRule extends ComponentBase {
     while (inputNamesIterator.hasNext()) {
       inputName = (String) inputNamesIterator.next();
       if (inputName.indexOf('-') >= 0) {
-        throw new IllegalArgumentException(Messages.getErrorString("JSRULE.ERROR_0006_INVALID_JS_VARIABLE", inputName)); //$NON-NLS-1$
+        throw new IllegalArgumentException(Messages.getInstance().getErrorString("JSRULE.ERROR_0006_INVALID_JS_VARIABLE", inputName)); //$NON-NLS-1$
       }
       inputValue = getInputValue(inputName);
       Object wrapper;

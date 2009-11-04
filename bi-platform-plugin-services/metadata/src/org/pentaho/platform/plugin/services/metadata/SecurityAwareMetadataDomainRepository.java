@@ -45,7 +45,7 @@ public class SecurityAwareMetadataDomainRepository extends MetadataDomainReposit
     }
     Authentication auth = SecurityHelper.getAuthentication(getSession(), true);
     if (auth == null) {
-      logger.info(Messages.getString("SecurityAwareCwmSchemaFactory.INFO_AUTH_NULL_CONTINUE")); //$NON-NLS-1$
+      logger.info(Messages.getInstance().getString("SecurityAwareCwmSchemaFactory.INFO_AUTH_NULL_CONTINUE")); //$NON-NLS-1$
       return "FALSE()"; //$NON-NLS-1$
     }
     String username = auth.getName();

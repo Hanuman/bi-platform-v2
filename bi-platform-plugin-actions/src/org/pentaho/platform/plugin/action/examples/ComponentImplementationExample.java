@@ -164,7 +164,7 @@ public class ComponentImplementationExample extends Object implements IComponent
   public void trace(final String message) {
     if (loggingLevel <= ILogger.TRACE) {
       if (messages != null) {
-        messages.add(Messages.getString("Message.USER_DEBUG", message, getClass().getName())); //$NON-NLS-1$
+        messages.add(Messages.getInstance().getString("Message.USER_DEBUG", message, getClass().getName())); //$NON-NLS-1$
       }
       getLogger().trace(getLogId() + message);
     }
@@ -173,7 +173,7 @@ public class ComponentImplementationExample extends Object implements IComponent
   public void debug(final String message) {
     if (loggingLevel <= ILogger.DEBUG) {
       if (messages != null) {
-        messages.add(Messages.getString("Message.USER_DEBUG", message, getClass().getName())); //$NON-NLS-1$
+        messages.add(Messages.getInstance().getString("Message.USER_DEBUG", message, getClass().getName())); //$NON-NLS-1$
       }
       getLogger().debug(getLogId() + message);
     }
@@ -182,7 +182,7 @@ public class ComponentImplementationExample extends Object implements IComponent
   public void info(final String message) {
     if (loggingLevel <= ILogger.INFO) {
       if (messages != null) {
-        messages.add(Messages.getString("Message.USER_INFO", message, getClass().getName())); //$NON-NLS-1$
+        messages.add(Messages.getInstance().getString("Message.USER_INFO", message, getClass().getName())); //$NON-NLS-1$
       }
       getLogger().info(getLogId() + message);
     }
@@ -191,7 +191,7 @@ public class ComponentImplementationExample extends Object implements IComponent
   public void warn(final String message) {
     if (loggingLevel <= ILogger.WARN) {
       if (messages != null) {
-        messages.add(Messages.getString("Message.USER_WARNING", message, getClass().getName())); //$NON-NLS-1$
+        messages.add(Messages.getInstance().getString("Message.USER_WARNING", message, getClass().getName())); //$NON-NLS-1$
       }
       getLogger().warn(getLogId() + message);
     }
@@ -200,7 +200,7 @@ public class ComponentImplementationExample extends Object implements IComponent
   public void error(final String message) {
     if (loggingLevel <= ILogger.ERROR) {
       if (messages != null) {
-        messages.add(Messages.getString("Message.USER_ERROR", message, getClass().getName())); //$NON-NLS-1$
+        messages.add(Messages.getInstance().getString("Message.USER_ERROR", message, getClass().getName())); //$NON-NLS-1$
       }
       getLogger().error(getLogId() + message);
     }
@@ -209,7 +209,7 @@ public class ComponentImplementationExample extends Object implements IComponent
   public void fatal(final String message) {
     if (loggingLevel <= ILogger.FATAL) {
       if (messages != null) {
-        messages.add(Messages.getString("Message.USER_ERROR", message, getClass().getName())); //$NON-NLS-1$
+        messages.add(Messages.getInstance().getString("Message.USER_ERROR", message, getClass().getName())); //$NON-NLS-1$
       }
       getLogger().fatal(getLogId() + message);
     }
@@ -218,7 +218,7 @@ public class ComponentImplementationExample extends Object implements IComponent
   public void trace(final String message, final Throwable error) {
     if (loggingLevel <= ILogger.TRACE) {
       if (messages != null) {
-        messages.add(Messages.getString("Message.USER_DEBUG", message, getClass().getName())); //$NON-NLS-1$
+        messages.add(Messages.getInstance().getString("Message.USER_DEBUG", message, getClass().getName())); //$NON-NLS-1$
       }
       getLogger().trace(getLogId() + message, error);
     }
@@ -227,7 +227,7 @@ public class ComponentImplementationExample extends Object implements IComponent
   public void debug(final String message, final Throwable error) {
     if (loggingLevel <= ILogger.DEBUG) {
       if (messages != null) {
-        messages.add(Messages.getString("Message.USER_DEBUG", message, getClass().getName())); //$NON-NLS-1$
+        messages.add(Messages.getInstance().getString("Message.USER_DEBUG", message, getClass().getName())); //$NON-NLS-1$
       }
       getLogger().debug(getLogId() + message, error);
     }
@@ -236,7 +236,7 @@ public class ComponentImplementationExample extends Object implements IComponent
   public void info(final String message, final Throwable error) {
     if (loggingLevel <= ILogger.INFO) {
       if (messages != null) {
-        messages.add(Messages.getString("Message.USER_INFO", message, getClass().getName())); //$NON-NLS-1$
+        messages.add(Messages.getInstance().getString("Message.USER_INFO", message, getClass().getName())); //$NON-NLS-1$
       }
       getLogger().info(getLogId() + message, error);
     }
@@ -245,7 +245,7 @@ public class ComponentImplementationExample extends Object implements IComponent
   public void warn(final String message, final Throwable error) {
     if (loggingLevel <= ILogger.WARN) {
       if (messages != null) {
-        messages.add(Messages.getString("Message.USER_WARNING", message, getClass().getName())); //$NON-NLS-1$
+        messages.add(Messages.getInstance().getString("Message.USER_WARNING", message, getClass().getName())); //$NON-NLS-1$
       }
       getLogger().warn(getLogId() + message, error);
     }
@@ -254,7 +254,7 @@ public class ComponentImplementationExample extends Object implements IComponent
   public void error(final String message, final Throwable error) {
     if (loggingLevel <= ILogger.ERROR) {
       if (messages != null) {
-        messages.add(Messages.getString("Message.USER_ERROR", message, getClass().getName())); //$NON-NLS-1$
+        messages.add(Messages.getInstance().getString("Message.USER_ERROR", message, getClass().getName())); //$NON-NLS-1$
       }
       IVersionHelper versionHelper = PentahoSystem.get(IVersionHelper.class, null);
       getLogger().error("Error Start: Pentaho " + versionHelper.getVersionInformation(this.getClass())); //$NON-NLS-1$
@@ -266,7 +266,7 @@ public class ComponentImplementationExample extends Object implements IComponent
   public void fatal(final String message, final Throwable error) {
     if (loggingLevel <= ILogger.FATAL) {
       if (messages != null) {
-        messages.add(Messages.getString("Message.USER_ERROR", message, getClass().getName())); //$NON-NLS-1$
+        messages.add(Messages.getInstance().getString("Message.USER_ERROR", message, getClass().getName())); //$NON-NLS-1$
       }
       IVersionHelper versionHelper = PentahoSystem.get(IVersionHelper.class, null);
       getLogger().error("Error: Pentaho " + versionHelper.getVersionInformation(this.getClass())); //$NON-NLS-1$
@@ -276,7 +276,7 @@ public class ComponentImplementationExample extends Object implements IComponent
   }
 
   public static String getUserString(final String type) {
-    return Messages.getString("Message.USER_" + type); //$NON-NLS-1$
+    return Messages.getInstance().getString("Message.USER_" + type); //$NON-NLS-1$
   }
 
   public void setInstanceId(final String instanceId) {
@@ -373,13 +373,13 @@ public class ComponentImplementationExample extends Object implements IComponent
 
   public final int validate() {
 
-    logId = Messages.getString("Base.CODE_LOG_ID", instanceId, runtimeContext.getHandle(), actionName); //$NON-NLS-1$
+    logId = Messages.getInstance().getString("Base.CODE_LOG_ID", instanceId, runtimeContext.getHandle(), actionName); //$NON-NLS-1$
     if (ComponentImplementationExample.debug) {
-      debug(Messages.getString("Base.DEBUG_VALIDATING_COMPONENT", actionName)); //$NON-NLS-1$
+      debug(Messages.getInstance().getString("Base.DEBUG_VALIDATING_COMPONENT", actionName)); //$NON-NLS-1$
       // grab the parameters first
     }
 
-    id = Messages.getString("Base.CODE_COMPONENT_ID", processId, actionName); //$NON-NLS-1$
+    id = Messages.getInstance().getString("Base.CODE_COMPONENT_ID", processId, actionName); //$NON-NLS-1$
 
     // now get picky about values
     baseInitOk = ((instanceId != null) && (sessionContext != null) && (processId != null) && (actionName != null));
@@ -539,19 +539,19 @@ public class ComponentImplementationExample extends Object implements IComponent
   }
 
   public void inputMissingError(final String paramName) {
-    error(Messages.getErrorString("ComponentBase.ERROR_0003_INPUT_PARAM_MISSING", paramName)); //$NON-NLS-1$
+    error(Messages.getInstance().getErrorString("ComponentBase.ERROR_0003_INPUT_PARAM_MISSING", paramName)); //$NON-NLS-1$
   }
 
   public void outputMissingError(final String paramName) {
-    error(Messages.getErrorString("ComponentBase.ERROR_0004_OUTPUT_PARAM_MISSING", paramName)); //$NON-NLS-1$
+    error(Messages.getInstance().getErrorString("ComponentBase.ERROR_0004_OUTPUT_PARAM_MISSING", paramName)); //$NON-NLS-1$
   }
 
   public void resourceMissingError(final String paramName) {
-    error(Messages.getErrorString("ComponentBase.ERROR_0005_RESOURCE_PARAM_MISSING", paramName)); //$NON-NLS-1$
+    error(Messages.getInstance().getErrorString("ComponentBase.ERROR_0005_RESOURCE_PARAM_MISSING", paramName)); //$NON-NLS-1$
   }
 
   public void resourceComponentSettingError(final String paramName) {
-    error(Messages.getErrorString("ComponentBase.ERROR_0006_COMPONENT_SETTING_PARAM_MISSING", paramName)); //$NON-NLS-1$
+    error(Messages.getInstance().getErrorString("ComponentBase.ERROR_0006_COMPONENT_SETTING_PARAM_MISSING", paramName)); //$NON-NLS-1$
   }
 
   public int execute() {
@@ -569,18 +569,18 @@ public class ComponentImplementationExample extends Object implements IComponent
     }
 
     if (loggingLevel == ILogger.UNKNOWN) {
-      warn(Messages.getString("Base.WARNING_LOGGING_LEVEL_UNKNOWN")); //$NON-NLS-1$
+      warn(Messages.getInstance().getString("Base.WARNING_LOGGING_LEVEL_UNKNOWN")); //$NON-NLS-1$
       loggingLevel = ILogger.DEBUG;
     }
     int result = IRuntimeContext.RUNTIME_STATUS_FAILURE;
 
     if (sessionContext == null) {
-      error(Messages.getErrorString("Base.ERROR_0001_INVALID_SESSION")); //$NON-NLS-1$
+      error(Messages.getInstance().getErrorString("Base.ERROR_0001_INVALID_SESSION")); //$NON-NLS-1$
       return result;
     }
 
     if (ComponentImplementationExample.debug) {
-      debug(Messages.getString("Base.DEBUG_VALIDATION_RESULT") + getInitOk()); //$NON-NLS-1$
+      debug(Messages.getInstance().getString("Base.DEBUG_VALIDATION_RESULT") + getInitOk()); //$NON-NLS-1$
     }
     if (!getInitOk()) {
       return result;
@@ -595,7 +595,7 @@ public class ComponentImplementationExample extends Object implements IComponent
         }
       }
     } catch (Throwable e) {
-      error(Messages.getErrorString("Base.ERROR_0002_EXECUTION_FAILED"), e); //$NON-NLS-1$
+      error(Messages.getInstance().getErrorString("Base.ERROR_0002_EXECUTION_FAILED"), e); //$NON-NLS-1$
     }
     return result;
   }

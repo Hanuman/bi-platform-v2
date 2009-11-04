@@ -139,7 +139,7 @@ public class SubscriptionHelper {
       final boolean saveOnly) {
 
     if ((userSession == null) || (userSession.getName() == null)) {
-      return Messages.getString("SubscriptionHelper.USER_LOGIN_NEEDED"); //$NON-NLS-1$
+      return Messages.getInstance().getString("SubscriptionHelper.USER_LOGIN_NEEDED"); //$NON-NLS-1$
     }
 
     String subscriptionId = (String) parameterProvider.getParameter("subscribe-id"); //$NON-NLS-1$
@@ -152,7 +152,7 @@ public class SubscriptionHelper {
     if (!editing) {
       boolean isUniqueName = subscriptionRepository.checkUniqueSubscriptionName(subscriptionName, userSession.getName(), actionReference);
       if (!isUniqueName) {
-        return Messages.getString("SubscriptionHelper.USER_SUBSCRIPTION_NAME_ALREADY_EXISTS", subscriptionName); //$NON-NLS-1$
+        return Messages.getInstance().getString("SubscriptionHelper.USER_SUBSCRIPTION_NAME_ALREADY_EXISTS", subscriptionName); //$NON-NLS-1$
       }
     }
 
@@ -162,7 +162,7 @@ public class SubscriptionHelper {
         PentahoSystem.loggingLevel, ISolutionRepository.ACTION_SUBSCRIBE);
     if (actionSequence == null) {
       // TODO log an error
-      return Messages.getString("SubscriptionHelper.USER_SUBSCRIPTION_NOT_CREATE"); //$NON-NLS-1$
+      return Messages.getInstance().getString("SubscriptionHelper.USER_SUBSCRIPTION_NOT_CREATE"); //$NON-NLS-1$
     }
     Map inputs = actionSequence.getInputDefinitionsForParameterProvider(IParameterProvider.SCOPE_REQUEST);
     ISubscribeContent content = subscriptionRepository.getContentByActionReference(actionReference);
@@ -172,7 +172,7 @@ public class SubscriptionHelper {
         content = new SubscribeContent(subContId, actionReference, SubscribeContent.TYPE_REPORT);
         subscriptionRepository.addContent(content);
       } else {
-        return (Messages.getString("SubscriptionHelper.ACTION_SEQUENCE_NOT_ALLOWED", contentInfo.getActionName())); //$NON-NLS-1$
+        return (Messages.getInstance().getString("SubscriptionHelper.ACTION_SEQUENCE_NOT_ALLOWED", contentInfo.getActionName())); //$NON-NLS-1$
       }
     }
 
@@ -234,10 +234,10 @@ public class SubscriptionHelper {
     }
 
     if (subscriptionRepository.addSubscription(subscription)) {
-      return Messages.getString("SubscriptionHelper.USER_SUBSCRIPTION_CREATED"); //$NON-NLS-1$
+      return Messages.getInstance().getString("SubscriptionHelper.USER_SUBSCRIPTION_CREATED"); //$NON-NLS-1$
     } else {
       // TODO log an error
-      return Messages.getString("SubscriptionHelper.USER_SUBSCRIPTION_NOT_CREATE"); //$NON-NLS-1$
+      return Messages.getInstance().getString("SubscriptionHelper.USER_SUBSCRIPTION_NOT_CREATE"); //$NON-NLS-1$
     }
   }
 
@@ -252,14 +252,14 @@ public class SubscriptionHelper {
 
     ISubscription subscription = subscriptionRepository.getSubscription(subscriptionId, userSession);
     if (subscription == null) {
-      return Messages.getString("SubscriptionHelper.USER_SUBSCRIPTION_NOT_DELETED"); //$NON-NLS-1$
+      return Messages.getInstance().getString("SubscriptionHelper.USER_SUBSCRIPTION_NOT_DELETED"); //$NON-NLS-1$
     }
 
     try {
       subscriptionRepository.deleteSubscription(subscriptionId, userSession);
-      return Messages.getString("SubscriptionHelper.USER_SUBSCRIPTION_DELETED"); //$NON-NLS-1$
+      return Messages.getInstance().getString("SubscriptionHelper.USER_SUBSCRIPTION_DELETED"); //$NON-NLS-1$
     } catch (Exception e) {
-      return Messages.getString("SubscriptionHelper.USER_SUBSCRIPTION_NOT_DELETED"); //$NON-NLS-1$
+      return Messages.getInstance().getString("SubscriptionHelper.USER_SUBSCRIPTION_NOT_DELETED"); //$NON-NLS-1$
     }
   }
 
@@ -350,14 +350,14 @@ public class SubscriptionHelper {
           generator.createContent();
           // we succeeded
           if (!outputHandler.contentDone()) {
-            String message = Messages.getString("SubscriptionExecute.DEBUG_FINISHED_EXECUTION", subscriptionName); //$NON-NLS-1$
+            String message = Messages.getInstance().getString("SubscriptionExecute.DEBUG_FINISHED_EXECUTION", subscriptionName); //$NON-NLS-1$
             writeMessage(message.toString(), outputHandler, subscriptionName, contentInfo.getSolutionName(), actionName, instanceId, session);
           }
         } catch (Exception e) {
           e.printStackTrace();
           // we need an error message...
           if (!outputHandler.contentDone()) {
-            String message = Messages.getString("PRO_SUBSCRIPTREP.EXCEPTION_WITH_SCHEDULE", subscriptionName); //$NON-NLS-1$
+            String message = Messages.getInstance().getString("PRO_SUBSCRIPTREP.EXCEPTION_WITH_SCHEDULE", subscriptionName); //$NON-NLS-1$
             writeMessage(message.toString(), outputHandler, subscriptionName, contentInfo.getSolutionName(), actionName, instanceId, session);
           }
         }
@@ -407,7 +407,7 @@ public class SubscriptionHelper {
       OutputStream outputStream = outoutContentItem.getOutputStream(subscriptionName);
       if (file == null) {
         // TODO surface an error
-        outputStream.write(Messages.getString("SubscriptionHelper.USER_ARCHIVE_NOT_FOUND").getBytes()); //$NON-NLS-1$
+        outputStream.write(Messages.getInstance().getString("SubscriptionHelper.USER_ARCHIVE_NOT_FOUND").getBytes()); //$NON-NLS-1$
         outoutContentItem.closeOutputStream();
         return;
       }
@@ -433,7 +433,7 @@ public class SubscriptionHelper {
     ISubscription subscription = subscriptionRepository.getSubscription(subscriptionName, session);
     if (subscription == null) {
       // TODO surface an error
-      return Messages.getString("SubscriptionHelper.USER_SUBSCRIPTION_DOES_NOT_EXIST"); //$NON-NLS-1$
+      return Messages.getInstance().getString("SubscriptionHelper.USER_SUBSCRIPTION_DOES_NOT_EXIST"); //$NON-NLS-1$
     }
 
     // handle the parameters for the subscription
@@ -476,15 +476,15 @@ public class SubscriptionHelper {
     ISubscription subscription = subscriptionRepository.getSubscription(subscriptionName, session);
     if (subscription == null) {
       // TODO surface an error
-      return Messages.getString("SubscriptionHelper.USER_SUBSCRIPTION_DOES_NOT_EXIST"); //$NON-NLS-1$
+      return Messages.getInstance().getString("SubscriptionHelper.USER_SUBSCRIPTION_DOES_NOT_EXIST"); //$NON-NLS-1$
     }
     IContentItem contentItem = subscriptionRepository.getContentItem(subscriptionName, session);
     if (contentItem == null) {
       // TODO surface an error
-      return Messages.getString("SubscriptionHelper.USER_CONTENT_ITEM_DOES_NOT_EXIST"); //$NON-NLS-1$
+      return Messages.getInstance().getString("SubscriptionHelper.USER_CONTENT_ITEM_DOES_NOT_EXIST"); //$NON-NLS-1$
     }
     contentItem.removeVersion(fileId);
-    return Messages.getString("SubscriptionHelper.USER_ARCHIVE_DELETED"); //$NON-NLS-1$
+    return Messages.getInstance().getString("SubscriptionHelper.USER_ARCHIVE_DELETED"); //$NON-NLS-1$
 
   }
 
@@ -494,12 +494,12 @@ public class SubscriptionHelper {
     ISubscription subscription = subscriptionRepository.getSubscription(subscriptionName, session);
     if (subscription == null) {
       // TODO surface an error
-      return Messages.getString("SubscriptionHelper.USER_SUBSCRIPTION_DOES_NOT_EXIST"); //$NON-NLS-1$
+      return Messages.getInstance().getString("SubscriptionHelper.USER_SUBSCRIPTION_DOES_NOT_EXIST"); //$NON-NLS-1$
     }
     ISubscribeContent content = subscription.getContent();
     if (content == null) {
       // TODO surface an error
-      return Messages.getString("SubscriptionHelper.USER_CONTENT_ITEM_DOES_NOT_EXIST"); //$NON-NLS-1$
+      return Messages.getInstance().getString("SubscriptionHelper.USER_CONTENT_ITEM_DOES_NOT_EXIST"); //$NON-NLS-1$
     }
     Map contentParameters = content.getParameters();
     Map subscriptionParameters = subscription.getParameters();

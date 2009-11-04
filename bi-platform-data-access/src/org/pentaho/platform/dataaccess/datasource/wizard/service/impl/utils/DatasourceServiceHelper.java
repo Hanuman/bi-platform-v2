@@ -78,8 +78,8 @@ public class DatasourceServiceHelper {
         serializedResultSet = new SerializedResultSet(columnTypes, marshallableResultSet.getColumnNames().getColumnName(), data);
       }
     } catch (Exception e) {
-      logger.error(Messages.getErrorString("DatasourceServiceHelper.ERROR_0001_QUERY_VALIDATION_FAILED", e.getLocalizedMessage()),e); //$NON-NLS-1$
-      throw new DatasourceServiceException(Messages.getErrorString("DatasourceServiceHelper.ERROR_0001_QUERY_VALIDATION_FAILED",e.getLocalizedMessage()), e); //$NON-NLS-1$      
+      logger.error(Messages.getInstance().getErrorString("DatasourceServiceHelper.ERROR_0001_QUERY_VALIDATION_FAILED", e.getLocalizedMessage()),e); //$NON-NLS-1$
+      throw new DatasourceServiceException(Messages.getInstance().getErrorString("DatasourceServiceHelper.ERROR_0001_QUERY_VALIDATION_FAILED",e.getLocalizedMessage()), e); //$NON-NLS-1$      
     } finally {
         if (sqlConnection != null) {
           sqlConnection.close();

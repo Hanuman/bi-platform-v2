@@ -57,7 +57,7 @@ public class PentahoAwareCharacterEncodingFilter extends SetCharacterEncodingFil
       String enc = httpRequest.getSession(true).getServletContext().getInitParameter(PentahoAwareCharacterEncodingFilter.INIT_PARAM_ENCODING);
       if (StringUtils.isNotBlank(enc)) {
         if (PentahoAwareCharacterEncodingFilter.logger.isDebugEnabled()) {
-          PentahoAwareCharacterEncodingFilter.logger.debug(Messages.getString("PentahoAwareCharacterEncodingFilter.ENCODING_IN_CTX", enc)); //$NON-NLS-1$
+          PentahoAwareCharacterEncodingFilter.logger.debug(Messages.getInstance().getString("PentahoAwareCharacterEncodingFilter.ENCODING_IN_CTX", enc)); //$NON-NLS-1$
         }
         return enc;
       }
@@ -65,12 +65,12 @@ public class PentahoAwareCharacterEncodingFilter extends SetCharacterEncodingFil
     String enc = super.selectEncoding(request);
     if (StringUtils.isNotBlank(enc)) {
       if (PentahoAwareCharacterEncodingFilter.logger.isDebugEnabled()) {
-        PentahoAwareCharacterEncodingFilter.logger.debug(Messages.getString("PentahoAwareCharacterEncodingFilter.ENCODING_IN_FILTER_INIT", enc)); //$NON-NLS-1$
+        PentahoAwareCharacterEncodingFilter.logger.debug(Messages.getInstance().getString("PentahoAwareCharacterEncodingFilter.ENCODING_IN_FILTER_INIT", enc)); //$NON-NLS-1$
       }
       return enc;
     } else {
       if (PentahoAwareCharacterEncodingFilter.logger.isWarnEnabled()) {
-        PentahoAwareCharacterEncodingFilter.logger.warn(Messages.getString("PentahoAwareCharacterEncodingFilter.COULD_NOT_FIND_ENCODING", //$NON-NLS-1$
+        PentahoAwareCharacterEncodingFilter.logger.warn(Messages.getInstance().getString("PentahoAwareCharacterEncodingFilter.COULD_NOT_FIND_ENCODING", //$NON-NLS-1$
             PentahoAwareCharacterEncodingFilter.DEFAULT_CHAR_ENCODING));
       }
       return PentahoAwareCharacterEncodingFilter.DEFAULT_CHAR_ENCODING;

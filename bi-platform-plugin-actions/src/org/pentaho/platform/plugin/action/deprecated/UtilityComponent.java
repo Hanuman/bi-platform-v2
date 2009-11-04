@@ -95,7 +95,7 @@ public class UtilityComponent extends ComponentBase {
       String commandName = element.getName();
       if ("format".equalsIgnoreCase(commandName)) { //$NON-NLS-1$
         if (element.selectSingleNode("format-string") == null) { //$NON-NLS-1$
-          error(Messages.getErrorString("TestComponent.ERROR_0002_PARAMETER_MISSING", "format-string")); //$NON-NLS-1$ //$NON-NLS-2$
+          error(Messages.getInstance().getErrorString("TestComponent.ERROR_0002_PARAMETER_MISSING", "format-string")); //$NON-NLS-1$ //$NON-NLS-2$
           result = false;
         }
       } else if ("print".equalsIgnoreCase(commandName)) { //$NON-NLS-1$
@@ -104,12 +104,12 @@ public class UtilityComponent extends ComponentBase {
         // Do nothing.
       } else if ("getmapvalues".equalsIgnoreCase(commandName)) { //$NON-NLS-1$
         if (element.selectSingleNode("property-map") == null) { //$NON-NLS-1$
-          error(Messages.getErrorString("TestComponent.ERROR_0002_PARAMETER_MISSING", "format-string")); //$NON-NLS-1$ //$NON-NLS-2$
+          error(Messages.getInstance().getErrorString("TestComponent.ERROR_0002_PARAMETER_MISSING", "format-string")); //$NON-NLS-1$ //$NON-NLS-2$
           result = false;
         }
         List paramList = element.selectNodes("arg"); //$NON-NLS-1$
         if (paramList.size() < 1) {
-          error(Messages.getErrorString(
+          error(Messages.getInstance().getErrorString(
               "TestComponent.ERROR_0003_PARAMETER_MISSING", "arg", String.valueOf(1), String.valueOf(paramList.size()))); //$NON-NLS-1$ //$NON-NLS-2$
           result = false;
         }
@@ -125,7 +125,7 @@ public class UtilityComponent extends ComponentBase {
   private boolean validateFormatAction(final FormatMsgAction formatMsgAction) {
     boolean result = true;
     if (formatMsgAction.getFormatString() == null) {
-      error(Messages.getErrorString("TestComponent.ERROR_0002_PARAMETER_MISSING", "format-string")); //$NON-NLS-1$ //$NON-NLS-2$
+      error(Messages.getInstance().getErrorString("TestComponent.ERROR_0002_PARAMETER_MISSING", "format-string")); //$NON-NLS-1$ //$NON-NLS-2$
       result = false;
     }
     return result;
@@ -138,11 +138,11 @@ public class UtilityComponent extends ComponentBase {
   private boolean validateGetMapValuesAction(final PrintMapValsAction getMapValsAction) {
     boolean result = true;
     if (getMapValsAction.getPropertyMap() == ActionInputConstant.NULL_INPUT) {
-      error(Messages.getErrorString("TestComponent.ERROR_0002_PARAMETER_MISSING", "format-string")); //$NON-NLS-1$ //$NON-NLS-2$
+      error(Messages.getInstance().getErrorString("TestComponent.ERROR_0002_PARAMETER_MISSING", "format-string")); //$NON-NLS-1$ //$NON-NLS-2$
       result = false;
     }
     if (getMapValsAction.getKeys().length < 1) {
-      error(Messages.getErrorString("TestComponent.ERROR_0003_PARAMETER_MISSING", "arg", String.valueOf(1), "0")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+      error(Messages.getInstance().getErrorString("TestComponent.ERROR_0003_PARAMETER_MISSING", "arg", String.valueOf(1), "0")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
       result = false;
     }
     return result;
@@ -204,7 +204,7 @@ public class UtilityComponent extends ComponentBase {
       try {
         tmpOutputs.put(outputName, getValueOf(inputName));
       } catch (Exception e) {
-        error(Messages.getString("UtilityComponent.ERROR_0003_ERROR_COPYING_PARAMETER")); //$NON-NLS-1$
+        error(Messages.getInstance().getString("UtilityComponent.ERROR_0003_ERROR_COPYING_PARAMETER")); //$NON-NLS-1$
         result = false;
       }
     }
@@ -237,7 +237,7 @@ public class UtilityComponent extends ComponentBase {
       String theResult = mf.format(formatArgs.toArray());
       tmpOutputs.put(outputName, theResult);
     } catch (Exception e) {
-      error(Messages.getString("UtilityComponent.ERROR_0001_FORMAT_ERROR")); //$NON-NLS-1$
+      error(Messages.getInstance().getString("UtilityComponent.ERROR_0001_FORMAT_ERROR")); //$NON-NLS-1$
       result = false;
     }
     return result;
@@ -269,7 +269,7 @@ public class UtilityComponent extends ComponentBase {
       sb.append("\n***************************************************************\n"); //$NON-NLS-1$
       info(sb.toString());
     } catch (Exception e) {
-      error(Messages.getString("UtilityComponent.ERROR_0002_MESSAGE_LOG_ERROR")); //$NON-NLS-1$
+      error(Messages.getInstance().getString("UtilityComponent.ERROR_0002_MESSAGE_LOG_ERROR")); //$NON-NLS-1$
       result = false;
     }
     return result;
@@ -297,7 +297,7 @@ public class UtilityComponent extends ComponentBase {
       Object mapObj = getValueOf(propertyMapName);
 
       if (!(mapObj instanceof Map)) {
-        error(Messages.getErrorString("UtilityComponent.ERROR_0004_PARAMETER_NOT_MAP", "property-map")); //$NON-NLS-1$ //$NON-NLS-2$
+        error(Messages.getInstance().getErrorString("UtilityComponent.ERROR_0004_PARAMETER_NOT_MAP", "property-map")); //$NON-NLS-1$ //$NON-NLS-2$
         result = false;
       } else {
         Map srcMap = (Map) mapObj;
@@ -307,7 +307,7 @@ public class UtilityComponent extends ComponentBase {
         }
       }
     } catch (Exception e) {
-      error(Messages.getString("UtilityComponent.ERROR_0005_GET_MAP_VALUES_ERROR")); //$NON-NLS-1$
+      error(Messages.getInstance().getString("UtilityComponent.ERROR_0005_GET_MAP_VALUES_ERROR")); //$NON-NLS-1$
       result = false;
     }
     return result;
@@ -366,7 +366,7 @@ public class UtilityComponent extends ComponentBase {
       sb.append("\n***************************************************************\n"); //$NON-NLS-1$
       info(sb.toString());
     } catch (Exception e) {
-      error(Messages.getString("UtilityComponent.ERROR_0002_MESSAGE_LOG_ERROR")); //$NON-NLS-1$
+      error(Messages.getInstance().getString("UtilityComponent.ERROR_0002_MESSAGE_LOG_ERROR")); //$NON-NLS-1$
       result = false;
     }
     return result;
@@ -378,7 +378,7 @@ public class UtilityComponent extends ComponentBase {
     boolean result = true;
     try {
       if (!(propertyMap.getValue() instanceof Map)) {
-        error(Messages.getErrorString("UtilityComponent.ERROR_0004_PARAMETER_NOT_MAP", "property-map")); //$NON-NLS-1$ //$NON-NLS-2$
+        error(Messages.getInstance().getErrorString("UtilityComponent.ERROR_0004_PARAMETER_NOT_MAP", "property-map")); //$NON-NLS-1$ //$NON-NLS-2$
         result = false;
       } else {
         Map srcMap = (Map) propertyMap.getValue();
@@ -388,7 +388,7 @@ public class UtilityComponent extends ComponentBase {
         }
       }
     } catch (Exception e) {
-      error(Messages.getString("UtilityComponent.ERROR_0005_GET_MAP_VALUES_ERROR")); //$NON-NLS-1$
+      error(Messages.getInstance().getString("UtilityComponent.ERROR_0005_GET_MAP_VALUES_ERROR")); //$NON-NLS-1$
       result = false;
     }
     return result;
@@ -461,7 +461,7 @@ public class UtilityComponent extends ComponentBase {
   @Override
   public boolean init() {
     if (ComponentBase.debug) {
-      debug(Messages.getString("TestComponent.DEBUG_INITIALIZING_TEST")); //$NON-NLS-1$
+      debug(Messages.getInstance().getString("TestComponent.DEBUG_INITIALIZING_TEST")); //$NON-NLS-1$
     }
     return true;
   }

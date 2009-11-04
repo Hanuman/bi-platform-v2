@@ -83,11 +83,11 @@ public class InMemoryUserRoleListService implements IUserRoleListService, Initia
   }
 
   public void afterPropertiesSet() throws Exception {
-    Assert.notNull(userRoleListEnhancedUserMap, Messages
+    Assert.notNull(userRoleListEnhancedUserMap, Messages.getInstance()
         .getErrorString("InMemoryUserRoleListService.ERROR_0001_PROPERTY_LIST_NOT_SPECIFIED")); //$NON-NLS-1$
-    Assert.notNull(allAuthorities, Messages
+    Assert.notNull(allAuthorities, Messages.getInstance()
         .getString("InMemoryUserRoleListService.ERROR_0002_ALL_AUTHORITIES_NOT_SPECIFIED")); //$NON-NLS-1$
-    Assert.notNull(userDetailsService, Messages
+    Assert.notNull(userDetailsService, Messages.getInstance()
         .getString("InMemoryUserRoleListService.ERROR_0003_USERDETAILSSERVICE_NOT_SPECIFIED")); //$NON-NLS-1$
   }
 

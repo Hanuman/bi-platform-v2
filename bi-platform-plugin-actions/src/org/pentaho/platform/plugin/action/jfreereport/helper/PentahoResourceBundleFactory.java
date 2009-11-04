@@ -62,7 +62,7 @@ public class PentahoResourceBundleFactory implements ResourceBundleFactory {
     try {
       return ResourceBundle.getBundle(resourceName, getLocale(), loader);
     } catch (Exception e) {
-      Logger.error(getClass().getName(), Messages.getErrorString(
+      Logger.error(getClass().getName(), Messages.getInstance().getErrorString(
           "JFreeReport.ERROR_0024_COULD_NOT_READ_PROPERTIES", path + File.separator + baseName), e); //$NON-NLS-1$
     }
     return null;

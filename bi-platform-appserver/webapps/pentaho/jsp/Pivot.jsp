@@ -310,7 +310,7 @@
         query = context.getOutputParameter( "mdx" ).getStringValue(); //$NON-NLS-1$
 
         if (catalogUri == null || dataSource == null || query == null) {
-          throw new Exception(Messages.getErrorString("UI.ERROR_0003_XACTION_INVALID_OUTPUTS", ActionInfo.buildSolutionPath(solutionName,actionPath,actionName), "Catalog URI=" + catalogUri + "; Data Source=" + dataSource + "; MDX Query=" + query, "isPromptPending=" + context.isPromptPending()));
+          throw new Exception(Messages.getInstance().getErrorString("UI.ERROR_0003_XACTION_INVALID_OUTPUTS", ActionInfo.buildSolutionPath(solutionName,actionPath,actionName), "Catalog URI=" + catalogUri + "; Data Source=" + dataSource + "; MDX Query=" + query, "isPromptPending=" + context.isPromptPending()));
         }
         
         if (context.getOutputNames().contains(PivotViewComponent.ROLE)) { //$NON-NLS-1$
@@ -553,7 +553,7 @@
   }
 
   if( pivotTitle == null ) {
-    pivotTitle = Messages.getString("UI.USER_ANALYSIS_UNTITLED_PIVOT_NAME"); //$NON-NLS-1$
+    pivotTitle = Messages.getInstance().getString("UI.USER_ANALYSIS_UNTITLED_PIVOT_NAME"); //$NON-NLS-1$
   }
 
   // Take care of saving this xaction
@@ -637,7 +637,7 @@
       saveResult = AnalysisSaver.saveAnalysis(userSession, props, request.getParameter("save-path"), request.getParameter("save-file"), true);
       switch (saveResult) {
         case ISolutionRepository.FILE_ADD_SUCCESSFUL: 
-          saveMessage = Messages.getString("UI.USER_SAVE_SUCCESS");
+          saveMessage = Messages.getInstance().getString("UI.USER_SAVE_SUCCESS");
           // only set the session attribute on success, it's the only path that requires it
           session.setAttribute( "save-message-01", saveMessage); //$NON-NLS-1$
           break;
@@ -645,13 +645,13 @@
           // Shouldn't ever get here, since we pass overwrite=true;
             break;
         case ISolutionRepository.FILE_ADD_FAILED:
-          saveMessage = Messages.getString("UI.USER_SAVE_FAILED_GENERAL");
+          saveMessage = Messages.getInstance().getString("UI.USER_SAVE_FAILED_GENERAL");
           break;
         case ISolutionRepository.FILE_ADD_INVALID_PUBLISH_PASSWORD:
           // There is no publish password on this save...
           break;
         case ISolutionRepository.FILE_ADD_INVALID_USER_CREDENTIALS:
-          saveMessage = Messages.getString("UI.USER_SAVE_FAILED_INVALID_USER_CREDS");
+          saveMessage = Messages.getInstance().getString("UI.USER_SAVE_FAILED_INVALID_USER_CREDS");
           break;
         case 0:
             saveMessage="";
@@ -698,7 +698,7 @@
   session.setAttribute(titleId, pivotTitle);
 %><html>
 <head>
-<title><%= Messages.getString("UI.USER_ANALYSIS") %></title>
+<title><%= Messages.getInstance().getString("UI.USER_ANALYSIS") %></title>
 <meta http-equiv="Content-Type"
   content="text/html; charset=<%= LocaleHelper.getSystemEncoding() %>">
 <link rel="stylesheet" type="text/css" href="jpivot/table/mdxtable.css">
@@ -740,10 +740,10 @@
     dojo.registerModulePath("adhoc", "../adhoc/js");
   </script>
 
-<script src="adhoc/js/common/ui/messages/Messages.js" type="text/javascript"></script>
+<script src="adhoc/js/common/ui/messages/Messages.getInstance().js" type="text/javascript"></script>
 
 <script type="text/javascript">
-    Messages.addBundle("adhoc.ui.messages", "message_strings");
+    Messages.getInstance().addBundle("adhoc.ui.messages", "message_strings");
   </script>
 
 <script src="adhoc/js/common/ui/MessageCtrl.js" type="text/javascript"></script>
@@ -979,7 +979,7 @@
       <%-- this allows us to remember which pivot we're working with --%>
       <input type="hidden" name="pivotId" value="<%=pivotId%>">
       <% if (_olapModel == null) { %>
-        <%= Messages.getString("UI.USER_ANALYSIS_INVALID_PAGE") %> 
+        <%= Messages.getInstance().getString("UI.USER_ANALYSIS_INVALID_PAGE") %> 
       <% } else { %>
       <%-- define table, navigator and forms --%> 
       <wcf:scroller />
@@ -1482,7 +1482,7 @@
     parameterProviders.put( HttpSessionParameterProvider.SCOPE_SESSION, sessionParameters ); //$NON-NLS-1$
     SimpleUrlFactory urlFactory = new SimpleUrlFactory( "" ); //$NON-NLS-1$
 
-    context = solutionEngine.execute( solutionName, actionPath, actionName, Messages.getString("BaseTest.DEBUG_JUNIT_TEST"), false, true, instanceId, false, parameterProviders, outputHandler, null, urlFactory, messages ); //$NON-NLS-1$
+    context = solutionEngine.execute( solutionName, actionPath, actionName, Messages.getInstance().getString("BaseTest.DEBUG_JUNIT_TEST"), false, true, instanceId, false, parameterProviders, outputHandler, null, urlFactory, messages ); //$NON-NLS-1$
 
     if( context != null && context.getStatus() == IRuntimeContext.RUNTIME_STATUS_SUCCESS ) {
       return context;

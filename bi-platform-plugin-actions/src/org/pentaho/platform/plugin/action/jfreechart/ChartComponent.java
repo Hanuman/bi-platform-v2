@@ -191,7 +191,7 @@ public class ChartComponent extends ComponentBase {
       try {
         chartDocument = XmlDom4JHelper.getDocFromString(chartAttributeString, new PentahoEntityResolver());  
       } catch(XmlParseException e) {
-        getLogger().error(Messages.getString("ChartComponent.ERROR_0005_CANT_DOCUMENT_FROM_STRING"), e);//$NON-NLS-1$
+        getLogger().error(Messages.getInstance().getString("ChartComponent.ERROR_0005_CANT_DOCUMENT_FROM_STRING"), e);//$NON-NLS-1$
         return false;
       }
       
@@ -296,9 +296,9 @@ public class ChartComponent extends ComponentBase {
     } else {
       // log a deprecation warning for this property...
       getLogger().warn(
-          Messages.getString(
+          Messages.getInstance().getString(
               "CHART.WARN_DEPRECATED_CHILD", ChartDefinition.SUBTITLE_NODE_NAME, ChartDefinition.SUBTITLES_NODE_NAME));//$NON-NLS-1$ 
-      getLogger().warn(Messages.getString("CHART.WARN_PROPERTY_WILL_NOT_VALIDATE", ChartDefinition.SUBTITLE_NODE_NAME));//$NON-NLS-1$  
+      getLogger().warn(Messages.getInstance().getString("CHART.WARN_PROPERTY_WILL_NOT_VALIDATE", ChartDefinition.SUBTITLE_NODE_NAME));//$NON-NLS-1$  
     }
 
     if (subtitles != null) {
@@ -415,7 +415,7 @@ public class ChartComponent extends ComponentBase {
           ChartUtilities.writeChartAsPNG(output, chart, width, height);
 
         } catch (Exception e) {
-          error(Messages.getErrorString("ChartComponent.ERROR_0004_CANT_CREATE_IMAGE"), e); //$NON-NLS-1$
+          error(Messages.getInstance().getErrorString("ChartComponent.ERROR_0004_CANT_CREATE_IMAGE"), e); //$NON-NLS-1$
           return false;
         }
 
@@ -435,7 +435,7 @@ public class ChartComponent extends ComponentBase {
         File[] fileResults = createTempFile(outputType, hasTemplate, !keepTempFile);
 
         if (fileResults == null) {
-          error(Messages.getErrorString("ChartComponent.ERROR_0003_CANT_CREATE_TEMP_FILES")); //$NON-NLS-1$
+          error(Messages.getInstance().getErrorString("ChartComponent.ERROR_0003_CANT_CREATE_TEMP_FILES")); //$NON-NLS-1$
           return false;
         }
 
@@ -480,7 +480,7 @@ public class ChartComponent extends ComponentBase {
               out.close();
             }
           } catch (IOException e) {
-            error(Messages.getErrorString(
+            error(Messages.getInstance().getErrorString(
                 "ChartComponent.ERROR_0001_CANT_WRITE_MAP", fileResults[ChartComponent.MAP_NAME].getPath())); //$NON-NLS-1$
             return false;
           } catch (Exception e) {

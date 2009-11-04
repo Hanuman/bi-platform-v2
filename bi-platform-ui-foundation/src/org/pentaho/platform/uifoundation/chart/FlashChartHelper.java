@@ -108,7 +108,7 @@ public class FlashChartHelper {
       if (content == null) {
         StringBuffer buffer = new StringBuffer();
         PentahoSystem.get(IMessageFormatter.class, userSession).formatErrorMessage(
-            "text/html", Messages.getString("Widget.ERROR_0001_COULD_NOT_CREATE_WIDGET"), messages, buffer); //$NON-NLS-1$ //$NON-NLS-2$
+            "text/html", Messages.getInstance().getString("Widget.ERROR_0001_COULD_NOT_CREATE_WIDGET"), messages, buffer); //$NON-NLS-1$ //$NON-NLS-2$
         content = buffer.toString();
         result = false;
       }
@@ -184,7 +184,7 @@ public class FlashChartHelper {
       if (content == null) {
         StringBuffer buffer = new StringBuffer();
         PentahoSystem.get(IMessageFormatter.class, userSession).formatErrorMessage(
-            "text/html", Messages.getString("Widget.ERROR_0001_COULD_NOT_CREATE_WIDGET"), messages, buffer); //$NON-NLS-1$ //$NON-NLS-2$
+            "text/html", Messages.getInstance().getString("Widget.ERROR_0001_COULD_NOT_CREATE_WIDGET"), messages, buffer); //$NON-NLS-1$ //$NON-NLS-2$
         content = buffer.toString();
         result = false;
       }

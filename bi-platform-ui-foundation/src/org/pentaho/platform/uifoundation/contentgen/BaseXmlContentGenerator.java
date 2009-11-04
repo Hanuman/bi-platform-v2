@@ -53,7 +53,7 @@ public abstract class BaseXmlContentGenerator extends BaseContentGenerator {
 
 		if( content == null ) {
 			StringBuffer buffer = new StringBuffer();
-			PentahoSystem.get(IMessageFormatter.class, userSession).formatErrorMessage( "text/html", Messages.getErrorString( "UI.ERROR_0001_CONTENT_ERROR" ), messages, buffer ); //$NON-NLS-1$ //$NON-NLS-2$
+			PentahoSystem.get(IMessageFormatter.class, userSession).formatErrorMessage( "text/html", Messages.getInstance().getErrorString( "UI.ERROR_0001_CONTENT_ERROR" ), messages, buffer ); //$NON-NLS-1$ //$NON-NLS-2$
 			content = buffer.toString();
 		}
 
@@ -69,7 +69,7 @@ public abstract class BaseXmlContentGenerator extends BaseContentGenerator {
 				footer = sections[1];
 			}
 		} else {
-			intro = Messages.getString( "UI.ERROR_0002_BAD_TEMPLATE_OBJECT" ); //$NON-NLS-1$
+			intro = Messages.getInstance().getString( "UI.ERROR_0002_BAD_TEMPLATE_OBJECT" ); //$NON-NLS-1$
 		}
         IContentItem contentItem = outputHandler.getOutputContentItem( IOutputHandler.RESPONSE, IOutputHandler.CONTENT, null, null, "text/html" );//$NON-NLS-1$
         OutputStream outputStream = contentItem.getOutputStream(null);

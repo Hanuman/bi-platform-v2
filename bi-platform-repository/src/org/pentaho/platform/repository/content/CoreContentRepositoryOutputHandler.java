@@ -166,7 +166,7 @@ public class CoreContentRepositoryOutputHandler implements IOutputHandler {
       // We need to create one now because someone is asking for it.
       IContentRepository contentRepository = PentahoSystem.get(IContentRepository.class, userSession);
       if (contentRepository == null) {
-        getLogger().error(Messages.getErrorString("RuntimeContext.ERROR_0024_NO_CONTENT_REPOSITORY")); //$NON-NLS-1$
+        getLogger().error(Messages.getInstance().getErrorString("RuntimeContext.ERROR_0024_NO_CONTENT_REPOSITORY")); //$NON-NLS-1$
         return null;
       }
       IContentItem contentItem = null;
@@ -193,7 +193,7 @@ public class CoreContentRepositoryOutputHandler implements IOutputHandler {
         }
 
         if (contentLocation == null) {
-          getLogger().error(Messages.getErrorString("RuntimeContext.ERROR_0025_INVALID_CONTENT_LOCATION")); //$NON-NLS-1$
+          getLogger().error(Messages.getInstance().getErrorString("RuntimeContext.ERROR_0025_INVALID_CONTENT_LOCATION")); //$NON-NLS-1$
           return null;
         }
 

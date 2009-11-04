@@ -224,7 +224,7 @@ public class SchedulerHelper {
       Scheduler sched = QuartzSystemListener.getSchedulerInstance();
       JobDetail jobDetail = sched.getJobDetail(jobName, jobGroup);
       if (jobDetail == null) {
-        throw new SchedulerException(Messages.getErrorString("SchedulerHelper.ERROR_0001_FAILED_TO_EXECUTE_NONEXISTENT_JOB",jobName)); //$NON-NLS-1$
+        throw new SchedulerException(Messages.getInstance().getErrorString("SchedulerHelper.ERROR_0001_FAILED_TO_EXECUTE_NONEXISTENT_JOB",jobName)); //$NON-NLS-1$
       } else {
         jobDetail.setGroup("Immediate"); //$NON-NLS-1$
         sched.scheduleJob(jobDetail, trigger);

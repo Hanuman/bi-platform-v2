@@ -169,7 +169,7 @@ public class PluginResourceLoader implements IPluginResourceLoader {
     ClassLoader classLoader = (_overrideClassloader != null) ? _overrideClassloader : clazz.getClassLoader();
 
     if (!PluginClassLoader.class.isAssignableFrom(classLoader.getClass())) {
-      Logger.warn(this, Messages.getString(
+      Logger.warn(this, Messages.getInstance().getString(
           "PluginResourceLoader.WARN_CLASS_LOADED_OUTSIDE_OF_PLUGIN_ENV", clazz.getName(), PluginClassLoader.class.getSimpleName(), this.getClass().getSimpleName())); //$NON-NLS-1$
     }
     return classLoader;

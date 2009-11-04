@@ -54,7 +54,7 @@ public class WebSpringPentahoObjectFactory extends AbstractSpringPentahoObjectFa
    */
   public void init(String configFile, Object context) {
     if (!(context instanceof ServletContext)) {
-      String msg = Messages.getErrorString("WebSpringPentahoObjectFactory.ERROR_0001_CONTEXT_NOT_SUPPORTED", //$NON-NLS-1$
+      String msg = Messages.getInstance().getErrorString("WebSpringPentahoObjectFactory.ERROR_0001_CONTEXT_NOT_SUPPORTED", //$NON-NLS-1$
           ServletContext.class.getName(), context.getClass().getName());
       throw new IllegalArgumentException(msg);
     }

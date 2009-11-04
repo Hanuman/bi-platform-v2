@@ -54,7 +54,7 @@
 	if ( "text/html".equals( mimeType ) ) {
 		if( content == null ) {
 			StringBuffer buffer = new StringBuffer();
-			PentahoSystem.get(IMessageFormatter.class, userSession).formatErrorMessage( "text/html", Messages.getErrorString( "SCHEDULER_ADMIN.ERROR_0001_DISPLAY_ERROR" ), messages, buffer ); //$NON-NLS-1$ //$NON-NLS-2$
+			PentahoSystem.get(IMessageFormatter.class, userSession).formatErrorMessage( "text/html", Messages.getInstance().getErrorString( "SCHEDULER_ADMIN.ERROR_0001_DISPLAY_ERROR" ), messages, buffer ); //$NON-NLS-1$ //$NON-NLS-2$
 			content = buffer.toString();
 		}
 	
@@ -70,7 +70,7 @@
 				footer = sections[1];
 			}
 		} else {
-			intro = Messages.getString( "UI.ERROR_0002_BAD_TEMPLATE_OBJECT" );
+			intro = Messages.getInstance().getString( "UI.ERROR_0002_BAD_TEMPLATE_OBJECT" );
 		}
 	
 		// Content had $ signs - the regex stuff messes up with $ and \ so...
@@ -81,7 +81,7 @@
 		<%= footer %><%    
 	} else {
 		if( content == null ) {
-		  content = "<error msg='" + Messages.getErrorString( "SCHEDULER_ADMIN.ERROR_0001_DISPLAY_ERROR" ) + "'></error>";
+		  content = "<error msg='" + Messages.getInstance().getErrorString( "SCHEDULER_ADMIN.ERROR_0001_DISPLAY_ERROR" ) + "'></error>";
 		}
 		%><%=content%><%  
 	}

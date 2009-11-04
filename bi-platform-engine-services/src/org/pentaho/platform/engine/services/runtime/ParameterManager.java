@@ -127,7 +127,7 @@ public class ParameterManager implements IParameterManager {
       }
     } catch (Throwable th) {
       // Do something here
-      ParameterManager.logger.error(Messages.getErrorString(
+      ParameterManager.logger.error(Messages.getInstance().getErrorString(
           "ParameterManager.ERROR_0001_DISPOSE_ERROR", param.getName()), th); //$NON-NLS-1$
     }
     return false;

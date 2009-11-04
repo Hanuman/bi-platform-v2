@@ -103,7 +103,7 @@ public class SampleUsersAndRolesInitHandler extends HibernateDaoSupport implemen
       }
     } catch (UncategorizedUserRoleDaoException e) {
       // log error and simply return
-      logger.error(Messages.getString("SampleUsersAndRolesInitHandler.ERROR_0001_COULD_NOT_INSERT_SAMPLES"), e); //$NON-NLS-1$
+      logger.error(Messages.getInstance().getString("SampleUsersAndRolesInitHandler.ERROR_0001_COULD_NOT_INSERT_SAMPLES"), e); //$NON-NLS-1$
     }
 
   }

@@ -113,8 +113,8 @@ public class BlobtoByteArrayUserType implements UserType {
       try {
         arg0.setBytes(arg2, (byte[]) arg1);
       } catch (SerializationException ex) {
-        BlobtoByteArrayUserType.log.error(Messages.getErrorString("BLOBUTYPE.ERROR_0001_SETTING_BLOB"), ex); //$NON-NLS-1$
-        throw new HibernateException(Messages.getErrorString("BLOBUTYPE.ERROR_0001_SETTING_BLOB"), ex); //$NON-NLS-1$
+        BlobtoByteArrayUserType.log.error(Messages.getInstance().getErrorString("BLOBUTYPE.ERROR_0001_SETTING_BLOB"), ex); //$NON-NLS-1$
+        throw new HibernateException(Messages.getInstance().getErrorString("BLOBUTYPE.ERROR_0001_SETTING_BLOB"), ex); //$NON-NLS-1$
       }
     } else {
       arg0.setNull(arg2, sqlTypes()[0]);

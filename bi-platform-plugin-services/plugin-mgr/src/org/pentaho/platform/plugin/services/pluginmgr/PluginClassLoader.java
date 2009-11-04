@@ -99,7 +99,7 @@ public class PluginClassLoader extends ClassLoader {
             JarFile jar = new JarFile(file, true);
             addJar(jar);
           } catch (Exception e) {
-            Logger.warn(getClass().toString(), Messages.getString(
+            Logger.warn(getClass().toString(), Messages.getInstance().getString(
                 "PluginClassLoader.WARN_COULD_NOT_LOAD_JAR", file.getAbsolutePath()), e); //$NON-NLS-1$
           }
         }
@@ -254,7 +254,7 @@ public class PluginClassLoader extends ClassLoader {
           try {
             return jar.getInputStream(entry);
           } catch (IOException e) {
-            logger.warn(Messages.getString("PluginClassLoader.WARN_CLASS_NOT_REGISTERED", entryName), e); //$NON-NLS-1$
+            logger.warn(Messages.getInstance().getString("PluginClassLoader.WARN_CLASS_NOT_REGISTERED", entryName), e); //$NON-NLS-1$
             return null;
           }
         }

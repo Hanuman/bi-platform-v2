@@ -59,7 +59,7 @@ public class UnionizingLdapAuthoritiesPopulator implements LdapAuthoritiesPopula
   }
 
   public void afterPropertiesSet() throws Exception {
-    Assert.notNull(populators, Messages.getString("UnionizingLdapAuthoritiesPopulator.ERROR_0001_POPULATOR_NULL")); //$NON-NLS-1$
+    Assert.notNull(populators, Messages.getInstance().getString("UnionizingLdapAuthoritiesPopulator.ERROR_0001_POPULATOR_NULL")); //$NON-NLS-1$
   }
 
 }

@@ -101,7 +101,7 @@ public class PentahoVersionCheckReflectHelper {
             if (downloadurl != null) {
               downloadurl = downloadurl.trim();
             }
-            logger.info(Messages.getString("VersionCheck.UPDATE_MESSAGE", title, version, type, downloadurl)); //$NON-NLS-1$
+            logger.info(Messages.getInstance().getString("VersionCheck.UPDATE_MESSAGE", title, version, type, downloadurl)); //$NON-NLS-1$
           }
 
           nodes = doc.selectNodes("//error"); //$NON-NLS-1$
@@ -109,15 +109,15 @@ public class PentahoVersionCheckReflectHelper {
           while (nodeIter.hasNext()) {
             Element errorElement = (Element) nodeIter.next();
             String message = errorElement.getText();
-            logger.info(Messages.getString("VersionCheck.ERROR_MESSAGE", message)); //$NON-NLS-1$
+            logger.info(Messages.getInstance().getString("VersionCheck.ERROR_MESSAGE", message)); //$NON-NLS-1$
           }
         }
         output = result;
       } catch (Exception e) {
-        output = "<vercheck><error><[!CDATA[" + Messages.getString("VersionCheck.ERROR_MESSAGE", e.getMessage()) + "]]></error></vercheck>"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+        output = "<vercheck><error><[!CDATA[" + Messages.getInstance().getString("VersionCheck.ERROR_MESSAGE", e.getMessage()) + "]]></error></vercheck>"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
       }
     } else {
-      output = "<vercheck><error><[!CDATA[" + Messages.getString("VersionCheck.NO_RESULT_MESSAGE") + "]]></error></vercheck>"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+      output = "<vercheck><error><[!CDATA[" + Messages.getInstance().getString("VersionCheck.NO_RESULT_MESSAGE") + "]]></error></vercheck>"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
     }
     return output;
   }

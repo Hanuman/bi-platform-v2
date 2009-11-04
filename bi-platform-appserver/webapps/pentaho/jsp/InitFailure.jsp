@@ -22,7 +22,7 @@
   <br />
   <div style='border:2px solid #cccccc'>
     <table width='100%' border='0'>
-      <tr><td><b><%=Messages.getString("InitFailure.USER_ERRORS_DETECTED")%></b></td></tr>
+      <tr><td><b><%=Messages.getInstance().getString("InitFailure.USER_ERRORS_DETECTED")%></b></td></tr>
 <%
   for (int i=0; i<initializationErrorMessages.size(); i++) {
 %>
@@ -32,7 +32,7 @@
 %>
     </table>
     <br />
-      <%= Messages.getString("InitFailure.USER_SEE_SERVER_CONSOLE") %>
+      <%= Messages.getInstance().getString("InitFailure.USER_SEE_SERVER_CONSOLE") %>
   </div>
  </body>
 </html>

@@ -124,7 +124,7 @@ public abstract class BaseTest extends GenericPentahoTest implements IActionComp
       initOk = true;
     }
     
-    assertTrue(Messages.getString("BaseTest.ERROR_0001_FAILED_INITIALIZATION"), initOk); //$NON-NLS-1$
+    assertTrue(Messages.getInstance().getString("BaseTest.ERROR_0001_FAILED_INITIALIZATION"), initOk); //$NON-NLS-1$
   }
 
   private ApplicationContext getSpringApplicationContext() {
@@ -176,7 +176,7 @@ public abstract class BaseTest extends GenericPentahoTest implements IActionComp
      Throwable th = new Throwable("Test"); //$NON-NLS-1$
      StackTraceElement[] st = th.getStackTrace();
      String name = st[1].getClassName() + "." + st[1].getMethodName(); //$NON-NLS-1$
-     String description = Messages.getString(name + ".USER_DESCRIPTION"); //$NON-NLS-1$
+     String description = Messages.getInstance().getString(name + ".USER_DESCRIPTION"); //$NON-NLS-1$
      */
   }
 
@@ -238,7 +238,7 @@ public abstract class BaseTest extends GenericPentahoTest implements IActionComp
       outputHandler = getOutputHandler((OutputStream) null);
     }
     String instanceId = null;
-    StandaloneSession initialSession = new StandaloneSession(Messages.getString("BaseTest.DEBUG_JUNIT_SESSION")); //$NON-NLS-1$
+    StandaloneSession initialSession = new StandaloneSession(Messages.getInstance().getString("BaseTest.DEBUG_JUNIT_SESSION")); //$NON-NLS-1$
     IPentahoSession session = sessionStartup(initialSession);
     if (outputHandler != null) {
       outputHandler.setSession(session);
@@ -262,7 +262,7 @@ public abstract class BaseTest extends GenericPentahoTest implements IActionComp
       String instanceId, boolean persisted, IParameterProvider parameterProvider, IOutputHandler outputHandler) {
     assertTrue(initOk);
 
-    info(Messages.getString("BaseTest.INFO_START_TEST_MSG", actionName)); //$NON-NLS-1$
+    info(Messages.getInstance().getString("BaseTest.INFO_START_TEST_MSG", actionName)); //$NON-NLS-1$
     info(actionName);
 
     String baseUrl = ""; //$NON-NLS-1$  
@@ -277,8 +277,8 @@ public abstract class BaseTest extends GenericPentahoTest implements IActionComp
             solutionId,
             path,
             actionName,
-            Messages.getString("BaseTest.DEBUG_JUNIT_TEST"), false, true, instanceId, persisted, parameterProviderMap, outputHandler, this, urlFactory, messages); //$NON-NLS-1$
-    info(Messages.getString("BaseTest.INFO_FINISH_TEST_MSG", actionName)); //$NON-NLS-1$
+            Messages.getInstance().getString("BaseTest.DEBUG_JUNIT_TEST"), false, true, instanceId, persisted, parameterProviderMap, outputHandler, this, urlFactory, messages); //$NON-NLS-1$
+    info(Messages.getInstance().getString("BaseTest.INFO_FINISH_TEST_MSG", actionName)); //$NON-NLS-1$
 
     // TODO compare message stack with saved version
 
@@ -296,51 +296,51 @@ public abstract class BaseTest extends GenericPentahoTest implements IActionComp
   }
 
   public void trace(String message) {
-    messages.add(Messages.getString("Message.USER_DEBUG", message, getClass().getName())); //$NON-NLS-1$
+    messages.add(Messages.getInstance().getString("Message.USER_DEBUG", message, getClass().getName())); //$NON-NLS-1$
   }
 
   public void debug(String message) {
-    messages.add(Messages.getString("Message.USER_DEBUG", message, getClass().getName())); //$NON-NLS-1$
+    messages.add(Messages.getInstance().getString("Message.USER_DEBUG", message, getClass().getName())); //$NON-NLS-1$
   }
 
   public void info(String message) {
-    messages.add(Messages.getString("Message.USER_INFO", message, getClass().getName())); //$NON-NLS-1$
+    messages.add(Messages.getInstance().getString("Message.USER_INFO", message, getClass().getName())); //$NON-NLS-1$
   }
 
   public void warn(String message) {
-    messages.add(Messages.getString("Message.USER_WARNING", message, getClass().getName())); //$NON-NLS-1$
+    messages.add(Messages.getInstance().getString("Message.USER_WARNING", message, getClass().getName())); //$NON-NLS-1$
   }
 
   public void error(String message) {
-    messages.add(Messages.getString("Message.USER_ERROR", message, getClass().getName())); //$NON-NLS-1$
+    messages.add(Messages.getInstance().getString("Message.USER_ERROR", message, getClass().getName())); //$NON-NLS-1$
   }
 
   public void fatal(String message) {
-    messages.add(Messages.getString("Message.USER_ERROR", message, getClass().getName())); //$NON-NLS-1$
+    messages.add(Messages.getInstance().getString("Message.USER_ERROR", message, getClass().getName())); //$NON-NLS-1$
   }
 
   public void trace(String message, Throwable error) {
-    messages.add(Messages.getString("Message.USER_DEBUG", message, getClass().getName())); //$NON-NLS-1$
+    messages.add(Messages.getInstance().getString("Message.USER_DEBUG", message, getClass().getName())); //$NON-NLS-1$
   }
 
   public void debug(String message, Throwable error) {
-    messages.add(Messages.getString("Message.USER_DEBUG", message, getClass().getName())); //$NON-NLS-1$
+    messages.add(Messages.getInstance().getString("Message.USER_DEBUG", message, getClass().getName())); //$NON-NLS-1$
   }
 
   public void info(String message, Throwable error) {
-    messages.add(Messages.getString("Message.USER_INFO", message, getClass().getName())); //$NON-NLS-1$
+    messages.add(Messages.getInstance().getString("Message.USER_INFO", message, getClass().getName())); //$NON-NLS-1$
   }
 
   public void warn(String message, Throwable error) {
-    messages.add(Messages.getString("Message.USER_WARNING", message, getClass().getName())); //$NON-NLS-1$
+    messages.add(Messages.getInstance().getString("Message.USER_WARNING", message, getClass().getName())); //$NON-NLS-1$
   }
 
   public void error(String message, Throwable error) {
-    messages.add(Messages.getString("Message.USER_ERROR", message, getClass().getName())); //$NON-NLS-1$
+    messages.add(Messages.getInstance().getString("Message.USER_ERROR", message, getClass().getName())); //$NON-NLS-1$
   }
 
   public void fatal(String message, Throwable error) {
-    messages.add(Messages.getString("Message.USER_ERROR", message, getClass().getName())); //$NON-NLS-1$
+    messages.add(Messages.getInstance().getString("Message.USER_ERROR", message, getClass().getName())); //$NON-NLS-1$
   }
 
 }

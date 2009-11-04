@@ -152,7 +152,7 @@ public class WsdlPageTest {
 	        try {
 	            contentGenerator.createContent();
 	            String content = new String( out.toByteArray() );
-	            assertTrue( content.indexOf( Messages.getErrorString("WebServiceContentGenerator.ERROR_0004_PATH_PARAMS_IS_MISSING") ) != -1 ); //$NON-NLS-1$
+	            assertTrue( content.indexOf( Messages.getInstance().getErrorString("WebServiceContentGenerator.ERROR_0004_PATH_PARAMS_IS_MISSING") ) != -1 ); //$NON-NLS-1$
 	          System.out.println( content );
 	          
 	        } catch (Exception e) {
@@ -196,7 +196,7 @@ public class WsdlPageTest {
 	            contentGenerator.createContent();
 	            String content = new String( out.toByteArray() );
 	          System.out.println( content );
-            assertTrue( content.indexOf( Messages.getErrorString("WebServiceContentGenerator.ERROR_0005_SERVICE_NAME_IS_MISSING") ) != -1 ); //$NON-NLS-1$
+            assertTrue( content.indexOf( Messages.getInstance().getErrorString("WebServiceContentGenerator.ERROR_0005_SERVICE_NAME_IS_MISSING") ) != -1 ); //$NON-NLS-1$
 	          
 	        } catch (Exception e) {
 	          assertTrue( "Exception occurred", false ); //$NON-NLS-1$
@@ -240,7 +240,7 @@ public class WsdlPageTest {
 	            contentGenerator.createContent();
 	            String content = new String( out.toByteArray() );
 	            System.out.println( content );
-	            assertTrue( content.indexOf( Messages.getErrorString("WebServiceContentGenerator.ERROR_0006_SERVICE_IS_INVALID", "bogus") ) != -1 ); //$NON-NLS-1$ //$NON-NLS-2$
+	            assertTrue( content.indexOf( Messages.getInstance().getErrorString("WebServiceContentGenerator.ERROR_0006_SERVICE_IS_INVALID", "bogus") ) != -1 ); //$NON-NLS-1$ //$NON-NLS-2$
 	        } catch (Exception e) {
 	          assertTrue( "Exception occurred", false ); //$NON-NLS-1$
 	        }

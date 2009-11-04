@@ -301,7 +301,7 @@ public class FileInfo {
     String fileType = node.attributeValue("type"); //$NON-NLS-1$
     if (fileType == null) {
       // we don't know what to do with this
-      logger.error(Messages.getErrorString("FileInfo.ERROR_0001_DOCUMENT_HAS_NO_TYPE")); //$NON-NLS-1$
+      logger.error(Messages.getInstance().getErrorString("FileInfo.ERROR_0001_DOCUMENT_HAS_NO_TYPE")); //$NON-NLS-1$
     } else if (node.attributeValue("type").equals(FileInfo.FILE_TYPE_FOLDER)) { //$NON-NLS-1$
       initFolderFromNode(node, logger);
     } else {
@@ -379,7 +379,7 @@ public class FileInfo {
         parameterNames = null;
       }
     } catch (Exception e) {
-      logger.error(Messages.getErrorString("FileInfo.ERROR_0002_COULD_NOT_LOAD"), e); //$NON-NLS-1$
+      logger.error(Messages.getInstance().getErrorString("FileInfo.ERROR_0002_COULD_NOT_LOAD"), e); //$NON-NLS-1$
     }
   }
 
@@ -393,7 +393,7 @@ public class FileInfo {
       visible = "true".equalsIgnoreCase(node.selectSingleNode("@visible").getText()); //$NON-NLS-1$ //$NON-NLS-2$
       solutionId = node.selectSingleNode("solution").getText(); //$NON-NLS-1$
     } catch (Exception e) {
-      logger.error(Messages.getErrorString("FileInfo.ERROR_0002_COULD_NOT_LOAD"), e); //$NON-NLS-1$
+      logger.error(Messages.getInstance().getErrorString("FileInfo.ERROR_0002_COULD_NOT_LOAD"), e); //$NON-NLS-1$
     }
   }
 

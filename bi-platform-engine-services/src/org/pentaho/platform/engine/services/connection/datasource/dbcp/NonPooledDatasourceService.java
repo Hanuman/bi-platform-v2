@@ -61,12 +61,12 @@ public class NonPooledDatasourceService extends BaseDatasourceService {
         dataSource = convert(datasource);
         cacheManager.putInRegionCache(IDatasourceService.JDBC_DATASOURCE,dsName, (DataSource) dataSource);  
       } else {
-        throw new DatasourceServiceException(Messages.getErrorString("NonPooledDatasourceService.ERROR_0002_UNABLE_TO_GET_DATASOURCE")); //$NON-NLS-1$
+        throw new DatasourceServiceException(Messages.getInstance().getErrorString("NonPooledDatasourceService.ERROR_0002_UNABLE_TO_GET_DATASOURCE")); //$NON-NLS-1$
       }
     } catch (ObjectFactoryException objface) {
-      throw new DatasourceServiceException(Messages.getErrorString("NonPooledDatasourceService.ERROR_0001_UNABLE_TO_INSTANTIATE_OBJECT"),objface); //$NON-NLS-1$
+      throw new DatasourceServiceException(Messages.getInstance().getErrorString("NonPooledDatasourceService.ERROR_0001_UNABLE_TO_INSTANTIATE_OBJECT"),objface); //$NON-NLS-1$
     } catch (DatasourceMgmtServiceException daoe) {
-      throw new DatasourceServiceException(Messages.getErrorString("NonPooledDatasourceService.ERROR_0002_UNABLE_TO_GET_DATASOURCE"),daoe); //$NON-NLS-1$
+      throw new DatasourceServiceException(Messages.getInstance().getErrorString("NonPooledDatasourceService.ERROR_0002_UNABLE_TO_GET_DATASOURCE"),daoe); //$NON-NLS-1$
     }
     return dataSource;
   }

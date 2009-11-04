@@ -44,24 +44,24 @@ public class ApacheVFSOutputHandler extends BaseOutputHandler {
       String contentName = getHandlerId().substring(4) + ":" + contentRef; //$NON-NLS-1$
       FileSystemManager fsManager = VFS.getManager();
       if (fsManager == null) {
-        Logger.error(ApacheVFSOutputHandler.class.getName(), Messages
+        Logger.error(ApacheVFSOutputHandler.class.getName(), Messages.getInstance()
             .getString("ApacheVFSOutputHandler.ERROR_0001_CANNOT_GET_VFSMGR")); //$NON-NLS-1$
         return null;
       }
       FileObject file = fsManager.resolveFile(contentName);
       if (file == null) {
-        Logger.error(ApacheVFSOutputHandler.class.getName(), Messages.getString(
+        Logger.error(ApacheVFSOutputHandler.class.getName(), Messages.getInstance().getString(
             "ApacheVFSOutputHandler.ERROR_0002_CANNOT_GET_VF", contentName)); //$NON-NLS-1$
         return null;
       }
       if (!file.isWriteable()) {
-        Logger.error(ApacheVFSOutputHandler.class.getName(), Messages.getString(
+        Logger.error(ApacheVFSOutputHandler.class.getName(), Messages.getInstance().getString(
             "ApacheVFSOutputHandler.ERROR_0003_CANNOT_WRITE", contentName)); //$NON-NLS-1$
         return null;
       }
       FileContent fileContent = file.getContent();
       if (fileContent == null) {
-        Logger.error(ApacheVFSOutputHandler.class.getName(), Messages.getString(
+        Logger.error(ApacheVFSOutputHandler.class.getName(), Messages.getInstance().getString(
             "ApacheVFSOutputHandler.ERROR_0004_CANNOT_GET_CTX", contentName)); //$NON-NLS-1$
         return null;
       }
@@ -70,7 +70,7 @@ public class ApacheVFSOutputHandler extends BaseOutputHandler {
       SimpleContentItem content = new SimpleContentItem(outputStream);
       return content;
     } catch (Throwable t) {
-      Logger.error(ApacheVFSOutputHandler.class.getName(), Messages.getString(
+      Logger.error(ApacheVFSOutputHandler.class.getName(), Messages.getInstance().getString(
           "ApacheVFSOutputHandler.ERROR_0005_CANNOT_GET_HANDLER", contentRef), t); //$NON-NLS-1$
     }
 

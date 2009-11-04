@@ -127,11 +127,11 @@ public class ChartHelper {
 
       } catch (Exception e) {
 
-        logger.error(Messages.getErrorString("ChartHelper.ERROR_0001_IO_PROBLEM_GETTING_CHART_TYPE"), e); //$NON-NLS-1$
+        logger.error(Messages.getInstance().getErrorString("ChartHelper.ERROR_0001_IO_PROBLEM_GETTING_CHART_TYPE"), e); //$NON-NLS-1$
         PentahoSystem
             .get(IMessageFormatter.class, userSession)
             .formatErrorMessage(
-                "text/html", Messages.getString("ChartHelper.ERROR_0001_IO_PROBLEM_GETTING_CHART_TYPE"), messages, messageBuffer); //$NON-NLS-1$ //$NON-NLS-2$
+                "text/html", Messages.getInstance().getString("ChartHelper.ERROR_0001_IO_PROBLEM_GETTING_CHART_TYPE"), messages, messageBuffer); //$NON-NLS-1$ //$NON-NLS-2$
         content = messageBuffer.toString();
         result = false;
       }
@@ -140,11 +140,11 @@ public class ChartHelper {
     // Check again - do we have a chart type now? If not, bail out, we have no idea what to try to generate
     if ((chartTypeStr == null) || (chartTypeStr.length() == 0)) {
 
-      logger.error(Messages.getString("ChartHelper.ERROR_0002_COULD_NOT_DETERMINE_CHART_TYPE")); //$NON-NLS-1$
+      logger.error(Messages.getInstance().getString("ChartHelper.ERROR_0002_COULD_NOT_DETERMINE_CHART_TYPE")); //$NON-NLS-1$
       PentahoSystem
           .get(IMessageFormatter.class, userSession)
           .formatErrorMessage(
-              "text/html", Messages.getString("ChartHelper.ERROR_0002_COULD_NOT_DETERMINE_CHART_TYPE"), messages, messageBuffer); //$NON-NLS-1$ //$NON-NLS-2$
+              "text/html", Messages.getInstance().getString("ChartHelper.ERROR_0002_COULD_NOT_DETERMINE_CHART_TYPE"), messages, messageBuffer); //$NON-NLS-1$ //$NON-NLS-2$
       content = messageBuffer.toString();
       result = false;
     }
@@ -212,10 +212,10 @@ public class ChartHelper {
           case JFreeChartEngine.UNDEFINED_CHART_TYPE:
           default:
             // Unsupported chart type, bail out
-            logger.error(Messages.getString(
+            logger.error(Messages.getInstance().getString(
                 "ChartHelper.ERROR_0003_INVALID_CHART_TYPE", chartTypeStr, Integer.toString(chartType))); //$NON-NLS-1$
             PentahoSystem.get(IMessageFormatter.class, userSession).formatErrorMessage(
-                "text/html", Messages.getString("ChartHelper.ERROR_0003_INVALID_CHART_TYPE", //$NON-NLS-1$ //$NON-NLS-2$
+                "text/html", Messages.getInstance().getString("ChartHelper.ERROR_0003_INVALID_CHART_TYPE", //$NON-NLS-1$ //$NON-NLS-2$
                     chartTypeStr, Integer.toString(chartType)), messages, messageBuffer);
             content = messageBuffer.toString();
             result = false;
@@ -286,7 +286,7 @@ public class ChartHelper {
           }
 
         } catch (Throwable e) {
-          logger.error(Messages.getErrorString("Widget.ERROR_0001_COULD_NOT_CREATE_WIDGET"), e); //$NON-NLS-1$
+          logger.error(Messages.getInstance().getErrorString("Widget.ERROR_0001_COULD_NOT_CREATE_WIDGET"), e); //$NON-NLS-1$
         }
       } // end of if(result)
 
@@ -295,13 +295,13 @@ public class ChartHelper {
           PentahoSystem
               .get(IMessageFormatter.class, userSession)
               .formatErrorMessage(
-                  "text/html", Messages.getErrorString("Widget.ERROR_0001_COULD_NOT_CREATE_WIDGET"), messages, messageBuffer); //$NON-NLS-1$ //$NON-NLS-2$
+                  "text/html", Messages.getInstance().getErrorString("Widget.ERROR_0001_COULD_NOT_CREATE_WIDGET"), messages, messageBuffer); //$NON-NLS-1$ //$NON-NLS-2$
           content = messageBuffer.toString();
           result = false;
         }
         outputStream.append(content);
       } catch (Exception e) {
-        logger.error(Messages.getErrorString("Widget.ERROR_0001_COULD_NOT_CREATE_WIDGET"), e); //$NON-NLS-1$
+        logger.error(Messages.getInstance().getErrorString("Widget.ERROR_0001_COULD_NOT_CREATE_WIDGET"), e); //$NON-NLS-1$
       }
 
     } finally {
@@ -383,7 +383,7 @@ public class ChartHelper {
       if (content == null) {
         StringBuffer buffer = new StringBuffer();
         PentahoSystem.get(IMessageFormatter.class, userSession).formatErrorMessage(
-            "text/html", Messages.getString("Widget.ERROR_0001_COULD_NOT_CREATE_WIDGET"), messages, buffer); //$NON-NLS-1$ //$NON-NLS-2$
+            "text/html", Messages.getInstance().getString("Widget.ERROR_0001_COULD_NOT_CREATE_WIDGET"), messages, buffer); //$NON-NLS-1$ //$NON-NLS-2$
         content = buffer.toString();
         result = false;
       }
@@ -462,7 +462,7 @@ public class ChartHelper {
       if (content == null) {
         StringBuffer buffer = new StringBuffer();
         PentahoSystem.get(IMessageFormatter.class, userSession).formatErrorMessage(
-            "text/html", Messages.getString("Widget.ERROR_0001_COULD_NOT_CREATE_WIDGET"), messages, buffer); //$NON-NLS-1$ //$NON-NLS-2$
+            "text/html", Messages.getInstance().getString("Widget.ERROR_0001_COULD_NOT_CREATE_WIDGET"), messages, buffer); //$NON-NLS-1$ //$NON-NLS-2$
         content = buffer.toString();
         result = false;
       }

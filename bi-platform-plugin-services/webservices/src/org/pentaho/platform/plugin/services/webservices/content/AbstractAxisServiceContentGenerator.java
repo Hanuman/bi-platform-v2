@@ -62,7 +62,7 @@ public abstract class AbstractAxisServiceContentGenerator extends SimpleContentG
       AxisConfiguration axisConfiguration = AxisWebServiceManager.currentAxisConfiguration;
       if( axisConfiguration == null ) {
         // return an error
-        String message = Messages.getErrorString("WebServiceContentGenerator.ERROR_0001_AXIS_CONFIG_IS_NULL"); //$NON-NLS-1$
+        String message = Messages.getInstance().getErrorString("WebServiceContentGenerator.ERROR_0001_AXIS_CONFIG_IS_NULL"); //$NON-NLS-1$
         getLogger().error( message );
         out.write( message.getBytes() );
         return;
@@ -128,7 +128,7 @@ public abstract class AbstractAxisServiceContentGenerator extends SimpleContentG
       // now process the fault
       handleFault(msgContext, out, http, e);
     } catch (AxisFault axisFault) {
-      String message = Messages.getErrorString("WebServiceContentGenerator.ERROR_0003_PROCESSING_FAULT"); //$NON-NLS-1$
+      String message = Messages.getInstance().getErrorString("WebServiceContentGenerator.ERROR_0003_PROCESSING_FAULT"); //$NON-NLS-1$
       getLogger().error( message, axisFault );
     }
   }

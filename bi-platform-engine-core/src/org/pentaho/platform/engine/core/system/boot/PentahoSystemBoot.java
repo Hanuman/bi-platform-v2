@@ -197,11 +197,11 @@ public class PentahoSystemBoot {
       //we want to wrap any exception that causes initialization to fail, so we will
       //catch throwable
     } catch (Throwable t) {
-      throw new PlatformInitializationException(Messages.getErrorString("PentahoSystemBoot.ERROR_0001_PLATFORM_INIT_FAILED"), t); //$NON-NLS-1$
+      throw new PlatformInitializationException(Messages.getInstance().getErrorString("PentahoSystemBoot.ERROR_0001_PLATFORM_INIT_FAILED"), t); //$NON-NLS-1$
     }
     
     if (!initialized) {
-      throw new PlatformInitializationException(Messages.getErrorString("PentahoSystemBoot.ERROR_0001_PLATFORM_INIT_FAILED")); //$NON-NLS-1$
+      throw new PlatformInitializationException(Messages.getInstance().getErrorString("PentahoSystemBoot.ERROR_0001_PLATFORM_INIT_FAILED")); //$NON-NLS-1$
     }
 
     return initialized;

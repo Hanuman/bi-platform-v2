@@ -39,7 +39,7 @@ public class PublishTest extends BaseTest {
 
     SolutionPublisher publisher = new SolutionPublisher();
     publisher.setLoggingLevel(getLoggingLevel());
-    StandaloneSession session = new StandaloneSession(Messages.getString("BaseTest.DEBUG_JUNIT_SESSION")); //$NON-NLS-1$
+    StandaloneSession session = new StandaloneSession(Messages.getInstance().getString("BaseTest.DEBUG_JUNIT_SESSION")); //$NON-NLS-1$
     publisher.publish(session, getLoggingLevel());
     assertTrue(publisher != null);
     finishTest();
@@ -66,7 +66,7 @@ public class PublishTest extends BaseTest {
 
     SolutionPublisher publisher = new SolutionPublisher();
     publisher.setLoggingLevel(getLoggingLevel());
-    StandaloneSession session = new StandaloneSession(Messages.getString("BaseTest.DEBUG_JUNIT_SESSION")); //$NON-NLS-1$
+    StandaloneSession session = new StandaloneSession(Messages.getInstance().getString("BaseTest.DEBUG_JUNIT_SESSION")); //$NON-NLS-1$
     publisher.publish(session, getLoggingLevel());
     assertTrue(publisher != null);
     // now set the locale back again
@@ -78,7 +78,7 @@ public class PublishTest extends BaseTest {
           startTest();
           SharkPublisher publisher = new SharkPublisher();
           publisher.setLoggingLevel(getLoggingLevel());
-          StandaloneSession session = new StandaloneSession(Messages.getString("BaseTest.DEBUG_JUNIT_SESSION")); //$NON-NLS-1$
+          StandaloneSession session = new StandaloneSession(Messages.getInstance().getString("BaseTest.DEBUG_JUNIT_SESSION")); //$NON-NLS-1$
           publisher.setLoggingLevel(getLoggingLevel());
           publisher.publish(session);
           assertTrue(publisher != null);

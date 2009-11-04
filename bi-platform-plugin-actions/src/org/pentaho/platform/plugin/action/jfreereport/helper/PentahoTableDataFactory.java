@@ -170,7 +170,7 @@ public class PentahoTableDataFactory implements DataFactory, Cloneable {
     try {
       return (DataFactory) clone();
     } catch (CloneNotSupportedException e) {
-      throw new ReportDataFactoryException(Messages.getErrorString("PentahoTableDataFactory.ERROR_0001_CLONE_SHOULD_NOT_FAIL")); //$NON-NLS-1$
+      throw new ReportDataFactoryException(Messages.getInstance().getErrorString("PentahoTableDataFactory.ERROR_0001_CLONE_SHOULD_NOT_FAIL")); //$NON-NLS-1$
     }
   }
 

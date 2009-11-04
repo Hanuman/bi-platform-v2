@@ -64,7 +64,7 @@ public class ContentOutputComponentTest extends BaseTest {
     IRuntimeContext context = run(
         "test", "platform", "ContentOutputTest.xaction", parameterProvider, testName, CO_TEST_EXTN); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
     assertEquals(
-        Messages.getString("BaseTest.USER_RUNNING_ACTION_SEQUENCE"), IRuntimeContext.RUNTIME_STATUS_SUCCESS, context.getStatus()); //$NON-NLS-1$
+        Messages.getInstance().getString("BaseTest.USER_RUNNING_ACTION_SEQUENCE"), IRuntimeContext.RUNTIME_STATUS_SUCCESS, context.getStatus()); //$NON-NLS-1$
 
     IActionParameter rtn = context.getOutputParameter("content");//$NON-NLS-1$
     assertNotNull(rtn);

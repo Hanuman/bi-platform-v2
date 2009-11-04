@@ -67,7 +67,7 @@ public class GetResource extends ServletBase {
     //	expires = "0";//$NON-NLS-1$
     //}
     if ((resource == null) || StringUtil.doesPathContainParentPathSegment( resource )) {
-      error(Messages.getErrorString("GetResource.ERROR_0001_RESOURCE_PARAMETER_MISSING")); //$NON-NLS-1$
+      error(Messages.getInstance().getErrorString("GetResource.ERROR_0001_RESOURCE_PARAMETER_MISSING")); //$NON-NLS-1$
       response.setStatus(HttpServletResponse.SC_SERVICE_UNAVAILABLE);
       return;
     }
@@ -90,7 +90,7 @@ public class GetResource extends ServletBase {
       resourcePath = resource;
     }
     else {
-      error(Messages.getErrorString("GetResource.ERROR_0002_INVALID_FILE", resource)); //$NON-NLS-1$
+      error(Messages.getInstance().getErrorString("GetResource.ERROR_0002_INVALID_FILE", resource)); //$NON-NLS-1$
       response.setStatus(HttpServletResponse.SC_SERVICE_UNAVAILABLE);
       return;
     }
@@ -98,7 +98,7 @@ public class GetResource extends ServletBase {
     ISolutionRepository repository = PentahoSystem.get(ISolutionRepository.class, session);
     InputStream in = repository.getResourceInputStream(resourcePath, true, ISolutionRepository.ACTION_EXECUTE);
     if (in == null) {
-      error(Messages.getErrorString("GetResource.ERROR_0003_RESOURCE_MISSING", resourcePath)); //$NON-NLS-1$
+      error(Messages.getInstance().getErrorString("GetResource.ERROR_0003_RESOURCE_MISSING", resourcePath)); //$NON-NLS-1$
       response.setStatus(HttpServletResponse.SC_SERVICE_UNAVAILABLE);
       return;
     }

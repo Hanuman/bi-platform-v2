@@ -68,7 +68,7 @@ public abstract class JcrCmsOutputHandler extends BaseOutputHandler {
       Repository repository = getRepository();
 
       if (repository == null) {
-        Logger.error(JcrCmsOutputHandler.class.getName(), Messages
+        Logger.error(JcrCmsOutputHandler.class.getName(), Messages.getInstance()
             .getString("JcrCmsOutputHandler.ERROR_0001_GETTING_CMSREPO")); //$NON-NLS-1$
         return null;
       }
@@ -76,7 +76,7 @@ public abstract class JcrCmsOutputHandler extends BaseOutputHandler {
       Session jcrSession = getJcrSession(repository);
 
       if (jcrSession == null) {
-        Logger.error(JcrCmsOutputHandler.class.getName(), Messages
+        Logger.error(JcrCmsOutputHandler.class.getName(), Messages.getInstance()
             .getString("JcrCmsOutputHandler.ERROR_0002_GETTING_SESSION")); //$NON-NLS-1$
         return null;
       }
@@ -84,7 +84,7 @@ public abstract class JcrCmsOutputHandler extends BaseOutputHandler {
       // Use the root node as a starting point
       Node root = jcrSession.getRootNode();
       if (root == null) {
-        Logger.error(JcrCmsOutputHandler.class.getName(), Messages
+        Logger.error(JcrCmsOutputHandler.class.getName(), Messages.getInstance()
             .getString("JcrCmsOutputHandler.ERROR_0003_GETTING_ROOT")); //$NON-NLS-1$
         return null;
       }
@@ -113,11 +113,11 @@ public abstract class JcrCmsOutputHandler extends BaseOutputHandler {
         contentNode = fileNode.getNode("jcr:content"); //$NON-NLS-1$
         if (contentNode.isLocked()) {
           JcrCmsOutputHandler.logger
-              .warn(Messages.getString("JcrCmsOutputHandler.ERROR_0004_NODE_LOCKED", contentName)); //$NON-NLS-1$
+              .warn(Messages.getInstance().getString("JcrCmsOutputHandler.ERROR_0004_NODE_LOCKED", contentName)); //$NON-NLS-1$
           return null;
         }
         if (contentNode.isCheckedOut()) {
-          JcrCmsOutputHandler.logger.warn(Messages.getString(
+          JcrCmsOutputHandler.logger.warn(Messages.getInstance().getString(
               "JcrCmsOutputHandler.ERROR_0005_NODE_CHECKED_OUT", contentName)); //$NON-NLS-1$
           return null;
         }
@@ -150,13 +150,13 @@ public abstract class JcrCmsOutputHandler extends BaseOutputHandler {
       }
       return contentItem;
     } catch (LockException le) {
-      Logger.error(JcrCmsOutputHandler.class.getName(), Messages
+      Logger.error(JcrCmsOutputHandler.class.getName(), Messages.getInstance()
           .getString("JcrCmsOutputHandler.ERROR_0006_GETTING_OUTPUTHANDLER") + contentName, le); //$NON-NLS-1$
     } catch (NestableRuntimeException nre) {
-      Logger.error(JcrCmsOutputHandler.class.getName(), Messages
+      Logger.error(JcrCmsOutputHandler.class.getName(), Messages.getInstance()
           .getString("JcrCmsOutputHandler.ERROR_0006_GETTING_OUTPUTHANDLER") + contentName, nre); //$NON-NLS-1$
     } catch (RepositoryException re) {
-      Logger.error(JcrCmsOutputHandler.class.getName(), Messages
+      Logger.error(JcrCmsOutputHandler.class.getName(), Messages.getInstance()
           .getString("JcrCmsOutputHandler.ERROR_0006_GETTING_OUTPUTHANDLER") + contentName, re); //$NON-NLS-1$
     }
     return null;
@@ -179,10 +179,10 @@ public abstract class JcrCmsOutputHandler extends BaseOutputHandler {
         }
       }
     } catch (InvalidQueryException iqe) {
-      Logger.error(JcrCmsOutputHandler.class.getName(), Messages
+      Logger.error(JcrCmsOutputHandler.class.getName(), Messages.getInstance()
           .getString("JcrCmsOutputHandler.ERROR_0008_SEARCH_FAILED"), iqe); //$NON-NLS-1$
     } catch (RepositoryException re) {
-      Logger.error(JcrCmsOutputHandler.class.getName(), Messages
+      Logger.error(JcrCmsOutputHandler.class.getName(), Messages.getInstance()
           .getString("JcrCmsOutputHandler.ERROR_0008_SEARCH_FAILED"), re); //$NON-NLS-1$
     }
 
@@ -214,10 +214,10 @@ public abstract class JcrCmsOutputHandler extends BaseOutputHandler {
         node.checkin();
         session.save();
       } catch (LockException le) {
-        Logger.error(JcrCmsOutputHandler.class.getName(), Messages
+        Logger.error(JcrCmsOutputHandler.class.getName(), Messages.getInstance()
             .getString("JcrCmsOutputHandler.ERROR_0007_SAVING_CONTENT"), le); //$NON-NLS-1$
       } catch (RepositoryException re) {
-        Logger.error(JcrCmsOutputHandler.class.getName(), Messages
+        Logger.error(JcrCmsOutputHandler.class.getName(), Messages.getInstance()
             .getString("JcrCmsOutputHandler.ERROR_0007_SAVING_CONTENT"), re); //$NON-NLS-1$
       }
     }

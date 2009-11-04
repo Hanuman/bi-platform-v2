@@ -105,7 +105,7 @@ public class RepositoryUpdateHelper {
     for (int i = 0; i < newFolders.size(); i++) {
       File newFolder = (File) newFolders.get(i);
       RepositoryFile newFolderObject = createFolder(newFolder);
-      RepositoryUpdateHelper.logger.info(Messages.getString(
+      RepositoryUpdateHelper.logger.info(Messages.getInstance().getString(
           "SolutionRepository.INFO_0004_ADDED_FOLDER", newFolderObject.getFullPath())); //$NON-NLS-1$
     }
     //
@@ -114,7 +114,7 @@ public class RepositoryUpdateHelper {
     for (int i = 0; i < newFiles.size(); i++) {
       File newFile = (File) newFiles.get(i);
       RepositoryFile newFileObject = createNewFile(newFile);
-      RepositoryUpdateHelper.logger.info(Messages.getString(
+      RepositoryUpdateHelper.logger.info(Messages.getInstance().getString(
           "SolutionRepository.INFO_0006_ADDED_FILE", newFileObject.getFullPath())); //$NON-NLS-1$
     }
   }
@@ -135,7 +135,7 @@ public class RepositoryUpdateHelper {
       byte[] data = FileHelper.getBytesFromFile(updatedFile);
       updRepoFileObject.setLastModified(updatedFile.lastModified());
       updRepoFileObject.setData(data);
-      RepositoryUpdateHelper.logger.info(Messages.getString(
+      RepositoryUpdateHelper.logger.info(Messages.getInstance().getString(
           "SolutionRepository.INFO_0007_UPDATED_FILE", updRepoFileObject.getFullPath())); //$NON-NLS-1$
     }
     //
@@ -152,7 +152,7 @@ public class RepositoryUpdateHelper {
         createdOrRetrievedFolders.put(folderNameCorrected, updFolderObject); // Put it here so we can use it later if needed
       }
       updFolderObject.setLastModified(updatedFolder.lastModified()); // Update the date/time stamp
-      RepositoryUpdateHelper.logger.info(Messages.getString(
+      RepositoryUpdateHelper.logger.info(Messages.getInstance().getString(
           "SolutionRepository.INFO_0002_UPDATED_FOLDER", folderNameCorrected)); //$NON-NLS-1$
     }
   }

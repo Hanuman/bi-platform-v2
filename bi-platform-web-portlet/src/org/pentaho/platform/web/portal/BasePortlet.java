@@ -83,14 +83,14 @@ public abstract class BasePortlet extends GenericPortlet implements ILogger {
           BasePortlet.logger = getLogger();
         }
         if (BasePortlet.logger != null) {
-          BasePortlet.logger.error(Messages.getErrorString("BasePortlet.ERROR_0002_COULD_NOT_INIT"), error); //$NON-NLS-1$
+          BasePortlet.logger.error(Messages.getInstance().getErrorString("BasePortlet.ERROR_0002_COULD_NOT_INIT"), error); //$NON-NLS-1$
         } else {
-          Logger.error(getClass().getName(), Messages.getErrorString("BasePortlet.ERROR_0002_COULD_NOT_INIT"), error); //$NON-NLS-1$
+          Logger.error(getClass().getName(), Messages.getInstance().getErrorString("BasePortlet.ERROR_0002_COULD_NOT_INIT"), error); //$NON-NLS-1$
         }
       } catch (Throwable logError) {
-        Logger.error(getClass().getName(), Messages.getErrorString("BasePortlet.ERROR_0002_COULD_NOT_INIT"), error); //$NON-NLS-1$
+        Logger.error(getClass().getName(), Messages.getInstance().getErrorString("BasePortlet.ERROR_0002_COULD_NOT_INIT"), error); //$NON-NLS-1$
       }
-      throw new PortletException(Messages.getErrorString("BasePortlet.ERROR_0002_COULD_NOT_INIT"), error); //$NON-NLS-1$
+      throw new PortletException(Messages.getInstance().getErrorString("BasePortlet.ERROR_0002_COULD_NOT_INIT"), error); //$NON-NLS-1$
     }
 
   }
@@ -192,7 +192,7 @@ public abstract class BasePortlet extends GenericPortlet implements ILogger {
       try {
         doPortletView(request, response, userSession);
       } catch (Throwable t) {
-        error(Messages.getErrorString("BasePortlet.ERROR_0003_PORTLET_ERROR"), t); //$NON-NLS-1$
+        error(Messages.getInstance().getErrorString("BasePortlet.ERROR_0003_PORTLET_ERROR"), t); //$NON-NLS-1$
       }
 
     } finally {
@@ -248,7 +248,7 @@ public abstract class BasePortlet extends GenericPortlet implements ILogger {
     PentahoPortletSession userSession;
     if (existingSession == null) {
       if (BasePortlet.debug) {
-        debug(Messages.getString("BasePortlet.DEBUG_CREATING_SESSION")); //$NON-NLS-1$
+        debug(Messages.getInstance().getString("BasePortlet.DEBUG_CREATING_SESSION")); //$NON-NLS-1$
       }
       userSession = new PentahoPortletSession(request.getRemoteUser(), session, request.getLocale());
       session.removeAttribute(IPentahoSession.PENTAHO_SESSION_KEY);
@@ -258,7 +258,7 @@ public abstract class BasePortlet extends GenericPortlet implements ILogger {
     }
 
     if (userSession != null) {
-      logId = Messages.getString("BasePortlet.CODE_LOG_ID", session.getId()); //$NON-NLS-1$
+      logId = Messages.getInstance().getString("BasePortlet.CODE_LOG_ID", session.getId()); //$NON-NLS-1$
     }
 
     return userSession;
@@ -276,7 +276,7 @@ public abstract class BasePortlet extends GenericPortlet implements ILogger {
   public void setLoggingLevel(final int logLevel) {
     this.logLevel = logLevel;
     if (BasePortlet.debug) {
-      debug(Messages.getString("BasePortlet.DEBUG_SETTING_LOGGING_LEVEL") + logLevel); //$NON-NLS-1$
+      debug(Messages.getInstance().getString("BasePortlet.DEBUG_SETTING_LOGGING_LEVEL") + logLevel); //$NON-NLS-1$
     }
   }
 

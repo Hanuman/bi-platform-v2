@@ -78,15 +78,15 @@ public class ResultSetFlattenerComponent extends ComponentBase {
   @Override
   protected boolean validateAction() {
     if (!isDefinedInput(ResultSetFlattenerComponent.RESULT_SET)) {
-      error(Messages.getString("ResultSetFlattenerComponent.ERROR_0001_DATA_INPUT_INVALID_OBJECT")); //$NON-NLS-1$
+      error(Messages.getInstance().getString("ResultSetFlattenerComponent.ERROR_0001_DATA_INPUT_INVALID_OBJECT")); //$NON-NLS-1$
       return false;
     }
     if (getResultOutputName() == null) {
-      error(Messages.getString("ResultSetFlattenerComponent.ERROR_0002_INVALID_OUTPUT")); //$NON-NLS-1$
+      error(Messages.getInstance().getString("ResultSetFlattenerComponent.ERROR_0002_INVALID_OUTPUT")); //$NON-NLS-1$
       return false;
     }
     if (!isDefinedInput(ResultSetFlattenerComponent.FLATTEN_COLUMN)) {
-      error(Messages.getString("ResultSetFlattenerComponent.ERROR_0003_INVALID_FLATTEN_COLUMN")); //$NON-NLS-1$
+      error(Messages.getInstance().getString("ResultSetFlattenerComponent.ERROR_0003_INVALID_FLATTEN_COLUMN")); //$NON-NLS-1$
       return false;
     }
     return true;
@@ -113,7 +113,7 @@ public class ResultSetFlattenerComponent extends ComponentBase {
   public String getResultOutputName() {
     Set outputs = getOutputNames();
     if ((outputs == null) || (outputs.size() == 0)) {
-      error(Messages.getString("Template.ERROR_0002_OUTPUT_COUNT_WRONG")); //$NON-NLS-1$
+      error(Messages.getInstance().getString("Template.ERROR_0002_OUTPUT_COUNT_WRONG")); //$NON-NLS-1$
       return null;
     }
     String outputName = null;

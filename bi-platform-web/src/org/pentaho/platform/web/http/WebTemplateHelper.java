@@ -66,30 +66,30 @@ public String processTemplate(String template, final String title, final String 
     template = template.replaceAll("\\{menu\\}", getMenuHtml( session ) ); //$NON-NLS-1$
     template = template.replaceFirst("\\{footer\\}", WebTemplateHelper.footerTemplate); //$NON-NLS-1$
     template = template.replaceAll("\\{title\\}", title); //$NON-NLS-1$
-    template = template.replaceAll("\\{home\\}", Messages.getString("UI.USER_HOME")); //$NON-NLS-1$ //$NON-NLS-2$
-    template = template.replaceAll("\\{navigate\\}", Messages.getString("UI.USER_NAVIGATE")); //$NON-NLS-1$ //$NON-NLS-2$
-    template = template.replaceAll("\\{solutions\\}", Messages.getString("UI.USER_SOLUTIONS")); //$NON-NLS-1$ //$NON-NLS-2$
-    template = template.replaceAll("\\{file-cache\\}", Messages.getString("UI.USER_FILE_CACHE")); //$NON-NLS-1$ //$NON-NLS-2$
-    template = template.replaceAll("\\{new-content\\}", Messages.getString("UI.USER_NEW_CONTENT")); //$NON-NLS-1$ //$NON-NLS-2$
+    template = template.replaceAll("\\{home\\}", Messages.getInstance().getString("UI.USER_HOME")); //$NON-NLS-1$ //$NON-NLS-2$
+    template = template.replaceAll("\\{navigate\\}", Messages.getInstance().getString("UI.USER_NAVIGATE")); //$NON-NLS-1$ //$NON-NLS-2$
+    template = template.replaceAll("\\{solutions\\}", Messages.getInstance().getString("UI.USER_SOLUTIONS")); //$NON-NLS-1$ //$NON-NLS-2$
+    template = template.replaceAll("\\{file-cache\\}", Messages.getInstance().getString("UI.USER_FILE_CACHE")); //$NON-NLS-1$ //$NON-NLS-2$
+    template = template.replaceAll("\\{new-content\\}", Messages.getInstance().getString("UI.USER_NEW_CONTENT")); //$NON-NLS-1$ //$NON-NLS-2$
 
-    template = template.replaceAll("\\{file\\}", Messages.getString("UI.USER_FILE")); //$NON-NLS-1$ //$NON-NLS-2$
-    template = template.replaceAll("\\{view\\}", Messages.getString("UI.USER_VIEW")); //$NON-NLS-1$ //$NON-NLS-2$
-    template = template.replaceAll("\\{nightly\\}", Messages.getString("UI.USER_NIGHTLY")); //$NON-NLS-1$ //$NON-NLS-2$
-    template = template.replaceAll("\\{tracker\\}", Messages.getString("UI.USER_TRACKER")); //$NON-NLS-1$ //$NON-NLS-2$
-    template = template.replaceAll("\\{new-report\\}", Messages.getString("UI.USER_NEW_REPORT")); //$NON-NLS-1$ //$NON-NLS-2$
-    template = template.replaceAll("\\{new-view", Messages.getString("UI.USER_NEW_PIVOT")); //$NON-NLS-1$ //$NON-NLS-2$
-    template = template.replaceAll("\\{admin\\}", Messages.getString("UI.USER_ADMIN")); //$NON-NLS-1$ //$NON-NLS-2$
-    template = template.replaceAll("\\{about\\}", Messages.getString("UI.USER_ABOUT")); //$NON-NLS-1$ //$NON-NLS-2$
-    template = template.replaceAll("\\{pentaho.org\\}", Messages.getString("UI.USER_PENTAHO.COM")); //$NON-NLS-1$ //$NON-NLS-2$
-    template = template.replaceAll("\\{close\\}", Messages.getString("UI.USER_CLOSE")); //$NON-NLS-1$ //$NON-NLS-2$
-    template = template.replaceAll("\\{forums\\}", Messages.getString("UI.USER_FORUMS")); //$NON-NLS-1$ //$NON-NLS-2$
-    template = template.replaceAll("\\{demos\\}", Messages.getString("UI.USER_DEMOS")); //$NON-NLS-1$ //$NON-NLS-2$
-    template = template.replaceAll("\\{downloads\\}", Messages.getString("UI.USER_DOWNLOADS")); //$NON-NLS-1$ //$NON-NLS-2$
+    template = template.replaceAll("\\{file\\}", Messages.getInstance().getString("UI.USER_FILE")); //$NON-NLS-1$ //$NON-NLS-2$
+    template = template.replaceAll("\\{view\\}", Messages.getInstance().getString("UI.USER_VIEW")); //$NON-NLS-1$ //$NON-NLS-2$
+    template = template.replaceAll("\\{nightly\\}", Messages.getInstance().getString("UI.USER_NIGHTLY")); //$NON-NLS-1$ //$NON-NLS-2$
+    template = template.replaceAll("\\{tracker\\}", Messages.getInstance().getString("UI.USER_TRACKER")); //$NON-NLS-1$ //$NON-NLS-2$
+    template = template.replaceAll("\\{new-report\\}", Messages.getInstance().getString("UI.USER_NEW_REPORT")); //$NON-NLS-1$ //$NON-NLS-2$
+    template = template.replaceAll("\\{new-view", Messages.getInstance().getString("UI.USER_NEW_PIVOT")); //$NON-NLS-1$ //$NON-NLS-2$
+    template = template.replaceAll("\\{admin\\}", Messages.getInstance().getString("UI.USER_ADMIN")); //$NON-NLS-1$ //$NON-NLS-2$
+    template = template.replaceAll("\\{about\\}", Messages.getInstance().getString("UI.USER_ABOUT")); //$NON-NLS-1$ //$NON-NLS-2$
+    template = template.replaceAll("\\{pentaho.org\\}", Messages.getInstance().getString("UI.USER_PENTAHO.COM")); //$NON-NLS-1$ //$NON-NLS-2$
+    template = template.replaceAll("\\{close\\}", Messages.getInstance().getString("UI.USER_CLOSE")); //$NON-NLS-1$ //$NON-NLS-2$
+    template = template.replaceAll("\\{forums\\}", Messages.getInstance().getString("UI.USER_FORUMS")); //$NON-NLS-1$ //$NON-NLS-2$
+    template = template.replaceAll("\\{demos\\}", Messages.getInstance().getString("UI.USER_DEMOS")); //$NON-NLS-1$ //$NON-NLS-2$
+    template = template.replaceAll("\\{downloads\\}", Messages.getInstance().getString("UI.USER_DOWNLOADS")); //$NON-NLS-1$ //$NON-NLS-2$
     template = template
         .replaceAll("text/html; charset=utf-8", "text/html; charset=" + LocaleHelper.getSystemEncoding()); //$NON-NLS-1$//$NON-NLS-2$ 
     template = template.replaceAll("\\{text-direction\\}", LocaleHelper.getTextDirection()); //$NON-NLS-1$
-    template = template.replaceAll("\\{logout\\}", Messages.getString("UI.USER_LOGOUT")); //$NON-NLS-1$ //$NON-NLS-2$
-    template = template.replaceAll("\\{portal\\}", Messages.getString("UI.USER_PORTAL")); //$NON-NLS-1$ //$NON-NLS-2$
+    template = template.replaceAll("\\{logout\\}", Messages.getInstance().getString("UI.USER_LOGOUT")); //$NON-NLS-1$ //$NON-NLS-2$
+    template = template.replaceAll("\\{portal\\}", Messages.getInstance().getString("UI.USER_PORTAL")); //$NON-NLS-1$ //$NON-NLS-2$
     if( PentahoSystem.getObjectFactory().objectDefined( IVersionHelper.class.getSimpleName() ) ) {
       IVersionHelper versionHelper = PentahoSystem.get(IVersionHelper.class, session);
       template = template.replaceAll("\\{version\\}", "Version: " + versionHelper.getVersionInformation(PentahoSystem.class)); //$NON-NLS-1$ //$NON-NLS-2$
@@ -101,7 +101,7 @@ public String processTemplate(String template, final String title, final String 
     template = template.replaceAll("\\{body-tag\\}", ""); //$NON-NLS-1$ //$NON-NLS-2$
     template = template.replaceAll("\\{isAdmin\\}", SecurityHelper.isPentahoAdministrator(session) ? "true" : "false"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
     template = template.replaceAll("\\{repository-name\\}", repository.getRepositoryName() ); //$NON-NLS-1$
-    template = template.replaceAll("\\{copyright\\}", Messages.getString("UI.USER_COPYRIGHT")); //$NON-NLS-1$ //$NON-NLS-2$
+    template = template.replaceAll("\\{copyright\\}", Messages.getInstance().getString("UI.USER_COPYRIGHT")); //$NON-NLS-1$ //$NON-NLS-2$
 
     return template;
   }
@@ -118,7 +118,7 @@ public String processTemplate(String template, final String title, final String 
     }
 
     if (template == null) {
-      return Messages.getString("UI.ERROR_0001_BAD_TEMPLATE", resource.getAddress()); //$NON-NLS-1$
+      return Messages.getInstance().getString("UI.ERROR_0001_BAD_TEMPLATE", resource.getAddress()); //$NON-NLS-1$
     } else {
       return template;
     }
@@ -149,7 +149,7 @@ public String processTemplate(String template, final String title, final String 
     if( menuProvider != null ) {
       return menuProvider.getMenuBar("menu", "system/ui/menubar.xul", session).toString(); //$NON-NLS-1$ //$NON-NLS-2$
     }
-    Logger.error( WebTemplateHelper.class.getName(), Messages.getString("WebTemplateHelper.ERROR_0001_COULD_NOT_CREATE_MENUBAR") ); //$NON-NLS-1$
+    Logger.error( WebTemplateHelper.class.getName(), Messages.getInstance().getString("WebTemplateHelper.ERROR_0001_COULD_NOT_CREATE_MENUBAR") ); //$NON-NLS-1$
     return ""; //$NON-NLS-1$
   }
 }

@@ -74,20 +74,20 @@ public class GetContent extends ServletBase {
 
       String id = request.getParameter("id"); //$NON-NLS-1$
       if (id == null) {
-        returnError(response, Messages.getErrorString("GetContent.ERROR_0001_ID_PARAMETER_EMPTY")); //$NON-NLS-1$
+        returnError(response, Messages.getInstance().getErrorString("GetContent.ERROR_0001_ID_PARAMETER_EMPTY")); //$NON-NLS-1$
         return;
       }
 
       IContentRepository contentRepos = PentahoSystem.get(IContentRepository.class, userSession);
       if (contentRepos == null) {
-        returnError(response, Messages.getString("GetContent.ERROR_0002_CONTENT_REPOS_UNAVAILABLE")); //$NON-NLS-1$
+        returnError(response, Messages.getInstance().getString("GetContent.ERROR_0002_CONTENT_REPOS_UNAVAILABLE")); //$NON-NLS-1$
         return;
       }
 
       try {
         IContentItem contentItem = contentRepos.getContentItemById(id);
         if (contentItem == null) {
-          returnError(response, Messages.getString("GetContent.ERROR_0005_CONTENT_NOT_FOUND", id)); //$NON-NLS-1$
+          returnError(response, Messages.getInstance().getString("GetContent.ERROR_0005_CONTENT_NOT_FOUND", id)); //$NON-NLS-1$
           return;
         }
 
@@ -116,7 +116,7 @@ public class GetContent extends ServletBase {
           // outStr.close();
         }
       } catch (Exception ex) {
-        error(Messages.getErrorString("GetContent.ERROR_0003_CONTENT_READ_ERROR"), ex); //$NON-NLS-1$
+        error(Messages.getInstance().getErrorString("GetContent.ERROR_0003_CONTENT_READ_ERROR"), ex); //$NON-NLS-1$
       }
 
     } finally {
@@ -129,7 +129,7 @@ public class GetContent extends ServletBase {
 
     response.setContentType("text/plain"); //$NON-NLS-1$
     try {
-      response.getWriter().println(Messages.getString("GetContent.ERROR_0004_RETURN_MESSAGE") + message); //$NON-NLS-1$
+      response.getWriter().println(Messages.getInstance().getString("GetContent.ERROR_0004_RETURN_MESSAGE") + message); //$NON-NLS-1$
     } catch (Throwable t) {
     }
   }

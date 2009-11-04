@@ -204,7 +204,7 @@ public class OpenFlashChartComponent extends ComponentBase {
         }
   
       } catch (XmlParseException e) {
-        getLogger().error(Messages.getErrorString("OpenFlashChartComponent.ERROR_0001_CANT_DOCUMENT_FROM_STRING"), e);//$NON-NLS-1$
+        getLogger().error(Messages.getInstance().getErrorString("OpenFlashChartComponent.ERROR_0001_CANT_DOCUMENT_FROM_STRING"), e);//$NON-NLS-1$
         return false;
       }
     } else {
@@ -217,7 +217,7 @@ public class OpenFlashChartComponent extends ComponentBase {
     // if the chart def isn't available, exit
     
     if (chartNode == null) {
-      getLogger().error(Messages.getErrorString("OpenFlashChartComponent.ERROR_0002_CHART_DEFINITION_NOT_FOUND"));//$NON-NLS-1$
+      getLogger().error(Messages.getInstance().getErrorString("OpenFlashChartComponent.ERROR_0002_CHART_DEFINITION_NOT_FOUND"));//$NON-NLS-1$
       return false;
     }
     

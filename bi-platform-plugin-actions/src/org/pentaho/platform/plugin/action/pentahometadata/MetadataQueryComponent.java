@@ -295,7 +295,7 @@ public class MetadataQueryComponent {
       // localConnection = getConnection(localConnection);
       return localConnection;
     } catch (Exception e) {
-      logger.error(Messages.getErrorString("MetadataQueryComponent.ERROR_0006_EXECUTE_FAILED"), e); //$NON-NLS-1$
+      logger.error(Messages.getInstance().getErrorString("MetadataQueryComponent.ERROR_0006_EXECUTE_FAILED"), e); //$NON-NLS-1$
     }
     return null;
   }
@@ -307,11 +307,11 @@ public class MetadataQueryComponent {
       prod = conn.getNativeConnection().getMetaData().getDatabaseProductName();
       DatabaseInterface di = DatabaseMetaUtil.getDatabaseInterface(prod);
       if (prod != null && di == null) {
-        logger.warn(Messages.getString("MQLRelationalDataComponent.WARN_0001_NO_DIALECT_DETECTED", prod)); //$NON-NLS-1$
+        logger.warn(Messages.getInstance().getString("MQLRelationalDataComponent.WARN_0001_NO_DIALECT_DETECTED", prod)); //$NON-NLS-1$
       }
       return di;
     } catch (SQLException e) {
-      logger.warn(Messages.getString("MQLRelationalDataComponent.WARN_0002_DIALECT_EXCEPTION", prod), e); //$NON-NLS-1$
+      logger.warn(Messages.getInstance().getString("MQLRelationalDataComponent.WARN_0002_DIALECT_EXCEPTION", prod), e); //$NON-NLS-1$
     }
     return null;
   }
@@ -363,7 +363,7 @@ public class MetadataQueryComponent {
     String sql = null;
     try {
       if ((sqlConnection == null) || !sqlConnection.initialized()) {
-        logger.error(Messages.getErrorString("SQLBaseComponent.ERROR_0007_NO_CONNECTION")); //$NON-NLS-1$
+        logger.error(Messages.getInstance().getErrorString("SQLBaseComponent.ERROR_0007_NO_CONNECTION")); //$NON-NLS-1$
         // TODO: throw an exception up the stack.
         return false;
       }
@@ -374,7 +374,7 @@ public class MetadataQueryComponent {
         mappedQuery = sqlGenerator.generateSql(queryObject, LocaleHelper.getLocale().toString(), repo, activeDatabaseMeta, parameters, true);
       } catch (Exception e) {
         // TODO: throw an exception up the stack.
-        logger.error(Messages.getErrorString("MetadataQueryComponent.ERROR_0001_ERROR_EXECUTING_QUERY", e.getLocalizedMessage())); //$NON-NLS-1$
+        logger.error(Messages.getInstance().getErrorString("MetadataQueryComponent.ERROR_0001_ERROR_EXECUTING_QUERY", e.getLocalizedMessage())); //$NON-NLS-1$
         logger.debug("error", e); //$NON-NLS-1$
         return false;
       }
@@ -446,7 +446,7 @@ public class MetadataQueryComponent {
         }
 
       } catch (Exception e) {
-        logger.error(Messages.getErrorString("MetadataQueryComponent.ERROR_0001_ERROR_EXECUTING_QUERY", e.getLocalizedMessage(), sql)); //$NON-NLS-1$
+        logger.error(Messages.getInstance().getErrorString("MetadataQueryComponent.ERROR_0001_ERROR_EXECUTING_QUERY", e.getLocalizedMessage(), sql)); //$NON-NLS-1$
         logger.debug("error", e); //$NON-NLS-1$
         return false;
       }
@@ -455,7 +455,7 @@ public class MetadataQueryComponent {
         resultSet = localResultSet;
         return true;
       } else {
-        logger.error(Messages.getErrorString("SQLBaseComponent.ERROR_0006_EXECUTE_FAILED")); //$NON-NLS-1$
+        logger.error(Messages.getInstance().getErrorString("SQLBaseComponent.ERROR_0006_EXECUTE_FAILED")); //$NON-NLS-1$
         return false;
       }
       

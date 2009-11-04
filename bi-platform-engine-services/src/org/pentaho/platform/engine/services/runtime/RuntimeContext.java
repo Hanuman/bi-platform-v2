@@ -287,7 +287,7 @@ public class RuntimeContext extends PentahoMessenger implements IRuntimeContext 
     if (childRuntimeData != null) {
       childInstanceId = childRuntimeData.getInstanceId();
 //    } else {
-//      warn(Messages.getString("RuntimeContext.ERROR_0027_COULD_NOT_CREATE_CHILD")); //$NON-NLS-1$
+//      warn(Messages.getInstance().getString("RuntimeContext.ERROR_0027_COULD_NOT_CREATE_CHILD")); //$NON-NLS-1$
     }
     return childInstanceId;
   }
@@ -324,7 +324,7 @@ public class RuntimeContext extends PentahoMessenger implements IRuntimeContext 
         childRuntimeData.forceSave();
       }
 //    } else {
-//      warn(Messages.getString("RuntimeContext.ERROR_0027_COULD_NOT_CREATE_CHILD")); //$NON-NLS-1$
+//      warn(Messages.getInstance().getString("RuntimeContext.ERROR_0027_COULD_NOT_CREATE_CHILD")); //$NON-NLS-1$
     }
     return childInstanceId;
   }
@@ -375,7 +375,7 @@ public class RuntimeContext extends PentahoMessenger implements IRuntimeContext 
 
     IActionParameter outputParameter = getOutputParameter(outputName);
     if (outputParameter == null) {
-      warn(Messages.getErrorString(
+      warn(Messages.getInstance().getErrorString(
           "RuntimeContext.ERROR_0021_INVALID_OUTPUT_REQUEST", outputName, actionSequence.getSequenceName())); //$NON-NLS-1$
     }
 
@@ -384,7 +384,7 @@ public class RuntimeContext extends PentahoMessenger implements IRuntimeContext 
     String contentName = "contentrepo:" + getSolutionName() + "/" + getSolutionPath() + "/" + getActionName() + ((seqNum > 0) ? Integer.toString(seqNum) : "") + extension; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 
     if (!IActionParameter.TYPE_CONTENT.equals(outputParameter.getType())) {
-      warn(Messages.getErrorString("RuntimeContext.ERROR_0023_INVALID_OUTPUT_STREAM", outputName)); //$NON-NLS-1$
+      warn(Messages.getInstance().getErrorString("RuntimeContext.ERROR_0023_INVALID_OUTPUT_STREAM", outputName)); //$NON-NLS-1$
       return null;
     }
 
@@ -421,7 +421,7 @@ public class RuntimeContext extends PentahoMessenger implements IRuntimeContext 
     IContentItem contentItem = null;
     IActionParameter parameter = (IActionParameter) actionSequence.getOutputDefinitions().get(outputName);
     if (parameter == null) {
-      warn(Messages.getErrorString(
+      warn(Messages.getInstance().getErrorString(
           "RuntimeContext.ERROR_0021_INVALID_OUTPUT_REQUEST", outputName, actionSequence.getSequenceName())); //$NON-NLS-1$
     } else {
       List destinationsList = parameter.getVariables();
@@ -495,7 +495,7 @@ public class RuntimeContext extends PentahoMessenger implements IRuntimeContext 
     }
 
     if (status != IRuntimeContext.RUNTIME_STATUS_NOT_STARTED) {
-      throw new IllegalStateException(Messages.getErrorString("RuntimeContext.ERROR_0001_RUNTIME_RUNNING")); //$NON-NLS-1$
+      throw new IllegalStateException(Messages.getInstance().getErrorString("RuntimeContext.ERROR_0001_RUNTIME_RUNNING")); //$NON-NLS-1$
     }
 
     initFromActionSequenceDefinition();
@@ -523,7 +523,7 @@ public class RuntimeContext extends PentahoMessenger implements IRuntimeContext 
 
         ISolutionActionDefinition actionDef = (ISolutionActionDefinition) listItem;
         if (RuntimeContext.debug) {
-          debug(Messages.getString("RuntimeContext.DEBUG_VALIDATING_COMPONENT", actionDef.getComponentName())); //$NON-NLS-1$
+          debug(Messages.getInstance().getString("RuntimeContext.DEBUG_VALIDATING_COMPONENT", actionDef.getComponentName())); //$NON-NLS-1$
         }
 
         IComponent component = null;
@@ -542,7 +542,7 @@ public class RuntimeContext extends PentahoMessenger implements IRuntimeContext 
         } catch (Throwable ex) {
           ActionDefinition actionDefinition = new ActionDefinition((Element) actionDef.getNode(), null);
           throw new ActionValidationException(
-              Messages.getErrorString("RuntimeContext.ERROR_0009_COULD_NOT_CREATE_COMPONENT", actionDef.getComponentName().trim()), ex, //$NON-NLS-1$
+              Messages.getInstance().getErrorString("RuntimeContext.ERROR_0009_COULD_NOT_CREATE_COMPONENT", actionDef.getComponentName().trim()), ex, //$NON-NLS-1$
               session.getName(),
               instanceId,
               getActionSequence().getSequenceName(),
@@ -561,7 +561,7 @@ public class RuntimeContext extends PentahoMessenger implements IRuntimeContext 
            */
         } catch (Throwable t) {
           throw new ActionValidationException(
-              Messages.getErrorString("RuntimeContext.ERROR_0035_ACTION_VALIDATION_FAILED"), t, //$NON-NLS-1$
+              Messages.getInstance().getErrorString("RuntimeContext.ERROR_0035_ACTION_VALIDATION_FAILED"), t, //$NON-NLS-1$
               session.getName(),
               instanceId,
               getActionSequence().getSequenceName(),
@@ -571,7 +571,7 @@ public class RuntimeContext extends PentahoMessenger implements IRuntimeContext 
         
         if (validateResult != IRuntimeContext.RUNTIME_CONTEXT_VALIDATE_OK) {
           throw new ActionValidationException(
-              Messages.getErrorString("RuntimeContext.ERROR_0035_ACTION_VALIDATION_FAILED"), //$NON-NLS-1$
+              Messages.getInstance().getErrorString("RuntimeContext.ERROR_0035_ACTION_VALIDATION_FAILED"), //$NON-NLS-1$
               session.getName(),
               instanceId,
               getActionSequence().getSequenceName(),
@@ -611,7 +611,7 @@ public class RuntimeContext extends PentahoMessenger implements IRuntimeContext 
         }
       }
     } catch (Exception ex) {
-      RuntimeContext.logger.warn(Messages.getString("RuntimeContext.WARN_NO_PLUGIN_PROPERTIES_BUNDLE")); //$NON-NLS-1$
+      RuntimeContext.logger.warn(Messages.getInstance().getString("RuntimeContext.WARN_NO_PLUGIN_PROPERTIES_BUNDLE")); //$NON-NLS-1$
     }
     // Get overrides...
     //
@@ -631,9 +631,9 @@ public class RuntimeContext extends PentahoMessenger implements IRuntimeContext 
         knownComponents.putAll(overrideComponents); // load over the top of the known properties
       }
     } catch (FileNotFoundException ignored) {
-      RuntimeContext.logger.warn(Messages.getString("RuntimeContext.WARN_NO_PLUGIN_PROPERTIES")); //$NON-NLS-1$
+      RuntimeContext.logger.warn(Messages.getInstance().getString("RuntimeContext.WARN_NO_PLUGIN_PROPERTIES")); //$NON-NLS-1$
     } catch (IOException ignored) {
-      RuntimeContext.logger.warn(Messages.getString("RuntimeContext.WARN_BAD_PLUGIN_PROPERTIES"), ignored); //$NON-NLS-1$
+      RuntimeContext.logger.warn(Messages.getInstance().getString("RuntimeContext.WARN_BAD_PLUGIN_PROPERTIES"), ignored); //$NON-NLS-1$
     }
 
     return knownComponents;
@@ -736,7 +736,7 @@ public class RuntimeContext extends PentahoMessenger implements IRuntimeContext 
       if (mappedClassName.charAt(0) == '!') {
         // this is deprecated, log a warning
         mappedClassName = mappedClassName.substring(1);
-        runtime.warn(Messages
+        runtime.warn(Messages.getInstance()
             .getString("RuntimeContext.WARN_DEPRECATED_COMPONENT_CLASS", rawClassName, mappedClassName)); //$NON-NLS-1$
         runtime.audit(MessageTypes.DEPRECATION_WARNING, rawClassName, mappedClassName, 0);
       }
@@ -867,11 +867,11 @@ public class RuntimeContext extends PentahoMessenger implements IRuntimeContext 
     // create an IActionDef object
     List actionDefinitions = actionSequence.getActionDefinitionsAndSequences();
     if (actionDefinitions == null) {
-      audit(MessageTypes.ACTION_SEQUENCE_FAILED, MessageTypes.VALIDATION, Messages
+      audit(MessageTypes.ACTION_SEQUENCE_FAILED, MessageTypes.VALIDATION, Messages.getInstance()
           .getErrorString("RuntimeContext.ERROR_0011_NO_VALID_ACTIONS"), 0); //$NON-NLS-1$
       status = IRuntimeContext.RUNTIME_STATUS_FAILURE;
       throw new ActionValidationException(
-          Messages.getErrorString("RuntimeContext.ERROR_0011_NO_VALID_ACTIONS"), //$NON-NLS-1$
+          Messages.getInstance().getErrorString("RuntimeContext.ERROR_0011_NO_VALID_ACTIONS"), //$NON-NLS-1$
           session.getName(),
           instanceId,
           getActionSequence().getSequenceName(),
@@ -882,7 +882,7 @@ public class RuntimeContext extends PentahoMessenger implements IRuntimeContext 
     setLoggingLevel(loggingLevel);
 
     if (RuntimeContext.debug) {
-      debug(Messages.getString("RuntimeContext.DEBUG_EXECUTING_ACTIONS")); //$NON-NLS-1$
+      debug(Messages.getInstance().getString("RuntimeContext.DEBUG_EXECUTING_ACTIONS")); //$NON-NLS-1$
     }
 
     paramManager.setCurrentParameters(null);
@@ -913,7 +913,7 @@ public class RuntimeContext extends PentahoMessenger implements IRuntimeContext 
           ParameterManager.ReturnParameter returnParam = (ParameterManager.ReturnParameter) mapEntry.getValue();
 
           if (returnParam == null) {
-            error(Messages.getErrorString("RuntimeContext.ERROR_0029_SAVE_PARAM_NOT_FOUND", paramName)); //$NON-NLS-1$
+            error(Messages.getInstance().getErrorString("RuntimeContext.ERROR_0029_SAVE_PARAM_NOT_FOUND", paramName)); //$NON-NLS-1$
           } else {
             if (IParameterProvider.SCOPE_SESSION.equals(returnParam.destinationName)) {
               session.setAttribute(returnParam.destinationParameter, returnParam.value);
@@ -924,7 +924,7 @@ public class RuntimeContext extends PentahoMessenger implements IRuntimeContext 
               if (outputHandler != null) {
                 outputHandler.setOutput(returnParam.destinationParameter, returnParam.value);
               } else {
-                info(Messages.getString("RuntimeContext.INFO_NO_OUTPUT_HANDLER")); //$NON-NLS-1$
+                info(Messages.getInstance().getString("RuntimeContext.INFO_NO_OUTPUT_HANDLER")); //$NON-NLS-1$
               }
               if (RuntimeContext.debug) {
                 debug(paramName + " - response - " + returnParam.destinationParameter); //$NON-NLS-1$
@@ -935,7 +935,7 @@ public class RuntimeContext extends PentahoMessenger implements IRuntimeContext 
                 debug(paramName + " - global - " + returnParam.destinationParameter); //$NON-NLS-1$
               }
             } else { // Unrecognized scope
-              warn(Messages
+              warn(Messages.getInstance()
                   .getString(
                       "RuntimeContext.WARN_UNRECOGNIZED_SCOPE", returnParam.destinationName, returnParam.destinationParameter)); //$NON-NLS-1$
             }
@@ -944,7 +944,7 @@ public class RuntimeContext extends PentahoMessenger implements IRuntimeContext 
       }
     }catch (UnresolvedParameterException ex) {
       status = IRuntimeContext.RUNTIME_STATUS_FAILURE;
-      audit(MessageTypes.ACTION_SEQUENCE_FAILED, MessageTypes.VALIDATION, Messages.getErrorString("RuntimeContext.ERROR_0013_BAD_PARAMETERS"), 0); //$NON-NLS-1$
+      audit(MessageTypes.ACTION_SEQUENCE_FAILED, MessageTypes.VALIDATION, Messages.getInstance().getErrorString("RuntimeContext.ERROR_0013_BAD_PARAMETERS"), 0); //$NON-NLS-1$
       throw ex;
     } catch (ActionSequenceException ex) {
       status = IRuntimeContext.RUNTIME_STATUS_FAILURE;
@@ -1006,7 +1006,7 @@ public class RuntimeContext extends PentahoMessenger implements IRuntimeContext 
     }    
     if( peekOnly && !(loopSet instanceof IPeekable) ) {
       throw new ActionExecutionException(
-          Messages.getErrorString("RuntimeContext.ERROR_0033_NOT_PEEKABLE"), //$NON-NLS-1$
+          Messages.getInstance().getErrorString("RuntimeContext.ERROR_0033_NOT_PEEKABLE"), //$NON-NLS-1$
           session.getName(),
           instanceId,
           getActionSequence().getSequenceName(),
@@ -1020,7 +1020,7 @@ public class RuntimeContext extends PentahoMessenger implements IRuntimeContext 
     while (row != null) {
       loopCount++;
       if (RuntimeContext.debug) {
-        debug(Messages.getString("RuntimeContext.DEBUG_EXECUTING_ACTION", Integer.toString(loopCount))); //$NON-NLS-1$
+        debug(Messages.getInstance().getString("RuntimeContext.DEBUG_EXECUTING_ACTION", Integer.toString(loopCount))); //$NON-NLS-1$
       }
 
       if (execListener != null) {
@@ -1043,10 +1043,10 @@ public class RuntimeContext extends PentahoMessenger implements IRuntimeContext 
           } else if (value instanceof String[]) {
             type = IActionParameter.TYPE_STRING;
           } else if (value == null) {
-            warn(Messages.getString("RuntimeContext.WARN_VARIABLE_IN_LOOP_IS_NULL", name)); //$NON-NLS-1$
+            warn(Messages.getInstance().getString("RuntimeContext.WARN_VARIABLE_IN_LOOP_IS_NULL", name)); //$NON-NLS-1$
           } else {
             type = IActionParameter.TYPE_OBJECT;
-            warn(Messages.getString(
+            warn(Messages.getInstance().getString(
                 "RuntimeContext.WARN_VARIABLE_IN_LOOP_NOT_RECOGNIZED", name, value.getClass().toString())); //$NON-NLS-1$
           }
           // TODO make sure any previous loop values are removed
@@ -1080,7 +1080,7 @@ public class RuntimeContext extends PentahoMessenger implements IRuntimeContext 
     for (Iterator it = loopList.iterator(); it.hasNext();) {
       loopCount++;
       if (RuntimeContext.debug) {
-        debug(Messages.getString("RuntimeContext.DEBUG_EXECUTING_ACTION", Integer.toString(loopCount))); //$NON-NLS-1$
+        debug(Messages.getInstance().getString("RuntimeContext.DEBUG_EXECUTING_ACTION", Integer.toString(loopCount))); //$NON-NLS-1$
       }
 
       if (execListener != null) {
@@ -1119,7 +1119,7 @@ public class RuntimeContext extends PentahoMessenger implements IRuntimeContext 
       	if (!conditional.shouldExecute(paramManager.getAllParameters(), RuntimeContext.logger)) {
         	//audit(MessageTypes.ACTION_SEQUENCE_EXECUTE_CONDITIONAL, MessageTypes.NOT_EXECUTED, "", 0); //$NON-NLS-1$ //$NON-NLS-2$
         	if (RuntimeContext.debug) {
-          	this.debug(Messages.getString("RuntimeContext.INFO_ACTION_NOT_EXECUTED")); //$NON-NLS-1$
+          	this.debug(Messages.getInstance().getString("RuntimeContext.INFO_ACTION_NOT_EXECUTED")); //$NON-NLS-1$
         	}
         	status = IRuntimeContext.RUNTIME_STATUS_SUCCESS;
         	return;
@@ -1128,7 +1128,7 @@ public class RuntimeContext extends PentahoMessenger implements IRuntimeContext 
         currentComponent = ""; //$NON-NLS-1$
         status = IRuntimeContext.RUNTIME_STATUS_FAILURE;
         throw new ActionExecutionException(
-            Messages.getErrorString("RuntimeContext.ERROR_0032_CONDITIONAL_EXECUTION_FAILED"), ex, //$NON-NLS-1$
+            Messages.getInstance().getErrorString("RuntimeContext.ERROR_0032_CONDITIONAL_EXECUTION_FAILED"), ex, //$NON-NLS-1$
               session.getName(),
               instanceId,
               getActionSequence().getSequenceName(),
@@ -1187,7 +1187,7 @@ public class RuntimeContext extends PentahoMessenger implements IRuntimeContext 
       // resolve the parameters
       resolveParameters();
     } catch (UnresolvedParameterException ex) {
-      audit(MessageTypes.COMPONENT_EXECUTE_FAILED, MessageTypes.VALIDATION, Messages
+      audit(MessageTypes.COMPONENT_EXECUTE_FAILED, MessageTypes.VALIDATION, Messages.getInstance()
           .getErrorString("RuntimeContext.ERROR_0013_BAD_PARAMETERS"), 0); //$NON-NLS-1$
       if (doneListener != null) {
         doneListener.actionComplete(this);
@@ -1198,7 +1198,7 @@ public class RuntimeContext extends PentahoMessenger implements IRuntimeContext 
     status = IRuntimeContext.RUNTIME_CONTEXT_RESOLVE_OK;
 
     if (RuntimeContext.debug) {
-      debug(Messages.getString("RuntimeContext.DEBUG_PRE-EXECUTE_AUDIT")); //$NON-NLS-1$
+      debug(Messages.getInstance().getString("RuntimeContext.DEBUG_PRE-EXECUTE_AUDIT")); //$NON-NLS-1$
     }
     List auditPre = actionDefinition.getPreExecuteAuditList();
     audit(auditPre);
@@ -1215,11 +1215,11 @@ public class RuntimeContext extends PentahoMessenger implements IRuntimeContext 
     IComponent component = actionDefinition.getComponent();
 
     if (RuntimeContext.debug) {
-      debug(Messages.getString("RuntimeContext.DEBUG_SETTING_LOGGING", Logger.getLogLevelName(loggingLevel))); //$NON-NLS-1$
+      debug(Messages.getInstance().getString("RuntimeContext.DEBUG_SETTING_LOGGING", Logger.getLogLevelName(loggingLevel))); //$NON-NLS-1$
     }
     component.setLoggingLevel(loggingLevel);
     if (RuntimeContext.debug) {
-      debug(Messages.getString("RuntimeContext.DEBUG_INITIALIZING_COMPONENT")); //$NON-NLS-1$
+      debug(Messages.getInstance().getString("RuntimeContext.DEBUG_INITIALIZING_COMPONENT")); //$NON-NLS-1$
     }
     boolean initResult = false;
     try {
@@ -1231,7 +1231,7 @@ public class RuntimeContext extends PentahoMessenger implements IRuntimeContext 
        */
     } catch (Throwable t) {
       throw new ActionInitializationException(
-          Messages.getErrorString("RuntimeContext.ERROR_0016_COMPONENT_INITIALIZE_FAILED"), t, //$NON-NLS-1$
+          Messages.getInstance().getErrorString("RuntimeContext.ERROR_0016_COMPONENT_INITIALIZE_FAILED"), t, //$NON-NLS-1$
               session.getName(),
               instanceId,
               getActionSequence().getSequenceName(),
@@ -1241,13 +1241,13 @@ public class RuntimeContext extends PentahoMessenger implements IRuntimeContext 
 
     if (!initResult) {
       status = IRuntimeContext.RUNTIME_STATUS_INITIALIZE_FAIL;
-      audit(MessageTypes.COMPONENT_EXECUTE_FAILED, MessageTypes.VALIDATION, Messages
+      audit(MessageTypes.COMPONENT_EXECUTE_FAILED, MessageTypes.VALIDATION, Messages.getInstance()
           .getErrorString("RuntimeContext.ERROR_0016_COMPONENT_INITIALIZE_FAILED"), 0); //$NON-NLS-1$
       if (doneListener != null) {
         doneListener.actionComplete(this);
       }
       throw new ActionInitializationException(
-          Messages.getErrorString("RuntimeContext.ERROR_0016_COMPONENT_INITIALIZE_FAILED"), //$NON-NLS-1$
+          Messages.getInstance().getErrorString("RuntimeContext.ERROR_0016_COMPONENT_INITIALIZE_FAILED"), //$NON-NLS-1$
               session.getName(),
               instanceId,
               getActionSequence().getSequenceName(),
@@ -1265,7 +1265,7 @@ public class RuntimeContext extends PentahoMessenger implements IRuntimeContext 
     }
 
     if (RuntimeContext.debug) {
-      debug(Messages.getString("RuntimeContext.DEBUG_POST-EXECUTE_AUDIT")); //$NON-NLS-1$
+      debug(Messages.getInstance().getString("RuntimeContext.DEBUG_POST-EXECUTE_AUDIT")); //$NON-NLS-1$
     }
     List auditPost = actionDefinition.getPostExecuteAuditList();
     audit(auditPost);
@@ -1284,13 +1284,13 @@ public class RuntimeContext extends PentahoMessenger implements IRuntimeContext 
 
   protected void executeComponent(final ISolutionActionDefinition actionDefinition) throws ActionExecutionException{
     if (RuntimeContext.debug) {
-      debug(Messages.getString("RuntimeContext.DEBUG_STARTING_COMPONENT_EXECUTE")); //$NON-NLS-1$
+      debug(Messages.getInstance().getString("RuntimeContext.DEBUG_STARTING_COMPONENT_EXECUTE")); //$NON-NLS-1$
     }
     try {
       status = actionDefinition.getComponent().execute();
       actionDefinition.getComponent().done();
       if (RuntimeContext.debug) {
-        debug(Messages.getString("RuntimeContext.DEBUG_FINISHED_COMPONENT_EXECUTE")); //$NON-NLS-1$
+        debug(Messages.getInstance().getString("RuntimeContext.DEBUG_FINISHED_COMPONENT_EXECUTE")); //$NON-NLS-1$
       }
       /*
        * We need to catch checked and unchecked exceptions here so we can create an ActionSequeceException
@@ -1303,7 +1303,7 @@ public class RuntimeContext extends PentahoMessenger implements IRuntimeContext 
       status = IRuntimeContext.RUNTIME_STATUS_FAILURE;
       audit(MessageTypes.COMPONENT_EXECUTE_FAILED, MessageTypes.FAILED, e.getLocalizedMessage(), 0);
       throw new ActionExecutionException(
-          Messages.getErrorString("RuntimeContext.ERROR_0017_COMPONENT_EXECUTE_FAILED"), e, //$NON-NLS-1$
+          Messages.getInstance().getErrorString("RuntimeContext.ERROR_0017_COMPONENT_EXECUTE_FAILED"), e, //$NON-NLS-1$
           session.getName(),
           instanceId,
           getActionSequence().getSequenceName(),
@@ -1312,7 +1312,7 @@ public class RuntimeContext extends PentahoMessenger implements IRuntimeContext 
     }
     
     if (status != IRuntimeContext.RUNTIME_STATUS_SUCCESS) {
-      throw new ActionExecutionException(Messages.getErrorString("RuntimeContext.ERROR_0017_COMPONENT_EXECUTE_FAILED"),  //$NON-NLS-1$
+      throw new ActionExecutionException(Messages.getInstance().getErrorString("RuntimeContext.ERROR_0017_COMPONENT_EXECUTE_FAILED"),  //$NON-NLS-1$
           session.getName(),
           instanceId,
           getActionSequence().getSequenceName(),
@@ -1352,7 +1352,7 @@ public class RuntimeContext extends PentahoMessenger implements IRuntimeContext 
       actionParameter = paramManager.getCurrentInput(inputName);
       if (actionParameter == null) {
         throw new UnresolvedParameterException(
-            Messages.getErrorString("RuntimeContext.ERROR_0031_INPUT_NOT_FOUND", inputName), //$NON-NLS-1$
+            Messages.getInstance().getErrorString("RuntimeContext.ERROR_0031_INPUT_NOT_FOUND", inputName), //$NON-NLS-1$
               session.getName(),
               instanceId,
               getActionSequence().getSequenceName(),
@@ -1382,7 +1382,7 @@ public class RuntimeContext extends PentahoMessenger implements IRuntimeContext 
         } else {
           parameterProvider = (IParameterProvider) parameterProviders.get(sourceName);
           if (parameterProvider == null) {
-            warn(Messages.getString(
+            warn(Messages.getInstance().getString(
                 "RuntimeContext.WARN_REQUESTED_PARAMETER_SOURCE_NOT_AVAILABLE", sourceName, inputName)); //$NON-NLS-1$
           } else {
             variableValue = parameterProvider.getParameter(sourceValue);
@@ -1398,18 +1398,18 @@ public class RuntimeContext extends PentahoMessenger implements IRuntimeContext 
         if (actionParameter.getValue() != null) {
           if (actionParameter.hasDefaultValue()) {
             if (PentahoSystem.trace) {
-              trace(Messages.getString("RuntimeContext.TRACE_USING_DEFAULT_PARAMETER_VALUE", inputName)); //$NON-NLS-1$
+              trace(Messages.getInstance().getString("RuntimeContext.TRACE_USING_DEFAULT_PARAMETER_VALUE", inputName)); //$NON-NLS-1$
             }
           } else {
             if (PentahoSystem.trace) {
-              trace(Messages.getString("RuntimeContext.TRACE_INFO_USING_CURRENT_PARAMETER_VALUE" + inputName)); //$NON-NLS-1$
+              trace(Messages.getInstance().getString("RuntimeContext.TRACE_INFO_USING_CURRENT_PARAMETER_VALUE" + inputName)); //$NON-NLS-1$
             }
           }
         } else if ("content".equals(actionParameter.getType())) { //$NON-NLS-1$
           variableValue = ""; //$NON-NLS-1$
         } else {
           throw new UnresolvedParameterException(
-              Messages.getErrorString("RuntimeContext.ERROR_0018_PARAMETER_NOT_FULFILLED", inputName), //$NON-NLS-1$
+              Messages.getInstance().getErrorString("RuntimeContext.ERROR_0018_PARAMETER_NOT_FULFILLED", inputName), //$NON-NLS-1$
               session.getName(),
               instanceId,
               getActionSequence().getSequenceName(),
@@ -1448,7 +1448,7 @@ public class RuntimeContext extends PentahoMessenger implements IRuntimeContext 
     IActionParameter actionParameter = paramManager.getCurrentInput(name);
     if (actionParameter == null) {
       // TODO need to know from the action definition if this is ok or not
-      warn(Messages.getErrorString("RuntimeContext.ERROR_0019_INVALID_INPUT_REQUEST", name, actionSequence.getSequenceName())); //$NON-NLS-1$
+      warn(Messages.getInstance().getErrorString("RuntimeContext.ERROR_0019_INVALID_INPUT_REQUEST", name, actionSequence.getSequenceName())); //$NON-NLS-1$
     } else {
       value = actionParameter.getValue();
     }
@@ -1460,7 +1460,7 @@ public class RuntimeContext extends PentahoMessenger implements IRuntimeContext 
     IActionParameter actionParameter = paramManager.getCurrentInput(name);
     if (actionParameter == null) {
       // TODO need to know from the action definition if this is ok or not
-      warn(Messages.getErrorString(
+      warn(Messages.getInstance().getErrorString(
           "RuntimeContext.ERROR_0019_INVALID_INPUT_REQUEST", name, actionSequence.getSequenceName())); //$NON-NLS-1$
     } else {
         value = actionParameter.getStringValue();
@@ -1473,7 +1473,7 @@ public class RuntimeContext extends PentahoMessenger implements IRuntimeContext 
     IActionParameter actionParameter = paramManager.getLoopParameter(name);
     if (actionParameter == null) {
       // TODO need to know from the action definition if this is ok or not
-      warn(Messages.getErrorString(
+      warn(Messages.getInstance().getErrorString(
           "RuntimeContext.ERROR_0020_INVALID_LOOP_PARAMETER", name, actionSequence.getSequenceName())); //$NON-NLS-1$
     } 
     return actionParameter;
@@ -1483,7 +1483,7 @@ public class RuntimeContext extends PentahoMessenger implements IRuntimeContext 
     IActionParameter actionParameter = paramManager.getCurrentInput(name);
     if (actionParameter == null) {
       // TODO need to know from the action definition if this is ok or not
-      warn(Messages.getErrorString(
+      warn(Messages.getInstance().getErrorString(
           "RuntimeContext.ERROR_0019_INVALID_INPUT_REQUEST", name, actionSequence.getSequenceName())); //$NON-NLS-1$
     }
     return actionParameter;
@@ -1493,7 +1493,7 @@ public class RuntimeContext extends PentahoMessenger implements IRuntimeContext 
     IActionParameter actionParameter = paramManager.getCurrentOutput(name);
     if (actionParameter == null) {
       // TODO need to know from the action definition if this is ok or not
-      warn(Messages.getErrorString(
+      warn(Messages.getInstance().getErrorString(
           "RuntimeContext.ERROR_0021_INVALID_OUTPUT_REQUEST", name, actionSequence.getSequenceName())); //$NON-NLS-1$
     }
     return actionParameter;
@@ -1504,7 +1504,7 @@ public class RuntimeContext extends PentahoMessenger implements IRuntimeContext 
 
     if (actionResource == null) {
       // TODO need to know from the action definition if this is ok or not
-      warn(Messages.getErrorString(
+      warn(Messages.getInstance().getErrorString(
           "RuntimeContext.ERROR_0022_INVALID_RESOURCE_REQUEST", name, actionSequence.getSequenceName())); //$NON-NLS-1$
     }
     return actionResource;
@@ -1521,7 +1521,7 @@ public class RuntimeContext extends PentahoMessenger implements IRuntimeContext 
   public void setOutputValue(final String name, final Object output) {
     IActionParameter actionParameter = paramManager.getCurrentOutput(name);
     if (actionParameter == null) {
-      throw new InvalidParameterException(Messages.getErrorString("RuntimeContext.ERROR_0021_INVALID_OUTPUT_REQUEST", name, actionSequence.getSequenceName())); //$NON-NLS-1$
+      throw new InvalidParameterException(Messages.getInstance().getErrorString("RuntimeContext.ERROR_0021_INVALID_OUTPUT_REQUEST", name, actionSequence.getSequenceName())); //$NON-NLS-1$
     }
     actionParameter.setValue(output);
 
@@ -1547,7 +1547,7 @@ public class RuntimeContext extends PentahoMessenger implements IRuntimeContext 
     // TODO Temp workaround for content repos bug
     IActionParameter actionParameter = paramManager.getCurrentInput(parameterName);
     if (actionParameter == null) {
-      throw new InvalidParameterException(Messages.getErrorString(
+      throw new InvalidParameterException(Messages.getInstance().getErrorString(
           "RuntimeContext.ERROR_0019_INVALID_INPUT_REQUEST", parameterName, actionSequence.getSequenceName())); //$NON-NLS-1$
     }
 
@@ -1561,7 +1561,7 @@ public class RuntimeContext extends PentahoMessenger implements IRuntimeContext 
         // get an output stream to hand to the caller
         IContentRepository contentRepository = PentahoSystem.get(IContentRepository.class,session);
         if (contentRepository == null) {
-          warn(Messages.getErrorString("RuntimeContext.ERROR_0024_NO_CONTENT_REPOSITORY")); //$NON-NLS-1$
+          warn(Messages.getInstance().getErrorString("RuntimeContext.ERROR_0024_NO_CONTENT_REPOSITORY")); //$NON-NLS-1$
         } else {
           IContentItem contentItem = contentRepository.getContentItemByPath(location);
           if (contentItem != null) {
@@ -1587,7 +1587,7 @@ public class RuntimeContext extends PentahoMessenger implements IRuntimeContext 
     InputStream inputStream = null;
     IActionParameter inputParameter = getInputParameter(parameterName);
     if (inputParameter == null) {
-      throw new InvalidParameterException(Messages.getErrorString(
+      throw new InvalidParameterException(Messages.getInstance().getErrorString(
           "RuntimeContext.ERROR_0019_INVALID_INPUT_REQUEST", parameterName, actionSequence.getSequenceName())); //$NON-NLS-1$
     }
     Object value = inputParameter.getValue();
@@ -1636,7 +1636,7 @@ public class RuntimeContext extends PentahoMessenger implements IRuntimeContext 
       try {
         return XmlDom4JHelper.getDocFromString(getEmbeddedResource(actionResource), null);  
       } catch(XmlParseException e) {
-        error(Messages.getString("RuntimeContext.ERROR_UNABLE_TO_GET_RESOURCE_AS_DOCUMENT"), e); //$NON-NLS-1$
+        error(Messages.getInstance().getString("RuntimeContext.ERROR_UNABLE_TO_GET_RESOURCE_AS_DOCUMENT"), e); //$NON-NLS-1$
         return null;
       }
     }
@@ -1670,12 +1670,12 @@ public class RuntimeContext extends PentahoMessenger implements IRuntimeContext 
   }
 
   public String getActionName() {
-    return ((actionSequence != null) ? actionSequence.getSequenceName() : Messages
+    return ((actionSequence != null) ? actionSequence.getSequenceName() : Messages.getInstance()
         .getString("RuntimeContext.DEBUG_NO_ACTION")); //$NON-NLS-1$
   }
 
   public String getActionTitle() {
-    return ((actionSequence != null) ? actionSequence.getTitle() : Messages.getString("RuntimeContext.DEBUG_NO_ACTION")); //$NON-NLS-1$
+    return ((actionSequence != null) ? actionSequence.getTitle() : Messages.getInstance().getString("RuntimeContext.DEBUG_NO_ACTION")); //$NON-NLS-1$
   }
 
   // Audit methods
@@ -1703,7 +1703,7 @@ public class RuntimeContext extends PentahoMessenger implements IRuntimeContext 
     }
 
     if (RuntimeContext.debug) {
-      debug(Messages.getString("RuntimeContext.DEBUG_AUDIT", instanceId, getCurrentComponentName(), messageType)); //$NON-NLS-1$
+      debug(Messages.getInstance().getString("RuntimeContext.DEBUG_AUDIT", instanceId, getCurrentComponentName(), messageType)); //$NON-NLS-1$
     }
     AuditHelper.audit(this, session, messageType, message, value, (float) duration / 1000, this);
   }
@@ -1756,13 +1756,13 @@ public class RuntimeContext extends PentahoMessenger implements IRuntimeContext 
         // Generate XForm for the parameters needed, transform into
         // HTML, and float it down the feedback stream
         xformBody.append("<tr><td>"); //$NON-NLS-1$
-        XForm.createXFormSubmit(RuntimeContext.PARAMETER_FORM, xformBody, Messages
+        XForm.createXFormSubmit(RuntimeContext.PARAMETER_FORM, xformBody, Messages.getInstance()
             .getString("RuntimeContext.USER_PARAMETER_FORM_SUBMIT")); //$NON-NLS-1$
         xformBody.append("</td></tr></table></body>"); //$NON-NLS-1$
         String html = XForm.completeXForm(XForm.OUTPUT_HTML_PAGE, RuntimeContext.PARAMETER_FORM, xformHeader,
             xformBody, getSession(), resolver);
         if (RuntimeContext.debug) {
-          debug(Messages.getString("RuntimeContext.DEBUG_PARAMETER_HTML", html)); //$NON-NLS-1$
+          debug(Messages.getInstance().getString("RuntimeContext.DEBUG_PARAMETER_HTML", html)); //$NON-NLS-1$
         }
         outputHandler.getFeedbackContentItem().setMimeType("text/html"); //$NON-NLS-1$ 
         OutputStream os = outputHandler.getFeedbackContentItem().getOutputStream(getActionName());
@@ -1771,7 +1771,7 @@ public class RuntimeContext extends PentahoMessenger implements IRuntimeContext 
         String html = XForm.completeXForm(XForm.OUTPUT_HTML_PAGE, RuntimeContext.PARAMETER_FORM, xformHeader,
             new StringBuffer(parameterTemplate), getSession(), resolver);
         if (RuntimeContext.debug) {
-          debug(Messages.getString("RuntimeContext.DEBUG_PARAMETER_HTML", html)); //$NON-NLS-1$
+          debug(Messages.getInstance().getString("RuntimeContext.DEBUG_PARAMETER_HTML", html)); //$NON-NLS-1$
         }
         IContentItem contentItem = outputHandler.getFeedbackContentItem();
         contentItem.setMimeType("text/html"); //$NON-NLS-1$ 
@@ -1797,10 +1797,10 @@ public class RuntimeContext extends PentahoMessenger implements IRuntimeContext 
                 "<?xml version=\"1.0\" encoding=\"" + LocaleHelper.getSystemEncoding() + "\" ?><filters xmlns:xf=\"http://www.w3.org/2002/xforms\">" + //$NON-NLS-1$ //$NON-NLS-2$
                     xformHeader + "<id><![CDATA[" + //$NON-NLS-1$
                     id + "]]></id><title><![CDATA[" + //$NON-NLS-1$
-                    Messages.getEncodedString(actionSequence.getTitle()) + "]]></title><description><![CDATA[" + //$NON-NLS-1$
-                    Messages.getEncodedString(actionSequence.getDescription()) + "]]></description><icon><![CDATA[" + //$NON-NLS-1$
+                    Messages.getInstance().getEncodedString(actionSequence.getTitle()) + "]]></title><description><![CDATA[" + //$NON-NLS-1$
+                    Messages.getInstance().getEncodedString(actionSequence.getDescription()) + "]]></description><icon><![CDATA[" + //$NON-NLS-1$
                     actionSequence.getIcon() + "]]></icon><help><![CDATA[" + //$NON-NLS-1$
-                    Messages.getEncodedString(actionSequence.getHelp()) + "]]></help>" + //$NON-NLS-1$
+                    Messages.getInstance().getEncodedString(actionSequence.getHelp()) + "]]></help>" + //$NON-NLS-1$
                     "<action><![CDATA[" + actionUrl + "]]></action>" + //$NON-NLS-1$ //$NON-NLS-2$
                     "<display><![CDATA[" + displayUrl + "]]></display>" + //$NON-NLS-1$ //$NON-NLS-2$
                     ((parameterTarget != null) ? "<target>" + parameterTarget + "</target>" : "") + //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
@@ -1839,7 +1839,7 @@ public class RuntimeContext extends PentahoMessenger implements IRuntimeContext 
               subscriptionRepository.addSchedulesToDocument(getSession().getName(), contentId, schedulesNode, editId);
             } catch (Throwable t) {
               //TODO: if this is truly an error, should we just let the exception propgate and fail the execute?
-              error(Messages.getErrorString("PRO_SUBSCRIPTREP.ERROR_0005_GENERAL_ERROR"), t); //$NON-NLS-1$
+              error(Messages.getInstance().getErrorString("PRO_SUBSCRIPTREP.ERROR_0005_GENERAL_ERROR"), t); //$NON-NLS-1$
             }
           }
           // TODO...
@@ -1869,7 +1869,7 @@ public class RuntimeContext extends PentahoMessenger implements IRuntimeContext 
        */
     } catch (Throwable e) {
       throw new ActionSequencePromptException(
-          Messages.getErrorString("RuntimeContext.ERROR_0030_SEND_FEEDBACKFORM"), e, //$NON-NLS-1$
+          Messages.getInstance().getErrorString("RuntimeContext.ERROR_0030_SEND_FEEDBACKFORM"), e, //$NON-NLS-1$
           session.getName(),
           instanceId,
           getActionSequence().getSequenceName(),
@@ -1987,10 +1987,10 @@ public class RuntimeContext extends PentahoMessenger implements IRuntimeContext 
     }
     if (parameterXsl == null) {
       // create some xform to represent this parameter...
-      xformBody.append(Messages.getString("RuntimeContext.CODE_XFORM_CONTROL_LABEL_START", displayName)); //$NON-NLS-1$
+      xformBody.append(Messages.getInstance().getString("RuntimeContext.CODE_XFORM_CONTROL_LABEL_START", displayName)); //$NON-NLS-1$
       XForm.createXFormControl(type, fieldName, defaultValues, values, dispNames, RuntimeContext.PARAMETER_FORM,
           xformHeader, xformBody);
-      xformBody.append(Messages.getString("RuntimeContext.CODE_XFORM_CONTROL_LABEL_END")); //$NON-NLS-1$
+      xformBody.append(Messages.getInstance().getString("RuntimeContext.CODE_XFORM_CONTROL_LABEL_END")); //$NON-NLS-1$
     } else if (parameterTemplate != null) {
       StringBuffer body = new StringBuffer();
       XForm.createXFormControl(type, fieldName, defaultValues, values, dispNames, RuntimeContext.PARAMETER_FORM,
@@ -2090,14 +2090,14 @@ public class RuntimeContext extends PentahoMessenger implements IRuntimeContext 
       // create some xform to represent this parameter...
 
       if (visible) {
-        xformBody.append(Messages.getString("RuntimeContext.CODE_XFORM_CONTROL_LABEL_START", displayName)); //$NON-NLS-1$
+        xformBody.append(Messages.getInstance().getString("RuntimeContext.CODE_XFORM_CONTROL_LABEL_START", displayName)); //$NON-NLS-1$
         // xformBody.append( "<tr><td class=\"portlet-font\">").append(
         // displayName ).append("</td><td class=\"portlet-font\">"
         // );//$NON-NLS-1$ //$NON-NLS-2$
       }
       XForm.createXFormControl(fieldName, defaultValue, RuntimeContext.PARAMETER_FORM, xformHeader, xformBody, visible);
       if (visible) {
-        xformBody.append(Messages.getString("RuntimeContext.CODE_XFORM_CONTROL_LABEL_END")); //$NON-NLS-1$
+        xformBody.append(Messages.getInstance().getString("RuntimeContext.CODE_XFORM_CONTROL_LABEL_END")); //$NON-NLS-1$
         // xformBody.append( "</td></tr>" ); //$NON-NLS-1$
       }
     } else if (parameterTemplate != null) {

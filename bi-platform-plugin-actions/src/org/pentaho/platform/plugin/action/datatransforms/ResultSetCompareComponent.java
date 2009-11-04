@@ -53,21 +53,21 @@ public class ResultSetCompareComponent extends ComponentBase {
       compareAction = (ResultSetCompareAction) getActionDefinition();
       if (compareAction.getResultSet1() == ActionInputConstant.NULL_INPUT) {
         actionValidated = false;
-        error(Messages.getErrorString("ResultSetCompareComponent.ERROR_0001_INPUT_RS1_UNDEFINED")); //$NON-NLS-1$
+        error(Messages.getInstance().getErrorString("ResultSetCompareComponent.ERROR_0001_INPUT_RS1_UNDEFINED")); //$NON-NLS-1$
       }
 
       if (actionValidated && (compareAction.getResultSet2() == ActionInputConstant.NULL_INPUT)) {
         actionValidated = false;
-        error(Messages.getErrorString("ResultSetCompareComponent.ERROR_0002_INPUT_RS2_UNDEFINED")); //$NON-NLS-1$
+        error(Messages.getInstance().getErrorString("ResultSetCompareComponent.ERROR_0002_INPUT_RS2_UNDEFINED")); //$NON-NLS-1$
       }
 
       if (actionValidated && (compareAction.getCompareColumnNum() == ActionInputConstant.NULL_INPUT)) {
         actionValidated = false;
-        error(Messages.getErrorString("ResultSetCompareComponent.ERROR_0003_COLUMN_UNDEFINED")); //$NON-NLS-1$        
+        error(Messages.getInstance().getErrorString("ResultSetCompareComponent.ERROR_0003_COLUMN_UNDEFINED")); //$NON-NLS-1$        
       }
     } else {
       actionValidated = false;
-      error(Messages.getErrorString(
+      error(Messages.getInstance().getErrorString(
           "ComponentBase.ERROR_0001_UNKNOWN_ACTION_TYPE", getActionDefinition().getElement().asXML())); //$NON-NLS-1$      
     }
 
@@ -91,13 +91,13 @@ public class ResultSetCompareComponent extends ComponentBase {
 
     Object obj1 = compareAction.getResultSet1().getValue();
     if (!(obj1 instanceof IPentahoResultSet)) {
-      error(Messages.getErrorString("ResultSetCompareComponent.ERROR_0004_INPUT_RS1_NOT_RS")); //$NON-NLS-1$
+      error(Messages.getInstance().getErrorString("ResultSetCompareComponent.ERROR_0004_INPUT_RS1_NOT_RS")); //$NON-NLS-1$
       return false;
     }
 
     Object obj2 = compareAction.getResultSet2().getValue();
     if (!(obj2 instanceof IPentahoResultSet)) {
-      error(Messages.getErrorString("ResultSetCompareComponent.ERROR_0005_INPUT_RS2_NOT_RS")); //$NON-NLS-1$
+      error(Messages.getInstance().getErrorString("ResultSetCompareComponent.ERROR_0005_INPUT_RS2_NOT_RS")); //$NON-NLS-1$
       return false;
     }
 
@@ -130,20 +130,20 @@ public class ResultSetCompareComponent extends ComponentBase {
     StringBuffer outputBuf = new StringBuffer();
     if (!outputMismatches) {
       if (sourceRowCount != compRowCount) {
-        error(Messages.getErrorString("ResultSetCompareComponent.ERROR_0006_RESULTSETS_ROWCOUNT_WRONG")); //$NON-NLS-1$
+        error(Messages.getInstance().getErrorString("ResultSetCompareComponent.ERROR_0006_RESULTSETS_ROWCOUNT_WRONG")); //$NON-NLS-1$
         return false;
       }
       if (sourceColCount != compColCount) {
-        error(Messages.getErrorString("ResultSetCompareComponent.ERROR_0007_RESULTSETS_COLUMNCOUNT_WRONG")); //$NON-NLS-1$
+        error(Messages.getInstance().getErrorString("ResultSetCompareComponent.ERROR_0007_RESULTSETS_COLUMNCOUNT_WRONG")); //$NON-NLS-1$
         return false;
       }
     }
     if (compareCol > sourceColCount) {
-      error(Messages.getErrorString("ResultSetCompareComponent.ERROR_0008_COLUMN_NOT_FOUND") + compareCol); //$NON-NLS-1$
+      error(Messages.getInstance().getErrorString("ResultSetCompareComponent.ERROR_0008_COLUMN_NOT_FOUND") + compareCol); //$NON-NLS-1$
       return false;
     }
     if (compareCol > compColCount) {
-      error(Messages.getErrorString("ResultSetCompareComponent.ERROR_0009_COMPARISON_COLUMN_NOT_FOUND") + compareCol); //$NON-NLS-1$
+      error(Messages.getInstance().getErrorString("ResultSetCompareComponent.ERROR_0009_COMPARISON_COLUMN_NOT_FOUND") + compareCol); //$NON-NLS-1$
       return false;
     }
     boolean anyMismatches = false;
@@ -172,7 +172,7 @@ public class ResultSetCompareComponent extends ComponentBase {
           output.setValue(outputBuf.toString());
         }
         if (outputMismatches) {
-          error(Messages.getErrorString("ResultSetCompareComponent.ERROR_0010_MISMATCH_OUTPUT", srcValue.toString())); //$NON-NLS-1$
+          error(Messages.getInstance().getErrorString("ResultSetCompareComponent.ERROR_0010_MISMATCH_OUTPUT", srcValue.toString())); //$NON-NLS-1$
           anyMismatches = true;
         } else {
           if (stopOnError) {

@@ -91,7 +91,7 @@ public class RuntimeRepository extends PentahoBase implements IRuntimeRepository
   public IRuntimeElement loadElementById(final String instId, final Collection allowableReadAttributeNames)
       throws RepositoryException {
     if (RuntimeRepository.debug) {
-      debug(Messages.getString("RTREPO.DEBUG_LOAD_ELEMENT_BY_ID", instId)); //$NON-NLS-1$
+      debug(Messages.getInstance().getString("RTREPO.DEBUG_LOAD_ELEMENT_BY_ID", instId)); //$NON-NLS-1$
     }
     Session session = HibernateUtil.getSession();
     try {
@@ -99,8 +99,8 @@ public class RuntimeRepository extends PentahoBase implements IRuntimeRepository
       runtimeElement.setAllowableAttributeNames(allowableReadAttributeNames);
       return runtimeElement;
     } catch (HibernateException ex) {
-      error(Messages.getErrorString("RTREPO.ERROR_0001_LOAD_ELEMENT", instId), ex); //$NON-NLS-1$
-      throw new RepositoryException(Messages.getErrorString("RTREPO.ERROR_0001_LOAD_ELEMENT", instId), ex); //$NON-NLS-1$
+      error(Messages.getInstance().getErrorString("RTREPO.ERROR_0001_LOAD_ELEMENT", instId), ex); //$NON-NLS-1$
+      throw new RepositoryException(Messages.getInstance().getErrorString("RTREPO.ERROR_0001_LOAD_ELEMENT", instId), ex); //$NON-NLS-1$
     }
   }
 
@@ -116,20 +116,20 @@ public class RuntimeRepository extends PentahoBase implements IRuntimeRepository
    */
   public IRuntimeElement newRuntimeElement(final String parId, final String parType, boolean transientOnly) {
     if (RuntimeRepository.debug) {
-      debug(Messages.getString("RTREPO.DEBUG_NEW_ELEMENT_PARENT", parId, parType)); //$NON-NLS-1$
+      debug(Messages.getInstance().getString("RTREPO.DEBUG_NEW_ELEMENT_PARENT", parId, parType)); //$NON-NLS-1$
     }
     Session session = HibernateUtil.getSession();
     String instanceId = UUIDUtil.getUUIDAsString();
     if (RuntimeRepository.debug) {
-      debug(Messages.getString("RTREPO.DEBUG_CREATE_INSTANCE", instanceId)); //$NON-NLS-1$
+      debug(Messages.getInstance().getString("RTREPO.DEBUG_CREATE_INSTANCE", instanceId)); //$NON-NLS-1$
     }
     RuntimeElement re = new RuntimeElement(instanceId, parId, parType);
     if (!transientOnly) {
       try {
         session.save(re);
       } catch (HibernateException ex) {
-        error(Messages.getErrorString("RTREPO.ERROR_0002_SAVING_ELEMENT"), ex); //$NON-NLS-1$
-        throw new RepositoryException(Messages.getErrorString("RTREPO.ERROR_0002_SAVING_ELEMENT"), ex);//$NON-NLS-1$
+        error(Messages.getInstance().getErrorString("RTREPO.ERROR_0002_SAVING_ELEMENT"), ex); //$NON-NLS-1$
+        throw new RepositoryException(Messages.getInstance().getErrorString("RTREPO.ERROR_0002_SAVING_ELEMENT"), ex);//$NON-NLS-1$
       }
     }
     return re;
@@ -150,20 +150,20 @@ public class RuntimeRepository extends PentahoBase implements IRuntimeRepository
   public IRuntimeElement newRuntimeElement(final String parId, final String parType, final String solnId,
       boolean transientOnly) {
     if (RuntimeRepository.debug) {
-      debug(Messages.getString("RTREPO.DEBUG_NEW_ELEMENT_PARENT_SOLN", parId, parType, solnId)); //$NON-NLS-1$
+      debug(Messages.getInstance().getString("RTREPO.DEBUG_NEW_ELEMENT_PARENT_SOLN", parId, parType, solnId)); //$NON-NLS-1$
     }
     Session session = HibernateUtil.getSession();
     String instanceId = UUIDUtil.getUUIDAsString();
     if (RuntimeRepository.debug) {
-      debug(Messages.getString("RTREPO.DEBUG_CREATE_INSTANCE", instanceId)); //$NON-NLS-1$
+      debug(Messages.getInstance().getString("RTREPO.DEBUG_CREATE_INSTANCE", instanceId)); //$NON-NLS-1$
     }
     RuntimeElement re = new RuntimeElement(instanceId, parId, parType, solnId);
     if (!transientOnly) {
       try {
         session.save(re);
       } catch (HibernateException ex) {
-        error(Messages.getErrorString("RTREPO.ERROR_0003_SAVING_ELEMENT"), ex); //$NON-NLS-1$
-        throw new RepositoryException(Messages.getErrorString("RTREPO.ERROR_0003_SAVING_ELEMENT"), ex); //$NON-NLS-1$
+        error(Messages.getInstance().getErrorString("RTREPO.ERROR_0003_SAVING_ELEMENT"), ex); //$NON-NLS-1$
+        throw new RepositoryException(Messages.getInstance().getErrorString("RTREPO.ERROR_0003_SAVING_ELEMENT"), ex); //$NON-NLS-1$
       }
     }
     return re;

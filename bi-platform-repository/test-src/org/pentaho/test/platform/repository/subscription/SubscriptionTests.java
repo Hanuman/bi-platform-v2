@@ -155,7 +155,7 @@ public class SubscriptionTests extends BaseTest {
     }
 
     try {
-      info(Messages.getString("SUBSCRTESTS.USER_CLEANUP_SUBSCRIPTIONS")); //$NON-NLS-1$
+      info(Messages.getInstance().getString("SUBSCRTESTS.USER_CLEANUP_SUBSCRIPTIONS")); //$NON-NLS-1$
       ISubscription cleanupSubscription = null;
       for (int i = 0; i < subscriptions.length; i++) {
         if (subscriptions[i][SUBSCRIPTION_ID_COLUMN] != null) {
@@ -170,7 +170,7 @@ public class SubscriptionTests extends BaseTest {
 
     // Keep trying cleanup...
     try {
-      info(Messages.getString("SUBSCRTESTS.USER_CLEANUP_CONTENT")); //$NON-NLS-1$
+      info(Messages.getInstance().getString("SUBSCRTESTS.USER_CLEANUP_CONTENT")); //$NON-NLS-1$
       ISubscribeContent cleanupContent = null;
       for (int i = 0; i < content.length; i++) {
         if (content[i][CONTENT_ID_COLUMN] != null) {
@@ -197,7 +197,7 @@ public class SubscriptionTests extends BaseTest {
     assertNotNull(subContent);
     String parameterName = null;
     String parameterValue = null;
-    info(Messages.getString("SUBSCRTESTS.USER_CREATING_SUBSCRIPTIONS")); //$NON-NLS-1$
+    info(Messages.getInstance().getString("SUBSCRTESTS.USER_CREATING_SUBSCRIPTIONS")); //$NON-NLS-1$
     for (int i = 0; i < subscriptions.length; i++) {
       subscriptionId = UUIDUtil.getUUIDAsString();
       subscriptions[i][SUBSCRIPTION_ID_COLUMN] = subscriptionId;
@@ -219,7 +219,7 @@ public class SubscriptionTests extends BaseTest {
     // After commiting and flushing, you must begin a new transaction...
     HibernateUtil.beginTransaction();
     Schedule schedCheck;
-    info(Messages.getString("SUBSCRTESTS.USER_VALIDATING_SUBSCRIPTIONS")); //$NON-NLS-1$
+    info(Messages.getInstance().getString("SUBSCRTESTS.USER_VALIDATING_SUBSCRIPTIONS")); //$NON-NLS-1$
     for (int i = 0; i < subscriptions.length; i++) {
       subscript = subscriptionRepo.getSubscriptionById((String) subscriptions[i][SUBSCRIPTION_ID_COLUMN]);
       assertNotNull(subscript);
@@ -249,7 +249,7 @@ public class SubscriptionTests extends BaseTest {
     ISchedule currentSchedule = null;
     
     HibernateUtil.beginTransaction();
-    info(Messages.getString("SUBSCRTESTS.USER_CREATING_SCHEDULES")); //$NON-NLS-1$
+    info(Messages.getInstance().getString("SUBSCRTESTS.USER_CREATING_SCHEDULES")); //$NON-NLS-1$
     for (int i = 0; i < schedules.length; i++) {
       scheduleId = UUIDUtil.getUUIDAsString();
       schedules[i][SCHEDULE_ID_COLUMN] = scheduleId;
@@ -269,7 +269,7 @@ public class SubscriptionTests extends BaseTest {
 
     // After commiting and flushing, you must begin a new transaction...
     HibernateUtil.beginTransaction();
-    info(Messages.getString("SUBSCRTESTS.USER_VALIDATING_SCHEDULES")); //$NON-NLS-1$
+    info(Messages.getInstance().getString("SUBSCRTESTS.USER_VALIDATING_SCHEDULES")); //$NON-NLS-1$
     for (int i = 0; i < schedules.length; i++) {
       currentSchedule = subscriptionRepo.getSchedule((String) schedules[i][SCHEDULE_ID_COLUMN]);
       assertNotNull(currentSchedule);
@@ -283,7 +283,7 @@ public class SubscriptionTests extends BaseTest {
   }
 
   private void commitFlushAndClear() {
-    info(Messages.getString("SUBSCRTESTS.USER_FLUSHING_CACHE")); //$NON-NLS-1$
+    info(Messages.getInstance().getString("SUBSCRTESTS.USER_FLUSHING_CACHE")); //$NON-NLS-1$
     HibernateUtil.commitTransaction();
     HibernateUtil.flushSession(); // Force write to disk.
     HibernateUtil.clear(); // Get everything out of the cache.
@@ -297,7 +297,7 @@ public class SubscriptionTests extends BaseTest {
   }
 
   public void createScheduleContent(SubscriptionRepository subscriptionRepo) {
-    info(Messages.getString("SUBSCRTESTS.USER_CREATING_CONTENT")); //$NON-NLS-1$
+    info(Messages.getInstance().getString("SUBSCRTESTS.USER_CREATING_CONTENT")); //$NON-NLS-1$
     String contentId = null;
     ISubscribeContent currentContent = null;
     for (int i = 0; i < content.length; i++) {
@@ -311,7 +311,7 @@ public class SubscriptionTests extends BaseTest {
     commitFlushAndClear();
     // After commiting and flushing, you must begin a new transaction...
     HibernateUtil.beginTransaction();
-    info(Messages.getString("SUBSCRTESTS.USER_VALIDATING_CONTENT")); //$NON-NLS-1$
+    info(Messages.getInstance().getString("SUBSCRTESTS.USER_VALIDATING_CONTENT")); //$NON-NLS-1$
     for (int i = 0; i < content.length; i++) {
       currentContent = subscriptionRepo.getContentById((String) content[i][CONTENT_ID_COLUMN]);
       assertNotNull(currentContent);
@@ -326,7 +326,7 @@ public class SubscriptionTests extends BaseTest {
     // First, test the Subscriptions-for-a-schedule query.
     ISchedule sched1 = subscriptionRepo.getSchedule((String) schedules[0][SCHEDULE_ID_COLUMN]);
     assertNotNull(sched1);
-    info(Messages.getString("SUBSCRTESTS.USER_LISTING_SUBSCRIPTIONS_FOR_SCHEDULE") + sched1.getId()); //$NON-NLS-1$
+    info(Messages.getInstance().getString("SUBSCRTESTS.USER_LISTING_SUBSCRIPTIONS_FOR_SCHEDULE") + sched1.getId()); //$NON-NLS-1$
     List subscriptionList = subscriptionRepo.getSubscriptionsForSchedule(sched1);
     Subscription subscript;
     for (int i = 0; i < subscriptionList.size(); i++) {
@@ -335,11 +335,11 @@ public class SubscriptionTests extends BaseTest {
       info(subscript.asXml());
     }
 
-    info(Messages.getString("SUBSCRTESTS.USER_LISTING_CONTENT_BY_ACTIONREF")); //$NON-NLS-1$
+    info(Messages.getInstance().getString("SUBSCRTESTS.USER_LISTING_CONTENT_BY_ACTIONREF")); //$NON-NLS-1$
     ISubscribeContent subContent = subscriptionRepo
         .getContentByActionReference((String) content[0][CONTENT_ACTIONREF_COLUMN]);
     assertNotNull(subContent);
-    info(Messages.getString("SUBSCRTESTS.USER_FOUND_CONTENT", subContent.getId())); //$NON-NLS-1$
+    info(Messages.getInstance().getString("SUBSCRTESTS.USER_FOUND_CONTENT", subContent.getId())); //$NON-NLS-1$
 
   }
 
@@ -362,7 +362,7 @@ public class SubscriptionTests extends BaseTest {
     subscription = new Subscription(subscriptionId,
         "fred", "My Central Report", subContent, "", Subscription.TYPE_PERSONAL, parameters); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
     repository.addSubscription(subscription);
-    StandaloneSession session = new StandaloneSession(Messages.getString("BaseTest.DEBUG_JUNIT_SESSION")); //$NON-NLS-1$
+    StandaloneSession session = new StandaloneSession(Messages.getInstance().getString("BaseTest.DEBUG_JUNIT_SESSION")); //$NON-NLS-1$
 
     Document userSubscriptionsDocument = repository.getUserSubscriptions("fred", null, session); //$NON-NLS-1$
 

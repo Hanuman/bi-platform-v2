@@ -114,15 +114,15 @@ public class ProxyServlet extends ServletBase {
   public void init(final ServletConfig servletConfig) throws ServletException {
     proxyURL = servletConfig.getInitParameter("ProxyURL"); //$NON-NLS-1$
     if ((proxyURL == null)) {
-      error(Messages.getString("ProxyServlet.ERROR_0001_NO_PROXY_URL_SPECIFIED")); //$NON-NLS-1$
+      error(Messages.getInstance().getString("ProxyServlet.ERROR_0001_NO_PROXY_URL_SPECIFIED")); //$NON-NLS-1$
     } else {
       proxyURL.trim();
       try {
         URL url = new URL(proxyURL); // Just doing this to verify
         // it's good
-        info(Messages.getString("ProxyServlet.INFO_0001_URL_SELECTED", url.toExternalForm())); // using 'url' to get rid of unused var compiler warning //$NON-NLS-1$
+        info(Messages.getInstance().getString("ProxyServlet.INFO_0001_URL_SELECTED", url.toExternalForm())); // using 'url' to get rid of unused var compiler warning //$NON-NLS-1$
       } catch (Throwable t) {
-        error(Messages.getErrorString("ProxyServlet.ERROR_0002_INVALID_URL", proxyURL)); //$NON-NLS-1$
+        error(Messages.getInstance().getErrorString("ProxyServlet.ERROR_0002_INVALID_URL", proxyURL)); //$NON-NLS-1$
         proxyURL = null;
       }
     }
@@ -178,7 +178,7 @@ public class ProxyServlet extends ServletBase {
       }
 
       // System.out.println( ">>>>>>>> PROXY: " + theUrl ); //$NON-NLS-1$
-      debug(Messages.getString("ProxyServlet.DEBUG_0001_OUTPUT_URL", theUrl)); //$NON-NLS-1$
+      debug(Messages.getInstance().getString("ProxyServlet.DEBUG_0001_OUTPUT_URL", theUrl)); //$NON-NLS-1$
 
       // Now do the request
       HttpClient client = new HttpClient();
@@ -188,7 +188,7 @@ public class ProxyServlet extends ServletBase {
         int statusCode = client.executeMethod(method);
 
         if (statusCode != HttpStatus.SC_OK) {
-          error(Messages.getErrorString(
+          error(Messages.getInstance().getErrorString(
               "ProxyServlet.ERROR_0003_REMOTE_HTTP_CALL_FAILED", method.getStatusLine().toString())); //$NON-NLS-1$
           return;
         }
@@ -204,10 +204,10 @@ public class ProxyServlet extends ServletBase {
           outStr.write(buf, 0, inCnt);
         }
       } catch (HttpException e) {
-        error(Messages.getErrorString("ProxyServlet.ERROR_0004_PROTOCOL_FAILURE"), e); //$NON-NLS-1$
+        error(Messages.getInstance().getErrorString("ProxyServlet.ERROR_0004_PROTOCOL_FAILURE"), e); //$NON-NLS-1$
         e.printStackTrace();
       } catch (IOException e) {
-        error(Messages.getErrorString("ProxyServlet.ERROR_0005_TRANSPORT_FAILURE"), e); //$NON-NLS-1$
+        error(Messages.getInstance().getErrorString("ProxyServlet.ERROR_0005_TRANSPORT_FAILURE"), e); //$NON-NLS-1$
         e.printStackTrace();
       } finally {
         method.releaseConnection();

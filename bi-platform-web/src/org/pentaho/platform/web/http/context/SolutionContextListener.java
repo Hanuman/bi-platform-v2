@@ -84,17 +84,17 @@ public class SolutionContextListener implements ServletContextListener {
     }
     LocaleHelper.setDefaultLocale(LocaleHelper.getLocale());
     // log everything that goes on here
-    Logger.info(SolutionContextListener.class.getName(), Messages
+    Logger.info(SolutionContextListener.class.getName(), Messages.getInstance()
         .getString("SolutionContextListener.INFO_INITIALIZING")); //$NON-NLS-1$
-    Logger.info(SolutionContextListener.class.getName(), Messages
+    Logger.info(SolutionContextListener.class.getName(), Messages.getInstance()
         .getString("SolutionContextListener.INFO_SERVLET_CONTEXT") + context); //$NON-NLS-1$
     SolutionContextListener.contextPath = context.getRealPath(""); //$NON-NLS-1$
-    Logger.info(SolutionContextListener.class.getName(), Messages
+    Logger.info(SolutionContextListener.class.getName(), Messages.getInstance()
         .getString("SolutionContextListener.INFO_CONTEXT_PATH") + SolutionContextListener.contextPath); //$NON-NLS-1$
 
     SolutionContextListener.solutionPath = PentahoHttpSessionHelper.getSolutionPath(context);
     if (StringUtils.isEmpty(SolutionContextListener.solutionPath)) {
-      String errorMsg = Messages.getErrorString("SolutionContextListener.ERROR_0001_NO_ROOT_PATH"); //$NON-NLS-1$
+      String errorMsg = Messages.getInstance().getErrorString("SolutionContextListener.ERROR_0001_NO_ROOT_PATH"); //$NON-NLS-1$
       Logger.error(getClass().getName(), errorMsg);
       /*
        * Since we couldn't find solution repository path there is no point in going 
@@ -105,7 +105,7 @@ public class SolutionContextListener implements ServletContextListener {
     }
 
     Logger.info(getClass().getName(),
-        Messages.getString("SolutionContextListener.INFO_ROOT_PATH") + SolutionContextListener.solutionPath); //$NON-NLS-1$
+        Messages.getInstance().getString("SolutionContextListener.INFO_ROOT_PATH") + SolutionContextListener.solutionPath); //$NON-NLS-1$
 
     // TODO: derive the base URL from somewhere
     String baseUrl = context.getInitParameter("base-url"); //$NON-NLS-1$
@@ -156,7 +156,7 @@ public class SolutionContextListener implements ServletContextListener {
       Class<?> classObject = Class.forName(pentahoObjectFactoryClassName);
       pentahoObjectFactory = (IPentahoObjectFactory) classObject.newInstance();
     } catch (Exception e) {
-      String msg = Messages.getErrorString("SolutionContextListener.ERROR_0002_BAD_OBJECT_FACTORY", pentahoObjectFactoryClassName); //$NON-NLS-1$
+      String msg = Messages.getInstance().getErrorString("SolutionContextListener.ERROR_0002_BAD_OBJECT_FACTORY", pentahoObjectFactoryClassName); //$NON-NLS-1$
       //Cannot proceed without an object factory, so we'll put some context around what
       //we were trying to do throw a runtime exception
       throw new RuntimeException(msg, e);
@@ -189,12 +189,12 @@ public class SolutionContextListener implements ServletContextListener {
       IVersionHelper helper = PentahoSystem.get(IVersionHelper.class, null); // No session yet
       if (initOk) {
         System.out
-            .println(Messages
+            .println(Messages.getInstance()
                 .getString(
                     "SolutionContextListener.INFO_SYSTEM_READY", "(" + helper.getVersionInformation(PentahoSystem.class) + ")", baseUrl, SolutionContextListener.solutionPath)); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
       } else {
         System.err
-            .println(Messages
+            .println(Messages.getInstance()
                 .getString(
                     "SolutionContextListener.INFO_SYSTEM_NOT_READY", "(" + helper.getVersionInformation(PentahoSystem.class) + ")", baseUrl, SolutionContextListener.solutionPath)); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
       }
@@ -216,7 +216,7 @@ public class SolutionContextListener implements ServletContextListener {
       LocaleHelper.setLocale(Locale.getDefault());
     }
     // log everything that goes on here
-    Logger.info(SolutionContextListener.class.getName(), Messages
+    Logger.info(SolutionContextListener.class.getName(), Messages.getInstance()
         .getString("SolutionContextListener.INFO_SYSTEM_EXITING")); //$NON-NLS-1$
   }
 }

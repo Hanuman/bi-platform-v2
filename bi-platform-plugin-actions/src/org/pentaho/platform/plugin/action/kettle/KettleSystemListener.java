@@ -53,7 +53,7 @@ public class KettleSystemListener implements IPentahoSystemListener {
       StepLoader.init(new String[]{PentahoSystem.getApplicationContext().getSolutionPath("system/kettle/plugins/steps")}); //$NON-NLS-1$
     } catch (Throwable t) {
       t.printStackTrace();
-      Logger.error(KettleSystemListener.class.getName(), Messages
+      Logger.error(KettleSystemListener.class.getName(), Messages.getInstance()
           .getErrorString("KettleSystemListener.ERROR_0001_STEP_LOAD_FAILED")); //$NON-NLS-1$
     }
 
@@ -61,7 +61,7 @@ public class KettleSystemListener implements IPentahoSystemListener {
       JobEntryLoader.init();
     } catch (Throwable t) {
       t.printStackTrace();
-      Logger.error(KettleSystemListener.class.getName(), Messages
+      Logger.error(KettleSystemListener.class.getName(), Messages.getInstance()
           .getString("KettleSystemListener.ERROR_0002_JOB_ENTRY_LOAD_FAILED")); //$NON-NLS-1$
     }
     
@@ -75,7 +75,7 @@ public class KettleSystemListener implements IPentahoSystemListener {
 			  PluginLoader.getInstance().load("platform-kettle-cfg"); //$NON-NLS-1$
 		  }
 		  catch(KettleConfigException e) {
-			 Logger.error(KettleSystemListener.class.getName(),Messages
+			 Logger.error(KettleSystemListener.class.getName(),Messages.getInstance()
 			          .getString("KettleSystemListener.ERROR_0001_PLUGIN_LOAD_FAILED", pluginPath)); //$NON-NLS-1$
 		  }
 	  }
@@ -109,7 +109,7 @@ public class KettleSystemListener implements IPentahoSystemListener {
       is = repository.getResourceInputStream(kettlePropsFilename, false, ISolutionRepository.ACTION_EXECUTE);
       props.load(is);
     } catch (IOException ioe) {
-      Logger.error(KettleSystemListener.class.getName(), Messages
+      Logger.error(KettleSystemListener.class.getName(), Messages.getInstance()
           .getString("KettleSystemListener.ERROR_0003_PROPERTY_FILE_READ_FAILED") + ioe.getMessage(), ioe); //$NON-NLS-1$
     } finally {
       if (is != null) {

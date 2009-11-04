@@ -64,14 +64,14 @@ public class JFreeReportParametersComponent extends AbstractJFreeReportComponent
     if (maybeReport instanceof MasterReport) {
       return (MasterReport) maybeReport;
     }
-    error(Messages.getString("JFreeReportParametersComponent.ERROR_0033_NO_REPORT_BOUND") + maybeReport); //$NON-NLS-1$
+    error(Messages.getInstance().getString("JFreeReportParametersComponent.ERROR_0033_NO_REPORT_BOUND") + maybeReport); //$NON-NLS-1$
     return null;
   }
 
   private boolean initReportInputs() throws CloneNotSupportedException {
 	  MasterReport report = getReport();
     if (report == null) {
-      error(Messages.getString("JFreeReportParametersComponent.ERROR_0034_NO_REPORT_DEFINITION")); //$NON-NLS-1$
+      error(Messages.getInstance().getString("JFreeReportParametersComponent.ERROR_0034_NO_REPORT_DEFINITION")); //$NON-NLS-1$
       return false;
     }
 

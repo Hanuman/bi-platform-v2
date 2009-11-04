@@ -145,7 +145,7 @@ public class BaseRequestHandler implements IActionRequestHandler, IActionComplet
     ISolutionEngine solutionEngine = PentahoSystem.get(ISolutionEngine.class, session);
     solutionEngine.setCreateFeedbackParameterCallback(createFeedbackParameterCallback);
     if (solutionEngine == null) {
-      Logger.error(this, Messages.getErrorString("BaseRequestHandler.ERROR_0001_NO_SOLUTION_ENGINE")); //$NON-NLS-1$
+      Logger.error(this, Messages.getInstance().getErrorString("BaseRequestHandler.ERROR_0001_NO_SOLUTION_ENGINE")); //$NON-NLS-1$
       return null;
     }
     solutionEngine.setLoggingLevel(ILogger.DEBUG);

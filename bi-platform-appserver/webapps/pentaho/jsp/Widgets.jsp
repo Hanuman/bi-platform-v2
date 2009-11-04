@@ -54,7 +54,7 @@
 	String content = widget.getContent( "text/html" ); //$NON-NLS-1$
 	if( content == null ) {
 		StringBuffer buffer = new StringBuffer();
-		PentahoSystem.get(IMessageFormatter.class, userSession).formatErrorMessage( "text/html", Messages.getErrorString( "WIDGETS.ERROR_0001_DISPLAY_ERROR" ), messages, buffer ); //$NON-NLS-1$ //$NON-NLS-2$
+		PentahoSystem.get(IMessageFormatter.class, userSession).formatErrorMessage( "text/html", Messages.getInstance().getErrorString( "WIDGETS.ERROR_0001_DISPLAY_ERROR" ), messages, buffer ); //$NON-NLS-1$ //$NON-NLS-2$
 		content = buffer.toString();
 	}
 
@@ -62,7 +62,7 @@
 	String footer = "";
 	IUITemplater templater = PentahoSystem.get( IUITemplater.class, userSession );
 	if( templater != null ) {
-		String sections[] = templater.breakTemplate( "template-document.html", Messages.getString("UI.USER_SAMPLES"), userSession ); //$NON-NLS-1$ //$NON-NLS-2$
+		String sections[] = templater.breakTemplate( "template-document.html", Messages.getInstance().getString("UI.USER_SAMPLES"), userSession ); //$NON-NLS-1$ //$NON-NLS-2$
 		if( sections != null && sections.length > 0 ) {
 			intro = sections[0];
 		}
@@ -70,7 +70,7 @@
 			footer = sections[1];
 		}
 	} else {
-		intro = Messages.getString( "UI.ERROR_0002_BAD_TEMPLATE_OBJECT" );
+		intro = Messages.getInstance().getString( "UI.ERROR_0002_BAD_TEMPLATE_OBJECT" );
 	}
 
 %><%= intro %>

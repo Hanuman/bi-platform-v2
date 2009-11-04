@@ -80,7 +80,7 @@ public class StandaloneObjectFactory implements IPentahoDefinableObjectFactory {
 
     ObjectCreator creator = creators.get(key);
     if( creator == null ) {
-      String msg = Messages.getString("AbstractSpringPentahoObjectFactory.WARN_FAILED_TO_CREATE_OBJECT", key); //$NON-NLS-1$
+      String msg = Messages.getInstance().getString("AbstractSpringPentahoObjectFactory.WARN_FAILED_TO_CREATE_OBJECT", key); //$NON-NLS-1$
       throw new ObjectFactoryException( msg );
     }
     
@@ -163,7 +163,7 @@ public class StandaloneObjectFactory implements IPentahoDefinableObjectFactory {
     public Object getSessionInstance( String key, IPentahoSession session )throws ObjectFactoryException  {
 
       if ( null == session ) {
-        throw new IllegalArgumentException( Messages.getErrorString( "SessionObjectCreator.ERROR_0001_INVALID_SESSION" ) ); //$NON-NLS-1$
+        throw new IllegalArgumentException( Messages.getInstance().getErrorString( "SessionObjectCreator.ERROR_0001_INVALID_SESSION" ) ); //$NON-NLS-1$
       }
       Object instance = session.getAttribute( key );
 

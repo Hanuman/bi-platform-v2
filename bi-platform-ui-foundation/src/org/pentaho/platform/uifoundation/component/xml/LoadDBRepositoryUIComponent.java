@@ -92,9 +92,9 @@ public class LoadDBRepositoryUIComponent extends XmlComponent {
           solutionRoot, deleteOrphans);
       result.addAttribute(LoadDBRepositoryUIComponent.TYPE_ATTRIBUTE, LoadDBRepositoryUIComponent.SUCCESS);
       if (usingDbRepository) {
-        result.addText(Messages.getString("LoadDBRepositoryUIComponent.INFO_0001_SUCCESS")); //$NON-NLS-1$
+        result.addText(Messages.getInstance().getString("LoadDBRepositoryUIComponent.INFO_0001_SUCCESS")); //$NON-NLS-1$
       } else {
-        result.addText(Messages.getString("LoadDBRepositoryUIComponent.INFO_0002_SUCCESS_NEED_CONFIG")); //$NON-NLS-1$
+        result.addText(Messages.getInstance().getString("LoadDBRepositoryUIComponent.INFO_0002_SUCCESS_NEED_CONFIG")); //$NON-NLS-1$
       }
       if ((orphanedFiles != null) && (orphanedFiles.size() > 0)) {
         Iterator iter = orphanedFiles.iterator();
@@ -102,14 +102,14 @@ public class LoadDBRepositoryUIComponent extends XmlComponent {
         orphans
             .addElement(LoadDBRepositoryUIComponent.ORPHANHANDLING)
             .addText(
-                deleteOrphans ? Messages.getString("LoadDBRepositoryUIComponent.INFO_0004_ORPHANED_DELETED") : Messages.getString("LoadDBRepositoryUIComponent.INFO_0005_ORPHANED_IGNORED")); //$NON-NLS-1$ //$NON-NLS-2$
+                deleteOrphans ? Messages.getInstance().getString("LoadDBRepositoryUIComponent.INFO_0004_ORPHANED_DELETED") : Messages.getInstance().getString("LoadDBRepositoryUIComponent.INFO_0005_ORPHANED_IGNORED")); //$NON-NLS-1$ //$NON-NLS-2$
         while (iter.hasNext()) {
           orphans.addElement(LoadDBRepositoryUIComponent.FILENAME).addText(((String) iter.next()));
         }
       }
     } catch (Exception e) {
       result.addAttribute(LoadDBRepositoryUIComponent.TYPE_ATTRIBUTE, LoadDBRepositoryUIComponent.FAILURE);
-      result.addText(Messages.getString("LoadDBRepositoryUIComponent.ERROR_0001_LOAD_ERROR") + solutionRoot); //$NON-NLS-1$
+      result.addText(Messages.getInstance().getString("LoadDBRepositoryUIComponent.ERROR_0001_LOAD_ERROR") + solutionRoot); //$NON-NLS-1$
       e.printStackTrace();
     }
     return document;
@@ -121,9 +121,9 @@ public class LoadDBRepositoryUIComponent extends XmlComponent {
     Element root = document.addElement(LoadDBRepositoryUIComponent.RESULT);
     root.addAttribute(LoadDBRepositoryUIComponent.TYPE_ATTRIBUTE, LoadDBRepositoryUIComponent.SHOW_INPUT);
     root.addElement(LoadDBRepositoryUIComponent.PATHTITLE).addText(
-        Messages.getString("LoadDBRepositoryUIComponent.INFO_0003_ENTER_PATH")); //$NON-NLS-1$
+        Messages.getInstance().getString("LoadDBRepositoryUIComponent.INFO_0003_ENTER_PATH")); //$NON-NLS-1$
     root.addElement(LoadDBRepositoryUIComponent.DELETETITLE).addText(
-        Messages.getString("LoadDBRepositoryUIComponent.INFO_0006_DELETE_ORPHANS_TITLE")); //$NON-NLS-1$
+        Messages.getInstance().getString("LoadDBRepositoryUIComponent.INFO_0006_DELETE_ORPHANS_TITLE")); //$NON-NLS-1$
     return document;
   }
 

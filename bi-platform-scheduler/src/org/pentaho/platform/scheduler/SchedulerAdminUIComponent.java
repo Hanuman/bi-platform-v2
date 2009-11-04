@@ -153,8 +153,8 @@ public class SchedulerAdminUIComponent extends XmlComponent {
       sched = QuartzSystemListener.getSchedulerInstance();
       backgroundExecution = PentahoSystem.get(IBackgroundExecution.class, getSession());
     } catch (Exception e) {
-      error(Messages
-          .getString(Messages.getErrorString("SchedulerAdminUIComponent.ERROR_0002_NoScheduler") + e.toString())); //$NON-NLS-1$
+      error(Messages.getInstance()
+          .getString(Messages.getInstance().getErrorString("SchedulerAdminUIComponent.ERROR_0002_NoScheduler") + e.toString())); //$NON-NLS-1$
       e.printStackTrace();
     }
     setXsl("text/html", "SchedulerAdmin.xsl"); //$NON-NLS-1$ //$NON-NLS-2$
@@ -229,7 +229,7 @@ public class SchedulerAdminUIComponent extends XmlComponent {
       try {
         document = XmlDom4JHelper.getDocFromString( strXml, null );        
       } catch(XmlParseException ee) {
-        error(Messages.getErrorString("SchedulerAdminUIComponent.ERROR_0424_UNABLE_TO_READ_DOCUMENT_FROM_STRING"), ee); //$NON-NLS-1$
+        error(Messages.getInstance().getErrorString("SchedulerAdminUIComponent.ERROR_0424_UNABLE_TO_READ_DOCUMENT_FROM_STRING"), ee); //$NON-NLS-1$
         return null;
       }
 
@@ -245,13 +245,13 @@ public class SchedulerAdminUIComponent extends XmlComponent {
     try {
       JobDetail jobDetail = sched.getJobDetail(jobName, groupName);
       if (jobDetail == null) {
-        throw new ComponentException(Messages.getErrorString("SchedulerAdminUIComponent.ERROR_0429_FAILED_TO_EXECUTE_NON_EXISTENT_JOB",jobName));
+        throw new ComponentException(Messages.getInstance().getErrorString("SchedulerAdminUIComponent.ERROR_0429_FAILED_TO_EXECUTE_NON_EXISTENT_JOB",jobName));
       } else {
         jobDetail.setGroup("Immediate"); //$NON-NLS-1$
         sched.scheduleJob(jobDetail, trigger);
       }
     } catch (SchedulerException e) {
-      throw new ComponentException(Messages.getErrorString("SchedulerAdminUIComponent.ERROR_0428_FAILED_TO_EXECUTE",jobName), e);
+      throw new ComponentException(Messages.getInstance().getErrorString("SchedulerAdminUIComponent.ERROR_0428_FAILED_TO_EXECUTE",jobName), e);
     }
 
     return doGetJobNames();
@@ -270,7 +270,7 @@ public class SchedulerAdminUIComponent extends XmlComponent {
       try {
         d = XmlDom4JHelper.getDocFromString(errorXml, null);  
       } catch(XmlParseException e) {
-        error(Messages.getErrorString("SchedulerAdminUIComponent.ERROR_0424_UNABLE_TO_READ_DOCUMENT_FROM_STRING"), e); //$NON-NLS-1$
+        error(Messages.getInstance().getErrorString("SchedulerAdminUIComponent.ERROR_0424_UNABLE_TO_READ_DOCUMENT_FROM_STRING"), e); //$NON-NLS-1$
         return null;        
       }
       return d;
@@ -280,7 +280,7 @@ public class SchedulerAdminUIComponent extends XmlComponent {
     try {
       d = XmlDom4JHelper.getDocFromString(strXml, null);  
     } catch(XmlParseException e) {
-      error(Messages.getErrorString("SchedulerAdminUIComponent.ERROR_0424_UNABLE_TO_READ_DOCUMENT_FROM_STRING"), e); //$NON-NLS-1$
+      error(Messages.getInstance().getErrorString("SchedulerAdminUIComponent.ERROR_0424_UNABLE_TO_READ_DOCUMENT_FROM_STRING"), e); //$NON-NLS-1$
       return null;        
     }
     return d;
@@ -292,12 +292,12 @@ public class SchedulerAdminUIComponent extends XmlComponent {
     String groupName = getParameter("oldJobGroup", null); //$NON-NLS-1$
 
     if (null == jobName || null == groupName) {
-      throw new ComponentException(Messages.getErrorString("SchedulerAdminUIComponent.ERROR_0420_MISSING_PARAMS")); //$NON-NLS-1$
+      throw new ComponentException(Messages.getInstance().getErrorString("SchedulerAdminUIComponent.ERROR_0420_MISSING_PARAMS")); //$NON-NLS-1$
     }
     try {
       sched.deleteJob(jobName, groupName);
     } catch (SchedulerException e) {
-      throw new ComponentException(Messages.getErrorString(
+      throw new ComponentException(Messages.getInstance().getErrorString(
           "SchedulerAdminUIComponent.ERROR_0421_FAILED_TO_UPDATE", jobName, groupName)); //$NON-NLS-1$
     }
     /*
@@ -317,7 +317,7 @@ public class SchedulerAdminUIComponent extends XmlComponent {
       try {
         d = XmlDom4JHelper.getDocFromString(errorXml, null);  
       } catch(Exception e) {
-        error(Messages.getErrorString("SchedulerAdminUIComponent.ERROR_0424_UNABLE_TO_READ_DOCUMENT_FROM_STRING"), e); //$NON-NLS-1$
+        error(Messages.getInstance().getErrorString("SchedulerAdminUIComponent.ERROR_0424_UNABLE_TO_READ_DOCUMENT_FROM_STRING"), e); //$NON-NLS-1$
         return null;        
       }
 
@@ -330,7 +330,7 @@ public class SchedulerAdminUIComponent extends XmlComponent {
     try {
       d = XmlDom4JHelper.getDocFromString(strXml, null);  
     } catch(XmlParseException e) {
-      error(Messages.getErrorString("SchedulerAdminUIComponent.ERROR_0424_UNABLE_TO_READ_DOCUMENT_FROM_STRING"), e); //$NON-NLS-1$
+      error(Messages.getInstance().getErrorString("SchedulerAdminUIComponent.ERROR_0424_UNABLE_TO_READ_DOCUMENT_FROM_STRING"), e); //$NON-NLS-1$
       return null;        
     }
 
@@ -350,7 +350,7 @@ public class SchedulerAdminUIComponent extends XmlComponent {
       }
       sched.deleteJob(jobName, groupName);    
     } catch (SchedulerException e) {
-      throw new ComponentException(Messages.getErrorString(
+      throw new ComponentException(Messages.getInstance().getErrorString(
           "SchedulerAdminUIComponent.ERROR_0422_FAILED_TO_DELETE", jobName, groupName), e); //$NON-NLS-1$
     }
 
@@ -363,7 +363,7 @@ public class SchedulerAdminUIComponent extends XmlComponent {
     try {
       sched.resumeJob(jobName, groupName);
     } catch (SchedulerException e) {
-      throw new ComponentException(Messages.getErrorString(
+      throw new ComponentException(Messages.getInstance().getErrorString(
           "SchedulerAdminUIComponent.ERROR_0426_FAILED_TO_RESUME", jobName, groupName), e);
     }
     
@@ -376,7 +376,7 @@ public class SchedulerAdminUIComponent extends XmlComponent {
     try {
       sched.pauseJob(jobName, groupName);
     } catch (SchedulerException e) {
-      throw new ComponentException(Messages.getErrorString(
+      throw new ComponentException(Messages.getInstance().getErrorString(
           "SchedulerAdminUIComponent.ERROR_0427_FAILED_TO_PAUSE", jobName, groupName), e);
       
     }
@@ -396,9 +396,9 @@ public class SchedulerAdminUIComponent extends XmlComponent {
       root
           .addAttribute(
               RESULT,
-              isInStandby ? Messages.getString("SchedulerAdminUIComponent.USER_isPaused") : Messages.getString("SchedulerAdminUIComponent.USER_isRunning")); //$NON-NLS-1$ //$NON-NLS-2$
+              isInStandby ? Messages.getInstance().getString("SchedulerAdminUIComponent.USER_isPaused") : Messages.getInstance().getString("SchedulerAdminUIComponent.USER_isRunning")); //$NON-NLS-1$ //$NON-NLS-2$
     } catch (SchedulerException e) {
-      throw new ComponentException(Messages.getErrorString("SchedulerAdminUIComponent.ERROR_0425_FAILED_TO_DETERMINE_STATE"), e);
+      throw new ComponentException(Messages.getInstance().getErrorString("SchedulerAdminUIComponent.ERROR_0425_FAILED_TO_DETERMINE_STATE"), e);
     }
     return document;
   }
@@ -428,11 +428,11 @@ public class SchedulerAdminUIComponent extends XmlComponent {
             Date date = trigger.getNextFireTime();
             job
                 .addAttribute(
-                    "nextFireTime", (date == null) ? Messages.getString("SchedulerAdminUIComponent.USER_NEVER") : date.toString()); //$NON-NLS-1$ //$NON-NLS-2$
+                    "nextFireTime", (date == null) ? Messages.getInstance().getString("SchedulerAdminUIComponent.USER_NEVER") : date.toString()); //$NON-NLS-1$ //$NON-NLS-2$
             date = trigger.getPreviousFireTime();
             job
                 .addAttribute(
-                    "prevFireTime", (date == null) ? Messages.getString("SchedulerAdminUIComponent.USER_NEVER") : date.toString()); //$NON-NLS-1$ //$NON-NLS-2$
+                    "prevFireTime", (date == null) ? Messages.getInstance().getString("SchedulerAdminUIComponent.USER_NEVER") : date.toString()); //$NON-NLS-1$ //$NON-NLS-2$
 
             // get the job info
             job.addAttribute(JOB_NAME, trigger.getJobName());
@@ -459,7 +459,7 @@ public class SchedulerAdminUIComponent extends XmlComponent {
               long repeatInSecs = ((SimpleTrigger) trigger).getRepeatInterval();
               job.addAttribute(StandardSettings.REPEAT_TIME_MILLISECS, Long.toString(repeatInSecs));
             } else {
-              throw new RuntimeException(Messages.getErrorString(
+              throw new RuntimeException(Messages.getInstance().getErrorString(
                   "SchedulerAdminUIComponent.ERROR_0423_UNRECOGNIZED_TRIGGER", trigger.getClass().getName())); //$NON-NLS-1$
             }
 
@@ -481,7 +481,7 @@ public class SchedulerAdminUIComponent extends XmlComponent {
         }
       }
     } catch (SchedulerException e) {
-      String msg = Messages.getErrorString("SchedulerAdminUIComponent.ERROR_0001_ErrorInScheduler") + e.toString();
+      String msg = Messages.getInstance().getErrorString("SchedulerAdminUIComponent.ERROR_0001_ErrorInScheduler") + e.toString();
       error(msg);
       root.addAttribute(RESULT, msg);
       addErrorElementToDocument(document, msg);
@@ -513,9 +513,9 @@ public class SchedulerAdminUIComponent extends XmlComponent {
     Element root = document.addElement(getParameter(SCHEDULER_ACTION_STR, "")); //$NON-NLS-1$
     try {
       sched.resumeAll();
-      root.addAttribute(RESULT, Messages.getString("SchedulerAdminUIComponent.USER_JobsResumed")); //$NON-NLS-1$
+      root.addAttribute(RESULT, Messages.getInstance().getString("SchedulerAdminUIComponent.USER_JobsResumed")); //$NON-NLS-1$
     } catch (SchedulerException e) {
-      throw new ComponentException(Messages.getErrorString("SchedulerAdminUIComponent.ERROR_0001_ErrorInScheduler")
+      throw new ComponentException(Messages.getInstance().getErrorString("SchedulerAdminUIComponent.ERROR_0001_ErrorInScheduler")
           + e.toString());
     }
 
@@ -531,9 +531,9 @@ public class SchedulerAdminUIComponent extends XmlComponent {
     Element root = document.addElement(getParameter(SCHEDULER_ACTION_STR, "")); //$NON-NLS-1$
     try {
       sched.pauseAll();
-      root.addAttribute(RESULT, Messages.getString("SchedulerAdminUIComponent.USER_JobsSuspended")); //$NON-NLS-1$
+      root.addAttribute(RESULT, Messages.getInstance().getString("SchedulerAdminUIComponent.USER_JobsSuspended")); //$NON-NLS-1$
     } catch (SchedulerException e) {
-      throw new ComponentException(Messages.getErrorString("SchedulerAdminUIComponent.ERROR_0001_ErrorInScheduler")
+      throw new ComponentException(Messages.getInstance().getErrorString("SchedulerAdminUIComponent.ERROR_0001_ErrorInScheduler")
           + e.toString());
     }
 

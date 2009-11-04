@@ -201,7 +201,7 @@ public class AdhocWebService extends ServletBase {
       try {
         content = getPayloadAsString(request);
       } catch (IOException ioEx) {
-        String msg = Messages.getErrorString("AdhocWebService.ERROR_0006_FAILED_TO_GET_PAYLOAD_FROM_REQUEST"); //$NON-NLS-1$
+        String msg = Messages.getInstance().getErrorString("AdhocWebService.ERROR_0006_FAILED_TO_GET_PAYLOAD_FROM_REQUEST"); //$NON-NLS-1$
         error(msg, ioEx);
         WebServiceUtil.writeString(outputStream,
             WebServiceUtil.getErrorXml(msg + " " + ioEx.getLocalizedMessage()), false); //$NON-NLS-1$
@@ -214,7 +214,7 @@ public class AdhocWebService extends ServletBase {
         try {
           doc = XmlDom4JHelper.getDocFromString(content, new PentahoEntityResolver() );  
         } catch (XmlParseException e) {
-          String msg = Messages.getErrorString("HttpWebService.ERROR_0001_ERROR_DURING_WEB_SERVICE"); //$NON-NLS-1$
+          String msg = Messages.getInstance().getErrorString("HttpWebService.ERROR_0001_ERROR_DURING_WEB_SERVICE"); //$NON-NLS-1$
           error(msg, e);
           WebServiceUtil.writeString(response.getOutputStream(), WebServiceUtil.getErrorXml(msg), false);
         }
@@ -260,7 +260,7 @@ public class AdhocWebService extends ServletBase {
       dispatch(request, response, component, parameterProvider, outputStream, userSession, wrapWithSoap);
 
     } catch (IOException ioEx) {
-      String msg = Messages.getErrorString("HttpWebService.ERROR_0001_ERROR_DURING_WEB_SERVICE"); //$NON-NLS-1$
+      String msg = Messages.getInstance().getErrorString("HttpWebService.ERROR_0001_ERROR_DURING_WEB_SERVICE"); //$NON-NLS-1$
       error(msg, ioEx);
       WebServiceUtil.writeString(outputStream, WebServiceUtil.getErrorXml(msg), false);
     } catch (AdhocWebServiceException ex) {
@@ -279,7 +279,7 @@ public class AdhocWebService extends ServletBase {
       PentahoSystem.systemExitPoint();
     }
     if (ServletBase.debug) {
-      debug(Messages.getString("HttpWebService.DEBUG_WEB_SERVICE_END")); //$NON-NLS-1$
+      debug(Messages.getInstance().getString("HttpWebService.DEBUG_WEB_SERVICE_END")); //$NON-NLS-1$
     }
   }
 
@@ -324,7 +324,7 @@ public class AdhocWebService extends ServletBase {
     } else if ("getJFreePaperSizes".equals(component)) { //$NON-NLS-1$
       getJFreePaperSizes(parameterProvider, outputStream, userSession, wrapWithSoap);
     } else {
-      throw new RuntimeException(Messages.getErrorString("HttpWebService.UNRECOGNIZED_COMPONENT_REQUEST", component)); //$NON-NLS-1$
+      throw new RuntimeException(Messages.getInstance().getErrorString("HttpWebService.UNRECOGNIZED_COMPONENT_REQUEST", component)); //$NON-NLS-1$
     }
   }
 
@@ -398,7 +398,7 @@ public class AdhocWebService extends ServletBase {
     String mimeType = MimeHelper.getMimeTypeFromExtension("." + outputType); //$NON-NLS-1$
     HttpMimeTypeListener listener = new HttpMimeTypeListener(request, response );
     listener.setMimeType(mimeType);
-    listener.setName( Messages.getString("AdhocWebService.USER_REPORT_PREVIEW") ); //$NON-NLS-1$
+    listener.setName( Messages.getInstance().getString("AdhocWebService.USER_REPORT_PREVIEW") ); //$NON-NLS-1$
     String reportXML = parameterProvider.getStringParameter("reportXml", null); //$NON-NLS-1$   
     String templatePath = parameterProvider.getStringParameter("templatePath", null); //$NON-NLS-1$
     try {
@@ -406,7 +406,7 @@ public class AdhocWebService extends ServletBase {
       createJFreeReportAsStream(reportXML, templatePath, outputType, outputStream, userSession, "debug", wrapWithSoap, interactive); //$NON-NLS-1$
     } catch (Exception e) {
       response.setContentType( "text/html" ); //$NON-NLS-1$
-      String msg = Messages.getString( "AdhocWebService.ERROR_0012_FAILED_TO_GENERATE_PREVIEW" ); //$NON-NLS-1$
+      String msg = Messages.getInstance().getString( "AdhocWebService.ERROR_0012_FAILED_TO_GENERATE_PREVIEW" ); //$NON-NLS-1$
       outputStream.write( AdhocWebService.getErrorHtml( request, e, msg ).getBytes() );
       error(msg, e);
     }
@@ -432,7 +432,7 @@ public class AdhocWebService extends ServletBase {
       throws AdhocWebServiceException, IOException, PentahoMetadataException {
     
     if ( StringUtil.doesPathContainParentPathSegment( templatePath ) ) {
-      String msg = Messages.getString( "AdhocWebService.ERROR_0008_MISSING_OR_INVALID_REPORT_NAME" ); //$NON-NLS-1$
+      String msg = Messages.getInstance().getString( "AdhocWebService.ERROR_0008_MISSING_OR_INVALID_REPORT_NAME" ); //$NON-NLS-1$
       throw new AdhocWebServiceException( msg );
     }
     
@@ -440,7 +440,7 @@ public class AdhocWebService extends ServletBase {
     try {
       reportSpecDoc = XmlDom4JHelper.getDocFromString(reportXML, new PentahoEntityResolver() );  
     } catch (XmlParseException e) {
-      String msg = Messages.getErrorString("HttpWebService.ERROR_0001_ERROR_DURING_WEB_SERVICE"); //$NON-NLS-1$
+      String msg = Messages.getInstance().getErrorString("HttpWebService.ERROR_0001_ERROR_DURING_WEB_SERVICE"); //$NON-NLS-1$
       error(msg, e);
       throw new AdhocWebServiceException(msg, e);
     }
@@ -557,7 +557,7 @@ public class AdhocWebService extends ServletBase {
 
     if ( IRuntimeContext.RUNTIME_STATUS_SUCCESS != solutionEngine.getStatus() ) {
       try {
-        outputStream.write(Messages.getErrorString("AdhocWebService.ERROR_0012_FAILED_TO_GENERATE_PREVIEW").getBytes()); //$NON-NLS-1$
+        outputStream.write(Messages.getInstance().getErrorString("AdhocWebService.ERROR_0012_FAILED_TO_GENERATE_PREVIEW").getBytes()); //$NON-NLS-1$
       } catch (IOException e) {
         logger.error(e);
       }
@@ -648,7 +648,7 @@ public class AdhocWebService extends ServletBase {
     try {
       queryObject = helper.fromXML(repo, xml);
     } catch (Exception e) {
-      String msg = Messages.getErrorString("HttpWebService.ERROR_0001_ERROR_DURING_WEB_SERVICE"); //$NON-NLS-1$
+      String msg = Messages.getInstance().getErrorString("HttpWebService.ERROR_0001_ERROR_DURING_WEB_SERVICE"); //$NON-NLS-1$
       error(msg, e);
       throw new AdhocWebServiceException(msg, e);
     }
@@ -658,7 +658,7 @@ public class AdhocWebService extends ServletBase {
       model = queryObject.getLogicalModel();
     }
     if (model == null) {
-      throw new AdhocWebServiceException(Messages.getErrorString("AdhocWebService.ERROR_0003_BUSINESS_VIEW_INVALID")); //$NON-NLS-1$
+      throw new AdhocWebServiceException(Messages.getInstance().getErrorString("AdhocWebService.ERROR_0003_BUSINESS_VIEW_INVALID")); //$NON-NLS-1$
     }
     
     String locale = LocaleHelper.getClosestLocale(LocaleHelper.getLocale().toString(), queryObject.getDomain().getLocaleCodes());
@@ -668,7 +668,7 @@ public class AdhocWebService extends ServletBase {
     ReportSpec reportSpec = (ReportSpec) CastorUtility.getInstance().readCastorObject(reportSpecInputStream,
         ReportSpec.class, reportXMLEncoding );
     if (reportSpec == null) {
-      throw new AdhocWebServiceException(Messages.getErrorString("AdhocWebService.ERROR_0002_REPORT_INVALID")); //$NON-NLS-1$
+      throw new AdhocWebServiceException(Messages.getInstance().getErrorString("AdhocWebService.ERROR_0002_REPORT_INVALID")); //$NON-NLS-1$
     }
 
 
@@ -687,7 +687,7 @@ public class AdhocWebService extends ServletBase {
     boolean columnWidthUnitsConsistent = AdhocWebService.areMetadataColumnUnitsConsistent( reportSpec, model );
 
     if ( !columnWidthUnitsConsistent ) {
-      logger.error( Messages.getErrorString( "AdhocWebService.ERROR_0013_INCONSISTENT_COLUMN_WIDTH_UNITS") ); //$NON-NLS-1$
+      logger.error( Messages.getInstance().getErrorString( "AdhocWebService.ERROR_0013_INCONSISTENT_COLUMN_WIDTH_UNITS") ); //$NON-NLS-1$
     } else {
       double columnWidthScaleFactor = 1.0;
       int missingColumnWidthCount = 0;
@@ -768,7 +768,7 @@ public class AdhocWebService extends ServletBase {
     try {
       generatedJFreeDoc = XmlDom4JHelper.getDocFromString(jfreeXml, new PentahoEntityResolver());  
     } catch (XmlParseException e) {
-      String msg = Messages.getErrorString("HttpWebService.ERROR_0001_ERROR_DURING_WEB_SERVICE"); //$NON-NLS-1$
+      String msg = Messages.getInstance().getErrorString("HttpWebService.ERROR_0001_ERROR_DURING_WEB_SERVICE"); //$NON-NLS-1$
       error(msg, e);
       throw new AdhocWebServiceException(msg, e);
     }
@@ -1236,7 +1236,7 @@ public class AdhocWebService extends ServletBase {
       try {
         jfreeReportDoc = XmlDom4JHelper.getDocFromString(jfreeReportXML, new PentahoEntityResolver());  
       } catch (XmlParseException e) {
-        String msg = Messages.getErrorString("HttpWebService.ERROR_0001_ERROR_DURING_WEB_SERVICE"); //$NON-NLS-1$
+        String msg = Messages.getInstance().getErrorString("HttpWebService.ERROR_0001_ERROR_DURING_WEB_SERVICE"); //$NON-NLS-1$
         error(msg, e);
         throw new AdhocWebServiceException(msg, e);
       }
@@ -1278,7 +1278,7 @@ public class AdhocWebService extends ServletBase {
       outputType = selections.addElement("output-type"); //$NON-NLS-1$
       outputType.addAttribute("prompt-if-one-value", "true"); //$NON-NLS-1$ //$NON-NLS-2$
       Element title = outputType.addElement("title"); //$NON-NLS-1$
-      String prompt = Messages.getString("AdhocWebService.SELECT_OUTPUT_TYPE");//$NON-NLS-1$
+      String prompt = Messages.getInstance().getString("AdhocWebService.SELECT_OUTPUT_TYPE");//$NON-NLS-1$
       title.setText(prompt);
       Element filter = outputType.addElement("filter"); //$NON-NLS-1$
       filter.setText("mimeTypes"); //$NON-NLS-1$
@@ -1376,7 +1376,7 @@ public class AdhocWebService extends ServletBase {
 
     String templateFolderPath = parameterProvider.getStringParameter("templateFolderPath", null); //$NON-NLS-1$
     if ( StringUtil.doesPathContainParentPathSegment( templateFolderPath )) {
-      String msg = Messages.getString( "AdhocWebService.ERROR_0010_OPEN_INDEX_DOC_FAILED", templateFolderPath ); //$NON-NLS-1$
+      String msg = Messages.getInstance().getString( "AdhocWebService.ERROR_0010_OPEN_INDEX_DOC_FAILED", templateFolderPath ); //$NON-NLS-1$
       throw new AdhocWebServiceException( msg );
     }
     
@@ -1390,7 +1390,7 @@ public class AdhocWebService extends ServletBase {
       
       WebServiceUtil.writeDocument(outputStream, indexDoc, wrapWithSoap);
     } catch (Exception e) {
-      String msg = Messages.getString("AdhocWebService.ERROR_0010_OPEN_INDEX_DOC_FAILED"); //$NON-NLS-1$
+      String msg = Messages.getInstance().getString("AdhocWebService.ERROR_0010_OPEN_INDEX_DOC_FAILED"); //$NON-NLS-1$
       msg = msg + " " + e.getLocalizedMessage(); //$NON-NLS-1$
       throw new AdhocWebServiceException( msg );
     }
@@ -1400,7 +1400,7 @@ public class AdhocWebService extends ServletBase {
       final IPentahoSession userSession, final boolean wrapWithSoap) throws IOException, AdhocWebServiceException {
     
     if ("true".equals(PentahoSystem.getSystemSetting("kiosk-mode", "false"))) {  //$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$
-      String msg = WebServiceUtil.getErrorXml(Messages.getString("PentahoGeneral.USER_FEATURE_DISABLED")); //$NON-NLS-1$
+      String msg = WebServiceUtil.getErrorXml(Messages.getInstance().getString("PentahoGeneral.USER_FEATURE_DISABLED")); //$NON-NLS-1$
       WebServiceUtil.writeString(outputStream, msg, wrapWithSoap);
       return;
     }
@@ -1413,7 +1413,7 @@ public class AdhocWebService extends ServletBase {
 
     if (StringUtil.doesPathContainParentPathSegment( path ) )
     {
-      String msg = Messages.getString("AdhocWebService.ERROR_0007_FAILED_TO_DELETE_FILES", filename ); //$NON-NLS-1$
+      String msg = Messages.getInstance().getString("AdhocWebService.ERROR_0007_FAILED_TO_DELETE_FILES", filename ); //$NON-NLS-1$
       throw new  AdhocWebServiceException( msg );
     }
     
@@ -1439,9 +1439,9 @@ public class AdhocWebService extends ServletBase {
     }
 
     if (msg.length() == 0) {
-      msg = WebServiceUtil.getStatusXml(Messages.getString("AdhocWebService.USER_DELETE_SUCCESSFUL")); //$NON-NLS-1$
+      msg = WebServiceUtil.getStatusXml(Messages.getInstance().getString("AdhocWebService.USER_DELETE_SUCCESSFUL")); //$NON-NLS-1$
     } else {
-      msg = Messages.getString("AdhocWebService.ERROR_0007_FAILED_TO_DELETE_FILES", msg); //$NON-NLS-1$
+      msg = Messages.getInstance().getString("AdhocWebService.ERROR_0007_FAILED_TO_DELETE_FILES", msg); //$NON-NLS-1$
       throw new AdhocWebServiceException( msg );
     }
 
@@ -1452,7 +1452,7 @@ public class AdhocWebService extends ServletBase {
       final boolean wrapWithSoap) throws AdhocWebServiceException, IOException, PentahoMetadataException, PentahoAccessControlException {
 
   if ("true".equals(PentahoSystem.getSystemSetting("kiosk-mode", "false"))) { //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-    String msg = WebServiceUtil.getErrorXml(Messages.getString("PentahoGeneral.USER_FEATURE_DISABLED")); //$NON-NLS-1$
+    String msg = WebServiceUtil.getErrorXml(Messages.getInstance().getString("PentahoGeneral.USER_FEATURE_DISABLED")); //$NON-NLS-1$
     WebServiceUtil.writeString(outputStream, msg, wrapWithSoap);
     return;
   }
@@ -1503,7 +1503,7 @@ public class AdhocWebService extends ServletBase {
  
     if ( StringUtil.doesPathContainParentPathSegment( solutionPath )
         || StringUtil.doesPathContainParentPathSegment( templatePath ) ) {
-      String msg = Messages.getString( "AdhocWebService.ERROR_0008_MISSING_OR_INVALID_REPORT_NAME" ); //$NON-NLS-1$
+      String msg = Messages.getInstance().getString( "AdhocWebService.ERROR_0008_MISSING_OR_INVALID_REPORT_NAME" ); //$NON-NLS-1$
       throw new AdhocWebServiceException( msg );
     }
     ISolutionRepository repository = PentahoSystem.get(ISolutionRepository.class, userSession);
@@ -1513,15 +1513,15 @@ public class AdhocWebService extends ServletBase {
     try {
       reportSpecDoc = XmlDom4JHelper.getDocFromString(reportXML, new PentahoEntityResolver());  
     } catch (XmlParseException e) {
-      String msg = Messages.getErrorString("HttpWebService.ERROR_0001_ERROR_DURING_WEB_SERVICE"); //$NON-NLS-1$
+      String msg = Messages.getInstance().getErrorString("HttpWebService.ERROR_0001_ERROR_DURING_WEB_SERVICE"); //$NON-NLS-1$
       error(msg, e);
       throw new AdhocWebServiceException(msg, e);
     }
 
     if ( null == reportSpecDoc )
     {
-      String msg = Messages.getString("AdhocWebService.ERROR_0009_SAVE_FAILED") //$NON-NLS-1$
-        + " " + Messages.getString("AdhocWebService.INVALID_CLIENT_XML" );  //$NON-NLS-1$//$NON-NLS-2$
+      String msg = Messages.getInstance().getString("AdhocWebService.ERROR_0009_SAVE_FAILED") //$NON-NLS-1$
+        + " " + Messages.getInstance().getString("AdhocWebService.INVALID_CLIENT_XML" );  //$NON-NLS-1$//$NON-NLS-2$
         
       throw new AdhocWebServiceException( msg );
     }
@@ -1537,7 +1537,7 @@ public class AdhocWebService extends ServletBase {
     
     String baseName = AdhocWebService.getBaseFilename( fileName );
     if (null == baseName) {
-      String msg = Messages.getString("AdhocWebService.ERROR_0008_MISSING_OR_INVALID_REPORT_NAME");//$NON-NLS-1$
+      String msg = Messages.getInstance().getString("AdhocWebService.ERROR_0008_MISSING_OR_INVALID_REPORT_NAME");//$NON-NLS-1$
       throw new AdhocWebServiceException(msg);
     }
     baseName += "." + AdhocWebService.WAQR_EXTENSION; //$NON-NLS-1$
@@ -1579,7 +1579,7 @@ public class AdhocWebService extends ServletBase {
     int[] errorStatusAr = { xactionSaveStatus, jfreeSaveStatus, xreportSpecSaveStatus };
     int errorStatus = AdhocWebService.getSaveErrorStatus(errorStatusAr);
     if (errorStatus == ISolutionRepository.FILE_ADD_SUCCESSFUL) {
-      String msg = WebServiceUtil.getStatusXml(Messages.getString("AdhocWebService.USER_REPORT_SAVED")); //$NON-NLS-1$
+      String msg = WebServiceUtil.getStatusXml(Messages.getInstance().getString("AdhocWebService.USER_REPORT_SAVED")); //$NON-NLS-1$
       WebServiceUtil.writeString(outputStream, msg, wrapWithSoap);
 
       // Force a refresh of the cached solution tree. This will cause the
@@ -1600,7 +1600,7 @@ public class AdhocWebService extends ServletBase {
         "AdhocWebService.ERROR_0005_FILE_ADD_INVALID_USER_CREDENTIALS"//$NON-NLS-1$ 
       };
       
-      String msg = Messages.getString("AdhocWebService.ERROR_0009_SAVE_FAILED") + " " + Messages.getString( FILE_STATUS_MSG[errorStatus] ); //$NON-NLS-1$ //$NON-NLS-2$
+      String msg = Messages.getInstance().getString("AdhocWebService.ERROR_0009_SAVE_FAILED") + " " + Messages.getInstance().getString( FILE_STATUS_MSG[errorStatus] ); //$NON-NLS-1$ //$NON-NLS-2$
       if (ISolutionRepository.FILE_EXISTS == errorStatus) {
         msg += " (" + xreportSpecFilename + ")"; //$NON-NLS-1$ //$NON-NLS-2$
       }
@@ -1690,11 +1690,11 @@ public class AdhocWebService extends ServletBase {
         reportSpecName = AdhocWebService.WAQR_REPOSITORY_PATH + reportSpecName;
         reportSpecDoc = repository.getResourceAsDocument(reportSpecName, ISolutionRepository.ACTION_EXECUTE);
       } catch (IOException ex) {
-        String msg = Messages.getString("AdhocWebService.ERROR_0004_FAILED_TO_LOAD_REPORTSPEC", reportSpecName);//$NON-NLS-1$
+        String msg = Messages.getInstance().getString("AdhocWebService.ERROR_0004_FAILED_TO_LOAD_REPORTSPEC", reportSpecName);//$NON-NLS-1$
         throw new AdhocWebServiceException(msg, ex);
       }
     } else {
-      String msg = Messages.getString("AdhocWebService.ERROR_0005_MISSING_REPORTSPEC_NAME"); //$NON-NLS-1$
+      String msg = Messages.getInstance().getString("AdhocWebService.ERROR_0005_MISSING_REPORTSPEC_NAME"); //$NON-NLS-1$
       throw new AdhocWebServiceException(msg);
     }
     WebServiceUtil.writeDocument(outputStream, reportSpecDoc, wrapWithSoap);
@@ -1715,12 +1715,12 @@ public class AdhocWebService extends ServletBase {
         String filePath = ActionInfo.buildSolutionPath(solution, path, filename);
         reportSpecDoc = repository.getResourceAsDocument(filePath, ISolutionRepository.ACTION_EXECUTE);
       } catch (IOException ex) {
-        String msg = Messages.getString("AdhocWebService.ERROR_0004_FAILED_TO_LOAD_REPORTSPEC",//$NON-NLS-1$
+        String msg = Messages.getInstance().getString("AdhocWebService.ERROR_0004_FAILED_TO_LOAD_REPORTSPEC",//$NON-NLS-1$
             filename );
         throw new AdhocWebServiceException(msg, ex);
       }
     } else {
-      String msg = Messages.getString("AdhocWebService.ERROR_0005_MISSING_REPORTSPEC_NAME"); //$NON-NLS-1$
+      String msg = Messages.getInstance().getString("AdhocWebService.ERROR_0005_MISSING_REPORTSPEC_NAME"); //$NON-NLS-1$
       throw new AdhocWebServiceException(msg);
     }
     WebServiceUtil.writeDocument(outputStream, reportSpecDoc, wrapWithSoap);
@@ -1732,7 +1732,7 @@ public class AdhocWebService extends ServletBase {
     StringBuffer b = new StringBuffer();
     List<String> msgList = new LinkedList<String>();
     msgList.add( errorMsg );
-    msgList.add( Messages.getString( "AdhocWebService.REASON") ); //$NON-NLS-1$
+    msgList.add( Messages.getInstance().getString( "AdhocWebService.REASON") ); //$NON-NLS-1$
     if ( null != e.getMessage() )
     {
       msgList.add( e.getMessage() );
@@ -1741,7 +1741,7 @@ public class AdhocWebService extends ServletBase {
     {
       msgList.add( e.getClass().getName() );
     }
-    PentahoSystem.get(IMessageFormatter.class, PentahoHttpSessionHelper.getPentahoSession(request)).formatErrorMessage( "text/html", Messages.getString( "AdhocWebService.HEADER_ERROR_PAGE"),//$NON-NLS-1$//$NON-NLS-2$
+    PentahoSystem.get(IMessageFormatter.class, PentahoHttpSessionHelper.getPentahoSession(request)).formatErrorMessage( "text/html", Messages.getInstance().getString( "AdhocWebService.HEADER_ERROR_PAGE"),//$NON-NLS-1$//$NON-NLS-2$
         msgList, b );
     
     return b.toString();
@@ -1868,7 +1868,7 @@ public class AdhocWebService extends ServletBase {
   private Document getWaqrRepositoryDoc( final String folderPath, final IPentahoSession userSession ) throws AdhocWebServiceException {
 
     if ( (folderPath != null && StringUtil.doesPathContainParentPathSegment( folderPath ) )) {
-      String msg = Messages.getString( "AdhocWebService.ERROR_0011_FAILED_TO_LOCATE_PATH", folderPath ); //$NON-NLS-1$
+      String msg = Messages.getInstance().getString( "AdhocWebService.ERROR_0011_FAILED_TO_LOCATE_PATH", folderPath ); //$NON-NLS-1$
       throw new AdhocWebServiceException( msg );
     }
     String solutionRepositoryName = AdhocWebService.getSolutionRepositoryName( userSession );
@@ -1888,7 +1888,7 @@ public class AdhocWebService extends ServletBase {
       systemDoc = DocumentHelper.createDocument((Element) clonedFolderElement.detach() );
       systemDoc.setXMLEncoding(LocaleHelper.getSystemEncoding());
     } else {
-      String msg = Messages.getString( "AdhocWebService.ERROR_0011_FAILED_TO_LOCATE_PATH", folderPath ); //$NON-NLS-1$
+      String msg = Messages.getInstance().getString( "AdhocWebService.ERROR_0011_FAILED_TO_LOCATE_PATH", folderPath ); //$NON-NLS-1$
       throw new AdhocWebServiceException( msg );
     }
     return systemDoc;

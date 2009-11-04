@@ -46,13 +46,13 @@ public class PooledDatasourceService extends BaseDatasourceService {
 	      ds = PooledDatasourceHelper
         .setupPooledDataSource(dataSource);
 			} else  {
-			  throw new DatasourceServiceException(Messages.getErrorString("PooledDatasourceService.ERROR_0002_UNABLE_TO_GET_DATASOURCE")); //$NON-NLS-1$
+			  throw new DatasourceServiceException(Messages.getInstance().getErrorString("PooledDatasourceService.ERROR_0002_UNABLE_TO_GET_DATASOURCE")); //$NON-NLS-1$
 			}
 			cacheManager.putInRegionCache(IDatasourceService.JDBC_DATASOURCE, datasource, ds);
     } catch (ObjectFactoryException objface) {
-      throw new DatasourceServiceException(Messages.getErrorString("PooledDatasourceService.ERROR_0001_UNABLE_TO_INSTANTIATE_OBJECT"),objface); //$NON-NLS-1$
+      throw new DatasourceServiceException(Messages.getInstance().getErrorString("PooledDatasourceService.ERROR_0001_UNABLE_TO_INSTANTIATE_OBJECT"),objface); //$NON-NLS-1$
 		} catch (DatasourceMgmtServiceException daoe) {
-		  throw new DatasourceServiceException(Messages.getErrorString("PooledDatasourceService.ERROR_0002_UNABLE_TO_GET_DATASOURCE"),daoe); //$NON-NLS-1$
+		  throw new DatasourceServiceException(Messages.getInstance().getErrorString("PooledDatasourceService.ERROR_0002_UNABLE_TO_GET_DATASOURCE"),daoe); //$NON-NLS-1$
 		}
 		return ds;
 	}

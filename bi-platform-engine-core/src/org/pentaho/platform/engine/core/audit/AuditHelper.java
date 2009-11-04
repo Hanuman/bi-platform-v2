@@ -46,10 +46,10 @@ public class AuditHelper {
   private static void logTheAuditError(final ILogger logger, Exception e) {
     String msg = null;
     try {
-      msg = ((e.getMessage() != null) ? e.getMessage() : Messages
+      msg = ((e.getMessage() != null) ? e.getMessage() : Messages.getInstance()
           .getErrorString("AUDITHELPER.ERROR_0001_AUDIT_ENTRY_ERROR")); //$NON-NLS-1$
     } catch (Throwable ignored) {
-      msg = Messages.getErrorString("AUDITHELPER.ERROR_0001_AUDIT_ENTRY_ERROR"); //$NON-NLS-1$
+      msg = Messages.getInstance().getErrorString("AUDITHELPER.ERROR_0001_AUDIT_ENTRY_ERROR"); //$NON-NLS-1$
     }
     if ((msg.toLowerCase().indexOf("not found") >= 0)) { //$NON-NLS-1$
       e = null; // Prevent Stack Trace
@@ -69,15 +69,15 @@ public class AuditHelper {
       if ((processId == null) || (instanceId == null) || (actionName == null) || actionName.equals("")) { //$NON-NLS-1$
         if (processId == null) {
           processId = ""; //$NON-NLS-1$
-          AuditHelper.log.error(Messages.getString("AUDITHELPER.ERROR_0002_PROCESS_ID_IS_NULL")); //$NON-NLS-1$
+          AuditHelper.log.error(Messages.getInstance().getString("AUDITHELPER.ERROR_0002_PROCESS_ID_IS_NULL")); //$NON-NLS-1$
         }
         if (instanceId == null) {
           instanceId = ""; //$NON-NLS-1$
-          AuditHelper.log.error(Messages.getString("AUDITHELPER.ERROR_0003_INSTANCE_ID_IS_NULL")); //$NON-NLS-1$
+          AuditHelper.log.error(Messages.getInstance().getString("AUDITHELPER.ERROR_0003_INSTANCE_ID_IS_NULL")); //$NON-NLS-1$
         }
         if (actionName == null) {
           actionName = ""; //$NON-NLS-1$
-          AuditHelper.log.error(Messages.getString("AUDITHELPER.ERROR_0004_ACTION_NAME_IS_NULL")); //$NON-NLS-1$
+          AuditHelper.log.error(Messages.getInstance().getString("AUDITHELPER.ERROR_0004_ACTION_NAME_IS_NULL")); //$NON-NLS-1$
         }
       }
       AuditEntry.auditJobDuration(processId, instanceId, actionName, objectType, userId, messageType, message, value,

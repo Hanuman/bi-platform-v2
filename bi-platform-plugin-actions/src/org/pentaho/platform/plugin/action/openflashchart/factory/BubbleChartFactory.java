@@ -40,7 +40,7 @@ public class BubbleChartFactory extends AbstractChartFactory {
   public void validateData() {
     super.validateData();
     if (getColumnCount() < 3) {
-      throw new RuntimeException(Messages.getErrorString("BubbleChartFactory.ERROR_0001_XYZ_COLUMN_COUNT")); //$NON-NLS-1$
+      throw new RuntimeException(Messages.getInstance().getErrorString("BubbleChartFactory.ERROR_0001_XYZ_COLUMN_COUNT")); //$NON-NLS-1$
     }
   }
 

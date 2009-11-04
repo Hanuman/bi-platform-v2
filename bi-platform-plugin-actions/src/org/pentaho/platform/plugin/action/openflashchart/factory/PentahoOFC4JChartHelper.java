@@ -64,7 +64,7 @@ public class PentahoOFC4JChartHelper {
 
       factoryClassString = (String)getChartFactories().get(chartType);
       if (factoryClassString == null) {
-        throw new RuntimeException(Messages.getErrorString("PentahoOFC4JChartHelper.ERROR_0001_FACTORY_INIT", chartType, factoryClassString)); //$NON-NLS-1$
+        throw new RuntimeException(Messages.getInstance().getErrorString("PentahoOFC4JChartHelper.ERROR_0001_FACTORY_INIT", chartType, factoryClassString)); //$NON-NLS-1$
       } else {
 
 
@@ -83,7 +83,7 @@ public class PentahoOFC4JChartHelper {
         return factory.convertToJson();
       }
     } catch (Exception e) {
-      logger.error(Messages.getErrorString("PentahoOFC4JChartHelper.ERROR_0001_FACTORY_INIT", chartType, factoryClassString), e); //$NON-NLS-1$
+      logger.error(Messages.getInstance().getErrorString("PentahoOFC4JChartHelper.ERROR_0001_FACTORY_INIT", chartType, factoryClassString), e); //$NON-NLS-1$
       throw new RuntimeException(e);
     }
   }
@@ -111,7 +111,7 @@ public class PentahoOFC4JChartHelper {
         }
       }
     } catch (Exception ex) {
-      logger.warn(Messages.getString("PentahoOFC4JChartHelper.WARN_NO_CHART_FACTORY_PROPERTIES_BUNDLE")); //$NON-NLS-1$
+      logger.warn(Messages.getInstance().getString("PentahoOFC4JChartHelper.WARN_NO_CHART_FACTORY_PROPERTIES_BUNDLE")); //$NON-NLS-1$
     }
     // Get overrides...
     //
@@ -132,9 +132,9 @@ public class PentahoOFC4JChartHelper {
         chartFactories.putAll(overrideChartFactories); // load over the top of the known properties
       }
     } catch (FileNotFoundException ignored) {
-      logger.warn(Messages.getString("PentahoOFC4JChartHelper.WARN_NO_CHART_FACTORY_PROPERTIES")); //$NON-NLS-1$
+      logger.warn(Messages.getInstance().getString("PentahoOFC4JChartHelper.WARN_NO_CHART_FACTORY_PROPERTIES")); //$NON-NLS-1$
     } catch (IOException ignored) {
-      logger.warn(Messages.getString("PentahoOFC4JChartHelper.WARN_BAD_CHART_FACTORY_PROPERTIES"), ignored); //$NON-NLS-1$
+      logger.warn(Messages.getInstance().getString("PentahoOFC4JChartHelper.WARN_BAD_CHART_FACTORY_PROPERTIES"), ignored); //$NON-NLS-1$
     }
 
     return chartFactories;

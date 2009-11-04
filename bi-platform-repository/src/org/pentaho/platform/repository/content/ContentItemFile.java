@@ -126,9 +126,9 @@ public class ContentItemFile extends PentahoBase implements IContentItemFile {
         if (itemFile.canRead()) {
           return new FileInputStream(itemFile);
         }
-        throw new ContentException(Messages.getErrorString("CONTFILE.ERROR_0001_FILE_CANNOT_BE_READ", fName)); //$NON-NLS-1$
+        throw new ContentException(Messages.getInstance().getErrorString("CONTFILE.ERROR_0001_FILE_CANNOT_BE_READ", fName)); //$NON-NLS-1$
       }
-      throw new ContentException(Messages.getErrorString("CONTFILE.ERROR_0002_FILE_DOES_NOT_EXIST", fName)); //$NON-NLS-1$
+      throw new ContentException(Messages.getInstance().getErrorString("CONTFILE.ERROR_0002_FILE_DOES_NOT_EXIST", fName)); //$NON-NLS-1$
     } catch (IOException e) {
       throw new ContentException(e.getMessage(), e);
     }
@@ -147,19 +147,19 @@ public class ContentItemFile extends PentahoBase implements IContentItemFile {
     String fName = getCompleteFileName();
     if (itemFile.exists() && (!overWriteOk)) {
       // Not allowed to overwrite a file that is versioned.
-      throw new ContentException(Messages.getErrorString("CONTFILE.ERROR_0003_OVERWRITE_DISALLOWED", fName)); //$NON-NLS-1$
+      throw new ContentException(Messages.getInstance().getErrorString("CONTFILE.ERROR_0003_OVERWRITE_DISALLOWED", fName)); //$NON-NLS-1$
     }
     try {
       if (!append) {
         if (itemFile.exists()) {
           if (!itemFile.delete()) {
-            throw new ContentException(Messages.getErrorString("CONTFILE.ERROR_0004_CANNOT_DELETE_FOR_CREATE", fName)); //$NON-NLS-1$
+            throw new ContentException(Messages.getInstance().getErrorString("CONTFILE.ERROR_0004_CANNOT_DELETE_FOR_CREATE", fName)); //$NON-NLS-1$
           }
         }
         if (itemFile.createNewFile()) {
           return new BufferedOutputStream(new FileOutputStream(itemFile));
         }
-        throw new ContentException(Messages.getErrorString("CONTFILE.ERROR_0005_CANNOT_CREATE", fName)); //$NON-NLS-1$
+        throw new ContentException(Messages.getInstance().getErrorString("CONTFILE.ERROR_0005_CANNOT_CREATE", fName)); //$NON-NLS-1$
       }
       return new BufferedOutputStream(new FileOutputStream(itemFile, append));
     } catch (IOException ex) {
@@ -189,7 +189,7 @@ public class ContentItemFile extends PentahoBase implements IContentItemFile {
         is.close();
       }
     } catch (IOException ex) {
-      throw new ContentException(Messages.getErrorString(
+      throw new ContentException(Messages.getInstance().getErrorString(
           "CONTFILE.ERROR_0006_DURING_COPY", this.getCompleteFileName(), newFileName), ex); //$NON-NLS-1$
     }
   }

@@ -62,12 +62,12 @@ public class TemplateComponent extends ComponentBase {
     }
 
     if (!templateOk) {
-      error(Messages.getString("Template.ERROR_0001_TEMPLATE_NOT_DEFINED")); //$NON-NLS-1$
+      error(Messages.getInstance().getString("Template.ERROR_0001_TEMPLATE_NOT_DEFINED")); //$NON-NLS-1$
       return false;
     }
     Set outputs = getOutputNames();
     if ((outputs == null) || (outputs.size() == 0) || (outputs.size() > 1)) {
-      error(Messages.getString("Template.ERROR_0002_OUTPUT_COUNT_WRONG")); //$NON-NLS-1$
+      error(Messages.getInstance().getString("Template.ERROR_0002_OUTPUT_COUNT_WRONG")); //$NON-NLS-1$
       return false;
     }
     return true;
@@ -130,7 +130,7 @@ public class TemplateComponent extends ComponentBase {
 
       return true;
     } catch (Exception e) {
-      error(Messages.getString("Template.ERROR_0004_COULD_NOT_FORMAT_TEMPLATE"), e); //$NON-NLS-1$
+      error(Messages.getInstance().getString("Template.ERROR_0004_COULD_NOT_FORMAT_TEMPLATE"), e); //$NON-NLS-1$
       return false;
     }
 

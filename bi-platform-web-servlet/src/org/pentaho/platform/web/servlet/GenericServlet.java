@@ -125,7 +125,7 @@ public class GenericServlet extends ServletBase {
       IPluginManager pluginManager = PentahoSystem.get(IPluginManager.class, session);
       if (pluginManager == null) {
         OutputStream out = response.getOutputStream();
-        String message = Messages.getErrorString("GenericServlet.ERROR_0001_BAD_OBJECT", IPluginManager.class.getSimpleName()); //$NON-NLS-1$
+        String message = Messages.getInstance().getErrorString("GenericServlet.ERROR_0001_BAD_OBJECT", IPluginManager.class.getSimpleName()); //$NON-NLS-1$
         error(message);
         out.write(message.getBytes());
         return;
@@ -181,7 +181,7 @@ public class GenericServlet extends ServletBase {
               IOUtils.closeQuietly(resourceStream);
             }
           }
-          logger.error(Messages.getErrorString("GenericServlet.ERROR_0004_RESOURCE_NOT_FOUND", pluginId, pathInfo)); //$NON-NLS-1$
+          logger.error(Messages.getInstance().getErrorString("GenericServlet.ERROR_0004_RESOURCE_NOT_FOUND", pluginId, pathInfo)); //$NON-NLS-1$
           response.sendError(404);
           return;
         }
@@ -190,7 +190,7 @@ public class GenericServlet extends ServletBase {
       IContentGenerator contentGenerator = pluginManager.getContentGenerator(contentGeneratorId, session);
       if (contentGenerator == null) {
         OutputStream out = response.getOutputStream();
-        String message = Messages.getErrorString("GenericServlet.ERROR_0002_BAD_GENERATOR", contentGeneratorId); //$NON-NLS-1$
+        String message = Messages.getInstance().getErrorString("GenericServlet.ERROR_0002_BAD_GENERATOR", contentGeneratorId); //$NON-NLS-1$
         error(message);
         out.write(message.getBytes());
         return;
@@ -263,7 +263,7 @@ public class GenericServlet extends ServletBase {
 
     } catch (Exception e) {
       StringBuffer buffer = new StringBuffer();
-      error(Messages.getErrorString("GenericServlet.ERROR_0002_BAD_GENERATOR", request.getQueryString()), e); //$NON-NLS-1$
+      error(Messages.getInstance().getErrorString("GenericServlet.ERROR_0002_BAD_GENERATOR", request.getQueryString()), e); //$NON-NLS-1$
       List errorList = new ArrayList();
       String msg = e.getMessage();
       errorList.add(msg);

@@ -62,11 +62,11 @@ public class ResultSetExportComponent extends ComponentBase {
   protected boolean validateAction() {
     boolean hasResultSetParameter = isDefinedInput("result-set"); //$NON-NLS-1$ 
     if (!hasResultSetParameter) {
-      error(Messages.getString("JFreeReport.ERROR_0022_DATA_INPUT_INVALID_OBJECT")); //$NON-NLS-1$
+      error(Messages.getInstance().getString("JFreeReport.ERROR_0022_DATA_INPUT_INVALID_OBJECT")); //$NON-NLS-1$
       return false;
     }
     if (getResultOutputName() == null) {
-      error(Messages.getString("JFreeReport.ERROR_0022_DATA_INPUT_INVALID_OBJECT")); //$NON-NLS-1$
+      error(Messages.getInstance().getString("JFreeReport.ERROR_0022_DATA_INPUT_INVALID_OBJECT")); //$NON-NLS-1$
       return false;
     }
     return true;
@@ -94,7 +94,7 @@ public class ResultSetExportComponent extends ComponentBase {
   public String getResultOutputName() {
     Set outputs = getOutputNames();
     if ((outputs == null) || (outputs.size() == 0)) {
-      error(Messages.getString("Template.ERROR_0002_OUTPUT_COUNT_WRONG")); //$NON-NLS-1$
+      error(Messages.getInstance().getString("Template.ERROR_0002_OUTPUT_COUNT_WRONG")); //$NON-NLS-1$
       return null;
     }
     String outputName = null;

@@ -87,18 +87,18 @@ public class InputFormComponent extends XmlComponent {
     }
 
     if (solution == null) {
-      error(Messages.getString("InputForm.ERROR_0001_SOLUTION_NOT_SPECIFIED")); //$NON-NLS-1$
+      error(Messages.getInstance().getString("InputForm.ERROR_0001_SOLUTION_NOT_SPECIFIED")); //$NON-NLS-1$
       ok = false;
     }
 
     if (path == null) {
-      error(Messages.getString("InputForm.ERROR_0002_ACTION_NAME_NOT_SPECIFIED")); //$NON-NLS-1$
+      error(Messages.getInstance().getString("InputForm.ERROR_0002_ACTION_NAME_NOT_SPECIFIED")); //$NON-NLS-1$
       ok = false;
     }
 
     if (actionName == null) {
       // TODO log this
-      error(Messages.getString("InputForm.ERROR_0003_ACTION_PATH_NOT_SPECIFIED")); //$NON-NLS-1$
+      error(Messages.getInstance().getString("InputForm.ERROR_0003_ACTION_PATH_NOT_SPECIFIED")); //$NON-NLS-1$
       ok = false;
     }
 
@@ -120,7 +120,7 @@ public class InputFormComponent extends XmlComponent {
 
     if (actionSequence == null) {
       // TODO log this
-      error(Messages.getString("InputForm.ERROR_0004_ACTION_NOT_FOUND") + solution + path + actionName); //$NON-NLS-1$
+      error(Messages.getInstance().getString("InputForm.ERROR_0004_ACTION_NOT_FOUND") + solution + path + actionName); //$NON-NLS-1$
       return null;
     }
 
@@ -129,7 +129,7 @@ public class InputFormComponent extends XmlComponent {
 
     Node node = action.getComponentSection();
     if (node == null) {
-      error(Messages.getString("InputForm.ERROR_0005_INBOX_DEFINITION_MISSING") + solution + path + actionName); //$NON-NLS-1$
+      error(Messages.getInstance().getString("InputForm.ERROR_0005_INBOX_DEFINITION_MISSING") + solution + path + actionName); //$NON-NLS-1$
       return null;
     }
 
@@ -141,7 +141,7 @@ public class InputFormComponent extends XmlComponent {
         templateName = templateNode.getText();
       }
       if (templateName == null) {
-        error(Messages.getString("InputForm.ERROR_0006_TEMPLATE_NOT_SPECIFIED")); //$NON-NLS-1$
+        error(Messages.getInstance().getString("InputForm.ERROR_0006_TEMPLATE_NOT_SPECIFIED")); //$NON-NLS-1$
         return null;
       }
     }
@@ -161,7 +161,7 @@ public class InputFormComponent extends XmlComponent {
 
       String xFormHtml = XForm.transformSnippet(xFormNode, getSession(), new SolutionURIResolver(getSession()));
       if (xFormHtml == null) {
-        error(Messages.getString("InputForm.ERROR_0007_INBOX_DEFINITION_INVALID") + solution + path + actionName); //$NON-NLS-1$
+        error(Messages.getInstance().getString("InputForm.ERROR_0007_INBOX_DEFINITION_INVALID") + solution + path + actionName); //$NON-NLS-1$
         return null;
       }
       Document document = DocumentHelper.parseText(xFormHtml);

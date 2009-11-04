@@ -113,14 +113,14 @@ public class FilterPanelComponent extends XmlComponent {
         filterDocument = PentahoSystem.get(ISolutionRepository.class, getSession()).getResourceAsDocument(resource, ISolutionRepository.ACTION_EXECUTE);
       } catch (IOException e) {
         // TODO sbarkdull localize
-        FilterPanelComponent.logger.error(Messages.getString("FilterPanelComponent.ERROR_0002_CREATE_XML"), e); //$NON-NLS-1$
+        FilterPanelComponent.logger.error(Messages.getInstance().getString("FilterPanelComponent.ERROR_0002_CREATE_XML"), e); //$NON-NLS-1$
         return false;
       }
       try {
         filterPanel = getFilterPanel(filterDocument);
       } catch (FilterPanelException e) {
         // TODO sbarkdull localize
-        FilterPanelComponent.logger.error(Messages.getString("FilterPanelComponent.ERROR_0003_CREATE"), e); //$NON-NLS-1$
+        FilterPanelComponent.logger.error(Messages.getInstance().getString("FilterPanelComponent.ERROR_0003_CREATE"), e); //$NON-NLS-1$
         return false;
       }
     }
@@ -129,12 +129,12 @@ public class FilterPanelComponent extends XmlComponent {
 
   @Override
   public Document getXmlContent() {
-    //      assert null != urlFactory : Messages.getString("FilterPanelComponent.ERROR_0000_FACTORY_CANNOT_BE_NULL"); //$NON-NLS-1$
+    //      assert null != urlFactory : Messages.getInstance().getString("FilterPanelComponent.ERROR_0000_FACTORY_CANNOT_BE_NULL"); //$NON-NLS-1$
 
     boolean ok = filterPanel.populate(getParameterProviders(), defaultValues);
 
     if (!ok) {
-      String msg = Messages.getString("FilterPanelComponent.ERROR_0001_POPULATE"); //$NON-NLS-1$
+      String msg = Messages.getInstance().getString("FilterPanelComponent.ERROR_0001_POPULATE"); //$NON-NLS-1$
       FilterPanelComponent.log.error(msg);
       throw new UIException(msg);
     }

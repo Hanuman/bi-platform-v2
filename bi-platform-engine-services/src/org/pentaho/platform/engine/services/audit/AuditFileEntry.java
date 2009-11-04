@@ -60,7 +60,7 @@ public class AuditFileEntry implements IAuditEntry {
     if (!auditDir.exists()) {
       auditDir.mkdirs();
     } else if (!auditDir.isDirectory()) {
-      Logger.error(this, Messages.getErrorString(
+      Logger.error(this, Messages.getInstance().getErrorString(
           "AUDFILEENT.ERROR_0001_AUDIT_PATH_NOT_DIRECTORY", AuditFileEntry.auditDirPath)); //$NON-NLS-1$
       return;
     }

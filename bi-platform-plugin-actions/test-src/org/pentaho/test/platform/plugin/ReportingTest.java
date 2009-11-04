@@ -159,7 +159,7 @@ public class ReportingTest extends BaseTest {
     ActionComponent component = new ActionComponent(
         "test/reporting/custom-parameter-page-example.xaction", null, IOutputHandler.OUTPUT_TYPE_DEFAULT, urlFactory, messages); //$NON-NLS-1$
     component.setParameterProvider(IParameterProvider.SCOPE_REQUEST, parameterProvider);
-    StandaloneSession session = new StandaloneSession(Messages.getString("BaseTest.DEBUG_JUNIT_SESSION")); //$NON-NLS-1$
+    StandaloneSession session = new StandaloneSession(Messages.getInstance().getString("BaseTest.DEBUG_JUNIT_SESSION")); //$NON-NLS-1$
     component.validate(session, null);
     OutputStream outputStream = getOutputStream("ReportingTest.testActionComponent", ".html"); //$NON-NLS-1$ //$NON-NLS-2$
     String content = component.getContent("text/html"); //$NON-NLS-1$

@@ -51,7 +51,7 @@ public class FileHelper {
 	try {
 		return IOUtils.toString( is );
 	} catch (IOException e) {
-		logger.error( Messages.getErrorString("FileUtil.ERROR_0001_ERROR", e.getMessage()), e); //$NON-NLS-1$
+		logger.error( Messages.getInstance().getErrorString("FileUtil.ERROR_0001_ERROR", e.getMessage()), e); //$NON-NLS-1$
       return null;
     }
   }
@@ -62,7 +62,7 @@ public class FileHelper {
       fin = new FileInputStream(f);
       return FileHelper.getStringFromInputStream(fin);
     } catch (Exception e) {
-    	logger.error(  Messages.getErrorString("FileUtil.ERROR_0001_ERROR", e.getMessage()), e); //$NON-NLS-1$
+    	logger.error(  Messages.getInstance().getErrorString("FileUtil.ERROR_0001_ERROR", e.getMessage()), e); //$NON-NLS-1$
     } finally {
       FileHelper.closeInputStream(fin);
     }
@@ -88,7 +88,7 @@ public class FileHelper {
       try {
         strm.close();
       } catch (IOException e) {
-        logger.warn(Messages.getString("FileHelper.WARN_ERROR_CLOSING_STREAM"), e); //$NON-NLS-1$
+        logger.warn(Messages.getInstance().getString("FileHelper.WARN_ERROR_CLOSING_STREAM"), e); //$NON-NLS-1$
       }
     }
   }
@@ -104,7 +104,7 @@ public class FileHelper {
       try {
         rdr.close();
       } catch (IOException e) {
-        logger.warn(Messages.getString("FileHelper.WARN_ERROR_CLOSING_READER"), e); //$NON-NLS-1$
+        logger.warn(Messages.getInstance().getString("FileHelper.WARN_ERROR_CLOSING_READER"), e); //$NON-NLS-1$
       }
     }
   }

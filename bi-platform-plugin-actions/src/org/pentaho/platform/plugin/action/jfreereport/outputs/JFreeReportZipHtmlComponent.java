@@ -88,13 +88,13 @@ public class JFreeReportZipHtmlComponent extends AbstractGenerateStreamContentCo
       close();
       return true;
     } catch (ReportProcessingException e) {
-      error(Messages.getString("JFreeReportZipHtmlComponent.ERROR_0046_FAILED_TO_PROCESS_REPORT"), e); //$NON-NLS-1$
+      error(Messages.getInstance().getString("JFreeReportZipHtmlComponent.ERROR_0046_FAILED_TO_PROCESS_REPORT"), e); //$NON-NLS-1$
       return false;
     } catch (IOException e) {
-      error(Messages.getString("JFreeReportZipHtmlComponent.ERROR_0046_FAILED_TO_PROCESS_REPORT"), e); //$NON-NLS-1$
+      error(Messages.getInstance().getString("JFreeReportZipHtmlComponent.ERROR_0046_FAILED_TO_PROCESS_REPORT"), e); //$NON-NLS-1$
       return false;
     } catch (ContentIOException e) {
-      error(Messages.getString("JFreeReportZipHtmlComponent.ERROR_0046_FAILED_TO_PROCESS_REPORT"), e); //$NON-NLS-1$
+      error(Messages.getInstance().getString("JFreeReportZipHtmlComponent.ERROR_0046_FAILED_TO_PROCESS_REPORT"), e); //$NON-NLS-1$
       return false;
     }
   }

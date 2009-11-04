@@ -37,11 +37,11 @@ public class CleanRepoPublisher extends BasePublisher {
   }
 
   public String getName() {
-    return Messages.getString("CleanRepoPublisher.CLEAN_REPO"); //$NON-NLS-1$
+    return Messages.getInstance().getString("CleanRepoPublisher.CLEAN_REPO"); //$NON-NLS-1$
   }
 
   public String getDescription() {
-    return Messages.getString("CleanRepoPublisher.CLEAN_REPO_DESCRIPTION"); //$NON-NLS-1$ 
+    return Messages.getInstance().getString("CleanRepoPublisher.CLEAN_REPO_DESCRIPTION"); //$NON-NLS-1$ 
   }
 
   @Override
@@ -53,12 +53,12 @@ public class CleanRepoPublisher extends BasePublisher {
       IRuntimeContext context = engine.getExecutionContext();
       int status = context.getStatus();
       if (status != IRuntimeContext.RUNTIME_STATUS_SUCCESS) {
-        return Messages.getString("CleanRepoPublisher.ERROR_0001_CLEAN_REPO_FAILED"); //$NON-NLS-1$
+        return Messages.getInstance().getString("CleanRepoPublisher.ERROR_0001_CLEAN_REPO_FAILED"); //$NON-NLS-1$
       }
     } catch (Throwable t) {
-      error(Messages.getErrorString("CleanRepoPublisher.ERROR_0001_CLEAN_REPO_FAILED", t.getMessage()), t); //$NON-NLS-1$
-      return Messages.getString("CleanRepoPublisher.ERROR_0001_CLEAN_REPO_FAILED", t.getLocalizedMessage()); //$NON-NLS-1$
+      error(Messages.getInstance().getErrorString("CleanRepoPublisher.ERROR_0001_CLEAN_REPO_FAILED", t.getMessage()), t); //$NON-NLS-1$
+      return Messages.getInstance().getString("CleanRepoPublisher.ERROR_0001_CLEAN_REPO_FAILED", t.getLocalizedMessage()); //$NON-NLS-1$
     }
-    return Messages.getString("CleanRepoPublisher.CLEAN_REPO_DONE"); //$NON-NLS-1$
+    return Messages.getInstance().getString("CleanRepoPublisher.CLEAN_REPO_DONE"); //$NON-NLS-1$
   }
 }

@@ -98,7 +98,7 @@ public class QuartzBackgroundExecutionHelper implements IBackgroundExecution {
     try {
       String cronString = parameterProvider.getStringParameter(StandardSettings.CRON_STRING, null);
       String repeatInterval = parameterProvider.getStringParameter(StandardSettings.REPEAT_TIME_MILLISECS, null);
-      assert (repeatInterval == null && cronString != null) || (repeatInterval != null && cronString == null) || (repeatInterval == null && cronString == null) : Messages
+      assert (repeatInterval == null && cronString != null) || (repeatInterval != null && cronString == null) || (repeatInterval == null && cronString == null) : Messages.getInstance()
           .getErrorString("QuartzBackgroundExecutionHelper.ERROR_0423_INVALID_INTERVAL"); //$NON-NLS-1$
 
       String solutionName = parameterProvider.getStringParameter(StandardSettings.SOLUTION, null); //$NON-NLS-1$
@@ -161,13 +161,13 @@ public class QuartzBackgroundExecutionHelper implements IBackgroundExecution {
       // Keep in mind that this class should be UI agnostic, and it should be the UI layer
       // that creates the UI-technology-appropriate message. (The HTML content of this message
       // should NOT be in this class.)
-      return Messages
+      return Messages.getInstance()
           .getString(
               "BackgroundExecuteHelper.USER_JOB_SUBMITTED", "UserContent", "if(window.opener) {window.opener.location.href='UserContent'; window.close() } else { return true; }"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
     } catch (SchedulerException ex) {
-      throw new BackgroundExecutionException(Messages.getErrorString("QuartzBackgroundExecutionHelper.ERROR_0421_UNABLE_TO_SUBMIT_USER_JOB", ex.getLocalizedMessage()), ex);
+      throw new BackgroundExecutionException(Messages.getInstance().getErrorString("QuartzBackgroundExecutionHelper.ERROR_0421_UNABLE_TO_SUBMIT_USER_JOB", ex.getLocalizedMessage()), ex);
     } catch (ParseException ex) {
-      throw new BackgroundExecutionException(Messages.getErrorString("QuartzBackgroundExecutionHelper.ERROR_0422_INVALID_DATE_FORMAT", ex.getLocalizedMessage()), ex);
+      throw new BackgroundExecutionException(Messages.getInstance().getErrorString("QuartzBackgroundExecutionHelper.ERROR_0422_INVALID_DATE_FORMAT", ex.getLocalizedMessage()), ex);
     }
   }
 
@@ -201,7 +201,7 @@ public class QuartzBackgroundExecutionHelper implements IBackgroundExecution {
       }
       return rtn;
     } catch (SchedulerException ex) {
-      throw new BackgroundExecutionException(Messages.getErrorString("QuartzBackgroundExecutionHelper.ERROR_0420_FAILED_TO_GET_JOBS_FROM_SCHEDULER", ex.getLocalizedMessage()), ex);
+      throw new BackgroundExecutionException(Messages.getInstance().getErrorString("QuartzBackgroundExecutionHelper.ERROR_0420_FAILED_TO_GET_JOBS_FROM_SCHEDULER", ex.getLocalizedMessage()), ex);
     }
   }
 
@@ -275,7 +275,7 @@ public class QuartzBackgroundExecutionHelper implements IBackgroundExecution {
       // don't let a bad plugin situation take us down
       logger.warn(ignored.getMessage(), ignored);
     }
-
+    
     ISolutionRepository repo = PentahoSystem.get(ISolutionRepository.class, userSession);
     String title = jobName;
     if (generator != null) {
@@ -359,7 +359,7 @@ public class QuartzBackgroundExecutionHelper implements IBackgroundExecution {
         if (contentItemGUID != null && userSession != null) {
           userSession.setBackgroundExecutionAlert(); // Toggle the alert status
         } else if (contentItemGUID == null) {
-          Logger.warn(this.getClass().getName(), Messages.getString("BackgroundExecuteHelper.WARN_CONTENT_ITEM_NOT_CREATED")); //$NON-NLS-1$
+          Logger.warn(this.getClass().getName(), Messages.getInstance().getString("BackgroundExecuteHelper.WARN_CONTENT_ITEM_NOT_CREATED")); //$NON-NLS-1$
         }
         this.userSession = null; // Make sure nothing keeps a handle to the user session.
         try {
@@ -369,7 +369,7 @@ public class QuartzBackgroundExecutionHelper implements IBackgroundExecution {
         } catch (RuntimeException ex) {
           throw ex; // programmer error, let RuntimeExceptions leak
         } catch (Exception ex) {
-          logger.error(Messages.getErrorString("BackgroundExecuteHelper.ERROR_0002_REMOVE_LISTENER_FAILED"), ex); //$NON-NLS-1$
+          logger.error(Messages.getInstance().getErrorString("BackgroundExecuteHelper.ERROR_0002_REMOVE_LISTENER_FAILED"), ex); //$NON-NLS-1$
         }
       }
     }

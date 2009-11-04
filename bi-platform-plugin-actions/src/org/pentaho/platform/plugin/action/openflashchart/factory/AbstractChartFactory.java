@@ -173,17 +173,17 @@ public abstract class AbstractChartFactory implements IChartFactory {
   public void validateData() {
     // make sure data is of a category dataset.
     if (getRowCount() < 1) {
-      throw new RuntimeException(Messages.getErrorString("AbstractChartFactory.ERROR_0001_ROW_COUNT")); //$NON-NLS-1$
+      throw new RuntimeException(Messages.getInstance().getErrorString("AbstractChartFactory.ERROR_0001_ROW_COUNT")); //$NON-NLS-1$
     }
     if (getColumnCount() < 1) {
-      throw new RuntimeException(Messages.getErrorString("AbstractChartFactory.ERROR_0002_COLUMN_COUNT")); //$NON-NLS-1$
+      throw new RuntimeException(Messages.getInstance().getErrorString("AbstractChartFactory.ERROR_0002_COLUMN_COUNT")); //$NON-NLS-1$
     }
 
     // check first row and first column, making sure the values are numbers
     for (int c = 0; c < getColumnCount(); c++) {
       Object data = getValueAt(0, c);
       if (!(data instanceof Number)) {
-        throw new RuntimeException(Messages.getErrorString("AbstractChartFactory.ERROR_0003_INVALID_TYPE")); //$NON-NLS-1$
+        throw new RuntimeException(Messages.getInstance().getErrorString("AbstractChartFactory.ERROR_0003_INVALID_TYPE")); //$NON-NLS-1$
       }
     }
     
@@ -191,7 +191,7 @@ public abstract class AbstractChartFactory implements IChartFactory {
     for (int r = 1; r < getRowCount(); r++) {
       Object data = getValueAt(r, 0);
       if (!(data instanceof Number)) {
-        throw new RuntimeException(Messages.getErrorString("AbstractChartFactory.ERROR_0003_INVALID_TYPE")); //$NON-NLS-1$
+        throw new RuntimeException(Messages.getInstance().getErrorString("AbstractChartFactory.ERROR_0003_INVALID_TYPE")); //$NON-NLS-1$
       }
     }
   }

@@ -65,7 +65,7 @@ public class QuartzScheduler implements IScheduler {
       for (int i = 0; i < scheduleList.size(); ++i) {
         ISchedule schedule = (ISchedule) scheduleList.get(i);
         if ( schedule.isRepeatSchedule() ) {
-          throw new IllegalStateException( Messages.getErrorString("QuartzScheduler.ERROR_421_DOES_NOT_SUPPORT_REPEAT_SCHEDULES") ); //$NON-NLS-1$
+          throw new IllegalStateException( Messages.getInstance().getErrorString("QuartzScheduler.ERROR_421_DOES_NOT_SUPPORT_REPEAT_SCHEDULES") ); //$NON-NLS-1$
         }
         Trigger trigger = new CronTrigger(schedule.getScheduleReference(),
             "Subscription Group", schedule.getCronString()); //$NON-NLS-1$

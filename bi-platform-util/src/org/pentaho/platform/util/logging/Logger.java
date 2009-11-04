@@ -80,7 +80,7 @@ public class Logger {
       case ILogger.FATAL:
         return "FATAL"; //$NON-NLS-1$
       default:
-        return Messages.getString("Logger.CODE_LOG_UNKNOWN"); //$NON-NLS-1$
+        return Messages.getInstance().getString("Logger.CODE_LOG_UNKNOWN"); //$NON-NLS-1$
     }
   }
 
@@ -115,49 +115,49 @@ public class Logger {
   }
 
   public static void trace(final Object caller, final String message) {
-    String id = (caller == null) ? Messages.getString("Logger.DEBUG_LOG_UNKNOWN") : caller.getClass().getName(); //$NON-NLS-1$
+    String id = (caller == null) ? Messages.getInstance().getString("Logger.DEBUG_LOG_UNKNOWN") : caller.getClass().getName(); //$NON-NLS-1$
     if (Logger.logLevel <= ILogger.TRACE) {
       Logger.logger.trace(Logger.MISC_LOG + id + ": " + message); //$NON-NLS-1$
     }
   }
 
   public static void debug(final Object caller, final String message) {
-    String id = (caller == null) ? Messages.getString("Logger.DEBUG_LOG_UNKNOWN") : caller.getClass().getName(); //$NON-NLS-1$
+    String id = (caller == null) ? Messages.getInstance().getString("Logger.DEBUG_LOG_UNKNOWN") : caller.getClass().getName(); //$NON-NLS-1$
     if (Logger.logLevel <= ILogger.DEBUG) {
       Logger.logger.debug(Logger.MISC_LOG + id + ": " + message); //$NON-NLS-1$
     }
   }
 
   public static void info(final Object caller, final String message) {
-    String id = (caller == null) ? Messages.getString("Logger.DEBUG_LOG_UNKNOWN") : caller.getClass().getName(); //$NON-NLS-1$
+    String id = (caller == null) ? Messages.getInstance().getString("Logger.DEBUG_LOG_UNKNOWN") : caller.getClass().getName(); //$NON-NLS-1$
     if (Logger.logLevel <= ILogger.INFO) {
       Logger.logger.info(Logger.MISC_LOG + id + ": " + message); //$NON-NLS-1$
     }
   }
 
   public static void warn(final Object caller, final String message) {
-    String id = (caller == null) ? Messages.getString("Logger.DEBUG_LOG_UNKNOWN") : caller.getClass().getName(); //$NON-NLS-1$
+    String id = (caller == null) ? Messages.getInstance().getString("Logger.DEBUG_LOG_UNKNOWN") : caller.getClass().getName(); //$NON-NLS-1$
     if (Logger.logLevel <= ILogger.WARN) {
       Logger.logger.warn(Logger.MISC_LOG + id + ": " + message); //$NON-NLS-1$
     }
   }
 
   public static void error(final Object caller, final String message) {
-    String id = (caller == null) ? Messages.getString("Logger.DEBUG_LOG_UNKNOWN") : caller.getClass().getName(); //$NON-NLS-1$
+    String id = (caller == null) ? Messages.getInstance().getString("Logger.DEBUG_LOG_UNKNOWN") : caller.getClass().getName(); //$NON-NLS-1$
     if (Logger.logLevel <= ILogger.ERROR) {
       Logger.logger.error(Logger.MISC_LOG + id + ": " + message); //$NON-NLS-1$
     }
   }
 
   public static void fatal(final Object caller, final String message) {
-    String id = (caller == null) ? Messages.getString("Logger.DEBUG_LOG_UNKNOWN") : caller.getClass().getName(); //$NON-NLS-1$
+    String id = (caller == null) ? Messages.getInstance().getString("Logger.DEBUG_LOG_UNKNOWN") : caller.getClass().getName(); //$NON-NLS-1$
     if (Logger.logLevel <= ILogger.FATAL) {
       Logger.logger.fatal(Logger.MISC_LOG + id + ": " + message); //$NON-NLS-1$
     }
   }
 
   public static void trace(final Object caller, final String message, final Throwable error) {
-    String id = (caller == null) ? Messages.getString("Logger.DEBUG_LOG_UNKNOWN") : caller.getClass().getName(); //$NON-NLS-1$
+    String id = (caller == null) ? Messages.getInstance().getString("Logger.DEBUG_LOG_UNKNOWN") : caller.getClass().getName(); //$NON-NLS-1$
     if (Logger.logLevel <= ILogger.TRACE) {
       Logger.logger.trace(Logger.MISC_LOG + id + ": " + message, error); //$NON-NLS-1$
     }
@@ -165,7 +165,7 @@ public class Logger {
   }
 
   public static void debug(final Object caller, final String message, final Throwable error) {
-    String id = (caller == null) ? Messages.getString("Logger.DEBUG_LOG_UNKNOWN") : caller.getClass().getName(); //$NON-NLS-1$
+    String id = (caller == null) ? Messages.getInstance().getString("Logger.DEBUG_LOG_UNKNOWN") : caller.getClass().getName(); //$NON-NLS-1$
     if (Logger.logLevel <= ILogger.DEBUG) {
       Logger.logger.debug(Logger.MISC_LOG + id + ": " + message, error); //$NON-NLS-1$
     }
@@ -173,7 +173,7 @@ public class Logger {
   }
 
   public static void info(final Object caller, final String message, final Throwable error) {
-    String id = (caller == null) ? Messages.getString("Logger.DEBUG_LOG_UNKNOWN") : caller.getClass().getName(); //$NON-NLS-1$
+    String id = (caller == null) ? Messages.getInstance().getString("Logger.DEBUG_LOG_UNKNOWN") : caller.getClass().getName(); //$NON-NLS-1$
     if (Logger.logLevel <= ILogger.INFO) {
       Logger.logger.info(Logger.MISC_LOG + id + ": " + message, error); //$NON-NLS-1$
     }
@@ -181,7 +181,7 @@ public class Logger {
   }
 
   public static void warn(final Object caller, final String message, final Throwable error) {
-    String id = (caller == null) ? Messages.getString("Logger.DEBUG_LOG_UNKNOWN") : caller.getClass().getName(); //$NON-NLS-1$
+    String id = (caller == null) ? Messages.getInstance().getString("Logger.DEBUG_LOG_UNKNOWN") : caller.getClass().getName(); //$NON-NLS-1$
     if (Logger.logLevel <= ILogger.WARN) {
       Logger.logger.warn(Logger.MISC_LOG + id + ": " + message, error); //$NON-NLS-1$
     }
@@ -189,7 +189,7 @@ public class Logger {
   }
 
   public static void error(final Object caller, final String message, final Throwable error) {
-    String id = (caller == null) ? Messages.getString("Logger.DEBUG_LOG_UNKNOWN") : caller.getClass().getName(); //$NON-NLS-1$
+    String id = (caller == null) ? Messages.getInstance().getString("Logger.DEBUG_LOG_UNKNOWN") : caller.getClass().getName(); //$NON-NLS-1$
     if (Logger.logLevel <= ILogger.ERROR) {
       Logger.logger.error(Logger.MISC_LOG + id + ": " + message, error); //$NON-NLS-1$
     }
@@ -197,7 +197,7 @@ public class Logger {
   }
 
   public static void fatal(final Object caller, final String message, final Throwable error) {
-    String id = (caller == null) ? Messages.getString("Logger.DEBUG_LOG_UNKNOWN") : caller.getClass().getName(); //$NON-NLS-1$
+    String id = (caller == null) ? Messages.getInstance().getString("Logger.DEBUG_LOG_UNKNOWN") : caller.getClass().getName(); //$NON-NLS-1$
     if (Logger.logLevel <= ILogger.FATAL) {
       Logger.logger.fatal(Logger.MISC_LOG + id + ": " + message, error); //$NON-NLS-1$
     }
@@ -205,42 +205,42 @@ public class Logger {
   }
 
   public static void debug(final String caller, final String message) {
-    String id = (caller == null) ? Messages.getString("Logger.DEBUG_LOG_UNKNOWN") : caller; //$NON-NLS-1$
+    String id = (caller == null) ? Messages.getInstance().getString("Logger.DEBUG_LOG_UNKNOWN") : caller; //$NON-NLS-1$
     if (Logger.logLevel <= ILogger.DEBUG) {
       Logger.logger.debug(Logger.MISC_LOG + id + ": " + message); //$NON-NLS-1$
     }
   }
 
   public static void info(final String caller, final String message) {
-    String id = (caller == null) ? Messages.getString("Logger.DEBUG_LOG_UNKNOWN") : caller; //$NON-NLS-1$
+    String id = (caller == null) ? Messages.getInstance().getString("Logger.DEBUG_LOG_UNKNOWN") : caller; //$NON-NLS-1$
     if (Logger.logLevel <= ILogger.INFO) {
       Logger.logger.info(Logger.MISC_LOG + id + ": " + message); //$NON-NLS-1$
     }
   }
 
   public static void warn(final String caller, final String message) {
-    String id = (caller == null) ? Messages.getString("Logger.DEBUG_LOG_UNKNOWN") : caller; //$NON-NLS-1$
+    String id = (caller == null) ? Messages.getInstance().getString("Logger.DEBUG_LOG_UNKNOWN") : caller; //$NON-NLS-1$
     if (Logger.logLevel <= ILogger.WARN) {
       Logger.logger.warn(Logger.MISC_LOG + id + ": " + message); //$NON-NLS-1$
     }
   }
 
   public static void error(final String caller, final String message) {
-    String id = (caller == null) ? Messages.getString("Logger.DEBUG_LOG_UNKNOWN") : caller; //$NON-NLS-1$
+    String id = (caller == null) ? Messages.getInstance().getString("Logger.DEBUG_LOG_UNKNOWN") : caller; //$NON-NLS-1$
     if (Logger.logLevel <= ILogger.ERROR) {
       Logger.logger.error(Logger.MISC_LOG + id + ": " + message); //$NON-NLS-1$
     }
   }
 
   public static void fatal(final String caller, final String message) {
-    String id = (caller == null) ? Messages.getString("Logger.DEBUG_LOG_UNKNOWN") : caller; //$NON-NLS-1$
+    String id = (caller == null) ? Messages.getInstance().getString("Logger.DEBUG_LOG_UNKNOWN") : caller; //$NON-NLS-1$
     if (Logger.logLevel <= ILogger.FATAL) {
       Logger.logger.fatal(Logger.MISC_LOG + id + ": " + message); //$NON-NLS-1$
     }
   }
 
   public static void debug(final String caller, final String message, final Throwable error) {
-    String id = (caller == null) ? Messages.getString("Logger.DEBUG_LOG_UNKNOWN") : caller; //$NON-NLS-1$
+    String id = (caller == null) ? Messages.getInstance().getString("Logger.DEBUG_LOG_UNKNOWN") : caller; //$NON-NLS-1$
     if (Logger.logLevel <= ILogger.DEBUG) {
       Logger.logger.debug(Logger.MISC_LOG + id + ": " + message, error); //$NON-NLS-1$
       Logger.addException(error);
@@ -248,7 +248,7 @@ public class Logger {
   }
 
   public static void info(final String caller, final String message, final Throwable error) {
-    String id = (caller == null) ? Messages.getString("Logger.DEBUG_LOG_UNKNOWN") : caller; //$NON-NLS-1$
+    String id = (caller == null) ? Messages.getInstance().getString("Logger.DEBUG_LOG_UNKNOWN") : caller; //$NON-NLS-1$
     if (Logger.logLevel <= ILogger.INFO) {
       Logger.logger.info(Logger.MISC_LOG + id + ": " + message, error); //$NON-NLS-1$
       Logger.addException(error);
@@ -256,7 +256,7 @@ public class Logger {
   }
 
   public static void warn(final String caller, final String message, final Throwable error) {
-    String id = (caller == null) ? Messages.getString("Logger.DEBUG_LOG_UNKNOWN") : caller; //$NON-NLS-1$
+    String id = (caller == null) ? Messages.getInstance().getString("Logger.DEBUG_LOG_UNKNOWN") : caller; //$NON-NLS-1$
     if (Logger.logLevel <= ILogger.WARN) {
       Logger.logger.warn(Logger.MISC_LOG + id + ": " + message, error); //$NON-NLS-1$
       Logger.addException(error);
@@ -264,7 +264,7 @@ public class Logger {
   }
 
   public static void error(final String caller, final String message, final Throwable error) {
-    String id = (caller == null) ? Messages.getString("Logger.DEBUG_LOG_UNKNOWN") : caller; //$NON-NLS-1$
+    String id = (caller == null) ? Messages.getInstance().getString("Logger.DEBUG_LOG_UNKNOWN") : caller; //$NON-NLS-1$
     if (Logger.logLevel <= ILogger.ERROR) {
       if (Logger.versionHelper != null) {
         Logger.logger.error("Error: Pentaho " + Logger.versionHelper.getVersionInformation(Logger.class)); //$NON-NLS-1$
@@ -278,7 +278,7 @@ public class Logger {
   }
 
   public static void fatal(final String caller, final String message, final Throwable error) {
-    String id = (caller == null) ? Messages.getString("Logger.DEBUG_LOG_UNKNOWN") : caller; //$NON-NLS-1$
+    String id = (caller == null) ? Messages.getInstance().getString("Logger.DEBUG_LOG_UNKNOWN") : caller; //$NON-NLS-1$
     if (Logger.logLevel <= ILogger.FATAL) {
       if (Logger.versionHelper != null) {
         Logger.logger.error("Error: Pentaho " + Logger.versionHelper.getVersionInformation(Logger.class)); //$NON-NLS-1$

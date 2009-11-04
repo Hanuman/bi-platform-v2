@@ -65,25 +65,25 @@ public class DatasourceMgmtService implements IDatasourceMgmtService {
           newDatasource.setPassword(passwordService.encrypt(newDatasource.getPassword()));
           session.save(newDatasource);
         } catch(ObjectFactoryException objface) {
-          throw new DatasourceMgmtServiceException(Messages.getErrorString(
+          throw new DatasourceMgmtServiceException(Messages.getInstance().getErrorString(
             "DatasourceMgmtService.ERROR_0009_UNABLE_TO_INIT_PASSWORD_SERVICE")); //$NON-NLS-1$
         } catch(PasswordServiceException pse) {
             session.evict(newDatasource);
-          throw new DatasourceMgmtServiceException(Messages.getErrorString(
+          throw new DatasourceMgmtServiceException(Messages.getInstance().getErrorString(
               "DatasourceMgmtService.ERROR_0007_UNABLE_TO_ENCRYPT_PASSWORD"), pse );//$NON-NLS-1$
         } catch (HibernateException ex) {
           session.evict(newDatasource);
-          throw new DatasourceMgmtServiceException(Messages.getErrorString(
+          throw new DatasourceMgmtServiceException(Messages.getInstance().getErrorString(
               "DatasourceMgmtService.ERROR_0001_UNABLE_TO_CREATE_DATASOURCE",newDatasource.getName()), ex );//$NON-NLS-1$
         } finally {
           session.setCacheMode(CacheMode.NORMAL);
         }
       } else {
-        throw new DuplicateDatasourceException(Messages.getErrorString(
+        throw new DuplicateDatasourceException(Messages.getInstance().getErrorString(
         "DatasourceMgmtService.ERROR_0005_DATASOURCE_ALREADY_EXIST",newDatasource.getName()));//$NON-NLS-1$
       }
     } else {
-      throw new DatasourceMgmtServiceException(Messages.getErrorString(
+      throw new DatasourceMgmtServiceException(Messages.getInstance().getErrorString(
           "DatasourceMgmtService.ERROR_0010_NULL_DATASOURCE_OBJECT"));//$NON-NLS-1$
     }
     session.setCacheMode(CacheMode.NORMAL);
@@ -94,7 +94,7 @@ public class DatasourceMgmtService implements IDatasourceMgmtService {
     if (datasource != null) {
       deleteDatasource(datasource);
     } else {
-      throw new NonExistingDatasourceException(Messages.getErrorString(
+      throw new NonExistingDatasourceException(Messages.getInstance().getErrorString(
         "DatasourceMgmtService.ERROR_0006_DATASOURCE_DOES_NOT_EXIST",jndiName));//$NON-NLS-1$
     }
   }  
@@ -110,7 +110,7 @@ public class DatasourceMgmtService implements IDatasourceMgmtService {
           session.setCacheMode(CacheMode.NORMAL);
         }
       } else {
-        throw new DatasourceMgmtServiceException(Messages.getErrorString(
+        throw new DatasourceMgmtServiceException(Messages.getInstance().getErrorString(
         "DatasourceMgmtService.ERROR_0010_NULL_DATASOURCE_OBJECT"));//$NON-NLS-1$
       }
 
@@ -130,13 +130,13 @@ public class DatasourceMgmtService implements IDatasourceMgmtService {
       }
       return datasource;
     } catch(ObjectFactoryException objface) {
-      throw new DatasourceMgmtServiceException(Messages.getErrorString(
+      throw new DatasourceMgmtServiceException(Messages.getInstance().getErrorString(
         "DatasourceMgmtService.ERROR_0009_UNABLE_TO_INIT_PASSWORD_SERVICE"), objface);//$NON-NLS-1$
     } catch(PasswordServiceException pse) {
-      throw new DatasourceMgmtServiceException(Messages.getErrorString(
+      throw new DatasourceMgmtServiceException(Messages.getInstance().getErrorString(
         "DatasourceMgmtService.ERROR_0008_UNABLE_TO_DECRYPT_PASSWORD"), pse );//$NON-NLS-1$
     } catch (HibernateException ex) {
-      throw new DatasourceMgmtServiceException(Messages.getErrorString(
+      throw new DatasourceMgmtServiceException(Messages.getInstance().getErrorString(
         "DatasourceMgmtService.ERROR_0004_UNABLE_TO_RETRIEVE_DATASOURCE"), ex);//$NON-NLS-1$
     } finally {
       session.setCacheMode(CacheMode.NORMAL);
@@ -159,13 +159,13 @@ public class DatasourceMgmtService implements IDatasourceMgmtService {
       }
       return datasourceList;
     } catch(PasswordServiceException pse) {
-      throw new DatasourceMgmtServiceException(Messages.getErrorString(
+      throw new DatasourceMgmtServiceException(Messages.getInstance().getErrorString(
         "DatasourceMgmtService.ERROR_0007_UNABLE_TO_ENCRYPT_PASSWORD"), pse );//$NON-NLS-1$
     } catch(ObjectFactoryException objface) {
-      throw new DatasourceMgmtServiceException(Messages.getErrorString(
+      throw new DatasourceMgmtServiceException(Messages.getInstance().getErrorString(
         "DatasourceMgmtService.ERROR_0009_UNABLE_TO_INIT_PASSWORD_SERVICE"), objface);//$NON-NLS-1$
     } catch (HibernateException ex) {
-      throw new DatasourceMgmtServiceException(Messages.getErrorString(
+      throw new DatasourceMgmtServiceException(Messages.getInstance().getErrorString(
         "DatasourceMgmtService.ERROR_0004_UNABLE_TO_RETRIEVE_DATASOURCE", ""), ex );//$NON-NLS-1$ //$NON-NLS-2$
     } finally {
       session.setCacheMode(CacheMode.NORMAL);
@@ -184,23 +184,23 @@ public class DatasourceMgmtService implements IDatasourceMgmtService {
           datasource.setPassword(passwordService.encrypt(datasource.getPassword()));
           session.update(session.merge(datasource));
         } catch(ObjectFactoryException objface) {
-          throw new DatasourceMgmtServiceException(Messages.getErrorString(
+          throw new DatasourceMgmtServiceException(Messages.getInstance().getErrorString(
             "DatasourceMgmtService.ERROR_0009_UNABLE_TO_INIT_PASSWORD_SERVICE"), objface);//$NON-NLS-1$
         } catch(PasswordServiceException pse) {
-            throw new DatasourceMgmtServiceException( Messages.getErrorString(
+            throw new DatasourceMgmtServiceException( Messages.getInstance().getErrorString(
               "DatasourceMgmtService.ERROR_0007_UNABLE_TO_ENCRYPT_PASSWORD"), pse );//$NON-NLS-1$
         } catch (HibernateException ex) {
-          throw new DatasourceMgmtServiceException(Messages.getErrorString(
+          throw new DatasourceMgmtServiceException(Messages.getInstance().getErrorString(
             "DatasourceMgmtService.ERROR_0004_UNABLE_TO_RETRIEVE_DATASOURCE", datasource.getName()), ex );//$NON-NLS-1$
         } finally {
           session.setCacheMode(CacheMode.NORMAL);
         }
       } else {
-        throw new NonExistingDatasourceException(Messages.getErrorString(
+        throw new NonExistingDatasourceException(Messages.getInstance().getErrorString(
           "DatasourceMgmtService.ERROR_0006_DATASOURCE_DOES_NOT_EXIST", datasource.getName()) );//$NON-NLS-1$
       }
     } else {
-      throw new DatasourceMgmtServiceException(Messages.getErrorString(
+      throw new DatasourceMgmtServiceException(Messages.getInstance().getErrorString(
           "DatasourceMgmtService.ERROR_0010_NULL_DATASOURCE_OBJECT"));//$NON-NLS-1$
     }
   }

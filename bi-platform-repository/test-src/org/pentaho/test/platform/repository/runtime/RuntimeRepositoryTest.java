@@ -122,13 +122,13 @@ public class RuntimeRepositoryTest extends RepositoryTestCase {
   
   @SuppressWarnings("unused")
   private void doReadOnlyTest(String elementId) {
-    info(Messages.getString("RUNTIMEREPOTEST.USER_TESTINGREADONLY")); //$NON-NLS-1$
+    info(Messages.getInstance().getString("RUNTIMEREPOTEST.USER_TESTINGREADONLY")); //$NON-NLS-1$
     HibernateUtil.beginTransaction();
     try {
       IRuntimeRepository repo = new RuntimeRepository();
       repo.setSession(getPentahoSession());
       RuntimeElement baseElement = (RuntimeElement) repo.loadElementById(elementId, null);
-      info(Messages.getString("RUNTIMEREPOTEST.USER_SETTINGELEMENTTOREADONLY")); //$NON-NLS-1$
+      info(Messages.getInstance().getString("RUNTIMEREPOTEST.USER_SETTINGELEMENTTOREADONLY")); //$NON-NLS-1$
       baseElement.setReadOnly(true);
     } finally {
       HibernateUtil.commitTransaction();
@@ -141,30 +141,30 @@ public class RuntimeRepositoryTest extends RepositoryTestCase {
     // Now, reload the element.
     HibernateUtil.beginTransaction();
     try {
-      info(Messages.getString("RUNTIMEREPOTEST.USER_LOADINGREADONLY")); //$NON-NLS-1$
+      info(Messages.getInstance().getString("RUNTIMEREPOTEST.USER_LOADINGREADONLY")); //$NON-NLS-1$
       IRuntimeRepository repo = new RuntimeRepository();
       repo.setSession(getPentahoSession());
       RuntimeElement baseElement = (RuntimeElement) repo.loadElementById(elementId, null);
       boolean caughtException = false;
       try {
-        info(Messages.getString("RUNTIMEREPOTEST.USER_TRYINGSETSTRINGPROPERTY")); //$NON-NLS-1$
+        info(Messages.getInstance().getString("RUNTIMEREPOTEST.USER_TRYINGSETSTRINGPROPERTY")); //$NON-NLS-1$
         baseElement
             .setStringProperty(
-                Messages.getString("RUNTIMEREPOTEST.MODIFY_NEW_STRING_KEY"), Messages.getString("RUNTIMEREPOTEST.MODIFY_STRING_VALUE")); //$NON-NLS-1$ //$NON-NLS-2$
+                Messages.getInstance().getString("RUNTIMEREPOTEST.MODIFY_NEW_STRING_KEY"), Messages.getInstance().getString("RUNTIMEREPOTEST.MODIFY_STRING_VALUE")); //$NON-NLS-1$ //$NON-NLS-2$
       } catch (IllegalStateException ex) {
         caughtException = true;
-        info(Messages.getString("RUNTIMEREPOTEST.USER_EXCEPTIONTRIPPED")); //$NON-NLS-1$
+        info(Messages.getInstance().getString("RUNTIMEREPOTEST.USER_EXCEPTIONTRIPPED")); //$NON-NLS-1$
       }
-      assertTrue(Messages.getErrorString("RUNTIMEREPOTEST.ERROR_0001_EXCEPTIONNOTTRIPPED"), caughtException); //$NON-NLS-1$
+      assertTrue(Messages.getInstance().getErrorString("RUNTIMEREPOTEST.ERROR_0001_EXCEPTIONNOTTRIPPED"), caughtException); //$NON-NLS-1$
       caughtException = false;
       try {
-        info(Messages.getString("RUNTIMEREPOTEST.USER_TRYINGSETPARENTTYPE")); //$NON-NLS-1$
-        baseElement.setParentType(Messages.getString("RUNTIMEREPOTEST.CREATE_PARENT_TYPE")); //$NON-NLS-1$
+        info(Messages.getInstance().getString("RUNTIMEREPOTEST.USER_TRYINGSETPARENTTYPE")); //$NON-NLS-1$
+        baseElement.setParentType(Messages.getInstance().getString("RUNTIMEREPOTEST.CREATE_PARENT_TYPE")); //$NON-NLS-1$
       } catch (IllegalStateException ex) {
         caughtException = true;
-        info(Messages.getString("RUNTIMEREPOTEST.USER_EXCEPTIONTRIPPED")); //$NON-NLS-1$
+        info(Messages.getInstance().getString("RUNTIMEREPOTEST.USER_EXCEPTIONTRIPPED")); //$NON-NLS-1$
       }
-      assertTrue(Messages.getErrorString("RUNTIMEREPOTEST.ERROR_0001_EXCEPTIONNOTTRIPPED"), caughtException); //$NON-NLS-1$
+      assertTrue(Messages.getInstance().getErrorString("RUNTIMEREPOTEST.ERROR_0001_EXCEPTIONNOTTRIPPED"), caughtException); //$NON-NLS-1$
     } finally {
       HibernateUtil.commitTransaction();
     }
@@ -190,7 +190,7 @@ public class RuntimeRepositoryTest extends RepositoryTestCase {
       repo.setSession(getPentahoSession());
       baseElement
           .setStringProperty(
-              Messages.getString("RUNTIMEREPOTEST.MODIFY_NEW_STRING_KEY"), Messages.getString("RUNTIMEREPOTEST.MODIFY_STRING_VALUE")); //$NON-NLS-1$ //$NON-NLS-2$
+              Messages.getInstance().getString("RUNTIMEREPOTEST.MODIFY_NEW_STRING_KEY"), Messages.getInstance().getString("RUNTIMEREPOTEST.MODIFY_STRING_VALUE")); //$NON-NLS-1$ //$NON-NLS-2$
     } finally {
       HibernateUtil.commitTransaction();
     }
@@ -203,23 +203,23 @@ public class RuntimeRepositoryTest extends RepositoryTestCase {
     RuntimeElement ele = null;
     ele = (RuntimeElement) repo
         .newRuntimeElement(
-            Messages.getString("RUNTIMEREPOTEST.CREATE_PARENT"), Messages.getString("RUNTIMEREPOTEST.CREATE_PARENT_TYPE"), false); //$NON-NLS-1$ //$NON-NLS-2$
+            Messages.getInstance().getString("RUNTIMEREPOTEST.CREATE_PARENT"), Messages.getInstance().getString("RUNTIMEREPOTEST.CREATE_PARENT_TYPE"), false); //$NON-NLS-1$ //$NON-NLS-2$
     try {
       assertNotNull(ele);
-      info(Messages.getString("RUNTIMEREPOTEST.DEBUG_INSTANCE_ID") + ele.getInstanceId()); //$NON-NLS-1$
-      ele.setSolutionId(Messages.getString("RUNTIMEREPOTEST.SALES_SOLUTION")); //$NON-NLS-1$
+      info(Messages.getInstance().getString("RUNTIMEREPOTEST.DEBUG_INSTANCE_ID") + ele.getInstanceId()); //$NON-NLS-1$
+      ele.setSolutionId(Messages.getInstance().getString("RUNTIMEREPOTEST.SALES_SOLUTION")); //$NON-NLS-1$
       ele
           .setStringProperty(
-              Messages.getString("RUNTIMEREPOTEST.SHORT_STRING_KEY"), Messages.getString("RUNTIMEREPOTEST.SHORT_STRING_VALUE")); //$NON-NLS-1$ //$NON-NLS-2$
+              Messages.getInstance().getString("RUNTIMEREPOTEST.SHORT_STRING_KEY"), Messages.getInstance().getString("RUNTIMEREPOTEST.SHORT_STRING_VALUE")); //$NON-NLS-1$ //$NON-NLS-2$
       // Get a Long String to Store...
-      ele.setStringProperty(Messages.getString("RUNTIMEREPOTEST.LONG_STRING_KEY"), longString.toString()); //$NON-NLS-1$
-      ele.setDateProperty(Messages.getString("RUNTIMEREPOTEST.DATE_KEY"), new Date()); //$NON-NLS-1$
-      ele.setBigDecimalProperty(Messages.getString("RUNTIMEREPOTEST.DECIMAL_KEY"), bdProperty); //$NON-NLS-1$
+      ele.setStringProperty(Messages.getInstance().getString("RUNTIMEREPOTEST.LONG_STRING_KEY"), longString.toString()); //$NON-NLS-1$
+      ele.setDateProperty(Messages.getInstance().getString("RUNTIMEREPOTEST.DATE_KEY"), new Date()); //$NON-NLS-1$
+      ele.setBigDecimalProperty(Messages.getInstance().getString("RUNTIMEREPOTEST.DECIMAL_KEY"), bdProperty); //$NON-NLS-1$
       List myList = new ArrayList();
-      myList.add(Messages.getString("RUNTIMEREPOTEST.LIST_ELEMENT_STRING")); //$NON-NLS-1$
+      myList.add(Messages.getInstance().getString("RUNTIMEREPOTEST.LIST_ELEMENT_STRING")); //$NON-NLS-1$
       myList.add(new BigDecimal("1283764.1294839483")); //$NON-NLS-1$
       myList.add(new Date());
-      ele.setListProperty(Messages.getString("RUNTIMEREPOTEST.LIST_ELEMENT_KEY"), myList); //$NON-NLS-1$
+      ele.setListProperty(Messages.getInstance().getString("RUNTIMEREPOTEST.LIST_ELEMENT_KEY"), myList); //$NON-NLS-1$
     } finally {
       HibernateUtil.commitTransaction();
     }
@@ -227,12 +227,12 @@ public class RuntimeRepositoryTest extends RepositoryTestCase {
   }
 
   private void checkValue(String expected, String value) {
-    assertEquals(Messages.getErrorString("RUNTIMEREPOTEST.ERROR_0002_VALUEREADNOTWHATWASEXPECTED", //$NON-NLS-1$ 
+    assertEquals(Messages.getInstance().getErrorString("RUNTIMEREPOTEST.ERROR_0002_VALUEREADNOTWHATWASEXPECTED", //$NON-NLS-1$ 
         expected, value), expected, value);
   }
 
   private void checkValue(BigDecimal expected, BigDecimal value) {
-    assertEquals(Messages.getErrorString("RUNTIMEREPOTEST.ERROR_0002_VALUEREADNOTWHATWASEXPECTED", //$NON-NLS-1$ 
+    assertEquals(Messages.getInstance().getErrorString("RUNTIMEREPOTEST.ERROR_0002_VALUEREADNOTWHATWASEXPECTED", //$NON-NLS-1$ 
         expected.toString(), value.toString()), expected, value);
   }
 
@@ -242,11 +242,11 @@ public class RuntimeRepositoryTest extends RepositoryTestCase {
     IRuntimeRepository repo = new RuntimeRepository();
     repo.setSession(getPentahoSession());
     RuntimeElement re = (RuntimeElement) repo.loadElementById(instanceId, null);
-    checkValue(Messages.getString("RUNTIMEREPOTEST.SALES_SOLUTION"), re.getSolutionId()); //$NON-NLS-1$
-    checkValue(longString.toString(), re.getStringProperty(Messages.getString("RUNTIMEREPOTEST.LONG_STRING_KEY"))); //$NON-NLS-1$
+    checkValue(Messages.getInstance().getString("RUNTIMEREPOTEST.SALES_SOLUTION"), re.getSolutionId()); //$NON-NLS-1$
+    checkValue(longString.toString(), re.getStringProperty(Messages.getInstance().getString("RUNTIMEREPOTEST.LONG_STRING_KEY"))); //$NON-NLS-1$
     checkValue(
-        Messages.getString("RUNTIMEREPOTEST.SHORT_STRING_VALUE"), re.getStringProperty(Messages.getString("RUNTIMEREPOTEST.SHORT_STRING_KEY"))); //$NON-NLS-1$ //$NON-NLS-2$
-    checkValue(bdProperty, re.getBigDecimalProperty(Messages.getString("RUNTIMEREPOTEST.DECIMAL_KEY"))); //$NON-NLS-1$
+        Messages.getInstance().getString("RUNTIMEREPOTEST.SHORT_STRING_VALUE"), re.getStringProperty(Messages.getInstance().getString("RUNTIMEREPOTEST.SHORT_STRING_KEY"))); //$NON-NLS-1$ //$NON-NLS-2$
+    checkValue(bdProperty, re.getBigDecimalProperty(Messages.getInstance().getString("RUNTIMEREPOTEST.DECIMAL_KEY"))); //$NON-NLS-1$
     String xml = re.toXML();
     info(xml);
     Set namesSet = re.getParameterNames();
@@ -255,7 +255,7 @@ public class RuntimeRepositoryTest extends RepositoryTestCase {
     while (it.hasNext()) {
       pName = (String) it.next();
       pType = re.getParameterType(pName);
-      info(Messages.getString("RUNTIMEREPOTEST.DEBUG_NAME_TYPE", pName, pType)); //$NON-NLS-1$
+      info(Messages.getInstance().getString("RUNTIMEREPOTEST.DEBUG_NAME_TYPE", pName, pType)); //$NON-NLS-1$
     }
   }
 

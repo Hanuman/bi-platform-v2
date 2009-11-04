@@ -66,7 +66,7 @@ public class ReportContentLocation implements ContentLocation {
   public ContentEntity getEntry(final String string) throws ContentIOException {
     final IContentItem rawItem = this.location.getContentItemByName(string);
     if (rawItem == null) {
-      throw new ContentIOException(Messages.getErrorString("ReportContentLocation.ERROR_0001_NO_ITEM", string)); //$NON-NLS-1$
+      throw new ContentIOException(Messages.getInstance().getErrorString("ReportContentLocation.ERROR_0001_NO_ITEM", string)); //$NON-NLS-1$
     }
     return new ReportContentItem(rawItem, this);
   }
@@ -74,14 +74,14 @@ public class ReportContentLocation implements ContentLocation {
   public ContentItem createItem(final String name) throws ContentCreationException {
     final String extension = IOUtils.getInstance().getFileExtension(name);
     final String mimeType = repository.getMimeRegistry().getMimeType(new DummyContentItem(this, name));
-    final IContentItem iContentItem = this.location.newContentItem(name, Messages
+    final IContentItem iContentItem = this.location.newContentItem(name, Messages.getInstance()
         .getString("ReportContentLocation.GENERATED_REPORT_CONTENT"), //$NON-NLS-1$
         extension, mimeType, null, IContentItem.WRITEMODE_OVERWRITE);
     return new ReportContentItem(iContentItem, this);
   }
 
   public ContentLocation createLocation(final String string) throws ContentCreationException {
-    throw new ContentCreationException(Messages.getErrorString(
+    throw new ContentCreationException(Messages.getInstance().getErrorString(
         "ReportContentLocation.ERROR_0002_CANT_CREATE_CONTENT_LOCATION", string)); //$NON-NLS-1$
   }
 

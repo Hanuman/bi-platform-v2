@@ -225,7 +225,7 @@
 	
 	IUITemplater templater = PentahoSystem.get(IUITemplater.class, userSession );
 	if( templater != null ) {
-		String sections[] = templater.breakTemplate( "template-document.html", Messages.getString("UI.USER_BURST_EDIT_DATA_TITLE"), userSession ); //$NON-NLS-1$ //$NON-NLS-2$
+		String sections[] = templater.breakTemplate( "template-document.html", Messages.getInstance().getString("UI.USER_BURST_EDIT_DATA_TITLE"), userSession ); //$NON-NLS-1$ //$NON-NLS-2$
 		if( sections != null && sections.length > 0 ) {
 			intro = sections[0];
 		}
@@ -233,21 +233,21 @@
 			footer = sections[1];
 		}
 	} else {
-		intro = Messages.getString( "UI.ERROR_0002_BAD_TEMPLATE_OBJECT" );
+		intro = Messages.getInstance().getString( "UI.ERROR_0002_BAD_TEMPLATE_OBJECT" );
 	}
 
   %><%= intro %>
 
 <div style="margin-left:10px;">
-<span class="portlet-font"><%= Messages.getString("UI.USER_BURST_EDIT_DATA_HINT") %></span>
+<span class="portlet-font"><%= Messages.getInstance().getString("UI.USER_BURST_EDIT_DATA_HINT") %></span>
 <p/>
   <form name="burst_edit" method="GET">
   <table>
     <thead>
       <tr>
-        <td class="portlet-table-header"><%= Messages.getString("UI.USER_BURST_REGION") %></td>
-        <td class="portlet-table-header"><%= Messages.getString("UI.USER_BURST_MANAGER") %></td>
-        <td class="portlet-table-header"><%= Messages.getString("UI.USER_BURST_EMAIL") %></td>
+        <td class="portlet-table-header"><%= Messages.getInstance().getString("UI.USER_BURST_REGION") %></td>
+        <td class="portlet-table-header"><%= Messages.getInstance().getString("UI.USER_BURST_MANAGER") %></td>
+        <td class="portlet-table-header"><%= Messages.getInstance().getString("UI.USER_BURST_EMAIL") %></td>
       </tr>
     </thead>
         <% for (int rowNum = 0; rowNum < existingUsers.length; rowNum++) {%>
@@ -260,7 +260,7 @@
   </table>
   <p/>
   <input type="hidden" name="action" value="update">
-  <input type="submit" class="portlet-form-button" value="<%= Messages.getString("UI.USER_UPDATE") %>"/>
+  <input type="submit" class="portlet-form-button" value="<%= Messages.getInstance().getString("UI.USER_UPDATE") %>"/>
   </form>
 </div>
 

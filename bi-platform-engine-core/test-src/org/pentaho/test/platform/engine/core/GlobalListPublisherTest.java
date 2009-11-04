@@ -75,13 +75,13 @@ public class GlobalListPublisherTest extends TestCase {
     
     engine.executeCount = 0;
     GlobalListsPublisher globals = new GlobalListsPublisher();
-    assertEquals( Messages.getString("GlobalListsPublisher.USER_SYSTEM_SETTINGS"), globals.getName() );
-    assertEquals( Messages.getString("GlobalListsPublisher.USER_DESCRIPTION"), globals.getDescription() );
+    assertEquals( Messages.getInstance().getString("GlobalListsPublisher.USER_SYSTEM_SETTINGS"), globals.getName() );
+    assertEquals( Messages.getInstance().getString("GlobalListsPublisher.USER_DESCRIPTION"), globals.getDescription() );
     assertTrue( !globals.getName().startsWith("!") );
     assertTrue( !globals.getDescription().startsWith("!") );
     assertNotNull( globals.getLogger() );
     String resultMsg = globals.publish(session);
-    assertEquals( Messages.getString("GlobalListsPublisher.USER_SYSTEM_SETTINGS_UPDATED"), resultMsg );
+    assertEquals( Messages.getInstance().getString("GlobalListsPublisher.USER_SYSTEM_SETTINGS_UPDATED"), resultMsg );
     
     assertEquals( 0, engine.executeCount );
     PentahoSystem.setSessionStartupActions(actions);
@@ -89,7 +89,7 @@ public class GlobalListPublisherTest extends TestCase {
     
     resultMsg = globals.publish(session);
     assertEquals( 1, engine.executeCount );
-    assertEquals( Messages.getString("GlobalListsPublisher.USER_SYSTEM_SETTINGS_UPDATED"), resultMsg );
+    assertEquals( Messages.getInstance().getString("GlobalListsPublisher.USER_SYSTEM_SETTINGS_UPDATED"), resultMsg );
     
     // check that we made it all the way to executing the startup action
     assertEquals( session, engine.initSession );
@@ -99,7 +99,7 @@ public class GlobalListPublisherTest extends TestCase {
     param.setValue("testvalue2");
 
     resultMsg = globals.publish(session);
-    assertEquals( Messages.getString("GlobalListsPublisher.USER_SYSTEM_SETTINGS_UPDATED"), resultMsg );
+    assertEquals( Messages.getInstance().getString("GlobalListsPublisher.USER_SYSTEM_SETTINGS_UPDATED"), resultMsg );
     assertEquals( 2, engine.executeCount );
     
     assertNotNull( globalParams );
@@ -107,7 +107,7 @@ public class GlobalListPublisherTest extends TestCase {
     
     engine.errorMsg = "test exception";
     resultMsg = globals.publish(session);
-    assertEquals( Messages.getString("GlobalListsPublisher.USER_ERROR_PUBLISH_FAILED")+"test exception", resultMsg );
+    assertEquals( Messages.getInstance().getString("GlobalListsPublisher.USER_ERROR_PUBLISH_FAILED")+"test exception", resultMsg );
     assertEquals( 3, engine.executeCount );
   }
   

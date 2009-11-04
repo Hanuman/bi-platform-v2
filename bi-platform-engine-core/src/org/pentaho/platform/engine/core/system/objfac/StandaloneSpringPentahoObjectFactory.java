@@ -62,7 +62,7 @@ public class StandaloneSpringPentahoObjectFactory extends AbstractSpringPentahoO
       beanFactory = appCtx;
     } else {
       if (!(context instanceof ApplicationContext)) {
-        String msg = Messages.getErrorString("StandalonePentahoObjectFactory.ERROR_0001_CONTEXT_NOT_SUPPORTED", //$NON-NLS-1$
+        String msg = Messages.getInstance().getErrorString("StandalonePentahoObjectFactory.ERROR_0001_CONTEXT_NOT_SUPPORTED", //$NON-NLS-1$
             getClass().getSimpleName(), "ApplicationContext", context.getClass().getName()); //$NON-NLS-1$
         throw new IllegalArgumentException(msg);
       }

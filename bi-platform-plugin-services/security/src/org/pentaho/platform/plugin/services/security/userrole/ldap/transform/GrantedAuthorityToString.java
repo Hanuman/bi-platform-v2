@@ -69,7 +69,7 @@ public class GrantedAuthorityToString implements Transformer {
   public Object transform(final Object obj) {
     if (GrantedAuthorityToString.logger.isDebugEnabled()) {
       String input = (obj instanceof Object[] ? Arrays.asList((Object[]) obj).toString() : obj.toString());
-      GrantedAuthorityToString.logger.debug(Messages.getString("GrantedAuthorityToString.DEBUG_INPUT_TO_TRANSFORM", //$NON-NLS-1$
+      GrantedAuthorityToString.logger.debug(Messages.getInstance().getString("GrantedAuthorityToString.DEBUG_INPUT_TO_TRANSFORM", //$NON-NLS-1$
           input));
     }
 

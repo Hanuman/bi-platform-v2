@@ -55,7 +55,7 @@ public class RepositoryTestCase extends BaseTest {
   }
   public void setUp() {
     super.setUp();
-    sess = new StandaloneSession(Messages.getString("REPOSTEST.JUNIT_TEST_SESSION")); //$NON-NLS-1$
+    sess = new StandaloneSession(Messages.getInstance().getString("REPOSTEST.JUNIT_TEST_SESSION")); //$NON-NLS-1$
     HibernateUtil.beginTransaction();
   }
 

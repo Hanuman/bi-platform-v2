@@ -56,7 +56,7 @@ public abstract class XmlComponent extends BaseUIComponent implements IXMLCompon
       if (document != null) {
         String xslName = (String) contentTypes.get(mimeType);
         if (xslName == null) {
-          error(Messages.getString("BaseUI.ERROR_0002_XSL_NOT_FOUND") + mimeType); //$NON-NLS-1$
+          error(Messages.getInstance().getString("BaseUI.ERROR_0002_XSL_NOT_FOUND") + mimeType); //$NON-NLS-1$
           return null;
         }
         StringBuffer sb = null;
@@ -64,11 +64,11 @@ public abstract class XmlComponent extends BaseUIComponent implements IXMLCompon
           sb = XmlHelper.transformXml(xslName, getSourcePath(), document.asXML(), getXslProperties(),
               new SolutionURIResolver(getSession()));
         } catch (TransformerException e) {
-          XmlComponent.log.error(Messages.getString("XmlComponent.ERROR_0000_XML_XFORM_FAILED"), e); //$NON-NLS-1$
+          XmlComponent.log.error(Messages.getInstance().getString("XmlComponent.ERROR_0000_XML_XFORM_FAILED"), e); //$NON-NLS-1$
           return null;
         }
         if( sb == null ) {
-          XmlComponent.log.error(Messages.getString("XmlComponent.ERROR_0000_XML_XFORM_FAILED") ); //$NON-NLS-1$
+          XmlComponent.log.error(Messages.getInstance().getString("XmlComponent.ERROR_0000_XML_XFORM_FAILED") ); //$NON-NLS-1$
           return null;
         }
         if (BaseUIComponent.debug ) {

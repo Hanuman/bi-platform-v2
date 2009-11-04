@@ -82,7 +82,7 @@ public class TestComponent extends ComponentBase {
     while (inputNamesIterator.hasNext()) {
       inputName = (String) inputNamesIterator.next();
       actionParameter = getInputParameter(inputName);
-      message(Messages.getString("TestComponent.DEBUG_INPUT_DESCRIPTION", inputName, actionParameter.getType())); //$NON-NLS-1$
+      message(Messages.getInstance().getString("TestComponent.DEBUG_INPUT_DESCRIPTION", inputName, actionParameter.getType())); //$NON-NLS-1$
     }
 
     Set outputNames = getOutputNames();
@@ -91,7 +91,7 @@ public class TestComponent extends ComponentBase {
     while (outputNamesIterator.hasNext()) {
       outputName = (String) outputNamesIterator.next();
       actionParameter = getOutputItem(outputName);
-      message(Messages.getString("TestComponent.DEBUG_OUTPUT_DESCRIPTION", outputName, actionParameter.getType())); //$NON-NLS-1$
+      message(Messages.getInstance().getString("TestComponent.DEBUG_OUTPUT_DESCRIPTION", outputName, actionParameter.getType())); //$NON-NLS-1$
     }
 
     Set resourceNames = getResourceNames();
@@ -101,15 +101,15 @@ public class TestComponent extends ComponentBase {
     while (resourceNamesIterator.hasNext()) {
       resourceName = (String) resourceNamesIterator.next();
       actionResource = getResource(resourceName);
-      message(Messages
+      message(Messages.getInstance()
           .getString(
               "TestComponent.DEBUG_RESOURCE_DESCRIPTION", resourceName, actionResource.getMimeType(), PentahoSystem.getApplicationContext().getSolutionPath(actionResource.getAddress()))); //$NON-NLS-1$
       try {
         String content = getResourceAsString(actionResource);
-        message(Messages.getString(
+        message(Messages.getInstance().getString(
             "TestComponent.DEBUG_RESOURCE_CONTENTS", ((content == null) ? "null" : content.substring(0, 100)))); //$NON-NLS-1$ //$NON-NLS-2$
       } catch (Exception e) {
-        message(Messages.getString("TestComponent.ERROR_0005_RESOURCE_NOT_LOADED", e.getMessage())); //$NON-NLS-1$
+        message(Messages.getInstance().getString("TestComponent.ERROR_0005_RESOURCE_NOT_LOADED", e.getMessage())); //$NON-NLS-1$
       }
     }
 
@@ -134,7 +134,7 @@ public class TestComponent extends ComponentBase {
    */
   @Override
   protected boolean executeAction() {
-    message(Messages.getString("TestComponent.DEBUG_EXECUTING_TEST")); //$NON-NLS-1$
+    message(Messages.getInstance().getString("TestComponent.DEBUG_EXECUTING_TEST")); //$NON-NLS-1$
     Node componentNode = getComponentDefinition();
 
     Set inputNames = getInputNames();
@@ -145,7 +145,7 @@ public class TestComponent extends ComponentBase {
       inputName = (String) inputNamesIterator.next();
       actionParameter = getInputParameter(inputName);
 
-      message(Messages
+      message(Messages.getInstance()
           .getString(
               "TestComponent.DEBUG_INPUT_DESCRIPTION", inputName, actionParameter.getValue().getClass().toString() + "=" + actionParameter.getValue().toString())); //$NON-NLS-1$ //$NON-NLS-2$
     }
@@ -177,7 +177,7 @@ public class TestComponent extends ComponentBase {
       else if ("map2params".equals(test)) { //$NON-NLS-1$
 
         if (!(p1 instanceof Map)) {
-          error(Messages.getErrorString("TestComponent.ERROR_0003_PARAMETER_NOT_MAP", "p1")); //$NON-NLS-1$ //$NON-NLS-2$
+          error(Messages.getInstance().getErrorString("TestComponent.ERROR_0003_PARAMETER_NOT_MAP", "p1")); //$NON-NLS-1$ //$NON-NLS-2$
           return (false);
         }
 
@@ -194,7 +194,7 @@ public class TestComponent extends ComponentBase {
       } else if ("getkeys".equals(test)) { //$NON-NLS-1$
 
         if (!(p1 instanceof Map)) {
-          error(Messages.getErrorString("TestComponent.ERROR_0003_PARAMETER_NOT_MAP", "p1")); //$NON-NLS-1$ //$NON-NLS-2$
+          error(Messages.getInstance().getErrorString("TestComponent.ERROR_0003_PARAMETER_NOT_MAP", "p1")); //$NON-NLS-1$ //$NON-NLS-2$
           return (false);
         }
         theResult = new ArrayList(((Map) p1).keySet());
@@ -209,7 +209,7 @@ public class TestComponent extends ComponentBase {
           theResult = p1.toString() + p2.toString();
         } else if ("print2".equals(test)) { //$NON-NLS-1$
 
-          String delim = Messages.getString("TestComponent.CODE_PRINT_DELIM"); //$NON-NLS-1$
+          String delim = Messages.getInstance().getString("TestComponent.CODE_PRINT_DELIM"); //$NON-NLS-1$
           theResult = delim + p1.toString() + " - " + p2.toString() + delim; //$NON-NLS-1$
         } else {
 
@@ -231,13 +231,13 @@ public class TestComponent extends ComponentBase {
             // output under the key "NewKey"
 
             if (!(p1 instanceof Map) || !(p2 instanceof List) || !(p3 instanceof String)) {
-              error(Messages.getErrorString("TestComponent.ERROR_0004_P1_P2_WRONG_TYPE")); //$NON-NLS-1$
+              error(Messages.getInstance().getErrorString("TestComponent.ERROR_0004_P1_P2_WRONG_TYPE")); //$NON-NLS-1$
               return (false);
             }
 
             theResult = merge((Map) p1, (List) p2, (String) p3);
           } else {
-            message(Messages.getErrorString("TestComponent.ERROR_0001_TEST_NODE_NOT_FOUND")); //$NON-NLS-1$
+            message(Messages.getInstance().getErrorString("TestComponent.ERROR_0001_TEST_NODE_NOT_FOUND")); //$NON-NLS-1$
             return false;
           }
         }
@@ -264,7 +264,7 @@ public class TestComponent extends ComponentBase {
    */
   @Override
   public boolean init() {
-    message(Messages.getString("TestComponent.DEBUG_INITIALIZING_TEST")); //$NON-NLS-1$
+    message(Messages.getInstance().getString("TestComponent.DEBUG_INITIALIZING_TEST")); //$NON-NLS-1$
     return true;
   }
 
@@ -309,7 +309,7 @@ public class TestComponent extends ComponentBase {
   private Object getParamFromComponentNode(final String paramName, final Node componentNode) {
     String param = XmlDom4JHelper.getNodeText(paramName, componentNode);
     if ((param == null) || (param.length() < 1)) {
-      error(Messages.getErrorString("TestComponent.ERROR_0002_PARAMETER_MISSING", paramName)); //$NON-NLS-1$
+      error(Messages.getInstance().getErrorString("TestComponent.ERROR_0002_PARAMETER_MISSING", paramName)); //$NON-NLS-1$
       return (null);
     }
     return (getActionParameterValue(param));

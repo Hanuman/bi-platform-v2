@@ -39,8 +39,8 @@ public abstract class ViewPortlet extends BasePortlet {
       throws PortletException, IOException {
     response.setContentType("text/html"); //$NON-NLS-1$
     PrintWriter out = response.getWriter();
-    out.println(Messages.getString(
-        "ViewPortlet.CODE_MESSAGE_TEMPLATE", Messages.getString("ViewPortlet.USER_HELP_NOT_AVAILABLE"))); //$NON-NLS-1$ //$NON-NLS-2$
+    out.println(Messages.getInstance().getString(
+        "ViewPortlet.CODE_MESSAGE_TEMPLATE", Messages.getInstance().getString("ViewPortlet.USER_HELP_NOT_AVAILABLE"))); //$NON-NLS-1$ //$NON-NLS-2$
   }
 
   @Override
@@ -49,8 +49,8 @@ public abstract class ViewPortlet extends BasePortlet {
     response.setContentType("text/html"); //$NON-NLS-1$
     PrintWriter out = response.getWriter();
     // TODO sbarkdull, ViewPortlet.CODE_MESSAGE_TEMPLATE probably shouldnt be in resource file
-    out.println(Messages.getString(
-        "ViewPortlet.CODE_MESSAGE_TEMPLATE", Messages.getString("ViewPortlet.USER_OPTIONS_NOT_AVAILABLE"))); //$NON-NLS-1$ //$NON-NLS-2$
+    out.println(Messages.getInstance().getString(
+        "ViewPortlet.CODE_MESSAGE_TEMPLATE", Messages.getInstance().getString("ViewPortlet.USER_OPTIONS_NOT_AVAILABLE"))); //$NON-NLS-1$ //$NON-NLS-2$
   }
 
   protected String getSetting(final String name, final String defaultValue, final ActionRequest request,

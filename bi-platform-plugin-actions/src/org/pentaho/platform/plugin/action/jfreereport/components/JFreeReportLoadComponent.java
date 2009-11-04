@@ -80,14 +80,14 @@ public class JFreeReportLoadComponent extends AbstractJFreeReportComponent {
       if (isDefinedResource(getInputStringValue(AbstractJFreeReportComponent.REPORTLOAD_RESOURCENAME))) {
         return true;
       } else {
-        error(Messages.getErrorString("JFreeReport.ERROR_0004_REPORT_DEFINITION_UNREADABLE")); //$NON-NLS-1$
+        error(Messages.getInstance().getErrorString("JFreeReport.ERROR_0004_REPORT_DEFINITION_UNREADABLE")); //$NON-NLS-1$
         return false;
       }
     }
 
     if (isDefinedResource(AbstractJFreeReportComponent.DATACOMPONENT_JARINPUT)) {
       if (!isDefinedInput(AbstractJFreeReportComponent.REPORTLOAD_REPORTLOC)) {
-        error(Messages.getErrorString("JFreeReport.ERROR_0011_REPORT_LOCATION_MISSING")); //$NON-NLS-1$
+        error(Messages.getInstance().getErrorString("JFreeReport.ERROR_0011_REPORT_LOCATION_MISSING")); //$NON-NLS-1$
         return false;
       }
 
@@ -97,23 +97,23 @@ public class JFreeReportLoadComponent extends AbstractJFreeReportComponent {
       try {
         in = solutionRepository.getResourceInputStream(resource, true, ISolutionRepository.ACTION_EXECUTE);
       } catch (FileNotFoundException e1) {
-        error(Messages.getErrorString("JFreeReport.ERROR_0010_REPORT_JAR_MISSING", resource.getAddress())); //$NON-NLS-1$
+        error(Messages.getInstance().getErrorString("JFreeReport.ERROR_0010_REPORT_JAR_MISSING", resource.getAddress())); //$NON-NLS-1$
         return false;
       }
 
       try {
         // not being able to read a single char is definitly a big boo ..
         if (in.read() == -1) {
-          error(Messages.getErrorString("JFreeReport.ERROR_0009_REPORT_JAR_UNREADABLE")); //$NON-NLS-1$
+          error(Messages.getInstance().getErrorString("JFreeReport.ERROR_0009_REPORT_JAR_UNREADABLE")); //$NON-NLS-1$
           return false;
         }
       } catch (Exception e) {
-        error(Messages.getErrorString("JFreeReport.ERROR_0009_REPORT_JAR_UNREADABLE")); //$NON-NLS-1$
+        error(Messages.getInstance().getErrorString("JFreeReport.ERROR_0009_REPORT_JAR_UNREADABLE")); //$NON-NLS-1$
         return false;
       }
 
       if (!isDefinedInput(AbstractJFreeReportComponent.REPORTLOAD_REPORTLOC)) {
-        error(Messages.getErrorString("JFreeReport.ERROR_0012_CLASS_LOCATION_MISSING")); //$NON-NLS-1$
+        error(Messages.getInstance().getErrorString("JFreeReport.ERROR_0012_CLASS_LOCATION_MISSING")); //$NON-NLS-1$
         return false;
       }
       return true;
@@ -176,7 +176,7 @@ public class JFreeReportLoadComponent extends AbstractJFreeReportComponent {
           url = new URL(baseURL);
         } catch (Exception e) {
           // a null URL is ok
-          warn(Messages.getString("JFreeReportLoadComponent.WARN_COULD_NOT_CREATE_URL")); //$NON-NLS-1$
+          warn(Messages.getInstance().getString("JFreeReportLoadComponent.WARN_COULD_NOT_CREATE_URL")); //$NON-NLS-1$
         }
         report = generator.parseReport(
             new InputSource(new ByteArrayInputStream(repDef.getBytes("UTF-8"))), getDefinedResourceURL(url)); //$NON-NLS-1$
@@ -191,13 +191,13 @@ public class JFreeReportLoadComponent extends AbstractJFreeReportComponent {
     final IActionSequenceResource resource = getResource(AbstractJFreeReportComponent.DATACOMPONENT_JARINPUT);
     final ClassLoader loader = ReportUtils.createJarLoader(getSession(), resource);
     if (loader == null) {
-      throw new Exception(Messages.getString("JFreeReportLoadComponent.ERROR_0035_COULD_NOT_CREATE_CLASSLOADER")); //$NON-NLS-1$
+      throw new Exception(Messages.getInstance().getString("JFreeReportLoadComponent.ERROR_0035_COULD_NOT_CREATE_CLASSLOADER")); //$NON-NLS-1$
     }
 
     String reportLocation = getInputStringValue(AbstractJFreeReportComponent.REPORTLOAD_REPORTLOC);
     URL resourceUrl = loader.getResource(reportLocation);
     if (resourceUrl == null) {
-      throw new Exception(Messages.getErrorString("JFreeReport.ERROR_0016_REPORT_RESOURCE_INVALID", //$NON-NLS-1$
+      throw new Exception(Messages.getInstance().getErrorString("JFreeReport.ERROR_0016_REPORT_RESOURCE_INVALID", //$NON-NLS-1$
           reportLocation, resource.getAddress()));
     }
 
@@ -209,7 +209,7 @@ public class JFreeReportLoadComponent extends AbstractJFreeReportComponent {
 
       report = generator.parseReport(resourceUrl, getDefinedResourceURL(resourceUrl));
     } catch (Exception ex) {
-      throw new Exception(Messages.getErrorString("JFreeReport.ERROR_0007_COULD_NOT_PARSE", reportLocation), ex); //$NON-NLS-1$
+      throw new Exception(Messages.getInstance().getErrorString("JFreeReport.ERROR_0007_COULD_NOT_PARSE", reportLocation), ex); //$NON-NLS-1$
     }
     return report;
   }
@@ -246,7 +246,7 @@ public class JFreeReportLoadComponent extends AbstractJFreeReportComponent {
     }
 
     try {
-      final String inputStringValue = getInputStringValue(Messages
+      final String inputStringValue = getInputStringValue(Messages.getInstance()
           .getString(AbstractJFreeReportComponent.REPORTLOAD_RESURL));
       return new URL(inputStringValue);
     } catch (Exception e) {
@@ -321,7 +321,7 @@ public class JFreeReportLoadComponent extends AbstractJFreeReportComponent {
       return ReportGenerator.getInstance().parseReport(resourceManager, key, contextKey);
 
     } catch (Exception ex) {
-      error(Messages.getErrorString("JFreeReport.ERROR_0007_COULD_NOT_PARSE", resource.getAddress()), ex); //$NON-NLS-1$
+      error(Messages.getInstance().getErrorString("JFreeReport.ERROR_0007_COULD_NOT_PARSE", resource.getAddress()), ex); //$NON-NLS-1$
       return null;
     }
   }

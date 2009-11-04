@@ -30,8 +30,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.pentaho.commons.connection.IPentahoConnection;
 import org.pentaho.commons.connection.IPentahoResultSet;
-import org.pentaho.commons.connection.marshal.MarshallableResultSet;
-import org.pentaho.commons.connection.marshal.MarshallableRow;
 import org.pentaho.metadata.model.Domain;
 import org.pentaho.metadata.model.InlineEtlPhysicalModel;
 import org.pentaho.metadata.model.LogicalModel;
@@ -89,7 +87,7 @@ public class DatasourceServiceImpl implements IDatasourceService {
       Constructor<?> defaultConstructor = clazz.getConstructor(new Class[] {});
       dataAccessPermHandler = (IDataAccessPermissionHandler) defaultConstructor.newInstance(new Object[] {});
     } catch (Exception e) {
-      logger.error(Messages.getErrorString("DatasourceServiceImpl.ERROR_0007_DATAACCESS_PERMISSIONS_INIT_ERROR"), e); //$NON-NLS-1$
+      logger.error(Messages.getInstance().getErrorString("DatasourceServiceImpl.ERROR_0007_DATAACCESS_PERMISSIONS_INIT_ERROR"), e); //$NON-NLS-1$
       // TODO: Unhardcode once this is an actual plugin
       dataAccessPermHandler = new SimpleDataAccessPermissionHandler();
     }
@@ -105,7 +103,7 @@ public class DatasourceServiceImpl implements IDatasourceService {
       dataAccessViewPermHandler = (IDataAccessViewPermissionHandler) defaultConstructor.newInstance(new Object[] {});
     } catch (Exception e) {
       logger.error(
-          Messages.getErrorString("DatasourceServiceImpl.ERROR_0030_DATAACCESS_VIEW_PERMISSIONS_INIT_ERROR"), e); //$NON-NLS-1$
+          Messages.getInstance().getErrorString("DatasourceServiceImpl.ERROR_0030_DATAACCESS_VIEW_PERMISSIONS_INIT_ERROR"), e); //$NON-NLS-1$
       // TODO: Unhardcode once this is an actual plugin
       dataAccessViewPermHandler = new SimpleDataAccessViewPermissionHandler();
     }
@@ -145,20 +143,20 @@ public class DatasourceServiceImpl implements IDatasourceService {
 
   public boolean deleteLogicalModel(String domainId, String modelName) throws DatasourceServiceException {
     if (!hasDataAccessPermission()) {
-      logger.error(Messages.getErrorString("DatasourceServiceImpl.ERROR_0001_PERMISSION_DENIED"));//$NON-NLS-1$
+      logger.error(Messages.getInstance().getErrorString("DatasourceServiceImpl.ERROR_0001_PERMISSION_DENIED"));//$NON-NLS-1$
       return false;
     }
     try {
       metadataDomainRepository.removeModel(domainId, modelName);
     } catch (DomainStorageException dse) {
-      logger.error(Messages.getErrorString(
+      logger.error(Messages.getInstance().getErrorString(
           "DatasourceServiceImpl.ERROR_0017_UNABLE_TO_STORE_DOMAIN", domainId, dse.getLocalizedMessage()), dse);//$NON-NLS-1$
-      throw new DatasourceServiceException(Messages.getErrorString(
+      throw new DatasourceServiceException(Messages.getInstance().getErrorString(
           "DatasourceServiceImpl.ERROR_0016_UNABLE_TO_STORE_DOMAIN", domainId, dse.getLocalizedMessage()), dse); //$NON-NLS-1$      
     } catch (DomainIdNullException dne) {
-      logger.error(Messages
+      logger.error(Messages.getInstance()
           .getErrorString("DatasourceServiceImpl.ERROR_0019_DOMAIN_IS_NULL", dne.getLocalizedMessage()), dne);//$NON-NLS-1$
-      throw new DatasourceServiceException(Messages.getErrorString(
+      throw new DatasourceServiceException(Messages.getInstance().getErrorString(
           "DatasourceServiceImpl.ERROR_0019_DOMAIN_IS_NULL", dne.getLocalizedMessage()), dne); //$NON-NLS-1$      
     }
     return true;
@@ -174,7 +172,7 @@ public class DatasourceServiceImpl implements IDatasourceService {
       sqlConnection.setReadOnly(true);
       return sqlConnection.executeQuery(BEFORE_QUERY + query + AFTER_QUERY);
     } catch (Exception e) {
-      logger.error(Messages.getErrorString(
+      logger.error(Messages.getInstance().getErrorString(
           "DatasourceServiceImpl.ERROR_0009_QUERY_VALIDATION_FAILED", e.getLocalizedMessage()), e);//$NON-NLS-1$
       throw new QueryValidationException(e.getLocalizedMessage(), e);
     } finally {
@@ -187,8 +185,8 @@ public class DatasourceServiceImpl implements IDatasourceService {
   public SerializedResultSet doPreview(String connectionName, String query, String previewLimit)
       throws DatasourceServiceException {
     if (!hasDataAccessPermission()) {
-      logger.error(Messages.getErrorString("DatasourceServiceImpl.ERROR_0001_PERMISSION_DENIED"));//$NON-NLS-1$
-      throw new DatasourceServiceException(Messages
+      logger.error(Messages.getInstance().getErrorString("DatasourceServiceImpl.ERROR_0001_PERMISSION_DENIED"));//$NON-NLS-1$
+      throw new DatasourceServiceException(Messages.getInstance()
           .getErrorString("DatasourceServiceImpl.ERROR_0001_PERMISSION_DENIED"));//$NON-NLS-1$
     }
     SerializedResultSet returnResultSet;
@@ -197,9 +195,9 @@ public class DatasourceServiceImpl implements IDatasourceService {
       returnResultSet = DatasourceServiceHelper.getSerializeableResultSet(connectionName, query,
           Integer.parseInt(previewLimit), PentahoSessionHolder.getSession());
     } catch (QueryValidationException e) {
-      logger.error(Messages.getErrorString(
+      logger.error(Messages.getInstance().getErrorString(
           "DatasourceServiceImpl.ERROR_0009_QUERY_VALIDATION_FAILED", e.getLocalizedMessage()), e);//$NON-NLS-1$
-      throw new DatasourceServiceException(Messages.getErrorString(
+      throw new DatasourceServiceException(Messages.getInstance().getErrorString(
           "DatasourceServiceImpl.ERROR_0009_QUERY_VALIDATION_FAILED", e.getLocalizedMessage()), e); //$NON-NLS-1$      
     }
     return returnResultSet;
@@ -208,17 +206,17 @@ public class DatasourceServiceImpl implements IDatasourceService {
 
   public boolean testDataSourceConnection(String connectionName) throws DatasourceServiceException {
     if (!hasDataAccessPermission()) {
-      logger.error(Messages.getErrorString("DatasourceServiceImpl.ERROR_0001_PERMISSION_DENIED"));//$NON-NLS-1$
-      throw new DatasourceServiceException(Messages
+      logger.error(Messages.getInstance().getErrorString("DatasourceServiceImpl.ERROR_0001_PERMISSION_DENIED"));//$NON-NLS-1$
+      throw new DatasourceServiceException(Messages.getInstance()
           .getErrorString("DatasourceServiceImpl.ERROR_0001_PERMISSION_DENIED"));//$NON-NLS-1$
     }
     Connection conn = null;
     try {
       conn = DatasourceServiceHelper.getDataSourceConnection(connectionName, PentahoSessionHolder.getSession());
       if (conn == null) {
-        logger.error(Messages.getErrorString(
+        logger.error(Messages.getInstance().getErrorString(
             "DatasourceServiceImpl.ERROR_0018_UNABLE_TO_TEST_CONNECTION", connectionName));//$NON-NLS-1$
-        throw new DatasourceServiceException(Messages.getErrorString(
+        throw new DatasourceServiceException(Messages.getInstance().getErrorString(
             "DatasourceServiceImpl.ERROR_0018_UNABLE_TO_TEST_CONNECTION", connectionName)); //$NON-NLS-1$
       }
     } finally {
@@ -227,9 +225,9 @@ public class DatasourceServiceImpl implements IDatasourceService {
           conn.close();
         }
       } catch (SQLException e) {
-        logger.error(Messages.getErrorString(
+        logger.error(Messages.getInstance().getErrorString(
             "DatasourceServiceImpl.ERROR_0018_UNABLE_TO_TEST_CONNECTION", connectionName, e.getLocalizedMessage()), e);//$NON-NLS-1$
-        throw new DatasourceServiceException(Messages.getErrorString(
+        throw new DatasourceServiceException(Messages.getInstance().getErrorString(
             "DatasourceServiceImpl.ERROR_0018_UNABLE_TO_TEST_CONNECTION", connectionName, e.getLocalizedMessage()), e); //$NON-NLS-1$
       }
     }
@@ -247,8 +245,8 @@ public class DatasourceServiceImpl implements IDatasourceService {
   public BusinessData generateLogicalModel(String modelName, String connectionName, String query, String previewLimit)
       throws DatasourceServiceException {
     if (!hasDataAccessPermission()) {
-      logger.error(Messages.getErrorString("DatasourceServiceImpl.ERROR_0001_PERMISSION_DENIED"));//$NON-NLS-1$
-      throw new DatasourceServiceException(Messages
+      logger.error(Messages.getInstance().getErrorString("DatasourceServiceImpl.ERROR_0001_PERMISSION_DENIED"));//$NON-NLS-1$
+      throw new DatasourceServiceException(Messages.getInstance()
           .getErrorString("DatasourceServiceImpl.ERROR_0001_PERMISSION_DENIED"));//$NON-NLS-1$
     }
     try {
@@ -264,14 +262,14 @@ public class DatasourceServiceImpl implements IDatasourceService {
       Domain domain = sqlModelGenerator.generate();
       return new BusinessData(domain, resultSet.getData());
     } catch (SQLModelGeneratorException smge) {
-      logger.error(Messages.getErrorString(
+      logger.error(Messages.getInstance().getErrorString(
           "DatasourceServiceImpl.ERROR_0011_UNABLE_TO_GENERATE_MODEL", smge.getLocalizedMessage()), smge);//$NON-NLS-1$
-      throw new DatasourceServiceException(Messages.getErrorString(
+      throw new DatasourceServiceException(Messages.getInstance().getErrorString(
           "DatasourceServiceImpl.ERROR_0011_UNABLE_TO_GENERATE_MODEL", smge.getLocalizedMessage()), smge); //$NON-NLS-1$
     } catch (QueryValidationException e) {
-      logger.error(Messages.getErrorString(
+      logger.error(Messages.getInstance().getErrorString(
           "DatasourceServiceImpl.ERROR_0009_QUERY_VALIDATION_FAILED", e.getLocalizedMessage()), e);//$NON-NLS-1$
-      throw new DatasourceServiceException(Messages.getErrorString(
+      throw new DatasourceServiceException(Messages.getInstance().getErrorString(
           "DatasourceServiceImpl.ERROR_0009_QUERY_VALIDATION_FAILED", e.getLocalizedMessage()), e); //$NON-NLS-1$
     }
    }
@@ -287,8 +285,8 @@ public class DatasourceServiceImpl implements IDatasourceService {
   public BusinessData generateInlineEtlLogicalModel(String modelName, String relativeFilePath, boolean headersPresent,
       String delimiter, String enclosure) throws DatasourceServiceException {
     if (!hasDataAccessPermission()) {
-      logger.error(Messages.getErrorString("DatasourceServiceImpl.ERROR_0001_PERMISSION_DENIED"));//$NON-NLS-1$
-      throw new DatasourceServiceException(Messages
+      logger.error(Messages.getInstance().getErrorString("DatasourceServiceImpl.ERROR_0001_PERMISSION_DENIED"));//$NON-NLS-1$
+      throw new DatasourceServiceException(Messages.getInstance()
           .getErrorString("DatasourceServiceImpl.ERROR_0001_PERMISSION_DENIED"));//$NON-NLS-1$
     }
 
@@ -310,17 +308,17 @@ public class DatasourceServiceImpl implements IDatasourceService {
           delimiter, enclosure, 5);
       return new BusinessData(domain, data);
     } catch (Exception e) {
-      logger.error(Messages.getErrorString(
+      logger.error(Messages.getInstance().getErrorString(
           "DatasourceServiceImpl.ERROR_0011_UNABLE_TO_GENERATE_MODEL", e.getLocalizedMessage()), e);//$NON-NLS-1$
-      throw new DatasourceServiceException(Messages.getErrorString(
+      throw new DatasourceServiceException(Messages.getInstance().getErrorString(
           "DatasourceServiceImpl.ERROR_0011_UNABLE_TO_GENERATE_MODEL", e.getLocalizedMessage()), e); //$NON-NLS-1$
     }
   }
 
   public boolean saveLogicalModel(Domain domain, boolean overwrite) throws DatasourceServiceException {
     if (!hasDataAccessPermission()) {
-      logger.error(Messages.getErrorString("DatasourceServiceImpl.ERROR_0001_PERMISSION_DENIED"));//$NON-NLS-1$
-      throw new DatasourceServiceException(Messages
+      logger.error(Messages.getInstance().getErrorString("DatasourceServiceImpl.ERROR_0001_PERMISSION_DENIED"));//$NON-NLS-1$
+      throw new DatasourceServiceException(Messages.getInstance()
           .getErrorString("DatasourceServiceImpl.ERROR_0001_PERMISSION_DENIED"));//$NON-NLS-1$
     }
 
@@ -329,22 +327,22 @@ public class DatasourceServiceImpl implements IDatasourceService {
       getMetadataDomainRepository().storeDomain(domain, overwrite);
       return true;
     } catch (DomainStorageException dse) {
-      logger.error(Messages.getErrorString(
+      logger.error(Messages.getInstance().getErrorString(
             "DatasourceServiceImpl.ERROR_0012_UNABLE_TO_STORE_DOMAIN", domainName, dse.getLocalizedMessage()));//$NON-NLS-1$
       logger.error("error", dse); //$NON-NLS-1$
-      throw new DatasourceServiceException(Messages.getErrorString(
+      throw new DatasourceServiceException(Messages.getInstance().getErrorString(
           "DatasourceServiceImpl.ERROR_0012_UNABLE_TO_STORE_DOMAIN", domainName, dse.getLocalizedMessage()), dse); //$NON-NLS-1$      
     } catch (DomainAlreadyExistsException dae) {
-      logger.error(Messages.getErrorString(
+      logger.error(Messages.getInstance().getErrorString(
           "DatasourceServiceImpl.ERROR_0013_DOMAIN_ALREADY_EXIST", domainName, dae.getLocalizedMessage()));//$NON-NLS-1$
       logger.error("error", dae); //$NON-NLS-1$
-      throw new DatasourceServiceException(Messages.getErrorString(
+      throw new DatasourceServiceException(Messages.getInstance().getErrorString(
           "DatasourceServiceImpl.ERROR_0013_DOMAIN_ALREADY_EXIST", domainName, dae.getLocalizedMessage()), dae); //$NON-NLS-1$      
     } catch (DomainIdNullException dne) {
-      logger.error(Messages
+      logger.error(Messages.getInstance()
           .getErrorString("DatasourceServiceImpl.ERROR_0014_DOMAIN_IS_NULL", dne.getLocalizedMessage()));//$NON-NLS-1$
       logger.error("error", dne); //$NON-NLS-1$
-      throw new DatasourceServiceException(Messages.getErrorString(
+      throw new DatasourceServiceException(Messages.getInstance().getErrorString(
           "DatasourceServiceImpl.ERROR_0014_DOMAIN_IS_NULL", dne.getLocalizedMessage()), dne); //$NON-NLS-1$      
     }
   }
@@ -359,8 +357,8 @@ public class DatasourceServiceImpl implements IDatasourceService {
 
   public List<LogicalModelSummary> getLogicalModels() throws DatasourceServiceException {
     if (!hasDataAccessViewPermission()) {
-      logger.error(Messages.getErrorString("DatasourceServiceImpl.ERROR_0001_PERMISSION_DENIED")); //$NON-NLS-1$
-      throw new DatasourceServiceException(Messages
+      logger.error(Messages.getInstance().getErrorString("DatasourceServiceImpl.ERROR_0001_PERMISSION_DENIED")); //$NON-NLS-1$
+      throw new DatasourceServiceException(Messages.getInstance()
           .getErrorString("DatasourceServiceImpl.ERROR_0001_PERMISSION_DENIED")); //$NON-NLS-1$
     }
     List<LogicalModelSummary> logicalModelSummaries = new ArrayList<LogicalModelSummary>();

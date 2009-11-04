@@ -97,7 +97,7 @@ public class BlobUserType implements UserType {
   public Object nullSafeGet(final ResultSet arg0, final String[] arg1, final Object arg2) throws HibernateException,
       SQLException {
     if (BlobUserType.debug) {
-      BlobUserType.log.debug(Messages.getString("BLOBUTYPE.DEBUG_NULL_SAFE_GET")); //$NON-NLS-1$
+      BlobUserType.log.debug(Messages.getInstance().getString("BLOBUTYPE.DEBUG_NULL_SAFE_GET")); //$NON-NLS-1$
     }
     InputStream is = arg0.getBinaryStream(arg1[0]);
     if (is != null) {
@@ -115,14 +115,14 @@ public class BlobUserType implements UserType {
   public void nullSafeSet(final PreparedStatement arg0, final Object arg1, final int arg2) throws HibernateException,
       SQLException {
     if (BlobUserType.debug) {
-      BlobUserType.log.debug(Messages.getString("BLOBUTYPE.DEBUG_NULL_SAFE_SET")); //$NON-NLS-1$
+      BlobUserType.log.debug(Messages.getInstance().getString("BLOBUTYPE.DEBUG_NULL_SAFE_SET")); //$NON-NLS-1$
     }
     if (arg1 != null) {
       try {
         arg0.setBytes(arg2, SerializationHelper.serialize((Serializable) arg1));
       } catch (SerializationException ex) {
-        BlobUserType.log.error(Messages.getErrorString("BLOBUTYPE.ERROR_0001_SETTING_BLOB"), ex); //$NON-NLS-1$
-        throw new HibernateException(Messages.getErrorString("BLOBUTYPE.ERROR_0001_SETTING_BLOB"), ex); //$NON-NLS-1$
+        BlobUserType.log.error(Messages.getInstance().getErrorString("BLOBUTYPE.ERROR_0001_SETTING_BLOB"), ex); //$NON-NLS-1$
+        throw new HibernateException(Messages.getInstance().getErrorString("BLOBUTYPE.ERROR_0001_SETTING_BLOB"), ex); //$NON-NLS-1$
       }
     } else {
       arg0.setNull(arg2, sqlTypes()[0]);

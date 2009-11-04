@@ -48,7 +48,7 @@ public class AdminContentGenerator extends BaseXmlContentGenerator {
 	@Override
 	public String getContent() throws Exception {
 
-		String header = Messages.getString( "UI.USER_ADMIN_INTRO" ); //$NON-NLS-1$
+		String header = Messages.getInstance().getString( "UI.USER_ADMIN_INTRO" ); //$NON-NLS-1$
 		String admin = getAdminLinks( userSession );
 		String publish = getPublisherContent( userSession );
 		
@@ -105,10 +105,10 @@ private final String getPublisherContent( IPentahoSession userSession ) {
 			return sb.toString();
 		} catch (TransformerException e )
 		{
-			return Messages.getErrorString( "PUBLISHERS.ERROR_0001_PUBLISHERS_ERROR" ); //$NON-NLS-1$
+			return Messages.getInstance().getErrorString( "PUBLISHERS.ERROR_0001_PUBLISHERS_ERROR" ); //$NON-NLS-1$
 		}
 	}
-	return Messages.getErrorString( "PUBLISHERS.ERROR_0001_PUBLISHERS_ERROR" ); //$NON-NLS-1$
+	return Messages.getInstance().getErrorString( "PUBLISHERS.ERROR_0001_PUBLISHERS_ERROR" ); //$NON-NLS-1$
 
 }
 

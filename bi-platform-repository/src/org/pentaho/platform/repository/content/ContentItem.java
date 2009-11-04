@@ -140,7 +140,7 @@ public class ContentItem extends PentahoBase implements IContentItem, ISearchabl
   public InputStream getInputStream() throws ContentException {
     ContentItemFile cif = getLatestFile();
     if (this.latestFile == null) {
-      throw new ContentException(Messages.getErrorString("CONTITEM.ERROR_0001_NO_EXISTING_FILES", this.getName())); //$NON-NLS-1$
+      throw new ContentException(Messages.getInstance().getErrorString("CONTITEM.ERROR_0001_NO_EXISTING_FILES", this.getName())); //$NON-NLS-1$
     }
     return cif.getInputStream();
   }
@@ -148,7 +148,7 @@ public class ContentItem extends PentahoBase implements IContentItem, ISearchabl
   public IPentahoStreamSource getDataSource() {
     ContentItemFile cif = getLatestFile();
     if (this.latestFile == null) {
-      throw new ContentException(Messages.getErrorString("CONTITEM.ERROR_0001_NO_EXISTING_FILES", this.getName())); //$NON-NLS-1$
+      throw new ContentException(Messages.getInstance().getErrorString("CONTITEM.ERROR_0001_NO_EXISTING_FILES", this.getName())); //$NON-NLS-1$
     }
 
     String fullPath = PentahoSystem.getApplicationContext().getFileOutputPath(
@@ -195,7 +195,7 @@ public class ContentItem extends PentahoBase implements IContentItem, ISearchabl
   public Reader getReader() throws ContentException {
     ContentItemFile cif = getLatestFile();
     if (this.latestFile == null) {
-      throw new ContentException(Messages.getErrorString("CONTITEM.ERROR_0002_NO_EXISTING_FILES", this.getName())); //$NON-NLS-1$
+      throw new ContentException(Messages.getInstance().getErrorString("CONTITEM.ERROR_0002_NO_EXISTING_FILES", this.getName())); //$NON-NLS-1$
     }
     return cif.getReader();
   }
@@ -203,7 +203,7 @@ public class ContentItem extends PentahoBase implements IContentItem, ISearchabl
   public OutputStream getOutputStream(final String actionName) throws IOException {
     outputStream = null;
     if (actionName == null) {
-      throw new IllegalArgumentException(Messages.getErrorString("CONTITEM.ERROR_0006_ACTION_NAME_CANNOT_BE_NULL")); //$NON-NLS-1$
+      throw new IllegalArgumentException(Messages.getInstance().getErrorString("CONTITEM.ERROR_0006_ACTION_NAME_CANNOT_BE_NULL")); //$NON-NLS-1$
     }
     switch (getWriteMode()) {
       case WRITEMODE_KEEPVERSIONS: {
@@ -220,7 +220,7 @@ public class ContentItem extends PentahoBase implements IContentItem, ISearchabl
           outputStream = cif.getOutputStream(true);
           return outputStream;
         }
-        throw new IOException(Messages.getErrorString("CONTITEM.ERROR_0004_OUTPUT_STREAM_NOT_AVAILABLE")); //$NON-NLS-1$
+        throw new IOException(Messages.getInstance().getErrorString("CONTITEM.ERROR_0004_OUTPUT_STREAM_NOT_AVAILABLE")); //$NON-NLS-1$
       }
       case WRITEMODE_APPEND: {
         ContentItemFile cif = getLatestFile();
@@ -231,10 +231,10 @@ public class ContentItem extends PentahoBase implements IContentItem, ISearchabl
           outputStream = cif.getOutputStream(true, true);
           return outputStream;
         }
-        throw new IOException(Messages.getErrorString("CONTITEM.ERROR_0004_OUTPUT_STREAM_NOT_AVAILABLE")); //$NON-NLS-1$
+        throw new IOException(Messages.getInstance().getErrorString("CONTITEM.ERROR_0004_OUTPUT_STREAM_NOT_AVAILABLE")); //$NON-NLS-1$
       }
       default: {
-        throw new ContentException(Messages.getErrorString(
+        throw new ContentException(Messages.getInstance().getErrorString(
             "CONTITEM.ERROR_0003_BAD_WRITE_MODE", Integer.toString(getWriteMode()))); //$NON-NLS-1$
       }
     }
@@ -245,7 +245,7 @@ public class ContentItem extends PentahoBase implements IContentItem, ISearchabl
       try {
         outputStream.close();
       } catch (IOException e) {
-        error(Messages.getErrorString("ContentItem.ERROR_0001_CLOSE_OUTPUT_STREAM"), e); //$NON-NLS-1$
+        error(Messages.getInstance().getErrorString("ContentItem.ERROR_0001_CLOSE_OUTPUT_STREAM"), e); //$NON-NLS-1$
       }
     }
   }
@@ -392,7 +392,7 @@ public class ContentItem extends PentahoBase implements IContentItem, ISearchabl
     try {
       cif.deleteOsFile();
     } catch (Exception ex) {
-      ContentItem.logger.error(Messages.getErrorString(
+      ContentItem.logger.error(Messages.getInstance().getErrorString(
           "CONTITEM.ERROR_0005_COULD_NOT_DELETE_OS_FILE", cif.getCompleteFileName()), ex); //$NON-NLS-1$
     }
     HibernateUtil.makeTransient(cif);

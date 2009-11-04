@@ -55,7 +55,7 @@ public class ContentItemHandlerTest extends BaseTest {
 		  
   public void testSimpleOutputHandler() {
     startTest();
-    IPentahoSession session = new StandaloneSession(Messages.getString("BaseTest.DEBUG_JUNIT_SESSION")); //$NON-NLS-1$
+    IPentahoSession session = new StandaloneSession(Messages.getInstance().getString("BaseTest.DEBUG_JUNIT_SESSION")); //$NON-NLS-1$
     SimpleParameterProvider parameterProvider = new SimpleParameterProvider();
     try {
       FileOutputStream outputStream = new FileOutputStream("c:/test.txt"); //$NON-NLS-1$
@@ -80,7 +80,7 @@ public class ContentItemHandlerTest extends BaseTest {
 
   public void testSimpleOutputHandlerWithContentItem() {
     startTest();
-    IPentahoSession session = new StandaloneSession(Messages.getString("BaseTest.DEBUG_JUNIT_SESSION")); //$NON-NLS-1$
+    IPentahoSession session = new StandaloneSession(Messages.getInstance().getString("BaseTest.DEBUG_JUNIT_SESSION")); //$NON-NLS-1$
     SimpleParameterProvider parameterProvider = new SimpleParameterProvider();
     try {
       FileOutputStream outputStream = new FileOutputStream("c:/test.txt"); //$NON-NLS-1$

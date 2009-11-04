@@ -64,7 +64,7 @@ public class SolutionTreeUIComponent extends XmlComponent implements ISolutionFi
       } catch (Exception e) {
         Document document = DocumentHelper.createDocument();
         document
-            .addElement("error").setText(Messages.getString("SolutionTreeUIComponent.ERROR_0001_PERMISSIONS_NOT_SUPPORTED")); //$NON-NLS-1$ //$NON-NLS-2$
+            .addElement("error").setText(Messages.getInstance().getString("SolutionTreeUIComponent.ERROR_0001_PERMISSIONS_NOT_SUPPORTED")); //$NON-NLS-1$ //$NON-NLS-2$
         return document;
       }
     } else {

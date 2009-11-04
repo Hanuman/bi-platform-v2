@@ -109,17 +109,17 @@ public class EmailComponent extends ComponentBase {
         PentahoSystem
             .get(IMessageFormatter.class, getSession())
             .formatErrorMessage(
-                "text/html", Messages.getString("Email.USER_COULD_NOT_SEND_EMAIL"), Messages.getString("Email.USER_SETTINGS_HELP"), messageBuffer); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+                "text/html", Messages.getInstance().getString("Email.USER_COULD_NOT_SEND_EMAIL"), Messages.getInstance().getString("Email.USER_SETTINGS_HELP"), messageBuffer); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
         try {
           feedbackStream.write(messageBuffer.toString().getBytes(LocaleHelper.getSystemEncoding()));
         } catch (Exception e) {
-          error(Messages.getErrorString("Base.ERROR_0003_INVALID_FEEDBACK_STREAM"), e); //$NON-NLS-1$
+          error(Messages.getInstance().getErrorString("Base.ERROR_0003_INVALID_FEEDBACK_STREAM"), e); //$NON-NLS-1$
           return false;
         }
         return false;
       } else {
         // we are not allowed to provide feedback and cannot continue...
-        error(Messages.getErrorString("Email.ERROR_0009_SERVER_SETTINGS_NOT_SET")); //$NON-NLS-1$
+        error(Messages.getInstance().getErrorString("Email.ERROR_0009_SERVER_SETTINGS_NOT_SET")); //$NON-NLS-1$
         return false;
       }
     }
@@ -141,7 +141,7 @@ public class EmailComponent extends ComponentBase {
     boolean result = true;
     // make sure that we can get a "to" email address
     if (!(getActionDefinition() instanceof EmailAction)) {
-      error(Messages.getErrorString(
+      error(Messages.getInstance().getErrorString(
           "ComponentBase.ERROR_0001_UNKNOWN_ACTION_TYPE", getActionDefinition().getElement().asXML())); //$NON-NLS-1$
       result = false;
     } else {
@@ -153,13 +153,13 @@ public class EmailComponent extends ComponentBase {
       IActionInput htmlMsg = emailAction.getMessageHtml();
 
       if (to == ActionInputConstant.NULL_INPUT) {
-        error(Messages.getErrorString("Email.ERROR_0001_TO_NOT_DEFINED", getActionName())); //$NON-NLS-1$
+        error(Messages.getInstance().getErrorString("Email.ERROR_0001_TO_NOT_DEFINED", getActionName())); //$NON-NLS-1$
         result = false;
       } else if (subject == ActionInputConstant.NULL_INPUT) {
-        error(Messages.getErrorString("Email.ERROR_0002_SUBJECT_NOT_DEFINED", getActionName())); //$NON-NLS-1$
+        error(Messages.getInstance().getErrorString("Email.ERROR_0002_SUBJECT_NOT_DEFINED", getActionName())); //$NON-NLS-1$
         result = false;
       } else if ((plainMsg == ActionInputConstant.NULL_INPUT) && (htmlMsg == ActionInputConstant.NULL_INPUT)) {
-        error(Messages.getErrorString("Email.ERROR_0003_BODY_NOT_DEFINED", getActionName())); //$NON-NLS-1$
+        error(Messages.getInstance().getErrorString("Email.ERROR_0003_BODY_NOT_DEFINED", getActionName())); //$NON-NLS-1$
         result = false;
       }
     }
@@ -215,11 +215,11 @@ public class EmailComponent extends ComponentBase {
      */
 
     if (ComponentBase.debug) {
-      debug(Messages.getString("Email.DEBUG_TO_FROM", to, from)); //$NON-NLS-1$
-      debug(Messages.getString("Email.DEBUG_CC_BCC", cc, bcc)); //$NON-NLS-1$
-      debug(Messages.getString("Email.DEBUG_SUBJECT", subject)); //$NON-NLS-1$
-      debug(Messages.getString("Email.DEBUG_PLAIN_MESSAGE", messagePlain)); //$NON-NLS-1$
-      debug(Messages.getString("Email.DEBUG_HTML_MESSAGE", messageHtml)); //$NON-NLS-1$
+      debug(Messages.getInstance().getString("Email.DEBUG_TO_FROM", to, from)); //$NON-NLS-1$
+      debug(Messages.getInstance().getString("Email.DEBUG_CC_BCC", cc, bcc)); //$NON-NLS-1$
+      debug(Messages.getInstance().getString("Email.DEBUG_SUBJECT", subject)); //$NON-NLS-1$
+      debug(Messages.getInstance().getString("Email.DEBUG_PLAIN_MESSAGE", messagePlain)); //$NON-NLS-1$
+      debug(Messages.getInstance().getString("Email.DEBUG_HTML_MESSAGE", messageHtml)); //$NON-NLS-1$
     }
 
     if ((to == null) || (to.trim().length() == 0)) {
@@ -227,7 +227,7 @@ public class EmailComponent extends ComponentBase {
       // Get the output stream that the feedback is going into
       OutputStream feedbackStream = getFeedbackOutputStream();
       if (feedbackStream != null) {
-        createFeedbackParameter("to", Messages.getString("Email.USER_ENTER_EMAIL_ADDRESS"), "", "", true); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+        createFeedbackParameter("to", Messages.getInstance().getString("Email.USER_ENTER_EMAIL_ADDRESS"), "", "", true); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
         setFeedbackMimeType("text/html"); //$NON-NLS-1$
         return true;
       } else {
@@ -235,11 +235,11 @@ public class EmailComponent extends ComponentBase {
       }
     }
     if (subject == null) {
-      error(Messages.getErrorString("Email.ERROR_0005_NULL_SUBJECT", getActionName())); //$NON-NLS-1$
+      error(Messages.getInstance().getErrorString("Email.ERROR_0005_NULL_SUBJECT", getActionName())); //$NON-NLS-1$
       return false;
     }
     if ((messagePlain == null) && (messageHtml == null)) {
-      error(Messages.getErrorString("Email.ERROR_0006_NULL_BODY", getActionName())); //$NON-NLS-1$
+      error(Messages.getInstance().getErrorString("Email.ERROR_0006_NULL_BODY", getActionName())); //$NON-NLS-1$
       return false;
     }
 
@@ -263,7 +263,7 @@ public class EmailComponent extends ComponentBase {
           props.put(propertyName, propertyValue);
         }
       } catch (Exception e) {
-        error(Messages.getString("Email.ERROR_0013_CONFIG_FILE_INVALID"), e); //$NON-NLS-1$
+        error(Messages.getInstance().getString("Email.ERROR_0013_CONFIG_FILE_INVALID"), e); //$NON-NLS-1$
         return false;
       }
 
@@ -291,7 +291,7 @@ public class EmailComponent extends ComponentBase {
         msg.setFrom(new InternetAddress(from));
       } else {
         // There should be no way to get here
-        error(Messages.getString("Email.ERROR_0012_FROM_NOT_DEFINED")); //$NON-NLS-1$
+        error(Messages.getInstance().getString("Email.ERROR_0012_FROM_NOT_DEFINED")); //$NON-NLS-1$
       }
 
       if ((to != null) && (to.trim().length() > 0)) {
@@ -339,13 +339,13 @@ public class EmailComponent extends ComponentBase {
         for (EmailAttachment element : emailAttachments) {
           IPentahoStreamSource source = element.getContent();
           if (source == null) {
-            error(Messages.getErrorString("Email.ERROR_0015_ATTACHMENT_FAILED")); //$NON-NLS-1$
+            error(Messages.getInstance().getErrorString("Email.ERROR_0015_ATTACHMENT_FAILED")); //$NON-NLS-1$
             return false;
           }
           DataSource dataSource = new ActivationHelper.PentahoStreamSourceWrapper(source);
           String attachmentName = element.getName();
           if (ComponentBase.debug) {
-            debug(Messages.getString("Email.DEBUG_ADDING_ATTACHMENT", attachmentName)); //$NON-NLS-1$
+            debug(Messages.getInstance().getString("Email.DEBUG_ADDING_ATTACHMENT", attachmentName)); //$NON-NLS-1$
           }
 
           // create the second message part
@@ -355,7 +355,7 @@ public class EmailComponent extends ComponentBase {
           attachmentBodyPart.setDataHandler(new DataHandler(dataSource));
           attachmentBodyPart.setFileName(attachmentName);
           if (ComponentBase.debug) {
-            debug(Messages.getString("Email.DEBUG_ATTACHMENT_SOURCE", dataSource.getName())); //$NON-NLS-1$
+            debug(Messages.getInstance().getString("Email.DEBUG_ATTACHMENT_SOURCE", dataSource.getName())); //$NON-NLS-1$
           }
           multipart.addBodyPart(attachmentBodyPart);
         }
@@ -370,25 +370,25 @@ public class EmailComponent extends ComponentBase {
       Transport.send(msg);
 
       if (ComponentBase.debug) {
-        debug(Messages.getString("Email.DEBUG_EMAIL_SUCCESS")); //$NON-NLS-1$
+        debug(Messages.getInstance().getString("Email.DEBUG_EMAIL_SUCCESS")); //$NON-NLS-1$
       }
       return true;
       // TODO: persist the content set for a while...
     } catch (SendFailedException e) {
-      error(Messages.getErrorString("Email.ERROR_0011_SEND_FAILED", to), e); //$NON-NLS-1$
+      error(Messages.getInstance().getErrorString("Email.ERROR_0011_SEND_FAILED", to), e); //$NON-NLS-1$
       /*
        Exception ne;
        MessagingException sfe = e;
        while ((ne = sfe.getNextException()) != null && ne instanceof MessagingException) {
        sfe = (MessagingException) ne;
-       error(Messages.getErrorString("Email.ERROR_0011_SEND_FAILED", sfe.toString()), sfe); //$NON-NLS-1$
+       error(Messages.getInstance().getErrorString("Email.ERROR_0011_SEND_FAILED", sfe.toString()), sfe); //$NON-NLS-1$
        }
        */
 
     } catch (AuthenticationFailedException e) {
-      error(Messages.getString("Email.ERROR_0014_AUTHENTICATION_FAILED", to), e); //$NON-NLS-1$
+      error(Messages.getInstance().getString("Email.ERROR_0014_AUTHENTICATION_FAILED", to), e); //$NON-NLS-1$
     } catch (Throwable e) {
-      error(Messages.getErrorString("Email.ERROR_0011_SEND_FAILED", to), e); //$NON-NLS-1$
+      error(Messages.getInstance().getErrorString("Email.ERROR_0011_SEND_FAILED", to), e); //$NON-NLS-1$
     }
     return false;
   }

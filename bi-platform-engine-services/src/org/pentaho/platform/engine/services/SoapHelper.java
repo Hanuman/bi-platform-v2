@@ -89,7 +89,7 @@ public class SoapHelper {
     messageBuffer.append("<SOAP-ENV:Fault>\n"); //$NON-NLS-1$
 
     if (message == null) {
-      message = Messages.getErrorString("SoapHelper.ERROR_0001_UNKNOWN_ERROR"); //$NON-NLS-1$
+      message = Messages.getInstance().getErrorString("SoapHelper.ERROR_0001_UNKNOWN_ERROR"); //$NON-NLS-1$
     }
 
     // Envelope envelope = new Envelope();

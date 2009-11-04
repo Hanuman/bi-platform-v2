@@ -150,7 +150,7 @@ public class HQLConnection implements IPentahoLoggingConnection, ILimitableConne
         }
      } catch (Exception e) {
         // Doesn't seem like we would get any exception from sess.close()
-        logger.error(Messages.getErrorString("HQLConnection.ERROR_0001_UNABLE_TO_CLOSE"), e); //$NON-NLS-1$
+        logger.error(Messages.getInstance().getErrorString("HQLConnection.ERROR_0001_UNABLE_TO_CLOSE"), e); //$NON-NLS-1$
       }
     }
 

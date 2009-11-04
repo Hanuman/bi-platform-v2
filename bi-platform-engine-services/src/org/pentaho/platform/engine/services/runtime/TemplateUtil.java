@@ -172,7 +172,7 @@ public class TemplateUtil {
         // TODO support type conversion
         value = inputs.getProperty(parameter);
         if (value == null) {
-          TemplateUtil.logger.warn(Messages.getString("TemplateUtil.NOT_FOUND", parameter)); //$NON-NLS-1$
+          TemplateUtil.logger.warn(Messages.getInstance().getString("TemplateUtil.NOT_FOUND", parameter)); //$NON-NLS-1$
         }
         
       }
@@ -233,14 +233,14 @@ public class TemplateUtil {
           obj = ((InputProperties) inputs).getInput(inputName);
         }
         if (obj == null) {
-          TemplateUtil.logger.warn(Messages.getString("TemplateUtil.NOT_FOUND", inputName)); //$NON-NLS-1$
+          TemplateUtil.logger.warn(Messages.getInstance().getString("TemplateUtil.NOT_FOUND", inputName)); //$NON-NLS-1$
         } else {
           if (obj instanceof IPentahoResultSet) {
             data = (IPentahoResultSet) obj;
             if (columnNo < data.getColumnCount()) {
               columnsList.add(new Integer(columnNo));
             } else {
-              TemplateUtil.logger.warn(Messages.getString("TemplateUtil.INVALID_COLUMN", String.valueOf(columnNo))); //$NON-NLS-1$
+              TemplateUtil.logger.warn(Messages.getInstance().getString("TemplateUtil.INVALID_COLUMN", String.valueOf(columnNo))); //$NON-NLS-1$
             }
           }
         }
@@ -262,7 +262,7 @@ public class TemplateUtil {
     if (partsList.size() > 0) {
       partsList.add(template.substring(lastEnd));
     } else {
-      TemplateUtil.logger.warn(Messages.getString("TemplateUtil.NO_TOKEN")); //$NON-NLS-1$
+      TemplateUtil.logger.warn(Messages.getInstance().getString("TemplateUtil.NO_TOKEN")); //$NON-NLS-1$
     }
 
     if ((data != null) && (partsList.size() == columnsList.size() + 1)) {
@@ -477,7 +477,7 @@ public class TemplateUtil {
             columnIdx = md.getColumnIndex(new String[] { name });
           }
           if (columnIdx < 0) {
-            InputProperties.inputPropertiesLogger.error(Messages.getErrorString("Template.ERROR_0005_COULD_NOT_DETERMINE_COLUMN")); //$NON-NLS-1$
+            InputProperties.inputPropertiesLogger.error(Messages.getInstance().getErrorString("Template.ERROR_0005_COULD_NOT_DETERMINE_COLUMN")); //$NON-NLS-1$
             return null;
           }
           int rowCount = rs.getRowCount();

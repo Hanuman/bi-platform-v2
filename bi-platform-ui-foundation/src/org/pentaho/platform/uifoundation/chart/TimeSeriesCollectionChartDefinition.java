@@ -220,9 +220,9 @@ public class TimeSeriesCollectionChartDefinition extends TimeSeriesCollection im
     } else {
       // log a deprecation warning for this property...
       getLogger().warn(
-          Messages.getString(
+          Messages.getInstance().getString(
               "CHART.WARN_DEPRECATED_CHILD", ChartDefinition.SUBTITLE_NODE_NAME, ChartDefinition.SUBTITLES_NODE_NAME));//$NON-NLS-1$ 
-      getLogger().warn(Messages.getString("CHART.WARN_PROPERTY_WILL_NOT_VALIDATE", ChartDefinition.SUBTITLE_NODE_NAME));//$NON-NLS-1$  
+      getLogger().warn(Messages.getInstance().getString("CHART.WARN_PROPERTY_WILL_NOT_VALIDATE", ChartDefinition.SUBTITLE_NODE_NAME));//$NON-NLS-1$  
     }
 
     if (subtitles != null) {
@@ -327,7 +327,7 @@ public class TimeSeriesCollectionChartDefinition extends TimeSeriesCollection im
   private void setDataByColumn(final IPentahoResultSet data) {
     // TODO Make this routine MDX friendly
     if (data == null) {
-      noDataMessage = Messages.getString("CHART.USER_NO_DATA_AVAILABLE"); //$NON-NLS-1$
+      noDataMessage = Messages.getInstance().getString("CHART.USER_NO_DATA_AVAILABLE"); //$NON-NLS-1$
       return; // No data so we've got nothing to set
       // TODO come up with some sort of error strategy here.
     }
@@ -359,7 +359,7 @@ public class TimeSeriesCollectionChartDefinition extends TimeSeriesCollection im
       addSeries(wrkSeries);
     }
     if ((data.getRowCount() > 0) && (this.getSeriesCount() <= 0)) {
-      noDataMessage = Messages.getString("CHART.USER_INCORRECT_DATA_FORMAT"); //$NON-NLS-1$
+      noDataMessage = Messages.getInstance().getString("CHART.USER_INCORRECT_DATA_FORMAT"); //$NON-NLS-1$
     }
 
   }
@@ -367,7 +367,7 @@ public class TimeSeriesCollectionChartDefinition extends TimeSeriesCollection im
   private void setDataByRow(final IPentahoResultSet data) {
     // TODO Make this routine MDX friendly
     if (data == null) {
-      noDataMessage = Messages.getString("CHART.USER_NO_DATA_AVAILABLE"); //$NON-NLS-1$
+      noDataMessage = Messages.getInstance().getString("CHART.USER_NO_DATA_AVAILABLE"); //$NON-NLS-1$
       return; // No data so we've got nothing to set
       // TODO come up with some sort of error strategy here.
     }
@@ -388,7 +388,7 @@ public class TimeSeriesCollectionChartDefinition extends TimeSeriesCollection im
     }
 
     if ((data.getRowCount() > 0) && (this.getSeriesCount() <= 0)) {
-      noDataMessage = Messages.getString("CHART.USER_INCORRECT_DATA_FORMAT"); //$NON-NLS-1$
+      noDataMessage = Messages.getInstance().getString("CHART.USER_INCORRECT_DATA_FORMAT"); //$NON-NLS-1$
     }
 
   }
@@ -408,7 +408,7 @@ public class TimeSeriesCollectionChartDefinition extends TimeSeriesCollection im
                 return formatter2.parse((String) raw);
             } catch (ParseException e) {
                 getLogger().error(
-                    Messages.getString("TimeSeriesCollectionChartDefinition.ERROR_0001_INVALID_DATE", //$NON-NLS-1$
+                    Messages.getInstance().getString("TimeSeriesCollectionChartDefinition.ERROR_0001_INVALID_DATE", //$NON-NLS-1$
                     (String) raw), e);
                 return null;
             }
@@ -1268,7 +1268,7 @@ public class TimeSeriesCollectionChartDefinition extends TimeSeriesCollection im
       try {
         setDateMaximum(DateFormat.getDateInstance().parse(dateMaximumNode.getText()));
       } catch (ParseException e) {
-        getLogger().error(Messages.getString("TimeSeriesCollectionChartDefinition.ERROR_0001_INVALID_DATE", //$NON-NLS-1$
+        getLogger().error(Messages.getInstance().getString("TimeSeriesCollectionChartDefinition.ERROR_0001_INVALID_DATE", //$NON-NLS-1$
             dateMaximumNode.getText()), e);
       }
     }
@@ -1287,7 +1287,7 @@ public class TimeSeriesCollectionChartDefinition extends TimeSeriesCollection im
       try {
         setDateMinimum(DateFormat.getDateInstance().parse(dateMinimumNode.getText()));
       } catch (ParseException e) {
-        getLogger().error(Messages.getString("TimeSeriesCollectionChartDefinition.ERROR_0001_INVALID_DATE", //$NON-NLS-1$
+        getLogger().error(Messages.getInstance().getString("TimeSeriesCollectionChartDefinition.ERROR_0001_INVALID_DATE", //$NON-NLS-1$
             dateMinimumNode.getText()), e);
       }
     }

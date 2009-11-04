@@ -72,16 +72,16 @@ public class GetImage extends ServletBase {
       final String image = request.getParameter("image"); //$NON-NLS-1$
       if (image != null) {
         if (ServletBase.debug) {
-          debug(Messages.getString("IMAGE.DEBUG_IMAGE_PARAMETER") + image); //$NON-NLS-1$
+          debug(Messages.getInstance().getString("IMAGE.DEBUG_IMAGE_PARAMETER") + image); //$NON-NLS-1$
         }
       } else {
-        error(Messages.getErrorString("IMAGE.ERROR_0001_IMAGE_PARAMETER_EMPTY")); //$NON-NLS-1$
+        error(Messages.getInstance().getErrorString("IMAGE.ERROR_0001_IMAGE_PARAMETER_EMPTY")); //$NON-NLS-1$
         return;
       }
 
       // some sanity checks ...
       if ( StringUtil.doesPathContainParentPathSegment( image ) ) {
-        error(Messages.getErrorString("IMAGE.ERROR_0002_FILE_NOT_FOUND", image)); //$NON-NLS-1$
+        error(Messages.getInstance().getErrorString("IMAGE.ERROR_0002_FILE_NOT_FOUND", image)); //$NON-NLS-1$
         // we don't give hints that we check the parameter. Just return not
         // found.
         response.setStatus(HttpServletResponse.SC_NOT_FOUND);
@@ -104,7 +104,7 @@ public class GetImage extends ServletBase {
       // circument the test above ...
       //      IOUtils ioUtils = IOUtils.getInstance();
       //      if (ioUtils.isSubDirectory(tempDirectory, file) == false) {
-      //        error(Messages.getErrorString("IMAGE.ERROR_0002_FILE_NOT_FOUND", image)); //$NON-NLS-1$
+      //        error(Messages.getInstance().getErrorString("IMAGE.ERROR_0002_FILE_NOT_FOUND", image)); //$NON-NLS-1$
       //        // we dont give hints that we check the parameter. Just return not
       //        // found.
       //        response.setStatus(HttpServletResponse.SC_NOT_FOUND);
@@ -116,7 +116,7 @@ public class GetImage extends ServletBase {
       InputStream in = repository.getResourceInputStream(location, true, ISolutionRepository.ACTION_EXECUTE);
 
       if (in == null) {
-        error(Messages.getErrorString("IMAGE.ERROR_0002_FILE_NOT_FOUND", image)); //$NON-NLS-1$
+        error(Messages.getInstance().getErrorString("IMAGE.ERROR_0002_FILE_NOT_FOUND", image)); //$NON-NLS-1$
         response.setStatus(HttpServletResponse.SC_NOT_FOUND);
         return;
       }

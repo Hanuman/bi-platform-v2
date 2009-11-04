@@ -59,17 +59,17 @@ public class PooledDatasourceSystemListener implements IPentahoSystemListener {
           cacheManager.putInRegionCache(IDatasourceService.JDBC_DATASOURCE, datasource.getName(), ds);
         } catch (DatasourceServiceException dse) {
           // Skip this datasource pooling
-          Logger.error(this, Messages.getErrorString("PooledDatasourceSystemListener.ERROR_0003_UNABLE_TO_POOL_DATASOURCE",datasource.getName(), dse.getMessage())); //$NON-NLS-1$
+          Logger.error(this, Messages.getInstance().getErrorString("PooledDatasourceSystemListener.ERROR_0003_UNABLE_TO_POOL_DATASOURCE",datasource.getName(), dse.getMessage())); //$NON-NLS-1$
           continue;
         }
        }
       Logger.debug(this, "PooledDatasourceSystemListener: done with init"); //$NON-NLS-1$
       return true;
     } catch (ObjectFactoryException objface) {
-      Logger.error(this, Messages.getErrorString("PooledDatasourceSystemListener.ERROR_0001_UNABLE_TO_INSTANTIATE_OBJECT"), objface); //$NON-NLS-1$
+      Logger.error(this, Messages.getInstance().getErrorString("PooledDatasourceSystemListener.ERROR_0001_UNABLE_TO_INSTANTIATE_OBJECT"), objface); //$NON-NLS-1$
       return false;
     } catch (DatasourceMgmtServiceException dmse) {
-      Logger.error(this, Messages.getErrorString("PooledDatasourceSystemListener.ERROR_0002_UNABLE_TO_GET_DATASOURCE"), dmse); //$NON-NLS-1$
+      Logger.error(this, Messages.getInstance().getErrorString("PooledDatasourceSystemListener.ERROR_0002_UNABLE_TO_GET_DATASOURCE"), dmse); //$NON-NLS-1$
       return false;
     }
   }

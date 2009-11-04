@@ -58,7 +58,7 @@ public class HelloWorldComponent extends ComponentBase {
   protected boolean validateAction() {
     boolean result = true;
     if (!(getActionDefinition() instanceof HelloWorldAction)) {
-      error(Messages.getErrorString(
+      error(Messages.getInstance().getErrorString(
           "ComponentBase.ERROR_0001_UNKNOWN_ACTION_TYPE", getActionDefinition().getElement().asXML())); //$NON-NLS-1$
       result = false;
     }
@@ -76,14 +76,14 @@ public class HelloWorldComponent extends ComponentBase {
     boolean result = true;
 
     // return the quote as the result of this component
-    String msg = Messages.getString("HelloWorld.USER_HELLO_WORLD_TEXT", helloWorldAction.getQuote().getStringValue("")); //$NON-NLS-1$ //$NON-NLS-2$
+    String msg = Messages.getInstance().getString("HelloWorld.USER_HELLO_WORLD_TEXT", helloWorldAction.getQuote().getStringValue("")); //$NON-NLS-1$ //$NON-NLS-2$
 
     OutputStream outputStream = getDefaultOutputStream("text/html"); //$NON-NLS-1$
     if (outputStream != null) {
       try {
         outputStream.write(msg.getBytes(LocaleHelper.getSystemEncoding()));
       } catch (Exception e) {
-        error(Messages.getErrorString("HelloWorld.ERROR_0001_COULDNOTWRITE"), e); //$NON-NLS-1$
+        error(Messages.getInstance().getErrorString("HelloWorld.ERROR_0001_COULDNOTWRITE"), e); //$NON-NLS-1$
         result = false;
       }
     }

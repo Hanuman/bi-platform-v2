@@ -92,7 +92,7 @@ public class SequenceDefinition implements ISequenceDefinition {
     // Check for a sequence document
     Node sequenceDefinitionNode = document.selectSingleNode("//action-sequence"); //$NON-NLS-1$
     if (sequenceDefinitionNode == null) {
-      logger.error(Messages.getErrorString(
+      logger.error(Messages.getInstance().getErrorString(
           "SequenceDefinition.ERROR_0002_NO_ACTION_SEQUENCE_NODE", solutionName, solutionPath, actionName)); //$NON-NLS-1$
       return null;
     }
@@ -172,12 +172,12 @@ public class SequenceDefinition implements ISequenceDefinition {
     errorCode = SequenceDefinition.parseParameters(sequenceRootNode, logger,
         "outputs/*", outputDefinitions, null, false); //$NON-NLS-1$
     if (errorCode != ISequenceDefinition.ACTION_SEQUENCE_DEFINITION_OK) {
-      logger.info(Messages.getString("SequenceDefinition.INFO_OUTPUT_PARAMETERS_NOT_DEFINED")); //$NON-NLS-1$      
+      logger.info(Messages.getInstance().getString("SequenceDefinition.INFO_OUTPUT_PARAMETERS_NOT_DEFINED")); //$NON-NLS-1$      
     }
     // get the resource definitions
     errorCode = parseResourceDefinitions(sequenceRootNode, logger);
     if (errorCode != ISequenceDefinition.ACTION_SEQUENCE_DEFINITION_OK) {
-      logger.info(Messages.getString("SequenceDefinition.INFO_RESOURCES_PARAMETERS_NOT_DEFINED")); //$NON-NLS-1$     
+      logger.info(Messages.getInstance().getString("SequenceDefinition.INFO_RESOURCES_PARAMETERS_NOT_DEFINED")); //$NON-NLS-1$     
     }
   }
 
@@ -209,7 +209,7 @@ public class SequenceDefinition implements ISequenceDefinition {
       ce.setScript(script);
       return ce;
     } catch (Exception ex) {
-      logger.error(Messages.getErrorString("SequenceDefinition.ERROR_0005_PARSING_PARAMETERS"), ex); //$NON-NLS-1$
+      logger.error(Messages.getInstance().getErrorString("SequenceDefinition.ERROR_0005_PARSING_PARAMETERS"), ex); //$NON-NLS-1$
     }
     return null;
   }
@@ -258,7 +258,7 @@ public class SequenceDefinition implements ISequenceDefinition {
             variableName = variableNode.getText();
             ActionParameterSource variable = new ActionParameterSource(variableSource, variableName);
             if (SequenceDefinition.debug) {
-              logger.debug(Messages.getString(
+              logger.debug(Messages.getInstance().getString(
                   "SequenceDefinition.DEBUG_ADDING_SOURCE_FOR_PARAMETER", variableSource, parameterName)); //$NON-NLS-1$
             }
 
@@ -266,7 +266,7 @@ public class SequenceDefinition implements ISequenceDefinition {
           } catch (Exception e) {
             logger
                 .error(
-                    Messages
+                    Messages.getInstance()
                         .getErrorString(
                             "SequenceDefinition.ERROR_0004_VARIABLE_SOURCE_NOT_VALID", Integer.toString(variableIdx), parameterName), e); //$NON-NLS-1$
           }
@@ -274,7 +274,7 @@ public class SequenceDefinition implements ISequenceDefinition {
         }
         if (defaultValue != null) {
           if (SequenceDefinition.debug) {
-            logger.debug(Messages.getString(
+            logger.debug(Messages.getInstance().getString(
                 "SequenceDefinition.DEBUG_USING_DEFAULT_VALUE", defaultValue.toString(), parameterName)); //$NON-NLS-1$
           }
         }
@@ -283,7 +283,7 @@ public class SequenceDefinition implements ISequenceDefinition {
       }
       return ISequenceDefinition.ACTION_SEQUENCE_DEFINITION_OK;
     } catch (Exception e) {
-      logger.error(Messages.getErrorString("SequenceDefinition.ERROR_0005_PARSING_PARAMETERS"), e); //$NON-NLS-1$
+      logger.error(Messages.getInstance().getErrorString("SequenceDefinition.ERROR_0005_PARSING_PARAMETERS"), e); //$NON-NLS-1$
     }
 
     return ISequenceDefinition.ACTION_SEQUENCE_DEFINITION_INVALID_ACTION_DOC;
@@ -317,7 +317,7 @@ public class SequenceDefinition implements ISequenceDefinition {
           String resourceLocation = XmlDom4JHelper.getNodeText("location", typeNode); //$NON-NLS-1$
           if (resourceType == IActionSequenceResource.SOLUTION_FILE_RESOURCE) {
             if (resourceLocation == null) {
-              logger.error(Messages.getErrorString("SequenceDefinition.ERROR_0008_RESOURCE_NO_LOCATION", resourceName)); //$NON-NLS-1$
+              logger.error(Messages.getInstance().getErrorString("SequenceDefinition.ERROR_0008_RESOURCE_NO_LOCATION", resourceName)); //$NON-NLS-1$
               continue;
             }
           } else if (resourceType == IActionSequenceResource.STRING) {
@@ -336,7 +336,7 @@ public class SequenceDefinition implements ISequenceDefinition {
                 resourceLocation);
             resourceDefinitions.put(resourceName, resource);
           } else {
-            logger.error(Messages.getErrorString("SequenceDefinition.ERROR_0007_RESOURCE_NO_MIME_TYPE", resourceName)); //$NON-NLS-1$
+            logger.error(Messages.getInstance().getErrorString("SequenceDefinition.ERROR_0007_RESOURCE_NO_MIME_TYPE", resourceName)); //$NON-NLS-1$
           }
         }
         // input = new ActionParameter( resourceName, resourceType, null
@@ -345,7 +345,7 @@ public class SequenceDefinition implements ISequenceDefinition {
       }
       return ISequenceDefinition.ACTION_SEQUENCE_DEFINITION_OK;
     } catch (Exception e) {
-      logger.error(Messages.getErrorString("SequenceDefinition.ERROR_0006_PARSING_RESOURCE"), e); //$NON-NLS-1$               
+      logger.error(Messages.getInstance().getErrorString("SequenceDefinition.ERROR_0006_PARSING_RESOURCE"), e); //$NON-NLS-1$               
     }
     return ISequenceDefinition.ACTION_SEQUENCE_DEFINITION_INVALID_ACTION_DOC;
 
@@ -381,7 +381,7 @@ public class SequenceDefinition implements ISequenceDefinition {
       }
       return ISequenceDefinition.ACTION_SEQUENCE_DEFINITION_OK;
     } catch (Exception e) {
-      logger.error(Messages.getErrorString("SequenceDefinition.ERROR_0006_PARSING_RESOURCE"), e); //$NON-NLS-1$               
+      logger.error(Messages.getInstance().getErrorString("SequenceDefinition.ERROR_0006_PARSING_RESOURCE"), e); //$NON-NLS-1$               
     }
     return ISequenceDefinition.ACTION_SEQUENCE_DEFINITION_INVALID_ACTION_DOC;
 

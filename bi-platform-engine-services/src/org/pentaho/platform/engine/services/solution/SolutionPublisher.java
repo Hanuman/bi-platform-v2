@@ -50,18 +50,18 @@ public class SolutionPublisher extends BasePublisher {
     try {
       PentahoSystem.get(ISolutionRepository.class,session).reloadSolutionRepository(session, getLoggingLevel());
     } catch (Throwable t) {
-      error(Messages.getErrorString("SolutionPublisher.ERROR_0001_PUBLISH_FAILED"), t); //$NON-NLS-1$
-      return Messages.getString("SolutionPublisher.USER_ERROR_PUBLISH_FAILED") + t.getLocalizedMessage(); //$NON-NLS-1$
+      error(Messages.getInstance().getErrorString("SolutionPublisher.ERROR_0001_PUBLISH_FAILED"), t); //$NON-NLS-1$
+      return Messages.getInstance().getString("SolutionPublisher.USER_ERROR_PUBLISH_FAILED") + t.getLocalizedMessage(); //$NON-NLS-1$
     }
-    return Messages.getString("SolutionPublisher.USER_SOLUTION_REPOSITORY_UPDATED"); //$NON-NLS-1$
+    return Messages.getInstance().getString("SolutionPublisher.USER_SOLUTION_REPOSITORY_UPDATED"); //$NON-NLS-1$
   }
 
   public String getName() {
-    return Messages.getString("SolutionRepository.USER_PUBLISH_TITLE"); //$NON-NLS-1$
+    return Messages.getInstance().getString("SolutionRepository.USER_PUBLISH_TITLE"); //$NON-NLS-1$
   }
 
   public String getDescription() {
-    return Messages.getString("SolutionRepository.USER_PUBLISH_DESCRIPTION"); //$NON-NLS-1$
+    return Messages.getInstance().getString("SolutionRepository.USER_PUBLISH_DESCRIPTION"); //$NON-NLS-1$
   }
 
 }

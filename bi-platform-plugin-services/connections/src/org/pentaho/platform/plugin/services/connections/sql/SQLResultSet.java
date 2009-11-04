@@ -78,7 +78,7 @@ public class SQLResultSet implements IPentahoResultSet, IPeekable {
         metadata = new SQLMetaData(nativeResultSet.getMetaData());
       } catch (SQLException e) {
         // TODO Auto-generated catch block
-        SQLResultSet.log.error(Messages.getErrorString("SQLResultSet.ERROR_0004_GET_METADATA"), e); //$NON-NLS-1$
+        SQLResultSet.log.error(Messages.getInstance().getErrorString("SQLResultSet.ERROR_0004_GET_METADATA"), e); //$NON-NLS-1$
         // log.error(null, e);
         throw new RuntimeException(e);
       }
@@ -118,8 +118,8 @@ public class SQLResultSet implements IPentahoResultSet, IPeekable {
       }
     } catch (SQLException e) {
       // TODO surface this error
-      SQLResultSet.log.error(Messages.getErrorString("SQLResultSet.ERROR_0005_NEXT"), e); //$NON-NLS-1$
-      throw new SQLResultSetException(Messages.getErrorString("SQLResultSet.ERROR_0005_NEXT"), e); //$NON-NLS-1$
+      SQLResultSet.log.error(Messages.getInstance().getErrorString("SQLResultSet.ERROR_0005_NEXT"), e); //$NON-NLS-1$
+      throw new SQLResultSetException(Messages.getInstance().getErrorString("SQLResultSet.ERROR_0005_NEXT"), e); //$NON-NLS-1$
     }
     return null;
   }
@@ -141,7 +141,7 @@ public class SQLResultSet implements IPentahoResultSet, IPeekable {
         nativeResultSet.close();
       } catch (SQLException e) {
         // TODO sbarkdull, localize this!
-        SQLResultSet.log.warn(Messages.getString("SQLResultSet.WARN_CONNECTION_NOT_CLOSED")); //$NON-NLS-1$
+        SQLResultSet.log.warn(Messages.getInstance().getString("SQLResultSet.WARN_CONNECTION_NOT_CLOSED")); //$NON-NLS-1$
       }
       rowCount = SQLResultSet.COUNT_NEVER_OBTAINED;
     }
@@ -157,7 +157,7 @@ public class SQLResultSet implements IPentahoResultSet, IPeekable {
     try {
       resultSetType = nativeResultSet.getType();
     } catch (SQLException ex) {
-      SQLResultSet.log.warn(Messages.getString("SQLResultSet.WARN_RESULTSET_TYPE_UNDETERMINED")); //$NON-NLS-1$
+      SQLResultSet.log.warn(Messages.getInstance().getString("SQLResultSet.WARN_RESULTSET_TYPE_UNDETERMINED")); //$NON-NLS-1$
     }
     if (resultSetType == ResultSet.TYPE_FORWARD_ONLY) {
       return false;
@@ -184,7 +184,7 @@ public class SQLResultSet implements IPentahoResultSet, IPeekable {
       return columnCount;
     } catch (SQLException ex) {
       // TODO: Surfase this exception.
-      SQLResultSet.log.error(Messages.getErrorString("SQLResultSet.ERROR_0006_GET_COLUMNCOUNT"), ex); //$NON-NLS-1$
+      SQLResultSet.log.error(Messages.getInstance().getErrorString("SQLResultSet.ERROR_0006_GET_COLUMNCOUNT"), ex); //$NON-NLS-1$
     }
     return 0;
   }
@@ -233,7 +233,7 @@ public class SQLResultSet implements IPentahoResultSet, IPeekable {
         }
       }
     } catch (SQLException sqle) {
-      SQLResultSet.log.error(Messages.getErrorString("SQLResultSet.ERROR_0001_OBTAINING_ROWCOUNT"), sqle); //$NON-NLS-1$
+      SQLResultSet.log.error(Messages.getInstance().getErrorString("SQLResultSet.ERROR_0001_OBTAINING_ROWCOUNT"), sqle); //$NON-NLS-1$
       rowCount = 0;
     }
     return rowCount;
@@ -265,8 +265,8 @@ public class SQLResultSet implements IPentahoResultSet, IPeekable {
         }
         return nativeResultSet.getObject(column + 1);
       } catch (SQLException ex) {
-        SQLResultSet.log.error(Messages.getErrorString("SQLResultSet.ERROR_0002_GET_VALUE"), ex); //$NON-NLS-1$
-        throw new IllegalStateException(Messages.getErrorString("SQLResultSet.ERROR_0008_FORWARDED_SQL_MSG"), ex); //$NON-NLS-1$
+        SQLResultSet.log.error(Messages.getInstance().getErrorString("SQLResultSet.ERROR_0002_GET_VALUE"), ex); //$NON-NLS-1$
+        throw new IllegalStateException(Messages.getInstance().getErrorString("SQLResultSet.ERROR_0008_FORWARDED_SQL_MSG"), ex); //$NON-NLS-1$
       }
     }
     return null;
@@ -292,12 +292,12 @@ public class SQLResultSet implements IPentahoResultSet, IPeekable {
   public void beforeFirst() {
     try {
       if (nativeResultSet == null) {
-        SQLResultSet.log.error(Messages.getErrorString("SQLResultSet.ERROR_0007_BEFORE_FIRST_CONNECTION_CLOSED")); //$NON-NLS-1$
+        SQLResultSet.log.error(Messages.getInstance().getErrorString("SQLResultSet.ERROR_0007_BEFORE_FIRST_CONNECTION_CLOSED")); //$NON-NLS-1$
       } else {
         nativeResultSet.beforeFirst();
       }
     } catch (SQLException e) {
-      SQLResultSet.log.error(Messages.getErrorString("SQLResultSet.ERROR_0003_BEFORE_FIRST"), e); //$NON-NLS-1$
+      SQLResultSet.log.error(Messages.getInstance().getErrorString("SQLResultSet.ERROR_0003_BEFORE_FIRST"), e); //$NON-NLS-1$
     }
   }
 

@@ -118,7 +118,7 @@ public class FilterPanelPortlet extends ViewPortlet {
     String xslName = getSetting(FilterPanelPortlet.XSLNAME, null, request, requestParameters);
 
     if (filterPanelDefinition == null) {
-      response.getWriter().print(Messages.getString("FilterPanel.ERROR_0001_NO_FILTERS")); //$NON-NLS-1$
+      response.getWriter().print(Messages.getInstance().getString("FilterPanel.ERROR_0001_NO_FILTERS")); //$NON-NLS-1$
       return;
     }
 
@@ -161,7 +161,7 @@ public class FilterPanelPortlet extends ViewPortlet {
     if (content == null) {
       StringBuffer buffer = new StringBuffer();
       PentahoSystem.get(IMessageFormatter.class, userSession).formatErrorMessage(
-          "text/html", Messages.getString("FilterPanelComponent.ERROR_0003_CREATE"), messages, buffer); //$NON-NLS-1$ //$NON-NLS-2$
+          "text/html", Messages.getInstance().getString("FilterPanelComponent.ERROR_0003_CREATE"), messages, buffer); //$NON-NLS-1$ //$NON-NLS-2$
       content = buffer.toString();
     }
 

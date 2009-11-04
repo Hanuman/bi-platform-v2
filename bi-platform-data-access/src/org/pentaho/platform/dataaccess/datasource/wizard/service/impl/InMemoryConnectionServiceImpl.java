@@ -62,16 +62,16 @@ public class InMemoryConnectionServiceImpl implements IConnectionService {
         return connection;
       }
     }
-    logger.error(Messages.getErrorString("ConnectionServiceInMemoryDelegate.ERROR_0003_UNABLE_TO_GET_CONNECTION",name,null));
-    throw new ConnectionServiceException(Messages.getErrorString("ConnectionServiceInMemoryDelegate.ERROR_0003_UNABLE_TO_GET_CONNECTION",name,null));
+    logger.error(Messages.getInstance().getErrorString("ConnectionServiceInMemoryDelegate.ERROR_0003_UNABLE_TO_GET_CONNECTION",name,null));
+    throw new ConnectionServiceException(Messages.getInstance().getErrorString("ConnectionServiceInMemoryDelegate.ERROR_0003_UNABLE_TO_GET_CONNECTION",name,null));
   }
   public boolean addConnection(IConnection connection) throws ConnectionServiceException  {
     if(!isConnectionExist(connection.getName())) {
       connectionList.add(connection);
       return true;
     } else {
-      logger.error(Messages.getErrorString("ConnectionServiceInMemoryDelegate.ERROR_0004_UNABLE_TO_ADD_CONNECTION",connection.getName(),null));
-      throw new ConnectionServiceException(Messages.getErrorString("ConnectionServiceInMemoryDelegate.ERROR_0004_UNABLE_TO_ADD_CONNECTION",connection.getName(),null));
+      logger.error(Messages.getInstance().getErrorString("ConnectionServiceInMemoryDelegate.ERROR_0004_UNABLE_TO_ADD_CONNECTION",connection.getName(),null));
+      throw new ConnectionServiceException(Messages.getInstance().getErrorString("ConnectionServiceInMemoryDelegate.ERROR_0004_UNABLE_TO_ADD_CONNECTION",connection.getName(),null));
     }
   }
   public boolean updateConnection(IConnection connection) throws ConnectionServiceException  {
@@ -83,8 +83,8 @@ public class InMemoryConnectionServiceImpl implements IConnectionService {
       conn.setUsername(connection.getUsername());
       return true;
     } else {
-      logger.error(Messages.getErrorString("ConnectionServiceInMemoryDelegate.ERROR_0005_UNABLE_TO_UPDATE_CONNECTION",connection.getName(),null));
-      throw new ConnectionServiceException(Messages.getErrorString("ConnectionServiceInMemoryDelegate.ERROR_0005_UNABLE_TO_UPDATE_CONNECTION",connection.getName(),null));
+      logger.error(Messages.getInstance().getErrorString("ConnectionServiceInMemoryDelegate.ERROR_0005_UNABLE_TO_UPDATE_CONNECTION",connection.getName(),null));
+      throw new ConnectionServiceException(Messages.getInstance().getErrorString("ConnectionServiceInMemoryDelegate.ERROR_0005_UNABLE_TO_UPDATE_CONNECTION",connection.getName(),null));
     }
   }
   public boolean deleteConnection(IConnection connection) throws ConnectionServiceException  {
@@ -97,8 +97,8 @@ public class InMemoryConnectionServiceImpl implements IConnectionService {
         return deleteConnection(connection);
       }
     }
-    logger.error(Messages.getErrorString("ConnectionServiceInMemoryDelegate.ERROR_0006_UNABLE_TO_DELETE_CONNECTION",name,null));
-    throw new ConnectionServiceException(Messages.getErrorString("ConnectionServiceInMemoryDelegate.ERROR_0006_UNABLE_TO_DELETE_CONNECTION",name,null));
+    logger.error(Messages.getInstance().getErrorString("ConnectionServiceInMemoryDelegate.ERROR_0006_UNABLE_TO_DELETE_CONNECTION",name,null));
+    throw new ConnectionServiceException(Messages.getInstance().getErrorString("ConnectionServiceInMemoryDelegate.ERROR_0006_UNABLE_TO_DELETE_CONNECTION",name,null));
   }
   
   public boolean testConnection(IConnection connection) throws ConnectionServiceException {
@@ -106,16 +106,16 @@ public class InMemoryConnectionServiceImpl implements IConnectionService {
     try {
       conn = getConnection(connection);
     } catch (ConnectionServiceException dme) {
-      logger.error(Messages.getErrorString("ConnectionServiceInMemoryDelegate.ERROR_0026_UNABLE_TO_TEST_CONNECTION",connection.getName(),dme.getLocalizedMessage()),dme);
-      throw new ConnectionServiceException(Messages.getErrorString("ConnectionServiceInMemoryDelegate.ERROR_0026_UNABLE_TO_TEST_CONNECTION",connection.getName(),dme.getLocalizedMessage()),dme);
+      logger.error(Messages.getInstance().getErrorString("ConnectionServiceInMemoryDelegate.ERROR_0026_UNABLE_TO_TEST_CONNECTION",connection.getName(),dme.getLocalizedMessage()),dme);
+      throw new ConnectionServiceException(Messages.getInstance().getErrorString("ConnectionServiceInMemoryDelegate.ERROR_0026_UNABLE_TO_TEST_CONNECTION",connection.getName(),dme.getLocalizedMessage()),dme);
     } finally {
       try {
         if (conn != null) {
           conn.close();
         }
       } catch (SQLException e) {
-        logger.error(Messages.getErrorString("ConnectionServiceInMemoryDelegate.ERROR_0026_UNABLE_TO_TEST_CONNECTION",connection.getName(),null));
-        throw new ConnectionServiceException(Messages.getErrorString("ConnectionServiceInMemoryDelegate.ERROR_0026_UNABLE_TO_TEST_CONNECTION",connection.getName(),null));
+        logger.error(Messages.getInstance().getErrorString("ConnectionServiceInMemoryDelegate.ERROR_0026_UNABLE_TO_TEST_CONNECTION",connection.getName(),null));
+        throw new ConnectionServiceException(Messages.getInstance().getErrorString("ConnectionServiceInMemoryDelegate.ERROR_0026_UNABLE_TO_TEST_CONNECTION",connection.getName(),null));
       }
     }
     return true;
@@ -133,8 +133,8 @@ public class InMemoryConnectionServiceImpl implements IConnectionService {
 
     String driverClass = connection.getDriverClass();
     if (StringUtils.isEmpty(driverClass)) {
-      logger.error(Messages.getErrorString("ConnectionServiceInMemoryDelegate.ERROR_0020_CONNECTION_ATTEMPT_FAILED"));
-      throw new ConnectionServiceException(Messages.getErrorString("ConnectionServiceInMemoryDelegate.ERROR_0020_CONNECTION_ATTEMPT_FAILED")); //$NON-NLS-1$
+      logger.error(Messages.getInstance().getErrorString("ConnectionServiceInMemoryDelegate.ERROR_0020_CONNECTION_ATTEMPT_FAILED"));
+      throw new ConnectionServiceException(Messages.getInstance().getErrorString("ConnectionServiceInMemoryDelegate.ERROR_0020_CONNECTION_ATTEMPT_FAILED")); //$NON-NLS-1$
       
     }
     Class<?> driverC = null;
@@ -142,13 +142,13 @@ public class InMemoryConnectionServiceImpl implements IConnectionService {
     try {
       driverC = Class.forName(driverClass);
     } catch (ClassNotFoundException e) {
-      logger.error(Messages.getErrorString("ConnectionServiceInMemoryDelegate.ERROR_0021_DRIVER_NOT_FOUND_IN_CLASSPATH", driverClass),e);
-      throw new ConnectionServiceException(Messages.getErrorString("ConnectionServiceInMemoryDelegate.ERROR_0021_DRIVER_NOT_FOUND_IN_CLASSPATH"),e); //$NON-NLS-1$
+      logger.error(Messages.getInstance().getErrorString("ConnectionServiceInMemoryDelegate.ERROR_0021_DRIVER_NOT_FOUND_IN_CLASSPATH", driverClass),e);
+      throw new ConnectionServiceException(Messages.getInstance().getErrorString("ConnectionServiceInMemoryDelegate.ERROR_0021_DRIVER_NOT_FOUND_IN_CLASSPATH"),e); //$NON-NLS-1$
 
     }
     if (!Driver.class.isAssignableFrom(driverC)) {
-      logger.error(Messages.getErrorString("ConnectionServiceInMemoryDelegate.ERROR_0021_DRIVER_NOT_FOUND_IN_CLASSPATH", driverClass));
-      throw new ConnectionServiceException(Messages.getErrorString("ConnectionServiceInMemoryDelegate.ERROR_0021_DRIVER_NOT_FOUND_IN_CLASSPATH")); //$NON-NLS-1$
+      logger.error(Messages.getInstance().getErrorString("ConnectionServiceInMemoryDelegate.ERROR_0021_DRIVER_NOT_FOUND_IN_CLASSPATH", driverClass));
+      throw new ConnectionServiceException(Messages.getInstance().getErrorString("ConnectionServiceInMemoryDelegate.ERROR_0021_DRIVER_NOT_FOUND_IN_CLASSPATH")); //$NON-NLS-1$
 
     }
     Driver driver = null;
@@ -156,19 +156,19 @@ public class InMemoryConnectionServiceImpl implements IConnectionService {
     try {
       driver = driverC.asSubclass(Driver.class).newInstance();
     } catch (InstantiationException e) {
-      logger.error(Messages.getErrorString("ConnectionServiceInMemoryDelegate.ERROR_0022_UNABLE_TO_INSTANCE_DRIVER", driverClass),e);
-      throw new ConnectionServiceException(Messages.getErrorString("ConnectionServiceInMemoryDelegate.ERROR_0022_UNABLE_TO_INSTANCE_DRIVER"), e); //$NON-NLS-1$
+      logger.error(Messages.getInstance().getErrorString("ConnectionServiceInMemoryDelegate.ERROR_0022_UNABLE_TO_INSTANCE_DRIVER", driverClass),e);
+      throw new ConnectionServiceException(Messages.getInstance().getErrorString("ConnectionServiceInMemoryDelegate.ERROR_0022_UNABLE_TO_INSTANCE_DRIVER"), e); //$NON-NLS-1$
     } catch (IllegalAccessException e) {
-      logger.error(Messages.getErrorString("ConnectionServiceInMemoryDelegate.ERROR_0022_UNABLE_TO_INSTANCE_DRIVER", driverClass),e);
-      throw new ConnectionServiceException(Messages.getErrorString("ConnectionServiceInMemoryDelegate.ERROR_0022_UNABLE_TO_INSTANCE_DRIVER"), e); //$NON-NLS-1$
+      logger.error(Messages.getInstance().getErrorString("ConnectionServiceInMemoryDelegate.ERROR_0022_UNABLE_TO_INSTANCE_DRIVER", driverClass),e);
+      throw new ConnectionServiceException(Messages.getInstance().getErrorString("ConnectionServiceInMemoryDelegate.ERROR_0022_UNABLE_TO_INSTANCE_DRIVER"), e); //$NON-NLS-1$
     }
     try {
       DriverManager.registerDriver(driver);
       conn = DriverManager.getConnection(connection.getUrl(), connection.getUsername(), connection.getPassword());
       return conn;
     } catch (SQLException e) {
-      logger.error(Messages.getErrorString("ConnectionServiceInMemoryDelegate.ERROR_0023_UNABLE_TO_CONNECT"), e);
-      throw new ConnectionServiceException(Messages.getErrorString("ConnectionServiceInMemoryDelegate.ERROR_0023_UNABLE_TO_CONNECT"), e); //$NON-NLS-1$
+      logger.error(Messages.getInstance().getErrorString("ConnectionServiceInMemoryDelegate.ERROR_0023_UNABLE_TO_CONNECT"), e);
+      throw new ConnectionServiceException(Messages.getInstance().getErrorString("ConnectionServiceInMemoryDelegate.ERROR_0023_UNABLE_TO_CONNECT"), e); //$NON-NLS-1$
    }
   }
   private boolean isConnectionExist(String connectionName) {

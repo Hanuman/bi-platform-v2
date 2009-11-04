@@ -58,7 +58,7 @@ public class PentahoSessionHolder {
       //that instance sessions use the PentahoSessionHolder yet, so we will not make a fuss here if session is null.  When PentahoSessionHolder
       //is fully integrated with all sessions, then we should probably throw an exception here since in that case a null session means 
       //the system is in an illegal state.
-      logger.debug(Messages.getString("PentahoSessionHolder.WARN_THREAD_SESSION_NULL", Thread.currentThread().getName())); //$NON-NLS-1$
+      logger.debug(Messages.getInstance().getString("PentahoSessionHolder.WARN_THREAD_SESSION_NULL", Thread.currentThread().getName())); //$NON-NLS-1$
     }
     return sess;
   }

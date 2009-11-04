@@ -83,7 +83,7 @@ public class PublisherUtil {
 
     String fullURL = publishURL + "?publishPath=" + publishPath; //$NON-NLS-1$
     if (publishPassword == null) {
-      throw new IllegalArgumentException(Messages.getErrorString("PUBLISHERUTIL.ERROR_0001_PUBLISH_PASSWORD_REQUIRED")); //$NON-NLS-1$
+      throw new IllegalArgumentException(Messages.getInstance().getErrorString("PUBLISHERUTIL.ERROR_0001_PUBLISH_PASSWORD_REQUIRED")); //$NON-NLS-1$
     }
 
     fullURL += "&publishKey=" + PublisherUtil.getPasswordKey(publishPassword); //$NON-NLS-1$

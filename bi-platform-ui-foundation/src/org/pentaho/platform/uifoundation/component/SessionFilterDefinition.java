@@ -44,7 +44,7 @@ public class SessionFilterDefinition extends FilterDefinition {
       IPentahoResultSet data = (IPentahoResultSet) session.getAttribute(sessionAttribute);
       return data;
     } catch (Exception e) {
-      logger.error(Messages.getString("FilterDefinition.ERROR_0003_NOT_IN_SESSION", sessionAttribute), e); //$NON-NLS-1$
+      logger.error(Messages.getInstance().getString("FilterDefinition.ERROR_0003_NOT_IN_SESSION", sessionAttribute), e); //$NON-NLS-1$
     }
     return null;
   }

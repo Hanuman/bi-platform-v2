@@ -66,7 +66,7 @@ public class StringToGrantedAuthority implements Transformer {
 
   public Object transform(final Object obj) {
     if (StringToGrantedAuthority.logger.isDebugEnabled()) {
-      StringToGrantedAuthority.logger.debug(Messages.getString(
+      StringToGrantedAuthority.logger.debug(Messages.getInstance().getString(
           "StringToGrantedAuthority.DEBUG_INPUT_TO_TRANSFORM", (null != obj) ? obj.toString() : "null")); //$NON-NLS-1$ //$NON-NLS-2$
     }
     Object transformed = obj;

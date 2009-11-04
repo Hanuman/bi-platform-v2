@@ -246,7 +246,7 @@ public abstract class AbstractChartComponent extends XmlComponent {
       fileName = file.getName();
       filePathWithoutExtension = solutionDir + fileName.substring(0, fileName.indexOf('.'));
     } catch (IOException e) {
-      getLogger().error(Messages.getErrorString("AbstractChartComponent.ERROR_0001_CANT_CREATE_TEMP_CHART"), e); //$NON-NLS-1$
+      getLogger().error(Messages.getInstance().getErrorString("AbstractChartComponent.ERROR_0001_CANT_CREATE_TEMP_CHART"), e); //$NON-NLS-1$
     }
     String[] value = new String[2];
     value[AbstractChartComponent.FILENAME_INDEX] = fileName;
@@ -291,7 +291,7 @@ public abstract class AbstractChartComponent extends XmlComponent {
 
         //encodedVal = URLEncoder.encode(stringVal, LocaleHelper.getSystemEncoding()); //$NON-NLS-1$
       } catch (UnsupportedEncodingException e) {
-        getLogger().error(Messages.getErrorString("AbstractChartComponent.ERROR_0002_URL_ENCODE_FAILED"), e); //$NON-NLS-1$
+        getLogger().error(Messages.getInstance().getErrorString("AbstractChartComponent.ERROR_0002_URL_ENCODE_FAILED"), e); //$NON-NLS-1$
       }
     }
   }

@@ -83,11 +83,11 @@ public class HtmlAxisServiceLister extends AbstractAxisServiceContentGenerator {
   protected void getPageTitle( HashMap serviceMap, StringBuilder sb ) {
     // write out the page title
     sb.append( "<div id=\"webservicediv\">" ); //$NON-NLS-1$
-    sb.append( "<h1>" ).append( Messages.getString("ListServices.USER_WEB_SERVICES") ).append( "</h1>\n" ); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+    sb.append( "<h1>" ).append( Messages.getInstance().getString("ListServices.USER_WEB_SERVICES") ).append( "</h1>\n" ); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 
     if (serviceMap.isEmpty()) {
       // there are no services defined
-      sb.append( Messages.getString("ListServices.USER_NO_SERVICES") ); //$NON-NLS-1$
+      sb.append( Messages.getInstance().getString("ListServices.USER_NO_SERVICES") ); //$NON-NLS-1$
     }
   }
 
@@ -106,23 +106,23 @@ public class HtmlAxisServiceLister extends AbstractAxisServiceContentGenerator {
 
     String serviceDescription = axisService.getDocumentation();
     if (serviceDescription == null || "".equals(serviceDescription)) { //$NON-NLS-1$
-        serviceDescription = Messages.getString( "WebServicePlugin.USER_NO_DESCRIPTION" ); //$NON-NLS-1$
+        serviceDescription = Messages.getInstance().getString( "WebServicePlugin.USER_NO_DESCRIPTION" ); //$NON-NLS-1$
     }
     
     // write out the description
-    sb.append( Messages.getString( "WebServicePlugin.USER_SERVICE_DESCRIPTION" ) ) //$NON-NLS-1$
+    sb.append( Messages.getInstance().getString( "WebServicePlugin.USER_SERVICE_DESCRIPTION" ) ) //$NON-NLS-1$
     .append( "</td><td>" ) //$NON-NLS-1$
     .append( serviceDescription )
       .append( "</td></tr>\n" ); //$NON-NLS-1$
       
     // write out the enable/disable controls
-    sb.append( "<tr><td>" ).append( Messages.getString( "WebServicePlugin.USER_SERVICE_STATUS" ) ) //$NON-NLS-1$ //$NON-NLS-2$
+    sb.append( "<tr><td>" ).append( Messages.getInstance().getString( "WebServicePlugin.USER_SERVICE_STATUS" ) ) //$NON-NLS-1$ //$NON-NLS-2$
     
     .append( "</td><td>" ); //$NON-NLS-1$
     if( axisService.isActive() ) {
-      sb.append( Messages.getString( "WebServicePlugin.USER_ENABLED" ) ); //$NON-NLS-1$
+      sb.append( Messages.getInstance().getString( "WebServicePlugin.USER_ENABLED" ) ); //$NON-NLS-1$
     } else {
-      sb.append( Messages.getString( "WebServicePlugin.USER_DISABLED" ) ); //$NON-NLS-1$
+      sb.append( Messages.getInstance().getString( "WebServicePlugin.USER_DISABLED" ) ); //$NON-NLS-1$
     }  }
   
   /**
@@ -133,7 +133,7 @@ public class HtmlAxisServiceLister extends AbstractAxisServiceContentGenerator {
   protected void getWsdlSection( AxisService axisService, StringBuilder sb ) {
     // write out the WSDL URL
     String wsdlUrl = AxisUtil.getWebServiceWsdlUrl();
-    sb.append( "<tr><td>" ).append( Messages.getString( "WebServicePlugin.USER_SERVICE_WSDL" ) ) //$NON-NLS-1$ //$NON-NLS-2$
+    sb.append( "<tr><td>" ).append( Messages.getInstance().getString( "WebServicePlugin.USER_SERVICE_WSDL" ) ) //$NON-NLS-1$ //$NON-NLS-2$
     .append( "</td><td><a href=\"" ).append( wsdlUrl+axisService.getName() ) //$NON-NLS-1$
     .append( "\">" ).append( wsdlUrl+axisService.getName() ) //$NON-NLS-1$
     .append( "</a></td></tr>\n" ); //$NON-NLS-1$
@@ -147,7 +147,7 @@ public class HtmlAxisServiceLister extends AbstractAxisServiceContentGenerator {
   protected void getRunSection( AxisService axisService, StringBuilder sb ) {
     // write out the execution URL
     String serviceUrl = AxisUtil.getWebServiceExecuteUrl();
-    sb.append( "<tr><td>" ).append( Messages.getString( "WebServicePlugin.USER_SERVICE_URL" ) ) //$NON-NLS-1$ //$NON-NLS-2$
+    sb.append( "<tr><td>" ).append( Messages.getInstance().getString( "WebServicePlugin.USER_SERVICE_URL" ) ) //$NON-NLS-1$ //$NON-NLS-2$
     .append( "</td><td><a href=\"" ).append( serviceUrl+axisService.getName() ) //$NON-NLS-1$
     .append( "\">" ).append( serviceUrl+axisService.getName() ) //$NON-NLS-1$
     .append( "</a></td></tr>\n" ); //$NON-NLS-1$
@@ -167,11 +167,11 @@ public class HtmlAxisServiceLister extends AbstractAxisServiceContentGenerator {
     Iterator it = axisService.getOperations();
 
     sb.append( "<tr><td valign=\"top\">" ) //$NON-NLS-1$
-    .append( Messages.getString( "WebServicePlugin.USER_OPERATIONS" ) ) //$NON-NLS-1$
+    .append( Messages.getInstance().getString( "WebServicePlugin.USER_OPERATIONS" ) ) //$NON-NLS-1$
     .append( "</td><td>" ); //$NON-NLS-1$
     // now do the operations
     if( !it.hasNext() ) {
-      sb.append( Messages.getString( "WebServicePlugin.USER_NO_OPERATIONS" ) ); //$NON-NLS-1$
+      sb.append( Messages.getInstance().getString( "WebServicePlugin.USER_NO_OPERATIONS" ) ); //$NON-NLS-1$
     } else {
 
       // write out the names of the operations

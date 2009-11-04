@@ -128,7 +128,7 @@ public class PentahoConnectionFactory {
       }
       connection.setProperties(properties);
     } catch (ObjectFactoryException e) {
-      Logger.error(PentahoSystem.class.getName(), Messages.getErrorString(
+      Logger.error(PentahoSystem.class.getName(), Messages.getInstance().getErrorString(
           "PentahoConnectionFactory.ERROR_0001_COULD_NOT_CREATE_CONNECTION", key), e); //$NON-NLS-1$
     }
 

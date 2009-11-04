@@ -124,7 +124,7 @@ public class JFreeReportDataComponent extends AbstractJFreeReportComponent {
             factory = new PentahoTableDataFactory(AbstractJFreeReportComponent.DATACOMPONENT_DEFAULTINPUT,
                 new PentahoTableModel(resultset));
           } else {
-            throw new IllegalArgumentException(Messages.getErrorString("JFreeReport.ERROR_0021_DATA_COMPONENT_FAILED")); //$NON-NLS-1$
+            throw new IllegalArgumentException(Messages.getInstance().getErrorString("JFreeReport.ERROR_0021_DATA_COMPONENT_FAILED")); //$NON-NLS-1$
           }
         } catch (ClassNotFoundException e) {
         } catch (InstantiationException e) {
@@ -151,14 +151,14 @@ public class JFreeReportDataComponent extends AbstractJFreeReportComponent {
         try {
           // not being able to read a single char is definitly a big boo ..
           if (in.read() == -1) {
-            throw new Exception(Messages.getErrorString("JFreeReport.ERROR_0009_REPORT_JAR_UNREADABLE")); //$NON-NLS-1$
+            throw new Exception(Messages.getInstance().getErrorString("JFreeReport.ERROR_0009_REPORT_JAR_UNREADABLE")); //$NON-NLS-1$
           } else {
             final ClassLoader loader = ReportUtils.createJarLoader(getSession(), resource);
             if (loader == null) {
-              throw new Exception(Messages
+              throw new Exception(Messages.getInstance()
                   .getString("JFreeReportDataComponent.ERROR_0035_COULD_NOT_CREATE_CLASSLOADER")); //$NON-NLS-1$
             } else if (!isDefinedInput(AbstractJFreeReportComponent.DATACOMPONENT_CLASSLOCINPUT)) {
-              throw new Exception(Messages.getErrorString("JFreeReport.ERROR_0012_CLASS_LOCATION_MISSING")); //$NON-NLS-1$
+              throw new Exception(Messages.getInstance().getErrorString("JFreeReport.ERROR_0012_CLASS_LOCATION_MISSING")); //$NON-NLS-1$
             } else {
               final String classLocation = getInputStringValue(AbstractJFreeReportComponent.DATACOMPONENT_CLASSLOCINPUT);
               // Get input parameters, and set them as properties in the report
@@ -193,10 +193,10 @@ public class JFreeReportDataComponent extends AbstractJFreeReportComponent {
             }
           }
         } catch (Exception e) {
-          throw new Exception(Messages.getErrorString("JFreeReport.ERROR_0009_REPORT_JAR_UNREADABLE")); //$NON-NLS-1$
+          throw new Exception(Messages.getInstance().getErrorString("JFreeReport.ERROR_0009_REPORT_JAR_UNREADABLE")); //$NON-NLS-1$
         }
       } catch (FileNotFoundException e1) {
-        throw new Exception(Messages.getErrorString("JFreeReport.ERROR_0010_REPORT_JAR_MISSING", resource.getAddress())); //$NON-NLS-1$
+        throw new Exception(Messages.getInstance().getErrorString("JFreeReport.ERROR_0010_REPORT_JAR_MISSING", resource.getAddress())); //$NON-NLS-1$
       }
     }
     return factory;
@@ -244,11 +244,11 @@ public class JFreeReportDataComponent extends AbstractJFreeReportComponent {
     //      }
     result = true;
     //    } catch (ClassNotFoundException ex) {
-    //      error(Messages.getErrorString("JFreeReport.ERROR_0021_DATA_COMPONENT_FAILED"), ex); //$NON-NLS-1$
+    //      error(Messages.getInstance().getErrorString("JFreeReport.ERROR_0021_DATA_COMPONENT_FAILED"), ex); //$NON-NLS-1$
     //    } catch (InstantiationException ex) {
-    //      error(Messages.getErrorString("JFreeReport.ERROR_0021_DATA_COMPONENT_FAILED"), ex); //$NON-NLS-1$
+    //      error(Messages.getInstance().getErrorString("JFreeReport.ERROR_0021_DATA_COMPONENT_FAILED"), ex); //$NON-NLS-1$
     //    } catch (IllegalAccessException ex) {
-    //      error(Messages.getErrorString("JFreeReport.ERROR_0021_DATA_COMPONENT_FAILED"), ex); //$NON-NLS-1$
+    //      error(Messages.getInstance().getErrorString("JFreeReport.ERROR_0021_DATA_COMPONENT_FAILED"), ex); //$NON-NLS-1$
     //    } catch (Exception ex) {
     //      error(ex.getMessage()); //$NON-NLS-1$
     //    }

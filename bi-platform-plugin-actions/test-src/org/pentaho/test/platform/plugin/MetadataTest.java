@@ -50,7 +50,7 @@ public class MetadataTest extends BaseTest {
     IPentahoUrlFactory urlFactory = new SimpleUrlFactory(""); //$NON-NLS-1$
 
     PMDUIComponent component = new PMDUIComponent(urlFactory, new ArrayList());
-    StandaloneSession session = new StandaloneSession(Messages.getString("BaseTest.DEBUG_JUNIT_SESSION")); //$NON-NLS-1$
+    StandaloneSession session = new StandaloneSession(Messages.getInstance().getString("BaseTest.DEBUG_JUNIT_SESSION")); //$NON-NLS-1$
     component.validate(session, null);
     component.setAction(PMDUIComponent.ACTION_LIST_MODELS);
 
@@ -70,7 +70,7 @@ public class MetadataTest extends BaseTest {
     IPentahoUrlFactory urlFactory = new SimpleUrlFactory(""); //$NON-NLS-1$
 
     PMDUIComponent component = new PMDUIComponent(urlFactory, new ArrayList());
-    StandaloneSession session = new StandaloneSession(Messages.getString("BaseTest.DEBUG_JUNIT_SESSION")); //$NON-NLS-1$
+    StandaloneSession session = new StandaloneSession(Messages.getInstance().getString("BaseTest.DEBUG_JUNIT_SESSION")); //$NON-NLS-1$
     component.validate(session, null);
     component.setAction(PMDUIComponent.ACTION_LOAD_MODEL);
     component.setDomainName("test"); //$NON-NLS-1$
@@ -92,7 +92,7 @@ public class MetadataTest extends BaseTest {
     IPentahoUrlFactory urlFactory = new SimpleUrlFactory(""); //$NON-NLS-1$
 
     PMDUIComponent component = new PMDUIComponent(urlFactory, new ArrayList());
-    StandaloneSession session = new StandaloneSession(Messages.getString("BaseTest.DEBUG_JUNIT_SESSION")); //$NON-NLS-1$
+    StandaloneSession session = new StandaloneSession(Messages.getInstance().getString("BaseTest.DEBUG_JUNIT_SESSION")); //$NON-NLS-1$
     component.validate(session, null);
     component.setAction(PMDUIComponent.ACTION_LOOKUP);
     component.setDomainName("test"); //$NON-NLS-1$

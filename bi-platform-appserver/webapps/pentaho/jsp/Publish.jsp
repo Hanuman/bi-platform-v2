@@ -59,7 +59,7 @@
 			if( sb != null ) {
 				content = sb.toString();
 			} else {
-				content = Messages.getErrorString( "PUBLISHERS.ERROR_0001_PUBLISHERS_ERROR" ); //$NON-NLS-1$
+				content = Messages.getInstance().getErrorString( "PUBLISHERS.ERROR_0001_PUBLISHERS_ERROR" ); //$NON-NLS-1$
 			}
 		}
 	}
@@ -68,7 +68,7 @@
 	String footer = "";
 	IUITemplater templater = PentahoSystem.get(IUITemplater.class, userSession );
 	if( templater != null ) {
-		String sections[] = templater.breakTemplate( templateName, Messages.getString("UI.USER_PUBLISHER_TITLE"), userSession ); //$NON-NLS-1$ //$NON-NLS-2$
+		String sections[] = templater.breakTemplate( templateName, Messages.getInstance().getString("UI.USER_PUBLISHER_TITLE"), userSession ); //$NON-NLS-1$ //$NON-NLS-2$
 		if( sections != null && sections.length > 0 ) {
 			intro = sections[0];
 		}
@@ -76,7 +76,7 @@
 			footer = sections[1];
 		}
 	} else {
-		intro = Messages.getString( "UI.ERROR_0002_BAD_TEMPLATE_OBJECT" );
+		intro = Messages.getInstance().getString( "UI.ERROR_0002_BAD_TEMPLATE_OBJECT" );
 	}
 
 %>

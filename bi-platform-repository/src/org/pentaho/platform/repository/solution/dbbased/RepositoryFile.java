@@ -46,9 +46,9 @@ public class RepositoryFile implements ISearchable, Comparable, AclObjectIdentit
 
   private static final String EMPTY_STRING = ""; //$NON-NLS-1$
 
-  private static final String[] SearchableColumns = { Messages.getString("SolutionRepository.QUERY_COLUMN_NAME"), //$NON-NLS-1$
-      Messages.getString("SolutionRepository.QUERY_COLUMN_PATH"), //$NON-NLS-1$
-      Messages.getString("SolutionRepository.QUERY_COLUMN_PARENT") //$NON-NLS-1$
+  private static final String[] SearchableColumns = { Messages.getInstance().getString("SolutionRepository.QUERY_COLUMN_NAME"), //$NON-NLS-1$
+      Messages.getInstance().getString("SolutionRepository.QUERY_COLUMN_PATH"), //$NON-NLS-1$
+      Messages.getInstance().getString("SolutionRepository.QUERY_COLUMN_PARENT") //$NON-NLS-1$
   };
 
   private static final String SearchableTable = "org.pentaho.platform.repository.solution.dbbased.RepositoryFile"; //$NON-NLS-1$

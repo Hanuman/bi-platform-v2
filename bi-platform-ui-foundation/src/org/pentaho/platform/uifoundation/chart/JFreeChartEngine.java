@@ -759,7 +759,7 @@ public class JFreeChartEngine {
     boolean legend = chartDefinition.isLegendIncluded();
 
     if (order == null) {
-      throw new IllegalArgumentException(Messages.getString("JFreeChartEngine.ERROR_0001_NULL_ORDER_ARGUMENT")); //$NON-NLS-1$
+      throw new IllegalArgumentException(Messages.getInstance().getString("JFreeChartEngine.ERROR_0001_NULL_ORDER_ARGUMENT")); //$NON-NLS-1$
     }
     MultiplePiePlot plot = new MultiplePiePlot(chartDefinition);
     JFreeChartEngine.updatePlot(plot, chartDefinition);
@@ -911,7 +911,7 @@ public class JFreeChartEngine {
     int iRowCount = chartDefinition.getRowCount();
 
     if (iRowCount <= 0) {
-      chartDefinition.setNoDataMessage(Messages.getString("CHART.USER_NO_DATA_AVAILABLE")); //$NON-NLS-1$
+      chartDefinition.setNoDataMessage(Messages.getInstance().getString("CHART.USER_NO_DATA_AVAILABLE")); //$NON-NLS-1$
     }
 
     /*
@@ -940,7 +940,7 @@ public class JFreeChartEngine {
     }
 
     if ((iRowCount > 0) && (barsDataset.getRowCount() <= 0) && (linesDataset.getRowCount() <= 0)) {
-      chartDefinition.setNoDataMessage(Messages.getString("CHART.USER_INCORRECT_DATA_FORMAT")); //$NON-NLS-1$
+      chartDefinition.setNoDataMessage(Messages.getInstance().getString("CHART.USER_INCORRECT_DATA_FORMAT")); //$NON-NLS-1$
     }
 
     //Create Axis Objects
@@ -1236,7 +1236,7 @@ public class JFreeChartEngine {
       String filePath = PentahoSystem.getApplicationContext().getFileOutputPath(fileName);
       JFreeChartEngine.saveChart(chart, filePath, width, height, outputType, writer, info);
     } catch (IOException e) {
-      logger.error(Messages.getString("ChartEngine.ERROR_0001_COULD_NOT_CREATE_CHART"), e); //$NON-NLS-1$
+      logger.error(Messages.getInstance().getString("ChartEngine.ERROR_0001_COULD_NOT_CREATE_CHART"), e); //$NON-NLS-1$
     }
   }
 
@@ -1282,7 +1282,7 @@ public class JFreeChartEngine {
       chart = JFreeChartEngine.createXYZSeriesCollectionChart((XYZSeriesCollectionChartDefinition) dataset);
     }
     if (chart == null) {
-      logger.error(Messages.getString("ChartEngine.ERROR_0002_COULD_NOT_CREATE_CHART")); //$NON-NLS-1$
+      logger.error(Messages.getInstance().getString("ChartEngine.ERROR_0002_COULD_NOT_CREATE_CHART")); //$NON-NLS-1$
     } else {
       // TODO implement the ability to have "ImageTitle"s for subtitles
       ChartDefinition chartDefinition = (ChartDefinition) dataset;

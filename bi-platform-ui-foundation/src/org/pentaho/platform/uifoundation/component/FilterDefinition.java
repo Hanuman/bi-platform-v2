@@ -299,11 +299,11 @@ abstract public class FilterDefinition {
       items = new ArrayList();
       if (nameColumnNo == -1) {
         // we did not find the specified name column
-        throw new ComponentException(Messages.getErrorString(
+        throw new ComponentException(Messages.getInstance().getErrorString(
             "FilterDefinition.ERROR_0001_NAME_COLUMN_MISSING", descriptionItem)); //$NON-NLS-1$
       } else if (valueColumnNo == -1) {
         // we did not find the specified name column
-        throw new ComponentException(Messages.getErrorString(
+        throw new ComponentException(Messages.getInstance().getErrorString(
             "FilterDefinition.ERROR_0002_VALUE_COLUMN_MISSING", valueItem)); //$NON-NLS-1$
       } else {
         // all is well with the world, you may proceed
@@ -316,7 +316,7 @@ abstract public class FilterDefinition {
         // We will check for null below
       }
       if (row == null) {
-        logger.warn(Messages.getErrorString("FilterDefinition.ERROR_0004_FILTER_DEFINITION_EMPTY")); //$NON-NLS-1$ 
+        logger.warn(Messages.getInstance().getErrorString("FilterDefinition.ERROR_0004_FILTER_DEFINITION_EMPTY")); //$NON-NLS-1$ 
       } else {
         while (row != null) {
           value = row[valueColumnNo].toString();
@@ -340,12 +340,12 @@ abstract public class FilterDefinition {
     } else {
       // ResultSet is null and it is ok only for a filter type of TEXT_BOX
       if (type != XForm.TYPE_TEXT) {
-        throw new ComponentException(Messages.getErrorString("FilterDefinition.ERROR_0003_FILTER_DEFINITION_NULL")); //$NON-NLS-1$
+        throw new ComponentException(Messages.getInstance().getErrorString("FilterDefinition.ERROR_0003_FILTER_DEFINITION_NULL")); //$NON-NLS-1$
       }
     }
 
-    assert formName != null : Messages.getErrorString("FilterDefinition.ERROR_0005_NAME_ELEMENT_EMPTY"); //$NON-NLS-1$
-    assert !formName.matches(FilterDefinition.RE_HAS_WHITE_SPACE) : Messages
+    assert formName != null : Messages.getInstance().getErrorString("FilterDefinition.ERROR_0005_NAME_ELEMENT_EMPTY"); //$NON-NLS-1$
+    assert !formName.matches(FilterDefinition.RE_HAS_WHITE_SPACE) : Messages.getInstance()
         .getErrorString("FilterDefinition.ERROR_0006_NAME_ELEMENT_WHITESPACE"); //$NON-NLS-1$
     XForm.createXFormControl(type, elementName, defaultValue, items, displayNames, formName, xformHeader, xformBody);
   }

@@ -75,7 +75,7 @@ public class AxisServiceWsdlGeneratorTest {
     contentGenerator.createContent();
     String content = new String(out.toByteArray());
     System.out.println(content);
-    assertTrue(content.indexOf(Messages.getErrorString("WebServiceContentGenerator.ERROR_0001_AXIS_CONFIG_IS_NULL")) != -1); //$NON-NLS-1$ 
+    assertTrue(content.indexOf(Messages.getInstance().getErrorString("WebServiceContentGenerator.ERROR_0001_AXIS_CONFIG_IS_NULL")) != -1); //$NON-NLS-1$ 
   }
 
 }

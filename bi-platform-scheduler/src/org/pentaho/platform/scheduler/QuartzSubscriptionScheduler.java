@@ -54,7 +54,7 @@ public class QuartzSubscriptionScheduler implements ISubscriptionScheduler {
 
   protected static final Log logger = LogFactory.getLog(QuartzSubscriptionScheduler.class);
 
-  public static final String GROUP_NAME = Messages.getString("QuartzSubscriptionScheduler.GROUP_NAME");
+  public static final String GROUP_NAME = Messages.getInstance().getString("QuartzSubscriptionScheduler.GROUP_NAME");
 
   private static final int PAUSE = 0;
 
@@ -65,10 +65,10 @@ public class QuartzSubscriptionScheduler implements ISubscriptionScheduler {
   private static final int DELETE = 3;
 
   private static final String exceptionMessages[] = {
-      Messages.getString("QuartzSubscriptionScheduler.USER_UNABLE_TO_PAUSE"), //$NON-NLS-1$
-      Messages.getString("QuartzSubscriptionScheduler.USER_UNABLE_TO_RESUME"), //$NON-NLS-1$
-      Messages.getString("QuartzSubscriptionScheduler.USER_UNABLE_TO_EXECUTE"), //$NON-NLS-1$
-      Messages.getString("QuartzSubscriptionScheduler.USER_UNABLE_TO_DELETE"), //$NON-NLS-1$
+      Messages.getInstance().getString("QuartzSubscriptionScheduler.USER_UNABLE_TO_PAUSE"), //$NON-NLS-1$
+      Messages.getInstance().getString("QuartzSubscriptionScheduler.USER_UNABLE_TO_RESUME"), //$NON-NLS-1$
+      Messages.getInstance().getString("QuartzSubscriptionScheduler.USER_UNABLE_TO_EXECUTE"), //$NON-NLS-1$
+      Messages.getInstance().getString("QuartzSubscriptionScheduler.USER_UNABLE_TO_DELETE"), //$NON-NLS-1$
   };
 
   // TODO sbarkdull, clean up the exception communication
@@ -105,9 +105,9 @@ public class QuartzSubscriptionScheduler implements ISubscriptionScheduler {
         scheduler.scheduleJob(jobDetail, trigger);
         return (new QuartzScheduledJob(trigger));
     } catch (SchedulerException e ) {
-      throw new SubscriptionSchedulerException( Messages.getErrorString("QuartzSubscriptionScheduler.ERROR_0421_SYNC_SCHED_FAILED0"), e ); //$NON-NLS-1$
+      throw new SubscriptionSchedulerException( Messages.getInstance().getErrorString("QuartzSubscriptionScheduler.ERROR_0421_SYNC_SCHED_FAILED0"), e ); //$NON-NLS-1$
     } catch (ParseException e ) {
-      throw new SubscriptionSchedulerException( Messages.getErrorString("QuartzSubscriptionScheduler.ERROR_0422_SYNC_SCHED_FAILED1", newSchedule.getCronString() ), e ); //$NON-NLS-1$
+      throw new SubscriptionSchedulerException( Messages.getInstance().getErrorString("QuartzSubscriptionScheduler.ERROR_0422_SYNC_SCHED_FAILED1", newSchedule.getCronString() ), e ); //$NON-NLS-1$
     }
   }
 
@@ -129,7 +129,7 @@ public class QuartzSubscriptionScheduler implements ISubscriptionScheduler {
       try {
         syncSchedule(sched.getScheduleReference(), sched);
       } catch (Throwable t) {
-        exceptionList.add(Messages.getString(
+        exceptionList.add(Messages.getInstance().getString(
             "QuartzSubscriptionScheduler.ERROR_SCHEDULING", sched.getScheduleReference(), t.getLocalizedMessage())); //$NON-NLS-1$
       }
       jobSet.remove(sched.getScheduleReference());
@@ -158,7 +158,7 @@ public class QuartzSubscriptionScheduler implements ISubscriptionScheduler {
         if ( null != t ) {
           jobMap.put(jobName, new QuartzScheduledJob(t));
         } else {
-          throw new SubscriptionSchedulerException( Messages.getErrorString("QuartzSubscriptionScheduler.ERROR_0423_GET_JOB_MAP_FAILED", jobName ) ); //$NON-NLS-1$
+          throw new SubscriptionSchedulerException( Messages.getInstance().getErrorString("QuartzSubscriptionScheduler.ERROR_0423_GET_JOB_MAP_FAILED", jobName ) ); //$NON-NLS-1$
         }
     }
     return (jobMap);
@@ -170,7 +170,7 @@ public class QuartzSubscriptionScheduler implements ISubscriptionScheduler {
     try {
       trigger = scheduler.getTrigger(schedRef, QuartzSubscriptionScheduler.GROUP_NAME);
     } catch (SchedulerException e) {
-      throw new SubscriptionSchedulerException( Messages.getErrorString("QuartzSubscriptionScheduler.ERROR_0424_FAILED_TO_GET_JOB_WITH_NAME", schedRef ), e ); //$NON-NLS-1$
+      throw new SubscriptionSchedulerException( Messages.getInstance().getErrorString("QuartzSubscriptionScheduler.ERROR_0424_FAILED_TO_GET_JOB_WITH_NAME", schedRef ), e ); //$NON-NLS-1$
     }
     return (new QuartzScheduledJob( trigger ));
   }
@@ -219,7 +219,7 @@ public class QuartzSubscriptionScheduler implements ISubscriptionScheduler {
         break;
       }
       case DELETE: {
-        logger.error( Messages.getErrorString("QuartzSubscriptionScheduler.ERROR_0425_FAILED_TO_DELETE_SCHEDULE", triggerName ) ); //$NON-NLS-1$
+        logger.error( Messages.getInstance().getErrorString("QuartzSubscriptionScheduler.ERROR_0425_FAILED_TO_DELETE_SCHEDULE", triggerName ) ); //$NON-NLS-1$
         scheduler.deleteJob(triggerName, QuartzSubscriptionScheduler.GROUP_NAME);
         break;
       }
@@ -295,7 +295,7 @@ public class QuartzSubscriptionScheduler implements ISubscriptionScheduler {
       trigger = new SimpleTrigger( sched.getScheduleReference(), QuartzSubscriptionScheduler.GROUP_NAME,
           repeatCount, sched.getRepeatInterval() );
     } else {
-      throw new IllegalStateException( Messages.getErrorString("QuartzSubscriptionScheduler.ERROR_0420_MISSING_CRON_AND_REPEAT_INTERVAL", sched.getId() ) ); //$NON-NLS-1$
+      throw new IllegalStateException( Messages.getInstance().getErrorString("QuartzSubscriptionScheduler.ERROR_0420_MISSING_CRON_AND_REPEAT_INTERVAL", sched.getId() ) ); //$NON-NLS-1$
     }
     if ( null != sched.getStartDate() ) {
       trigger.setStartTime( sched.getStartDate() );

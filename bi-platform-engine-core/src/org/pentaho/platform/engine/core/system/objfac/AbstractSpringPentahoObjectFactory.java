@@ -77,7 +77,7 @@ public abstract class AbstractSpringPentahoObjectFactory implements IPentahoObje
     try {
       object = beanFactory.getType(key).newInstance();
     } catch (Exception e) {
-      String msg = Messages.getString("AbstractSpringPentahoObjectFactory.WARN_FAILED_TO_CREATE_OBJECT", key); //$NON-NLS-1$
+      String msg = Messages.getInstance().getString("AbstractSpringPentahoObjectFactory.WARN_FAILED_TO_CREATE_OBJECT", key); //$NON-NLS-1$
       throw new ObjectFactoryException(msg, e);
     }
     return object;
@@ -88,7 +88,7 @@ public abstract class AbstractSpringPentahoObjectFactory implements IPentahoObje
     try {
       object = beanFactory.getBean(beanId);
     } catch (Throwable t) {
-      String msg = Messages.getString("AbstractSpringPentahoObjectFactory.WARN_FAILED_TO_RETRIEVE_OBJECT", beanId); //$NON-NLS-1$
+      String msg = Messages.getInstance().getString("AbstractSpringPentahoObjectFactory.WARN_FAILED_TO_RETRIEVE_OBJECT", beanId); //$NON-NLS-1$
       throw new ObjectFactoryException(msg,t);
     }
     return object;

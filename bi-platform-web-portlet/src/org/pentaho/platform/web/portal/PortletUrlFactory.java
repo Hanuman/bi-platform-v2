@@ -76,7 +76,7 @@ public class PortletUrlFactory implements IPentahoUrlFactory {
       portletUrl.setWindowState(state);
       portletUrl.setSecure(false);
     } catch (Exception e) {
-      String msg = Messages.getString("PortletUrlFactory.ERROR_0000_GETACTIONURLBUILDER_FAILED") + mode; //$NON-NLS-1$
+      String msg = Messages.getInstance().getString("PortletUrlFactory.ERROR_0000_GETACTIONURLBUILDER_FAILED") + mode; //$NON-NLS-1$
       PortletUrlFactory.log.error(msg);
       throw new UIException(msg, e);
     }
@@ -97,7 +97,7 @@ public class PortletUrlFactory implements IPentahoUrlFactory {
       portletUrl.setWindowState(state);
       portletUrl.setSecure(false);
     } catch (Exception e) {
-      String msg = Messages.getString("PortletUrlFactory.ERROR_0001_GETDISPLAYURLBUILDER_FAILED") + mode; //$NON-NLS-1$
+      String msg = Messages.getInstance().getString("PortletUrlFactory.ERROR_0001_GETDISPLAYURLBUILDER_FAILED") + mode; //$NON-NLS-1$
       PortletUrlFactory.log.error(msg);
       throw new UIException(msg, e);
     }

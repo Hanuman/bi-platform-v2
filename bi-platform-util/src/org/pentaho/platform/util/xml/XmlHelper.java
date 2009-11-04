@@ -118,7 +118,7 @@ public class XmlHelper {
     while (it.hasNext()) {
       ent = (Map.Entry) it.next();
       if (!(ent.getKey() instanceof String)) {
-        throw new UnsupportedOperationException(Messages.getErrorString("XMLUTL.ERROR_0011_MAP_KEYS")); //$NON-NLS-1$
+        throw new UnsupportedOperationException(Messages.getInstance().getErrorString("XMLUTL.ERROR_0011_MAP_KEYS")); //$NON-NLS-1$
       }
       sb.append(newIndent).append("<map-entry>\r"); //$NON-NLS-1$
       sb.append(newIndent).append("<key>\r"); //$NON-NLS-1$
@@ -160,7 +160,7 @@ public class XmlHelper {
       sb.append(XmlHelper.listToXML((List) obj, newIndent));
       sb.append(newIndent).append("</list-value>\r"); //$NON-NLS-1$
     } else {
-      throw new UnsupportedOperationException(Messages.getErrorString(
+      throw new UnsupportedOperationException(Messages.getInstance().getErrorString(
           "XMLUTL.ERROR_0012_DATA_TYPE", obj.getClass().getName())); //$NON-NLS-1$
     }
 
@@ -340,9 +340,9 @@ public class XmlHelper {
 
     InputStream xslInStrm = XmlHelper.getLocalizedXsl(xslPath, xslName, loader);
     if (null == xslInStrm) {
-      Logger.error(XmlHelper.class.getName(), Messages.getErrorString("XmlHelper.ERROR_0003_NULL_XSL_SOURCE")); //$NON-NLS-1$
+      Logger.error(XmlHelper.class.getName(), Messages.getInstance().getErrorString("XmlHelper.ERROR_0003_NULL_XSL_SOURCE")); //$NON-NLS-1$
     } else if (null == docInStrm) {
-      Logger.error(XmlHelper.class.getName(), Messages.getErrorString("XmlHelper.ERROR_0004_NULL_DOCUMENT")); //$NON-NLS-1$
+      Logger.error(XmlHelper.class.getName(), Messages.getInstance().getErrorString("XmlHelper.ERROR_0004_NULL_DOCUMENT")); //$NON-NLS-1$
     } else {
 
       // at this point, we have both of our InputStreams
@@ -356,7 +356,7 @@ public class XmlHelper {
       try {
         result = XmlHelper.transformXml(xslInStrm, docInStrm, params, loader);
       } catch (TransformerException e) {
-        Logger.error(XmlHelper.class.getName(), Messages.getErrorString(
+        Logger.error(XmlHelper.class.getName(), Messages.getInstance().getErrorString(
             "XmlHelper.ERROR_0006_TRANSFORM_XML_ERROR", e.getMessage(), xslName), e); //$NON-NLS-1$
         throw e;
       } finally {
@@ -470,7 +470,7 @@ public class XmlHelper {
     }
     if (null == file) {
       // we should not get this far...
-      Logger.error(XmlHelper.class.getName(), Messages.getErrorString(
+      Logger.error(XmlHelper.class.getName(), Messages.getInstance().getErrorString(
           "XmlHelper.ERROR_0011_TRANSFORM_XSL_DOES_NOT_EXIST", xslName, fullPath, defaultPath)); //$NON-NLS-1$
     }
     return file;

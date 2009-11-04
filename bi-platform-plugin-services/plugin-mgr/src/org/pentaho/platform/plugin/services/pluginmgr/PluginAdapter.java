@@ -36,7 +36,7 @@ public class PluginAdapter implements IPentahoSystemListener, IPentahoPublisher 
 		IPluginManager pluginManager = PentahoSystem.get(IPluginManager.class, session);
 		if( pluginManager == null ) {
 			// we cannot continue without the PluginSettings
-			Logger.error( getClass().toString(), Messages.getErrorString("PluginAdapter.ERROR_0001_PLUGIN_MANAGER_NOT_CONFIGURED")); //$NON-NLS-1$
+			Logger.error( getClass().toString(), Messages.getInstance().getErrorString("PluginAdapter.ERROR_0001_PLUGIN_MANAGER_NOT_CONFIGURED")); //$NON-NLS-1$
 			return false;
 		}
     pluginManager.reload(session);
@@ -52,12 +52,12 @@ public class PluginAdapter implements IPentahoSystemListener, IPentahoPublisher 
 	
 	public String getDescription() {
 		// from IPentahoPublisher
-		return Messages.getString("PluginAdapter.USER_REFRESH_PLUGINS"); //$NON-NLS-1$
+		return Messages.getInstance().getString("PluginAdapter.USER_REFRESH_PLUGINS"); //$NON-NLS-1$
 	}
 
 	public String getName() {
 		// from IPentahoPublisher
-		return Messages.getString("PluginAdapter.USER_PLUGIN_MANAGER"); //$NON-NLS-1$
+		return Messages.getInstance().getString("PluginAdapter.USER_PLUGIN_MANAGER"); //$NON-NLS-1$
 	}
 
 	public String publish(IPentahoSession session, int loggingLevel) {
@@ -67,8 +67,8 @@ public class PluginAdapter implements IPentahoSystemListener, IPentahoPublisher 
   		IPluginManager pluginManager = PentahoSystem.get(IPluginManager.class, session);
   		if( pluginManager == null ) {
   			// we cannot continue without the PluginSettings
-  			Logger.error( getClass().toString(), Messages.getErrorString("PluginAdapter.ERROR_0001_PLUGIN_MANAGER_NOT_CONFIGURED")); //$NON-NLS-1$
-  			return Messages.getString("PluginAdapter.ERROR_0001_PLUGIN_MANAGER_NOT_CONFIGURED"); //$NON-NLS-1$
+  			Logger.error( getClass().toString(), Messages.getInstance().getErrorString("PluginAdapter.ERROR_0001_PLUGIN_MANAGER_NOT_CONFIGURED")); //$NON-NLS-1$
+  			return Messages.getInstance().getString("PluginAdapter.ERROR_0001_PLUGIN_MANAGER_NOT_CONFIGURED"); //$NON-NLS-1$
   		}
       pluginManager.reload(session);
   		String rtn = PluginMessageLogger.getAll().toString();

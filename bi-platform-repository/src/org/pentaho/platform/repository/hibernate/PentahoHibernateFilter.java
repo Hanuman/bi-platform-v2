@@ -45,7 +45,7 @@ public class PentahoHibernateFilter implements Filter {
    * @see javax.servlet.Filter#init(javax.servlet.FilterConfig)
    */
   public void init(final FilterConfig arg0) {
-    PentahoHibernateFilter.logger.info(Messages.getString("HIBFILTER.INFO_INIT")); //$NON-NLS-1$
+    PentahoHibernateFilter.logger.info(Messages.getInstance().getString("HIBFILTER.INFO_INIT")); //$NON-NLS-1$
   }
 
   /*

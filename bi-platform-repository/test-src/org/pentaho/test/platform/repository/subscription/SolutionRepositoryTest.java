@@ -97,7 +97,7 @@ public class SolutionRepositoryTest extends RepositoryTestCase {
     defaultAcls.put(new SimpleRole("cto"), new SimplePermissionMask(IPentahoAclEntry.PERM_FULL_CONTROL)); //$NON-NLS
     defaultAcls.put(new SimpleRole("dev"), new SimplePermissionMask(IPentahoAclEntry.PERM_EXECUTE_SUBSCRIBE)); //$NON-NLS-1$
     defaultAcls.put(new SimpleRole("Authenticated"), new SimplePermissionMask(IPentahoAclEntry.PERM_EXECUTE)); //$NON-NLS-1$
-    session = new StandaloneSession(Messages.getString("BaseTest.DEBUG_JUNIT_SESSION")); //$NON-NLS-1$
+    session = new StandaloneSession(Messages.getInstance().getString("BaseTest.DEBUG_JUNIT_SESSION")); //$NON-NLS-1$
     MockSecurityUtility.createPat(session);
     repository = getSolutionRepository(session);
     file = (RepositoryFile) repository.getSolutionFile("samples", ISolutionRepository.ACTION_EXECUTE);
@@ -139,7 +139,7 @@ public class SolutionRepositoryTest extends RepositoryTestCase {
    */
   public void LoadtestSolutionRepository() {
     org.pentaho.platform.repository.solution.dbbased.DbBasedSolutionRepository repository = new org.pentaho.platform.repository.solution.dbbased.DbBasedSolutionRepository();
-    StandaloneSession session = new StandaloneSession(Messages.getString("BaseTest.DEBUG_JUNIT_SESSION")); //$NON-NLS-1$
+    StandaloneSession session = new StandaloneSession(Messages.getInstance().getString("BaseTest.DEBUG_JUNIT_SESSION")); //$NON-NLS-1$
     repository.init(session);
     repository.loadSolutionFromFileSystem(session, getSolutionPath(), false);
 
@@ -149,7 +149,7 @@ public class SolutionRepositoryTest extends RepositoryTestCase {
   }
 
   public void atestSetAclsForPat() {
-    StandaloneSession session = new StandaloneSession(Messages.getString("BaseTest.DEBUG_JUNIT_SESSION")); //$NON-NLS-1$
+    StandaloneSession session = new StandaloneSession(Messages.getInstance().getString("BaseTest.DEBUG_JUNIT_SESSION")); //$NON-NLS-1$
     // Mock up credentials for ACL Testing
     MockSecurityUtility.createPat(session);
 
@@ -190,7 +190,7 @@ public class SolutionRepositoryTest extends RepositoryTestCase {
 
 //  public void testAclRepositoryLoadingForSuzy() {
 //    System.out.println("******** RDBMS Repository - Suzy ***************"); //$NON-NLS-1$
-//    StandaloneSession session = new StandaloneSession(Messages.getString("BaseTest.DEBUG_JUNIT_SESSION")); //$NON-NLS-1$
+//    StandaloneSession session = new StandaloneSession(Messages.getInstance().getString("BaseTest.DEBUG_JUNIT_SESSION")); //$NON-NLS-1$
 //    // Mock up credentials for ACL Testing
 //    MockSecurityUtility.createSuzy(session);
 //
@@ -207,7 +207,7 @@ public class SolutionRepositoryTest extends RepositoryTestCase {
 
 //  public void testFileRepository() {
 //    System.out.println("******** File Repository ***************"); //$NON-NLS-1$
-//    StandaloneSession session = new StandaloneSession(Messages.getString("BaseTest.DEBUG_JUNIT_SESSION")); //$NON-NLS-1$
+//    StandaloneSession session = new StandaloneSession(Messages.getInstance().getString("BaseTest.DEBUG_JUNIT_SESSION")); //$NON-NLS-1$
 //    org.pentaho.platform.repository.solution.filebased.FileBasedSolutionRepository repo = getFileSolutionRepository(session);
 //    Document docFullTree = repo.getFullSolutionTree(ISolutionRepository.ACTION_EXECUTE, null);
 //    String docXmlFullTree = docFullTree.asXML();
@@ -286,7 +286,7 @@ public class SolutionRepositoryTest extends RepositoryTestCase {
 //    defaultAcls.put(new SimpleRole("dev"), new SimplePermissionMask(IPentahoAclEntry.PERM_EXECUTE_SUBSCRIBE)); //$NON-NLS-1$
 //    defaultAcls.put(new SimpleRole("Authenticated"), new SimplePermissionMask(IPentahoAclEntry.PERM_EXECUTE)); //$NON-NLS-1$
 //
-//    session = new StandaloneSession(Messages.getString("BaseTest.DEBUG_JUNIT_SESSION")); //$NON-NLS-1$
+//    session = new StandaloneSession(Messages.getInstance().getString("BaseTest.DEBUG_JUNIT_SESSION")); //$NON-NLS-1$
 //    MockSecurityUtility.createJoe(session);
 //    repository = getSolutionRepository(session);
 //    file = (RepositoryFile) repository.getFileByPath("samples/reporting");
@@ -335,7 +335,7 @@ public class SolutionRepositoryTest extends RepositoryTestCase {
 //  }
 
 //  public void testIsPentahoAdministrator() {
-//    StandaloneSession session = new StandaloneSession(Messages.getString("BaseTest.DEBUG_JUNIT_SESSION")); //$NON-NLS-1$
+//    StandaloneSession session = new StandaloneSession(Messages.getInstance().getString("BaseTest.DEBUG_JUNIT_SESSION")); //$NON-NLS-1$
 //    MockSecurityUtility.createJoe(session);
 //    repository = getSolutionRepository(session);
 //    boolean isPentahoAdmin = repository.isPentahoAdministrator();
@@ -343,7 +343,7 @@ public class SolutionRepositoryTest extends RepositoryTestCase {
 //  }
 //
 //  public void testGetSolutionDocument() {
-//    StandaloneSession session = new StandaloneSession(Messages.getString("BaseTest.DEBUG_JUNIT_SESSION")); //$NON-NLS-1$
+//    StandaloneSession session = new StandaloneSession(Messages.getInstance().getString("BaseTest.DEBUG_JUNIT_SESSION")); //$NON-NLS-1$
 //    MockSecurityUtility.createJoe(session);
 //    org.pentaho.platform.repository.solution.dbbased.DbBasedSolutionRepository repository = getSolutionRepository(session);
 //    Document doc = SolutionReposHelper.getActionSequences(
@@ -354,7 +354,7 @@ public class SolutionRepositoryTest extends RepositoryTestCase {
 //  }
 
 //  public void testGetAllActionSequences() {
-//    StandaloneSession session = new StandaloneSession(Messages.getString("BaseTest.DEBUG_JUNIT_SESSION")); //$NON-NLS-1$
+//    StandaloneSession session = new StandaloneSession(Messages.getInstance().getString("BaseTest.DEBUG_JUNIT_SESSION")); //$NON-NLS-1$
 //    MockSecurityUtility.createPat(session);
 //    repository = getSolutionRepository(session);
 //    String allActionSequences[] = repository.getAllActionSequences();
@@ -363,7 +363,7 @@ public class SolutionRepositoryTest extends RepositoryTestCase {
 
 
 //  public void testGetSolutionTree() {
-//    StandaloneSession session = new StandaloneSession(Messages.getString("BaseTest.DEBUG_JUNIT_SESSION")); //$NON-NLS-1$
+//    StandaloneSession session = new StandaloneSession(Messages.getInstance().getString("BaseTest.DEBUG_JUNIT_SESSION")); //$NON-NLS-1$
 //    MockSecurityUtility.createPat(session);
 //    org.pentaho.platform.repository.solution.dbbased.DbBasedSolutionRepository repository = getSolutionRepository(session);
 //    Document doc = repository.getSolutionTree(ISolutionRepository.ACTION_ADMIN);
@@ -371,7 +371,7 @@ public class SolutionRepositoryTest extends RepositoryTestCase {
 //  }
 
 //  public void testGetSolutionFileLastModified() {
-//    StandaloneSession session = new StandaloneSession(Messages.getString("BaseTest.DEBUG_JUNIT_SESSION")); //$NON-NLS-1$
+//    StandaloneSession session = new StandaloneSession(Messages.getInstance().getString("BaseTest.DEBUG_JUNIT_SESSION")); //$NON-NLS-1$
 //    MockSecurityUtility.createPat(session);
 //    org.pentaho.platform.repository.solution.dbbased.DbBasedSolutionRepository repository = getSolutionRepository(session);
 //    long time = repository.getSolutionFileLastModified("samples/reporting/MDX_report.xaction");
@@ -391,7 +391,7 @@ public class SolutionRepositoryTest extends RepositoryTestCase {
 //      defaultAcls.put(new SimpleRole("dev"), new SimplePermissionMask(IPentahoAclEntry.PERM_EXECUTE_SUBSCRIBE)); //$NON-NLS-1$
 //      defaultAcls.put(new SimpleRole("Authenticated"), new SimplePermissionMask(IPentahoAclEntry.PERM_EXECUTE)); //$NON-NLS-1$
 //
-//      session = new StandaloneSession(Messages.getString("BaseTest.DEBUG_JUNIT_SESSION")); //$NON-NLS-1$
+//      session = new StandaloneSession(Messages.getInstance().getString("BaseTest.DEBUG_JUNIT_SESSION")); //$NON-NLS-1$
 //      MockSecurityUtility.createJoe(session);
 //      repository = getSolutionRepository(session);
 //      file = (RepositoryFile) repository.getFileByPath("samples/reporting");
@@ -477,7 +477,7 @@ public class SolutionRepositoryTest extends RepositoryTestCase {
 //  }
 
 //  public void testGetPermissionsNoAccess() {
-//    StandaloneSession session = new StandaloneSession(Messages.getString("BaseTest.DEBUG_JUNIT_SESSION")); //$NON-NLS-1$
+//    StandaloneSession session = new StandaloneSession(Messages.getInstance().getString("BaseTest.DEBUG_JUNIT_SESSION")); //$NON-NLS-1$
 //    MockSecurityUtility.createNoRolesGuy(session);
 //    int count = 0;
 //    // Get the repository
@@ -505,7 +505,7 @@ public class SolutionRepositoryTest extends RepositoryTestCase {
 
 //  public void testPublish() {
 //    try {
-//      StandaloneSession session = new StandaloneSession(Messages.getString("BaseTest.DEBUG_JUNIT_SESSION")); //$NON-NLS-1$
+//      StandaloneSession session = new StandaloneSession(Messages.getInstance().getString("BaseTest.DEBUG_JUNIT_SESSION")); //$NON-NLS-1$
 //      // Mock up credentials for ACL Testing
 //      HibernateUtil.beginTransaction();
 //      MockSecurityUtility.createJoe(session);
@@ -527,7 +527,7 @@ public class SolutionRepositoryTest extends RepositoryTestCase {
 //  }
 
 //  public void testGetPermissions() {
-//    StandaloneSession session = new StandaloneSession(Messages.getString("BaseTest.DEBUG_JUNIT_SESSION")); //$NON-NLS-1$
+//    StandaloneSession session = new StandaloneSession(Messages.getInstance().getString("BaseTest.DEBUG_JUNIT_SESSION")); //$NON-NLS-1$
 //    MockSecurityUtility.createJoe(session);
 //    int count = 0;
 //    // Get the repository
@@ -563,7 +563,7 @@ public class SolutionRepositoryTest extends RepositoryTestCase {
 
 //  public void testShare() {
 //    try {
-//      StandaloneSession session = new StandaloneSession(Messages.getString("BaseTest.DEBUG_JUNIT_SESSION")); //$NON-NLS-1$
+//      StandaloneSession session = new StandaloneSession(Messages.getInstance().getString("BaseTest.DEBUG_JUNIT_SESSION")); //$NON-NLS-1$
 //      // Mock up credentials for ACL Testing
 //      MockSecurityUtility.createJoe(session);
 //      // Get the repository
@@ -577,7 +577,7 @@ public class SolutionRepositoryTest extends RepositoryTestCase {
 //      shareRecipientList.add(shareRecipient1);
 //      repo.share(aFile, shareRecipientList);
 //      session.destroy();
-//      session = new StandaloneSession(Messages.getString("BaseTest.DEBUG_JUNIT_SESSION")); //$NON-NLS-1$
+//      session = new StandaloneSession(Messages.getInstance().getString("BaseTest.DEBUG_JUNIT_SESSION")); //$NON-NLS-1$
 //      MockSecurityUtility.createPat(session);
 //      org.pentaho.platform.repository.solution.dbbased.DbBasedSolutionRepository repo1 = getSolutionRepository(session);
 //      RepositoryFile aFile1 = (RepositoryFile) repo
@@ -591,7 +591,7 @@ public class SolutionRepositoryTest extends RepositoryTestCase {
 //  public void testSetRepositoryName() {
 //    try {
 //      HibernateUtil.beginTransaction();
-//      StandaloneSession session = new StandaloneSession(Messages.getString("BaseTest.DEBUG_JUNIT_SESSION")); //$NON-NLS-1$
+//      StandaloneSession session = new StandaloneSession(Messages.getInstance().getString("BaseTest.DEBUG_JUNIT_SESSION")); //$NON-NLS-1$
 //      // Mock up credentials for ACL Testing
 //      MockSecurityUtility.createJoe(session);
 //      // Get the repository

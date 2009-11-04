@@ -155,7 +155,7 @@ public abstract class AbstractJFreeChartComponent extends AbstractChartComponent
         height = (int) XmlDom4JHelper.getNodeText("chart/height", dataActionDocument, DEFAULT_HEIGHT); //$NON-NLS-1$
       }
     } catch (Exception e) {
-      error(Messages.getString("CategoryDatasetChartComponent.ERROR_0001_INVALID_CHART_DEFINITION", chartDefinition), e); //$NON-NLS-1$
+      error(Messages.getInstance().getString("CategoryDatasetChartComponent.ERROR_0001_INVALID_CHART_DEFINITION", chartDefinition), e); //$NON-NLS-1$
       return false;
     }
     return true;

@@ -79,7 +79,7 @@ public class QuartzSystemListener implements IPentahoSystemListener {
       try {
         quartzProps = findPropertiesInClasspath();
       } catch (IOException ex) {
-        Logger.error(QuartzSystemListener.class.getName(), Messages
+        Logger.error(QuartzSystemListener.class.getName(), Messages.getInstance()
             .getErrorString("QuartzSystemListener.ERROR_0004_LOAD_PROPERTIES_FROM_CLASSPATH"), ex); //$NON-NLS-1$
       }
     }
@@ -97,11 +97,11 @@ public class QuartzSystemListener implements IPentahoSystemListener {
           quartzProps.setProperty("org.quartz.dataSource.myDS.jndiURL", boundDsName); //$NON-NLS-1$
         }
       } catch (ObjectFactoryException objface) {
-      	Logger.error(this, Messages.getErrorString(
+      	Logger.error(this, Messages.getInstance().getErrorString(
             "QuartzSystemListener.ERROR_0005_UNABLE_TO_INSTANTIATE_OBJECT",QuartzSystemListener.class.getName()), objface); //$NON-NLS-1$
       	return false;
       } catch (DatasourceServiceException dse) {
-        Logger.error(this, Messages.getErrorString(
+        Logger.error(this, Messages.getInstance().getErrorString(
             "QuartzSystemListener.ERROR_0006_UNABLE_TO_GET_DATASOURCE",QuartzSystemListener.class.getName()), dse); //$NON-NLS-1$
         return false;        
       }
@@ -115,7 +115,7 @@ public class QuartzSystemListener implements IPentahoSystemListener {
       }
       QuartzSystemListener.schedulerInstance.start();
     } catch (SchedulerException e) {
-      Logger.error(this, Messages.getErrorString(
+      Logger.error(this, Messages.getInstance().getErrorString(
           "QuartzSystemListener.ERROR_0001_Scheduler_Not_Initialized",QuartzSystemListener.class.getName()), e); //$NON-NLS-1$
       return false;        
     }
@@ -182,7 +182,7 @@ public class QuartzSystemListener implements IPentahoSystemListener {
    */
   public static Scheduler getSchedulerInstance() throws SchedulerInitializationException {
     if (QuartzSystemListener.schedulerInstance == null) {
-      throw new SchedulerInitializationException(Messages
+      throw new SchedulerInitializationException(Messages.getInstance()
           .getErrorString("QuartzSystemListener.ERROR_0001_Scheduler_Not_Initialized")); //$NON-NLS-1$
     }
     return QuartzSystemListener.schedulerInstance;

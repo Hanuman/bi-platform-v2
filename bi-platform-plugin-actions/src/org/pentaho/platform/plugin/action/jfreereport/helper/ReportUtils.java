@@ -79,7 +79,7 @@ public class ReportUtils {
       userTempDir.mkdir();
       return userTempDir;
     }
-    throw new IllegalStateException(Messages.getString("ReportUtils.ERROR_0036_PENTAHO_SYSTEM_NOT_OK")); //$NON-NLS-1$
+    throw new IllegalStateException(Messages.getInstance().getString("ReportUtils.ERROR_0036_PENTAHO_SYSTEM_NOT_OK")); //$NON-NLS-1$
   }
 
   public static ClassLoader createJarLoader(final IPentahoSession session, final IActionSequenceResource resource) {

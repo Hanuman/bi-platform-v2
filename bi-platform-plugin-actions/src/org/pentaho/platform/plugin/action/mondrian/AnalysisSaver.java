@@ -69,7 +69,7 @@ public class AnalysisSaver extends PentahoMessenger {
   public static int saveAnalysis(final IPentahoSession session, final HashMap props, final String path, String fileName, final boolean overwrite) {
 
     if ("true".equals(PentahoSystem.getSystemSetting("kiosk-mode", "false"))) { //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-      throw new RuntimeException(Messages.getErrorString("ANALYSISSAVER.ERROR_0006_SAVE_IS_DISABLED")); //$NON-NLS-1$
+      throw new RuntimeException(Messages.getInstance().getErrorString("ANALYSISSAVER.ERROR_0006_SAVE_IS_DISABLED")); //$NON-NLS-1$
     }
 
     int result = 0;
@@ -82,7 +82,7 @@ public class AnalysisSaver extends PentahoMessenger {
       String originalActionReference = (String) props.get("actionreference"); //$NON-NLS-1$
 
       if (originalActionReference == null) {
-        throw new MissingParameterException(Messages.getErrorString("ANALYSISSAVER.ERROR_0001_MISSING_ACTION_REFERENCE")); //$NON-NLS-1$
+        throw new MissingParameterException(Messages.getInstance().getErrorString("ANALYSISSAVER.ERROR_0001_MISSING_ACTION_REFERENCE")); //$NON-NLS-1$
       }
 
       org.dom4j.Document document = solutionRepository.getResourceAsDocument(originalActionReference, ISolutionRepository.ACTION_UPDATE);
@@ -109,7 +109,7 @@ public class AnalysisSaver extends PentahoMessenger {
 
       solutionRepository.resetRepository();
     } catch (Exception e) {
-      AnalysisSaver.logger.error(Messages.getErrorString("ANALYSISSAVER.ERROR_0000_UNKNOWN"), e); //$NON-NLS-1$
+      AnalysisSaver.logger.error(Messages.getInstance().getErrorString("ANALYSISSAVER.ERROR_0000_UNKNOWN"), e); //$NON-NLS-1$
       result = ISolutionRepository.FILE_ADD_FAILED;
     }
 
@@ -129,7 +129,7 @@ public class AnalysisSaver extends PentahoMessenger {
 
       Node actionSequence = document.selectSingleNode("/action-sequence"); //$NON-NLS-1$
       if (actionSequence == null) {
-        throw new InvalidDocumentException(Messages.getErrorString("ANALYSISSAVER.ERROR_0004_INVALID_ORIGIN_DOCUMENT")); //$NON-NLS-1$
+        throw new InvalidDocumentException(Messages.getInstance().getErrorString("ANALYSISSAVER.ERROR_0004_INVALID_ORIGIN_DOCUMENT")); //$NON-NLS-1$
       }
       Element asElement = ((Element)actionSequence);
       Node title = null;
@@ -152,7 +152,7 @@ public class AnalysisSaver extends PentahoMessenger {
 
       componentDefinition = (Element) document.selectSingleNode("//action-definition[component-name='PivotViewComponent']/component-definition"); //$NON-NLS-1$
       if (componentDefinition == null) {
-        throw new InvalidDocumentException(Messages.getErrorString("ANALYSISSAVER.ERROR_0005_INVALID_NO_PIVOT_ACTION")); //$NON-NLS-1$
+        throw new InvalidDocumentException(Messages.getInstance().getErrorString("ANALYSISSAVER.ERROR_0005_INVALID_NO_PIVOT_ACTION")); //$NON-NLS-1$
       }
 
       AnalysisSaver.updateComponent(componentDefinition, props);

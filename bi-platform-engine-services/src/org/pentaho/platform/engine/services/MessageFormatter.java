@@ -95,7 +95,7 @@ public class MessageFormatter implements IMessageFormatter {
     if ("text/html".equals(mimeType)) { //$NON-NLS-1$
       messageBuffer
           .append("<html><head><title>") //$NON-NLS-1$
-          .append(Messages.getString("MessageFormatter.ERROR_PAGE_TITLE")) //$NON-NLS-1$
+          .append(Messages.getInstance().getString("MessageFormatter.ERROR_PAGE_TITLE")) //$NON-NLS-1$
           .append(
               "</title><link rel=\"stylesheet\" type=\"text/css\" href=\"/pentaho-style/active/default.css\"></head>") //$NON-NLS-1$
           .append("<body dir=\"").append(LocaleHelper.getTextDirection()).append("\"><table cellspacing=\"10\"><tr><td class=\"portlet-section\" colspan=\"3\">") //$NON-NLS-1$ //$NON-NLS-2$
@@ -118,7 +118,7 @@ public class MessageFormatter implements IMessageFormatter {
       if (PentahoSystem.getObjectFactory().objectDefined(IVersionHelper.class.getSimpleName())) {
         IVersionHelper versionHelper = PentahoSystem.get(IVersionHelper.class, null);
         messageBuffer
-            .append("&nbsp;&nbsp;" + Messages.getString("MessageFormatter.USER_SERVER_VERSION", versionHelper.getVersionInformation(PentahoSystem.class))); //$NON-NLS-1$ //$NON-NLS-2$
+            .append("&nbsp;&nbsp;" + Messages.getInstance().getString("MessageFormatter.USER_SERVER_VERSION", versionHelper.getVersionInformation(PentahoSystem.class))); //$NON-NLS-1$ //$NON-NLS-2$
       }
       messageBuffer.append("</body></html>"); //$NON-NLS-1$
     } else {
@@ -135,7 +135,7 @@ public class MessageFormatter implements IMessageFormatter {
       // something went badly wrong
       formatErrorMessage(
           mimeType,
-          Messages.getString("MessageFormatter.ERROR_0001_REQUEST_FAILED"), Messages.getString("MessageFormatter.ERROR_0002_COULD_NOT_PROCESS"), messageBuffer); //$NON-NLS-1$ //$NON-NLS-2$
+          Messages.getInstance().getString("MessageFormatter.ERROR_0001_REQUEST_FAILED"), Messages.getInstance().getString("MessageFormatter.ERROR_0002_COULD_NOT_PROCESS"), messageBuffer); //$NON-NLS-1$ //$NON-NLS-2$
     } else {
       if (context == null) {
         formatErrorMessage(mimeType, "Failed", defaultMessages, messageBuffer); //$NON-NLS-1$
@@ -169,7 +169,7 @@ public class MessageFormatter implements IMessageFormatter {
       try {
         templateFile = repository.getResourceAsString(templatePath, ISolutionRepository.ACTION_EXECUTE);
       } catch (IOException e) {
-        messageBuffer.append(Messages.getErrorString("MessageFormatter.RESPONSE_ERROR_HEADING", templatePath)); //$NON-NLS-1$
+        messageBuffer.append(Messages.getInstance().getErrorString("MessageFormatter.RESPONSE_ERROR_HEADING", templatePath)); //$NON-NLS-1$
         e.printStackTrace();
       }
 
@@ -181,43 +181,43 @@ public class MessageFormatter implements IMessageFormatter {
       //ways of doing mass replacements of text, such as using StringBuilder.replace
 
       //%ERROR_HEADING%
-      templateFile = StringUtils.replace(templateFile, "%ERROR_HEADING%", Messages //$NON-NLS-1$
+      templateFile = StringUtils.replace(templateFile, "%ERROR_HEADING%", Messages.getInstance() //$NON-NLS-1$
           .getString("MessageFormatter.RESPONSE_ERROR_HEADING")); //$NON-NLS-1$
 
       //%EXCEPTION_MSG%
       templateFile = StringUtils.replace(templateFile, "%EXCEPTION_MSG%", StringEscapeUtils.escapeHtml(exception //$NON-NLS-1$
           .getMessage() == null ? "" : exception.getMessage())); //$NON-NLS-1$
-      templateFile = StringUtils.replace(templateFile, "%EXCEPTION_MSG_LABEL%", Messages //$NON-NLS-1$
+      templateFile = StringUtils.replace(templateFile, "%EXCEPTION_MSG_LABEL%", Messages.getInstance() //$NON-NLS-1$
           .getString("MessageFormatter.RESPONSE_EXCEPTION_MSG_LABEL")); //$NON-NLS-1$
 
       //%EXCEPTION_TIME%
       templateFile = StringUtils.replace(templateFile, "%EXCEPTION_TIME%", StringEscapeUtils.escapeHtml(dateFormat //$NON-NLS-1$
           .format(exception.getDate())));
-      templateFile = StringUtils.replace(templateFile, "%EXCEPTION_TIME_LABEL%", Messages //$NON-NLS-1$
+      templateFile = StringUtils.replace(templateFile, "%EXCEPTION_TIME_LABEL%", Messages.getInstance() //$NON-NLS-1$
           .getString("MessageFormatter.RESPONSE_EXCEPTION_TIME_LABEL")); //$NON-NLS-1$
 
       //%EXCEPTION_TYPE%
       templateFile = StringUtils.replace(templateFile, "%EXCEPTION_TYPE%", StringEscapeUtils.escapeHtml(exception //$NON-NLS-1$
           .getClass().getSimpleName()));
-      templateFile = StringUtils.replace(templateFile, "%EXCEPTION_TYPE_LABEL%", Messages //$NON-NLS-1$
+      templateFile = StringUtils.replace(templateFile, "%EXCEPTION_TYPE_LABEL%", Messages.getInstance() //$NON-NLS-1$
           .getString("MessageFormatter.RESPONSE_EXCEPTION_TYPE_LABEL")); //$NON-NLS-1$
 
       //%SESSION_ID%
       templateFile = StringUtils.replace(templateFile, "%SESSION_ID%", StringEscapeUtils.escapeHtml(exception //$NON-NLS-1$
           .getSessionId() == null ? "" : exception.getSessionId())); //$NON-NLS-1$
-      templateFile = StringUtils.replace(templateFile, "%SESSION_ID_LABEL%", Messages //$NON-NLS-1$
+      templateFile = StringUtils.replace(templateFile, "%SESSION_ID_LABEL%", Messages.getInstance() //$NON-NLS-1$
           .getString("MessageFormatter.RESPONSE_EXCEPTION_SESSION_ID_LABEL")); //$NON-NLS-1$
 
       //%INSTANCE_ID%
       templateFile = StringUtils.replace(templateFile, "%INSTANCE_ID%", StringEscapeUtils.escapeHtml(exception //$NON-NLS-1$
           .getInstanceId() == null ? "" : exception.getInstanceId())); //$NON-NLS-1$
-      templateFile = StringUtils.replace(templateFile, "%INSTANCE_ID_LABEL%", Messages //$NON-NLS-1$
+      templateFile = StringUtils.replace(templateFile, "%INSTANCE_ID_LABEL%", Messages.getInstance() //$NON-NLS-1$
           .getString("MessageFormatter.RESPONSE_EXCEPTION_INSTANCE_ID_LABEL")); //$NON-NLS-1$
 
       //%ACTION_SEQUENCE%
       templateFile = StringUtils.replace(templateFile, "%ACTION_SEQUENCE%", StringEscapeUtils.escapeHtml(exception //$NON-NLS-1$
           .getActionSequenceName() == null ? "" : exception.getActionSequenceName())); //$NON-NLS-1$
-      templateFile = StringUtils.replace(templateFile, "%ACTION_SEQUENCE_LABEL%", Messages //$NON-NLS-1$
+      templateFile = StringUtils.replace(templateFile, "%ACTION_SEQUENCE_LABEL%", Messages.getInstance() //$NON-NLS-1$
           .getString("MessageFormatter.RESPONSE_EXCEPTION_ACTION_SEQUENCE_LABEL")); //$NON-NLS-1$
       
       //%ACTION_SEQUENCE_EXECUTION_STACK%
@@ -226,31 +226,31 @@ public class MessageFormatter implements IMessageFormatter {
       exception.printActionExecutionStack(printWriter);
       templateFile = StringUtils.replace(templateFile, "%ACTION_SEQUENCE_EXECUTION_STACK%", StringEscapeUtils.escapeHtml(charWriter //$NON-NLS-1$
           .toString()));
-      templateFile = StringUtils.replace(templateFile, "%ACTION_SEQUENCE_EXECUTION_STACK_LABEL%", Messages //$NON-NLS-1$
+      templateFile = StringUtils.replace(templateFile, "%ACTION_SEQUENCE_EXECUTION_STACK_LABEL%", Messages.getInstance() //$NON-NLS-1$
           .getString("MessageFormatter.RESPONSE_EXCEPTION_ACTION_SEQUENCE_EXECUTION_STACK_LABEL")); //$NON-NLS-1$
 
       //%ACTION_CLASS%
       templateFile = StringUtils.replace(templateFile, "%ACTION_CLASS%", StringEscapeUtils.escapeHtml(exception //$NON-NLS-1$
           .getActionClass() == null ? "" : exception.getActionClass())); //$NON-NLS-1$
-      templateFile = StringUtils.replace(templateFile, "%ACTION_CLASS_LABEL%", Messages //$NON-NLS-1$
+      templateFile = StringUtils.replace(templateFile, "%ACTION_CLASS_LABEL%", Messages.getInstance() //$NON-NLS-1$
           .getString("MessageFormatter.RESPONSE_EXCEPTION_ACTION_CLASS_LABEL")); //$NON-NLS-1$
 
       //%ACTION_DESC%
       templateFile = StringUtils.replace(templateFile, "%ACTION_DESC%", StringEscapeUtils.escapeHtml(exception //$NON-NLS-1$
           .getStepDescription() == null ? "" : exception.getStepDescription())); //$NON-NLS-1$
-      templateFile = StringUtils.replace(templateFile, "%ACTION_DESC_LABEL%", Messages //$NON-NLS-1$
+      templateFile = StringUtils.replace(templateFile, "%ACTION_DESC_LABEL%", Messages.getInstance() //$NON-NLS-1$
           .getString("MessageFormatter.RESPONSE_EXCEPTION_ACTION_DESC_LABEL")); //$NON-NLS-1$
 
       //%STEP_NUM%
       templateFile = StringUtils.replace(templateFile, "%STEP_NUM%", StringEscapeUtils.escapeHtml(exception //$NON-NLS-1$
-          .getStepNumber() == null ? Messages.getString("MessageFormatter.EXCEPTION_FIELD_NOT_APPLICABLE") : exception.getStepNumber().toString())); //$NON-NLS-1$
-      templateFile = StringUtils.replace(templateFile, "%STEP_NUM_LABEL%", Messages //$NON-NLS-1$
+          .getStepNumber() == null ? Messages.getInstance().getString("MessageFormatter.EXCEPTION_FIELD_NOT_APPLICABLE") : exception.getStepNumber().toString())); //$NON-NLS-1$
+      templateFile = StringUtils.replace(templateFile, "%STEP_NUM_LABEL%", Messages.getInstance() //$NON-NLS-1$
           .getString("MessageFormatter.RESPONSE_EXCEPTION_STEP_NUM_LABEL")); //$NON-NLS-1$
       
       //%STEP_NUM%
       templateFile = StringUtils.replace(templateFile, "%LOOP_INDEX%", StringEscapeUtils.escapeHtml(exception //$NON-NLS-1$
-          .getLoopIndex() == null ? Messages.getString("MessageFormatter.EXCEPTION_FIELD_NOT_APPLICABLE") : exception.getLoopIndex().toString())); //$NON-NLS-1$
-      templateFile = StringUtils.replace(templateFile, "%LOOP_INDEX_LABEL%", Messages //$NON-NLS-1$
+          .getLoopIndex() == null ? Messages.getInstance().getString("MessageFormatter.EXCEPTION_FIELD_NOT_APPLICABLE") : exception.getLoopIndex().toString())); //$NON-NLS-1$
+      templateFile = StringUtils.replace(templateFile, "%LOOP_INDEX_LABEL%", Messages.getInstance() //$NON-NLS-1$
           .getString("MessageFormatter.RESPONSE_EXCEPTION_LOOP_INDEX_LABEL")); //$NON-NLS-1$
 
       //%STACK_TRACE%
@@ -259,7 +259,7 @@ public class MessageFormatter implements IMessageFormatter {
       exception.printStackTrace(printWriter);
       templateFile = StringUtils.replace(templateFile, "%STACK_TRACE%", StringEscapeUtils.escapeHtml(charWriter //$NON-NLS-1$
           .toString()));
-      templateFile = StringUtils.replace(templateFile, "%STACK_TRACE_LABEL%", Messages //$NON-NLS-1$
+      templateFile = StringUtils.replace(templateFile, "%STACK_TRACE_LABEL%", Messages.getInstance() //$NON-NLS-1$
           .getString("MessageFormatter.RESPONSE_EXCEPTION_STACK_TRACE_LABEL")); //$NON-NLS-1$
 
       //%EXCEPTION_MESSAGES%
@@ -272,13 +272,13 @@ public class MessageFormatter implements IMessageFormatter {
       }
       templateFile = StringUtils.replace(templateFile, "%EXCEPTION_MESSAGES%", StringEscapeUtils.escapeHtml(charWriter //$NON-NLS-1$
           .toString()));
-      templateFile = StringUtils.replace(templateFile, "%EXCEPTION_MESSAGES_LABEL%", Messages //$NON-NLS-1$
+      templateFile = StringUtils.replace(templateFile, "%EXCEPTION_MESSAGES_LABEL%", Messages.getInstance() //$NON-NLS-1$
           .getString("MessageFormatter.RESPONSE_EXCEPTION_MESSAGES_LABEL")); //$NON-NLS-1$
 
       //%SERVER_INFO% (if available)
       if (PentahoSystem.getObjectFactory().objectDefined(IVersionHelper.class.getSimpleName())) {
         IVersionHelper versionHelper = PentahoSystem.get(IVersionHelper.class);
-        templateFile = StringUtils.replace(templateFile, "%SERVER_INFO%", Messages.getString( //$NON-NLS-1$
+        templateFile = StringUtils.replace(templateFile, "%SERVER_INFO%", Messages.getInstance().getString( //$NON-NLS-1$
             "MessageFormatter.USER_SERVER_VERSION", versionHelper.getVersionInformation(PentahoSystem.class))); //$NON-NLS-1$
       }
 
@@ -372,11 +372,11 @@ public class MessageFormatter implements IMessageFormatter {
       if (doWrapper) {
         messageBuffer
             .append("<html><head><title>") //$NON-NLS-1$
-            .append(Messages.getString("MessageFormatter.USER_START_ACTION")) //$NON-NLS-1$
+            .append(Messages.getInstance().getString("MessageFormatter.USER_START_ACTION")) //$NON-NLS-1$
             .append(
                 "</title><link rel=\"stylesheet\" type=\"text/css\" href=\"/pentaho-style/active/default.css\"></head>") //$NON-NLS-1$
             .append("<body dir=\"").append(LocaleHelper.getTextDirection()).append("\"><table cellspacing=\"10\"><tr><td class=\"portlet-section\" colspan=\"3\">") //$NON-NLS-1$ //$NON-NLS-2$
-            .append(Messages.getString("MessageFormatter.USER_ACTION_SUCCESSFUL")) //$NON-NLS-1$
+            .append(Messages.getInstance().getString("MessageFormatter.USER_ACTION_SUCCESSFUL")) //$NON-NLS-1$
             .append("<hr size=\"1\"/></td></tr><tr><td class=\"portlet-font\" valign=\"top\">"); //$NON-NLS-1$
       }
 
@@ -427,8 +427,8 @@ public class MessageFormatter implements IMessageFormatter {
         messageBuffer.append("</td></tr></table></body></html>"); //$NON-NLS-1$
       }
     } else if (mimeType.equalsIgnoreCase(MessageFormatter.TEXT_MIME_TYPE)) {
-      messageBuffer.append(Messages.getString("MessageFormatter.USER_START_ACTION" + "\n")) //$NON-NLS-1$ //$NON-NLS-2$
-          .append(Messages.getString("MessageFormatter.USER_ACTION_SUCCESSFUL" + "\n")); //$NON-NLS-1$ //$NON-NLS-2$
+      messageBuffer.append(Messages.getInstance().getString("MessageFormatter.USER_START_ACTION" + "\n")) //$NON-NLS-1$ //$NON-NLS-2$
+          .append(Messages.getInstance().getString("MessageFormatter.USER_ACTION_SUCCESSFUL" + "\n")); //$NON-NLS-1$ //$NON-NLS-2$
 
       // hmm do we need this to be ordered?
       Set outputNames = context.getOutputNames();

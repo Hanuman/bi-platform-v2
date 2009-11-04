@@ -82,14 +82,14 @@ public abstract class MDXBaseComponent extends ComponentBase implements IDataCom
 
         if (actionValidated) {
           if (queryAction.getQuery() == ActionInputConstant.NULL_INPUT) {
-            error(Messages.getErrorString("MDXBaseComponent.ERROR_0001_QUERY_NOT_SPECIFIED", getActionName())); //$NON-NLS-1$
+            error(Messages.getInstance().getErrorString("MDXBaseComponent.ERROR_0001_QUERY_NOT_SPECIFIED", getActionName())); //$NON-NLS-1$
             actionValidated = false;
           }
         }
 
         if (actionValidated) {
           if ((queryAction.getOutputResultSet() == null) && (queryAction.getOutputPreparedStatement() == null)) {
-            error(Messages.getErrorString("MDXBaseComponent.ERROR_0003_OUTPUT_NOT_SPECIFIED", getActionName())); //$NON-NLS-1$
+            error(Messages.getInstance().getErrorString("MDXBaseComponent.ERROR_0003_OUTPUT_NOT_SPECIFIED", getActionName())); //$NON-NLS-1$
             actionValidated = false;
           }
         }
@@ -97,14 +97,14 @@ public abstract class MDXBaseComponent extends ComponentBase implements IDataCom
         connAction = (MdxConnectionAction) getActionDefinition();
         actionValidated = isConnectionInfoSpecified(connAction);
         if (connAction.getOutputConnection() == null) {
-          error(Messages.getErrorString("MDXBaseComponent.ERROR_0003_OUTPUT_NOT_SPECIFIED", getActionName())); //$NON-NLS-1$
+          error(Messages.getInstance().getErrorString("MDXBaseComponent.ERROR_0003_OUTPUT_NOT_SPECIFIED", getActionName())); //$NON-NLS-1$
           actionValidated = false;
         }
 
       }
     } catch (Exception e) {
       actionValidated = false;
-      error(Messages.getErrorString("MDXBaseComponent.ERROR_0004_VALIDATION_FAILED", getActionName()), e); //$NON-NLS-1$        
+      error(Messages.getInstance().getErrorString("MDXBaseComponent.ERROR_0004_VALIDATION_FAILED", getActionName()), e); //$NON-NLS-1$        
     }
 
     return actionValidated;
@@ -121,14 +121,14 @@ public abstract class MDXBaseComponent extends ComponentBase implements IDataCom
           && (connAction.getMdxConnectionString() == null) && (connAction.getJndi() == ActionInputConstant.NULL_INPUT)
           && (connAction.getConnectionProps() == ActionInputConstant.NULL_INPUT)
           && (((MdxQueryAction) connAction).getMdxConnection() == ActionInputConstant.NULL_INPUT)) {
-        error(Messages.getErrorString("MDXBaseComponent.ERROR_0002_CONNECTION_NOT_SPECIFIED", getActionName())); //$NON-NLS-1$
+        error(Messages.getInstance().getErrorString("MDXBaseComponent.ERROR_0002_CONNECTION_NOT_SPECIFIED", getActionName())); //$NON-NLS-1$
         value = false;
       }
     } else if (connAction instanceof MdxConnectionAction) {
       if ((connAction.getConnection() == ActionInputConstant.NULL_INPUT)
           && (connAction.getMdxConnectionString() == null) && (connAction.getJndi() == ActionInputConstant.NULL_INPUT)
           && (connAction.getConnectionProps() == ActionInputConstant.NULL_INPUT)) {
-        error(Messages.getErrorString("MDXBaseComponent.ERROR_0002_CONNECTION_NOT_SPECIFIED", getActionName())); //$NON-NLS-1$
+        error(Messages.getInstance().getErrorString("MDXBaseComponent.ERROR_0002_CONNECTION_NOT_SPECIFIED", getActionName())); //$NON-NLS-1$
         value = false;
       }
     }
@@ -167,10 +167,10 @@ public abstract class MDXBaseComponent extends ComponentBase implements IDataCom
             if (conn.getDatasourceType() == IPentahoConnection.MDX_DATASOURCE) {
               connection = conn;
             } else {
-              error(Messages.getErrorString("IPreparedComponent.ERROR_0001_INVALID_CONNECTION_TYPE", getActionName())); //$NON-NLS-1$            
+              error(Messages.getInstance().getErrorString("IPreparedComponent.ERROR_0001_INVALID_CONNECTION_TYPE", getActionName())); //$NON-NLS-1$            
             }
           } else {
-            error(Messages.getErrorString("IPreparedComponent.ERROR_0002_CONNECTION_NOT_AVAILABLE", getActionName())); //$NON-NLS-1$
+            error(Messages.getInstance().getErrorString("IPreparedComponent.ERROR_0002_CONNECTION_NOT_AVAILABLE", getActionName())); //$NON-NLS-1$
           }
         } else {
           dispose();
@@ -189,7 +189,7 @@ public abstract class MDXBaseComponent extends ComponentBase implements IDataCom
             value = runQuery(connection, query);
           }
         } else {
-          error(Messages.getErrorString("IPreparedComponent.ERROR_0004_NO_CONNECTION_INFO", getActionName())); //$NON-NLS-1$
+          error(Messages.getInstance().getErrorString("IPreparedComponent.ERROR_0004_NO_CONNECTION_INFO", getActionName())); //$NON-NLS-1$
         }
       } else if (getActionDefinition() instanceof MdxConnectionAction) {
         dispose();
@@ -200,10 +200,10 @@ public abstract class MDXBaseComponent extends ComponentBase implements IDataCom
           value = true;
         }
       } else /**/{
-        error(Messages.getErrorString("MDXBaseComponent.ERROR_0004_VALIDATION_FAILED", getActionName())); //$NON-NLS-1$
+        error(Messages.getInstance().getErrorString("MDXBaseComponent.ERROR_0004_VALIDATION_FAILED", getActionName())); //$NON-NLS-1$
       }
     } catch (Exception e) {
-      error(Messages.getErrorString("MDXBaseComponent.ERROR_0006_EXECUTE_FAILED", getActionName()), e); //$NON-NLS-1$
+      error(Messages.getInstance().getErrorString("MDXBaseComponent.ERROR_0006_EXECUTE_FAILED", getActionName()), e); //$NON-NLS-1$
     }
 
     return value;
@@ -220,11 +220,11 @@ public abstract class MDXBaseComponent extends ComponentBase implements IDataCom
 
     try {
       if (connection == null) {
-        error(Messages.getErrorString("MDXBaseComponent.ERROR_0008_NO_CONNECTION")); //$NON-NLS-1$
+        error(Messages.getInstance().getErrorString("MDXBaseComponent.ERROR_0008_NO_CONNECTION")); //$NON-NLS-1$
         return false;
       }
       if (!connection.initialized()) {
-        error(Messages.getErrorString("MDXBaseComponent.ERROR_0008_NO_CONNECTION")); //$NON-NLS-1$
+        error(Messages.getInstance().getErrorString("MDXBaseComponent.ERROR_0008_NO_CONNECTION")); //$NON-NLS-1$
         return false;
       }
 
@@ -234,7 +234,7 @@ public abstract class MDXBaseComponent extends ComponentBase implements IDataCom
 
       return true;
     } catch (Exception e) {
-      error(Messages.getErrorString("MDXBaseComponent.ERROR_0006_EXECUTE_FAILED", getActionName()), e); //$NON-NLS-1$
+      error(Messages.getInstance().getErrorString("MDXBaseComponent.ERROR_0006_EXECUTE_FAILED", getActionName()), e); //$NON-NLS-1$
     }
 
     return false;
@@ -273,15 +273,15 @@ public abstract class MDXBaseComponent extends ComponentBase implements IDataCom
   public IPentahoResultSet executePrepared(final Map preparedParams) {
     try {
       if (connection == null) {
-        error(Messages.getErrorString("MDXBaseComponent.ERROR_0008_NO_CONNECTION")); //$NON-NLS-1$
+        error(Messages.getInstance().getErrorString("MDXBaseComponent.ERROR_0008_NO_CONNECTION")); //$NON-NLS-1$
         return null;
       }
       if (!connection.initialized()) {
-        error(Messages.getErrorString("MDXBaseComponent.ERROR_0008_NO_CONNECTION")); //$NON-NLS-1$
+        error(Messages.getInstance().getErrorString("MDXBaseComponent.ERROR_0008_NO_CONNECTION")); //$NON-NLS-1$
         return null;
       }
       if (preparedQuery == null) {
-        error(Messages.getErrorString("MDXBaseComponent.ERROR_0001_QUERY_NOT_SPECIFIED", getActionName())); //$NON-NLS-1$
+        error(Messages.getInstance().getErrorString("MDXBaseComponent.ERROR_0001_QUERY_NOT_SPECIFIED", getActionName())); //$NON-NLS-1$
         return null;
       }
 
@@ -290,7 +290,7 @@ public abstract class MDXBaseComponent extends ComponentBase implements IDataCom
           preparedParams, IPreparedComponent.PREPARE_LATER_PREFIX, getRuntimeContext()));
 
       if (ComponentBase.debug) {
-        debug(Messages.getString("MDXBaseComponent.DEBUG_RUNNING_QUERY", query)); //$NON-NLS-1$
+        debug(Messages.getInstance().getString("MDXBaseComponent.DEBUG_RUNNING_QUERY", query)); //$NON-NLS-1$
       }
 
       // evaluate 
@@ -298,7 +298,7 @@ public abstract class MDXBaseComponent extends ComponentBase implements IDataCom
       rSet = resultSet;
       return resultSet;
     } catch (Exception e) {
-      error(Messages.getErrorString("MDXBaseComponent.ERROR_0006_EXECUTE_FAILED", getActionName()), e); //$NON-NLS-1$
+      error(Messages.getInstance().getErrorString("MDXBaseComponent.ERROR_0006_EXECUTE_FAILED", getActionName()), e); //$NON-NLS-1$
     }
     return null;
   }
@@ -307,20 +307,20 @@ public abstract class MDXBaseComponent extends ComponentBase implements IDataCom
 
     try {
       if (localConnection == null) {
-        error(Messages.getErrorString("MDXBaseComponent.ERROR_0008_NO_CONNECTION")); //$NON-NLS-1$
+        error(Messages.getInstance().getErrorString("MDXBaseComponent.ERROR_0008_NO_CONNECTION")); //$NON-NLS-1$
         return false;
       }
       if (!localConnection.initialized()) {
-        error(Messages.getErrorString("MDXBaseComponent.ERROR_0008_NO_CONNECTION")); //$NON-NLS-1$
+        error(Messages.getInstance().getErrorString("MDXBaseComponent.ERROR_0008_NO_CONNECTION")); //$NON-NLS-1$
         return false;
       }
       if (rawQuery == null) {
-        error(Messages.getErrorString("MDXBaseComponent.ERROR_0001_QUERY_NOT_SPECIFIED", getActionName())); //$NON-NLS-1$
+        error(Messages.getInstance().getErrorString("MDXBaseComponent.ERROR_0001_QUERY_NOT_SPECIFIED", getActionName())); //$NON-NLS-1$
         return false;
       }
       
       if (ComponentBase.debug) {
-        debug(Messages.getString("MDXBaseComponent.DEBUG_RUNNING_QUERY", rawQuery)); //$NON-NLS-1$
+        debug(Messages.getInstance().getString("MDXBaseComponent.DEBUG_RUNNING_QUERY", rawQuery)); //$NON-NLS-1$
       }
 
       // execute the query, read the results and cache them
@@ -335,13 +335,13 @@ public abstract class MDXBaseComponent extends ComponentBase implements IDataCom
         return true;
       } else {
         // close the connection
-        error(Messages.getErrorString("MDXBaseComponent.ERROR_0006_EXECUTE_FAILED", getActionName())); //$NON-NLS-1$
+        error(Messages.getInstance().getErrorString("MDXBaseComponent.ERROR_0006_EXECUTE_FAILED", getActionName())); //$NON-NLS-1$
         localConnection.close();
         return false;
       }
 
     } catch (Exception e) {
-      error(Messages.getErrorString("MDXBaseComponent.ERROR_0006_EXECUTE_FAILED", getActionName()), e); //$NON-NLS-1$
+      error(Messages.getInstance().getErrorString("MDXBaseComponent.ERROR_0006_EXECUTE_FAILED", getActionName()), e); //$NON-NLS-1$
     }
 
     return false;
@@ -379,7 +379,7 @@ public abstract class MDXBaseComponent extends ComponentBase implements IDataCom
   protected void waitFor(final int millis) {
     try {
       if (ComponentBase.debug) {
-        debug(Messages.getString("MDXBaseComponent.DEBUG_WAITING_FOR_CONNECTION", Integer.toString(millis))); //$NON-NLS-1$
+        debug(Messages.getInstance().getString("MDXBaseComponent.DEBUG_WAITING_FOR_CONNECTION", Integer.toString(millis))); //$NON-NLS-1$
       }
       Thread.sleep(millis);
     } catch (Exception ex) {
@@ -421,7 +421,7 @@ public abstract class MDXBaseComponent extends ComponentBase implements IDataCom
         }
       }
       if (catalog == null) {
-        warn(Messages.getString("MDXBaseComponent.ERROR_0007_CATALOG_NOT_DEFINED", getActionName())); //$NON-NLS-1$
+        warn(Messages.getInstance().getString("MDXBaseComponent.ERROR_0007_CATALOG_NOT_DEFINED", getActionName())); //$NON-NLS-1$
       } else {
         if (mdxConnectionProps != null) {
           mdxConnectionProps.put(MdxConnectionAction.CATALOG_ELEMENT, catalog);
@@ -445,7 +445,7 @@ public abstract class MDXBaseComponent extends ComponentBase implements IDataCom
 
             IDatasourceService datasourceService = PentahoSystem.getObjectFactory().get(IDatasourceService.class ,null);
             if (datasourceService.getDataSource(jndiStr) == null) {
-              error(Messages.getErrorString("MDXBaseComponent.ERROR_0005_INVALID_CONNECTION")); //$NON-NLS-1$
+              error(Messages.getInstance().getErrorString("MDXBaseComponent.ERROR_0005_INVALID_CONNECTION")); //$NON-NLS-1$
               return null;
             }
             
@@ -468,7 +468,7 @@ public abstract class MDXBaseComponent extends ComponentBase implements IDataCom
               getSession(), this);
         }
         if (localConnection == null) {
-          error(Messages.getErrorString("MDXBaseComponent.ERROR_0005_INVALID_CONNECTION")); //$NON-NLS-1$
+          error(Messages.getInstance().getErrorString("MDXBaseComponent.ERROR_0005_INVALID_CONNECTION")); //$NON-NLS-1$
           return null;
         }
       }
@@ -483,7 +483,7 @@ public abstract class MDXBaseComponent extends ComponentBase implements IDataCom
       }
       return localConnection;
     } catch (Exception e) {
-      error(Messages.getErrorString("MDXBaseComponent.ERROR_0006_EXECUTE_FAILED", getActionName()), e); //$NON-NLS-1$
+      error(Messages.getInstance().getErrorString("MDXBaseComponent.ERROR_0006_EXECUTE_FAILED", getActionName()), e); //$NON-NLS-1$
     }
     return null;
   }

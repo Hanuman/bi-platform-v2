@@ -43,7 +43,7 @@
 			footer = sections[1];
 		}
 	} else {
-		intro = Messages.getString( "UI.ERROR_0002_BAD_TEMPLATE_OBJECT" );
+		intro = Messages.getInstance().getString( "UI.ERROR_0002_BAD_TEMPLATE_OBJECT" );
 	}
 	
 %><%=intro %>
@@ -55,10 +55,10 @@
             <tr>
                <td>
 
-                  <div class="icon_folder_sm"><a href="Admin"><%= Messages.getString("UI.USER_ADMIN") %></a></div>
+                  <div class="icon_folder_sm"><a href="Admin"><%= Messages.getInstance().getString("UI.USER_ADMIN") %></a></div>
                </td>
                <td>
-                  <div class="icon_folder_sm"><a href="javascript:history.go(0)"><%= Messages.getString("UI.USER_PERMISSIONS") %></a></div>
+                  <div class="icon_folder_sm"><a href="javascript:history.go(0)"><%= Messages.getInstance().getString("UI.USER_PERMISSIONS") %></a></div>
                </td>
             </tr>
          </table>
@@ -70,7 +70,7 @@
   	<table border="0" width="100%" class="content_header" cellpadding="0" cellspacing="0" style="positionx:absolute;top:50px;left:10px;width:200px;height:20px;">
 		<tr>
 			<td width="100%">
-				<%= Messages.getString("UI.USER_PERMISSION_TREE") %>
+				<%= Messages.getInstance().getString("UI.USER_PERMISSION_TREE") %>
 			</td>
 		</tr>
 	</table>
@@ -90,7 +90,7 @@
   	<table border="0" width="100%" class="content_header" cellpadding="0" cellspacing="0" style="position:relative;top:-550px;left:330px;width:200px;height:20px;">
 		<tr>
 			<td width="100%">
-				<%= Messages.getString("UI.USER_PERMISSION_SETTINGS") %>
+				<%= Messages.getInstance().getString("UI.USER_PERMISSION_SETTINGS") %>
 			</td>
 		</tr>
 	</table>

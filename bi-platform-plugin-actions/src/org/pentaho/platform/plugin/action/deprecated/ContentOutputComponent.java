@@ -75,15 +75,15 @@ public class ContentOutputComponent extends ComponentBase {
   @Override
   protected boolean validateAction() {
     if (!isDefinedInput(ContentOutputComponent.INPUT_NAME_EXPECTED)) {
-      error(Messages.getErrorString("ContentOutputComponent.ERROR_0001_CONTENTOUTPUT_NOT_DEFINED")); //$NON-NLS-1$
+      error(Messages.getInstance().getErrorString("ContentOutputComponent.ERROR_0001_CONTENTOUTPUT_NOT_DEFINED")); //$NON-NLS-1$
       return false;
     }
     if (!isDefinedInput(ContentOutputComponent.COMPONENT_SETTING_MIME_TYPE)) {
-      error(Messages.getErrorString("ContentOutputComponent.ERROR_0006_MIME_TYPE_REQUIRED")); //$NON-NLS-1$
+      error(Messages.getInstance().getErrorString("ContentOutputComponent.ERROR_0006_MIME_TYPE_REQUIRED")); //$NON-NLS-1$
       return false;
     }
     if (!isDefinedOutput(ContentOutputComponent.OUTPUT_NAME)) {
-      error(Messages.getErrorString("ContentOutputComponent.ERROR_0008_CONTENT_OUTPUT_REQUIRED")); //$NON-NLS-1$
+      error(Messages.getInstance().getErrorString("ContentOutputComponent.ERROR_0008_CONTENT_OUTPUT_REQUIRED")); //$NON-NLS-1$
       return false;
     }
     return true;
@@ -125,13 +125,13 @@ public class ContentOutputComponent extends ComponentBase {
               outputStream.close();
               outputContentItem.closeOutputStream();
             } catch (Exception e) {
-              error(Messages.getErrorString("ContentOutputComponent.ERROR_0003_WRITING_OUTPUT"), e); //$NON-NLS-1$
+              error(Messages.getInstance().getErrorString("ContentOutputComponent.ERROR_0003_WRITING_OUTPUT"), e); //$NON-NLS-1$
               return false;
             }
             trace(theOutput);
             return true;
           } else {
-            error(Messages.getErrorString("ContentOutputComponent.ERROR_0002_EMPTY_OUTPUT")); //$NON-NLS-1$
+            error(Messages.getInstance().getErrorString("ContentOutputComponent.ERROR_0002_EMPTY_OUTPUT")); //$NON-NLS-1$
             return false;
           }
         } else if (dataToOutput instanceof InputStream) {
@@ -155,17 +155,17 @@ public class ContentOutputComponent extends ComponentBase {
           outputContentItem.closeOutputStream();
           return true;
         } else {
-          error(Messages.getErrorString(
+          error(Messages.getInstance().getErrorString(
               "ContentOutputComponent.ERROR_0007_UNKNOWN_TYPE", dataToOutput.getClass().getName())); //$NON-NLS-1$
           return false;
         }
 
       } else {
-        error(Messages.getErrorString("ContentOutputComponent.ERROR_0005_OUTPUT_CONTENT_ITEM")); //$NON-NLS-1$
+        error(Messages.getInstance().getErrorString("ContentOutputComponent.ERROR_0005_OUTPUT_CONTENT_ITEM")); //$NON-NLS-1$
         return false;
       }
     }
-    error(Messages.getErrorString("ContentOutputComponent.ERROR_0004_CONTENTOUTPUT_NULL")); //$NON-NLS-1$
+    error(Messages.getInstance().getErrorString("ContentOutputComponent.ERROR_0004_CONTENTOUTPUT_NULL")); //$NON-NLS-1$
     return false;
   }
 

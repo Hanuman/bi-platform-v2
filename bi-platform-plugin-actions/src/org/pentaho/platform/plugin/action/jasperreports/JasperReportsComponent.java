@@ -165,17 +165,17 @@ public class JasperReportsComponent extends ComponentBase {
         "jasperreports/htmlExportOptions/removeEmptySpaceBetweenRows", "false"); //$NON-NLS-1$ //$NON-NLS-2$ 
 
     if (debug) {
-      debug(Messages.getString("JasperReport.DEBUG_IMAGE_URL") + imageUrl); //$NON-NLS-1$
-      debug(Messages.getString("JasperReport.DEBUG_IMAGE_DIRECTORY") + imageDir); //$NON-NLS-1$
-      debug(Messages.getString("JasperReport.DEBUG_REMOVE_EMPTRY_ROWS") + removeEmptyRows); //$NON-NLS-1$
+      debug(Messages.getInstance().getString("JasperReport.DEBUG_IMAGE_URL") + imageUrl); //$NON-NLS-1$
+      debug(Messages.getInstance().getString("JasperReport.DEBUG_IMAGE_DIRECTORY") + imageDir); //$NON-NLS-1$
+      debug(Messages.getInstance().getString("JasperReport.DEBUG_REMOVE_EMPTRY_ROWS") + removeEmptyRows); //$NON-NLS-1$
     }
 
     if (imageUrl == null) {
-      error(Messages.getErrorString("JasperReport.ERROR_0001_IMAGE_URL_NOT_DEFINED")); //$NON-NLS-1$
+      error(Messages.getInstance().getErrorString("JasperReport.ERROR_0001_IMAGE_URL_NOT_DEFINED")); //$NON-NLS-1$
       return false;
     }
     if (imageDir == null) {
-      error(Messages.getErrorString("JasperReport.ERROR_0002_IMAGE_DIRECTORY_INVALID")); //$NON-NLS-1$
+      error(Messages.getInstance().getErrorString("JasperReport.ERROR_0002_IMAGE_DIRECTORY_INVALID")); //$NON-NLS-1$
       return false;
     }
 
@@ -208,32 +208,32 @@ public class JasperReportsComponent extends ComponentBase {
       // Validate settings are passed. Treat the password as optional.
       if (reportAction.getJndi() == ActionInputConstant.NULL_INPUT) {
         if (reportAction.getDriver() != ActionInputConstant.NULL_INPUT) {
-          error(Messages.getErrorString("JasperReport.ERROR_0003_JDBC_DRIVER_NOT_SPECIFIED")); //$NON-NLS-1$
+          error(Messages.getInstance().getErrorString("JasperReport.ERROR_0003_JDBC_DRIVER_NOT_SPECIFIED")); //$NON-NLS-1$
           actionValidated = false;
         }
         if (actionValidated && reportAction.getConnection() == ActionInputConstant.NULL_INPUT) {
-          error(Messages.getErrorString("JasperReport.ERROR_0004_JDBC_CONNECTION_NOT_SPECIFIED")); //$NON-NLS-1$
+          error(Messages.getInstance().getErrorString("JasperReport.ERROR_0004_JDBC_CONNECTION_NOT_SPECIFIED")); //$NON-NLS-1$
           actionValidated = false;
         }
         if (actionValidated && reportAction.getUserId() == ActionInputConstant.NULL_INPUT) {
-          error(Messages.getErrorString("JasperReport.ERROR_0005_JDBC_USER_NOT_SPECIFIED")); //$NON-NLS-1$
+          error(Messages.getInstance().getErrorString("JasperReport.ERROR_0005_JDBC_USER_NOT_SPECIFIED")); //$NON-NLS-1$
           actionValidated = false;
         }
       }
       // check the inputs, we cannot reply on input values during validation
       if (actionValidated && reportAction.getOutputType() == ActionInputConstant.NULL_INPUT) { 
-        error(Messages.getErrorString("JasperReport.ERROR_0006_OUTPUT_TYPE_NOT_SPECIFIED")); //$NON-NLS-1$
+        error(Messages.getInstance().getErrorString("JasperReport.ERROR_0006_OUTPUT_TYPE_NOT_SPECIFIED")); //$NON-NLS-1$
         actionValidated = false;
       }
 
       // check the resources
       if (actionValidated && reportAction.getReportDefinition() == null) {
-        error(Messages.getErrorString("JasperReport.ERROR_0007_REPORT_DEFINITION_NOT_SPECIFIED")); //$NON-NLS-1$
+        error(Messages.getInstance().getErrorString("JasperReport.ERROR_0007_REPORT_DEFINITION_NOT_SPECIFIED")); //$NON-NLS-1$
         actionValidated = false;
       }
     } else {
       actionValidated = false;
-      error(Messages.getErrorString(
+      error(Messages.getInstance().getErrorString(
           "ComponentBase.ERROR_0001_UNKNOWN_ACTION_TYPE", getActionDefinition().getElement().asXML())); //$NON-NLS-1$      
     }
     return actionValidated;
@@ -284,7 +284,7 @@ public class JasperReportsComponent extends ComponentBase {
       exporter.setParameter(JRHtmlExporterParameter.IMAGES_URI, imageUrl + reportName + "/"); //$NON-NLS-1$
       exporter.setParameter(JRHtmlExporterParameter.IS_OUTPUT_IMAGES_TO_DIR, Boolean.TRUE);
       if (debug) {
-        debug(Messages.getString("JasperReport.DEBUG_IMAGE_DIRECTORY", imagePath)); //$NON-NLS-1$
+        debug(Messages.getInstance().getString("JasperReport.DEBUG_IMAGE_DIRECTORY", imagePath)); //$NON-NLS-1$
       }
     } else if (PDF.equals(outputType)) { 
       exporter = new JRPdfExporter();
@@ -321,12 +321,12 @@ public class JasperReportsComponent extends ComponentBase {
     // perform runtime validation of the output type
     String reportOutputType = reportAction.getOutputType().getStringValue();
     if (debug) {
-      debug(Messages.getString("JasperReport.DEBUG_OUTPUT_TYPE", reportOutputType)); //$NON-NLS-1$
+      debug(Messages.getInstance().getString("JasperReport.DEBUG_OUTPUT_TYPE", reportOutputType)); //$NON-NLS-1$
     }
 
     String mimeType = getMimeType(reportOutputType);
     if (mimeType == null) {
-      error(Messages.getErrorString("JasperReport.ERROR_0011_OUTPUT_TYPE_INVALID")); //$NON-NLS-1$
+      error(Messages.getInstance().getErrorString("JasperReport.ERROR_0011_OUTPUT_TYPE_INVALID")); //$NON-NLS-1$
       return false;
     }
 
@@ -371,7 +371,7 @@ public class JasperReportsComponent extends ComponentBase {
     IContentItem contentItem = null;
     OutputStream outputStream = getOutputStream(mimeType, extension, contentItem);
     if (outputStream == null) {
-      error(Messages.getErrorString("JasperReport.ERROR_0013_OUTPUT_STREAM_INVALID")); //$NON-NLS-1$
+      error(Messages.getInstance().getErrorString("JasperReport.ERROR_0013_OUTPUT_STREAM_INVALID")); //$NON-NLS-1$
       return false;
     }
 
@@ -394,7 +394,7 @@ public class JasperReportsComponent extends ComponentBase {
     String compiledReportPath = ""; //$NON-NLS-1$
 
     if (reportDefinitionPath == null) {
-      error(Messages.getErrorString("JasperReport.ERROR_0008_REPORT_DEFINITION_UNREADABLE")); //$NON-NLS-1$
+      error(Messages.getInstance().getErrorString("JasperReport.ERROR_0008_REPORT_DEFINITION_UNREADABLE")); //$NON-NLS-1$
       continueProcessing = false;
     }
 
@@ -422,7 +422,7 @@ public class JasperReportsComponent extends ComponentBase {
       JRParameter[] jrparams = jrreport.getParameters();
 
       if (debug) {
-        debug(Messages.getString("JasperReport.DEBUG_LOADED_DESIGN", Integer.toString(jrparams.length))); //$NON-NLS-1$
+        debug(Messages.getInstance().getString("JasperReport.DEBUG_LOADED_DESIGN", Integer.toString(jrparams.length))); //$NON-NLS-1$
       }
 
       HashMap needToPrompt = new HashMap();
@@ -513,7 +513,7 @@ public class JasperReportsComponent extends ComponentBase {
       // Go!
       exporter.exportReport();
     } catch (JRException jre) {
-      error(Messages.getErrorString("JasperReport.ERROR_0014_REPORT_EXECUTION_FAILED"), jre); //$NON-NLS-1$
+      error(Messages.getInstance().getErrorString("JasperReport.ERROR_0014_REPORT_EXECUTION_FAILED"), jre); //$NON-NLS-1$
       return false;
     } finally {
       try {
@@ -555,7 +555,7 @@ public class JasperReportsComponent extends ComponentBase {
       if (parameterValue != null && parameterValue.toString().length() != 0) {
         // give the parameter value to the report engine...
         if (debug) {
-          debug(Messages.getString("JasperReport.DEBUG_ADDING_PARAMETER", parameterName, parameterValue.toString())); //$NON-NLS-1$ 
+          debug(Messages.getInstance().getString("JasperReport.DEBUG_ADDING_PARAMETER", parameterName, parameterValue.toString())); //$NON-NLS-1$ 
         }
 
         reportParameters.put(parameterName, parameterValue);
@@ -563,7 +563,7 @@ public class JasperReportsComponent extends ComponentBase {
       // Check for unspecified parameters that need to be specified
       else if (param.isForPrompting()) {
         if (debug) {
-          debug(Messages.getString("JasperReport.DEBUG_PARAMETER_NEEDED", parameterName)); //$NON-NLS-1$
+          debug(Messages.getInstance().getString("JasperReport.DEBUG_PARAMETER_NEEDED", parameterName)); //$NON-NLS-1$
         }
         // see if we can prompt for this...
         if (feedbackAllowed()) {
@@ -590,7 +590,7 @@ public class JasperReportsComponent extends ComponentBase {
    */
   private JasperReport loadJasperReport(String compiledReportPath) {
     if (debug) {
-      debug(Messages.getString("JasperReport.DEBUG_LOADING_REPORT_DESIGN")); //$NON-NLS-1$
+      debug(Messages.getInstance().getString("JasperReport.DEBUG_LOADING_REPORT_DESIGN")); //$NON-NLS-1$
     }
 
     JasperReport jrreport = null;
@@ -598,7 +598,7 @@ public class JasperReportsComponent extends ComponentBase {
       jrreport = (JasperReport) JRLoader.loadObject(compiledReportPath);
     } catch (JRException jre) {
       jrreport = null;
-      error(Messages.getErrorString("JasperReport.ERROR_0012_REPORT_DESIGN_NO_LOADABLE", compiledReportPath), jre); //$NON-NLS-1$      
+      error(Messages.getInstance().getErrorString("JasperReport.ERROR_0012_REPORT_DESIGN_NO_LOADABLE", compiledReportPath), jre); //$NON-NLS-1$      
     }
 
     return jrreport;
@@ -611,7 +611,7 @@ public class JasperReportsComponent extends ComponentBase {
     String compiledReportPath = null;
 
     if (debug) {
-      debug(Messages.getString("JasperReport.GETTING_REPORT_PATH", reportDefinitionPath)); //$NON-NLS-1$
+      debug(Messages.getInstance().getString("JasperReport.GETTING_REPORT_PATH", reportDefinitionPath)); //$NON-NLS-1$
     }
 
     // See if we have a compiled report or a report definition. If its a
@@ -632,10 +632,10 @@ public class JasperReportsComponent extends ComponentBase {
       // Assume its a .jrxml
       if (!sourceFile.exists()) {
         compiledReportPath = null;
-        error(Messages.getErrorString("JasperReport.ERROR_0009_REPORT_DEFINITION_MISSING", reportDefinitionPath)); //$NON-NLS-1$
+        error(Messages.getInstance().getErrorString("JasperReport.ERROR_0009_REPORT_DEFINITION_MISSING", reportDefinitionPath)); //$NON-NLS-1$
       } else {
         if (debug) {
-          debug(Messages.getString("JasperReport.DEBUG_REPORT_FILE_FOUND")); //$NON-NLS-1$
+          debug(Messages.getInstance().getString("JasperReport.DEBUG_REPORT_FILE_FOUND")); //$NON-NLS-1$
         }
         StringBuffer sb = new StringBuffer();
         sb.append(sourceFile.getParent());
@@ -658,8 +658,8 @@ public class JasperReportsComponent extends ComponentBase {
     boolean reportCompiled = true;
 
     if (debug) {
-      debug(Messages.getString("JasperReport.DEBUG_RUNNING_REPORT", reportDefinitionPath)); //$NON-NLS-1$
-      debug(Messages.getString("JasperReport.DEBUG_COMPILED_REPORT_LOCATION", compiledReportPath)); //$NON-NLS-1$
+      debug(Messages.getInstance().getString("JasperReport.DEBUG_RUNNING_REPORT", reportDefinitionPath)); //$NON-NLS-1$
+      debug(Messages.getInstance().getString("JasperReport.DEBUG_COMPILED_REPORT_LOCATION", compiledReportPath)); //$NON-NLS-1$
     }
 
     // make sure the report is compiled
@@ -670,7 +670,7 @@ public class JasperReportsComponent extends ComponentBase {
     // newer
     if (!compiledReportFile.exists() || sourceFile.lastModified() > compiledReportFile.lastModified()) {
       if (debug) {
-        debug(Messages.getString("JasperReport.DEBUG_COMPILING_REPORT")); //$NON-NLS-1$
+        debug(Messages.getInstance().getString("JasperReport.DEBUG_COMPILING_REPORT")); //$NON-NLS-1$
       }
       // We are currently ignoring any error conditions with compiled
       // files
@@ -683,13 +683,13 @@ public class JasperReportsComponent extends ComponentBase {
       try {
         JasperCompileManager.compileReportToFile(reportDefinitionPath, compiledReportPath);
       } catch (JRException jre) {
-        error(Messages.getErrorString(
+        error(Messages.getInstance().getErrorString(
             "JasperReport.ERROR_0010_UNABLE_TO_COMPILE", reportDefinitionPath, compiledReportPath), jre); //$NON-NLS-1$
         reportCompiled = false;
       }
 
       if (debug && reportCompiled) {
-        debug(Messages.getString("JasperReport.DEBUG_COMPILED_OK")); //$NON-NLS-1$
+        debug(Messages.getInstance().getString("JasperReport.DEBUG_COMPILED_OK")); //$NON-NLS-1$
       }
     }
 
@@ -757,7 +757,7 @@ public class JasperReportsComponent extends ComponentBase {
       // There was no output in the action-sequence document, so make a
       // default
       // outputStream.
-      warn(Messages.getString("Base.WARN_NO_OUTPUT_STREAM")); //$NON-NLS-1$
+      warn(Messages.getInstance().getString("Base.WARN_NO_OUTPUT_STREAM")); //$NON-NLS-1$
       outputStream = getDefaultOutputStream(mimeType);
       if (outputStream != null) {
         setOutputMimeType(mimeType);
@@ -796,13 +796,13 @@ public class JasperReportsComponent extends ComponentBase {
       }
       return conn;
     } catch (ObjectFactoryException objface) {
-      error(Messages.getErrorString("JasperReport.ERROR_0017_UNABLE_TO_FACTORY_OBJECT")); //$NON-NLS-1$      
+      error(Messages.getInstance().getErrorString("JasperReport.ERROR_0017_UNABLE_TO_FACTORY_OBJECT")); //$NON-NLS-1$      
     } catch (ClassNotFoundException cnfe) {
-      error(Messages.getErrorString("JasperReport.ERROR_0015_JDBC_DRIVER_LOAD_FAILED")); //$NON-NLS-1$
+      error(Messages.getInstance().getErrorString("JasperReport.ERROR_0015_JDBC_DRIVER_LOAD_FAILED")); //$NON-NLS-1$
     } catch (SQLException se) {
-      error(Messages.getErrorString("JasperReport.ERROR_0016_DATABASE_CONNECTION_FAILED"), se); //$NON-NLS-1$
+      error(Messages.getInstance().getErrorString("JasperReport.ERROR_0016_DATABASE_CONNECTION_FAILED"), se); //$NON-NLS-1$
     } catch (DatasourceServiceException dse) {
-      error(Messages.getErrorString("JasperReport.ERROR_0016_DATABASE_CONNECTION_FAILED"), dse); //$NON-NLS-1$
+      error(Messages.getInstance().getErrorString("JasperReport.ERROR_0016_DATABASE_CONNECTION_FAILED"), dse); //$NON-NLS-1$
     }
     return null;
   }

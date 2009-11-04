@@ -104,7 +104,7 @@ public class AnalysisViewService extends ServletBase {
       try {
         content = getPayloadAsString(request);
       } catch (IOException ioEx) {
-        String msg = Messages.getErrorString("AdhocWebService.ERROR_0006_FAILED_TO_GET_PAYLOAD_FROM_REQUEST"); //$NON-NLS-1$
+        String msg = Messages.getInstance().getErrorString("AdhocWebService.ERROR_0006_FAILED_TO_GET_PAYLOAD_FROM_REQUEST"); //$NON-NLS-1$
         error(msg, ioEx);
         WebServiceUtil.writeString(response.getOutputStream(),
             WebServiceUtil.getErrorXml(msg + " " + ioEx.getLocalizedMessage()), false); //$NON-NLS-1$
@@ -117,7 +117,7 @@ public class AnalysisViewService extends ServletBase {
         try {
           doc = XmlDom4JHelper.getDocFromString(content, new PentahoEntityResolver() );  
         } catch (XmlParseException e) {
-          String msg = Messages.getErrorString("HttpWebService.ERROR_0001_ERROR_DURING_WEB_SERVICE"); //$NON-NLS-1$
+          String msg = Messages.getInstance().getErrorString("HttpWebService.ERROR_0001_ERROR_DURING_WEB_SERVICE"); //$NON-NLS-1$
           error(msg, e);
           WebServiceUtil.writeString(response.getOutputStream(), WebServiceUtil.getErrorXml(msg), false);
         } 
@@ -165,7 +165,7 @@ public class AnalysisViewService extends ServletBase {
       dispatch(request, response, component, parameterProvider, userSession, wrapWithSoap);
 
     } catch (IOException ioEx) {
-      String msg = Messages.getErrorString("HttpWebService.ERROR_0001_ERROR_DURING_WEB_SERVICE"); //$NON-NLS-1$
+      String msg = Messages.getInstance().getErrorString("HttpWebService.ERROR_0001_ERROR_DURING_WEB_SERVICE"); //$NON-NLS-1$
       error(msg, ioEx);
       WebServiceUtil.writeString(response.getOutputStream(), WebServiceUtil.getErrorXml(msg), false);
     } catch (PentahoSystemException ex) {
@@ -247,7 +247,7 @@ public class AnalysisViewService extends ServletBase {
   
       // validate parameters
       if(selectedCatalog == null){
-        throw new PentahoSystemException(Messages.getString("AnalysisViewService.ERROR_0004_MODEL_NULL")); //$NON-NLS-1$
+        throw new PentahoSystemException(Messages.getInstance().getString("AnalysisViewService.ERROR_0004_MODEL_NULL")); //$NON-NLS-1$
       }
       
       MondrianDataSource datasource = selectedCatalog.getEffectiveDataSource();
@@ -259,7 +259,7 @@ public class AnalysisViewService extends ServletBase {
     	IDatasourceService datasourceService =  PentahoSystem.getObjectFactory().get(IDatasourceService.class ,null);
         jndi = datasourceService.getDSUnboundName(datasource.getJndi());    	
         } catch (ObjectFactoryException objface) {
-		      Logger.error("AnalysisViewService",Messages.getErrorString("AnalysisViewService.ERROR_0001_UNABLE_TO_FACTORY_OBJECT", jndi), objface); //$NON-NLS-1$ //$NON-NLS-2$
+		      Logger.error("AnalysisViewService",Messages.getInstance().getErrorString("AnalysisViewService.ERROR_0001_UNABLE_TO_FACTORY_OBJECT", jndi), objface); //$NON-NLS-1$ //$NON-NLS-2$
         }
       } else {
         jdbc = datasource.getJdbc();
@@ -268,28 +268,28 @@ public class AnalysisViewService extends ServletBase {
       model = selectedCatalog.getDefinition();
       
       if ((solutionName == null) || solutionName.equals("")) { //$NON-NLS-1$
-        throw new PentahoSystemException(Messages.getString("AnalysisViewService.ERROR_0001_SOLUTION_NAME_NULL")); //$NON-NLS-1$
+        throw new PentahoSystemException(Messages.getInstance().getString("AnalysisViewService.ERROR_0001_SOLUTION_NAME_NULL")); //$NON-NLS-1$
       }
       if ((solutionPath == null) || solutionPath.equals("")) { //$NON-NLS-1$
         solutionPath = "/"; //$NON-NLS-1$
       }
       if ((title == null) || title.equals("")) { //$NON-NLS-1$
-        throw new PentahoSystemException(Messages.getString("AnalysisViewService.ERROR_0003_TITLE_NULL")); //$NON-NLS-1$
+        throw new PentahoSystemException(Messages.getInstance().getString("AnalysisViewService.ERROR_0003_TITLE_NULL")); //$NON-NLS-1$
       }
       if ((model == null) || model.equals("")) { //$NON-NLS-1$
-        throw new PentahoSystemException(Messages.getString("AnalysisViewService.ERROR_0004_MODEL_NULL")); //$NON-NLS-1$
+        throw new PentahoSystemException(Messages.getInstance().getString("AnalysisViewService.ERROR_0004_MODEL_NULL")); //$NON-NLS-1$
       }
       if ((description == null) || description.equals("")) { //$NON-NLS-1$
-        throw new PentahoSystemException(Messages.getString("AnalysisViewService.ERROR_0005_DESCRIPTION_NULL")); //$NON-NLS-1$
+        throw new PentahoSystemException(Messages.getInstance().getString("AnalysisViewService.ERROR_0005_DESCRIPTION_NULL")); //$NON-NLS-1$
       }
       if ((jndi == null) || jndi.equals("")) { //$NON-NLS-1$
-        throw new PentahoSystemException(Messages.getString("AnalysisViewService.ERROR_0006_JNDI_NULL")); //$NON-NLS-1$
+        throw new PentahoSystemException(Messages.getInstance().getString("AnalysisViewService.ERROR_0006_JNDI_NULL")); //$NON-NLS-1$
       }
       if ((cube == null) || cube.equals("")) { //$NON-NLS-1$
-        throw new PentahoSystemException(Messages.getString("AnalysisViewService.ERROR_0007_CUBE_NULL")); //$NON-NLS-1$
+        throw new PentahoSystemException(Messages.getInstance().getString("AnalysisViewService.ERROR_0007_CUBE_NULL")); //$NON-NLS-1$
       }
       if ((xactionFilename == null) || xactionFilename.equals("")) { //$NON-NLS-1$
-        throw new PentahoSystemException(Messages.getString("AnalysisViewService.ERROR_0008_XACTION_NULL")); //$NON-NLS-1$
+        throw new PentahoSystemException(Messages.getInstance().getString("AnalysisViewService.ERROR_0008_XACTION_NULL")); //$NON-NLS-1$
       }
       String path = solutionName;
       if (!solutionName.endsWith("/") && !solutionPath.startsWith("/")) {  //$NON-NLS-1$ //$NON-NLS-2$
@@ -311,7 +311,7 @@ public class AnalysisViewService extends ServletBase {
       int xactionSaveStatus = repository.publish(baseUrl, path, xactionFilename,
           xaction.getBytes(), overwrite);
       
-      // String msg = WebServiceUtil.getStatusXml(Messages.getString("AnalysisViewService.USER_VIEW_SAVED")); //$NON-NLS-1$
+      // String msg = WebServiceUtil.getStatusXml(Messages.getInstance().getString("AnalysisViewService.USER_VIEW_SAVED")); //$NON-NLS-1$
       
       if (xactionSaveStatus == ISolutionRepository.FILE_ADD_SUCCESSFUL) {
         //WebServiceUtil.writeString(response.getOutputStream(), msg, wrapWithSoap);
@@ -352,7 +352,7 @@ public class AnalysisViewService extends ServletBase {
       action.setJndi(new ActionInputConstant(jndi, null));
     } else {
       // note, pivot view action does not support jdbc based connections at this time
-      throw new PentahoSystemException(Messages.getErrorString("AnalysisViewService.ERROR_0006_JNDI_NULL")); //$NON-NLS-1$
+      throw new PentahoSystemException(Messages.getInstance().getErrorString("AnalysisViewService.ERROR_0006_JNDI_NULL")); //$NON-NLS-1$
     }
     
     //TODO: add JDBC datasource support
@@ -379,10 +379,10 @@ public class AnalysisViewService extends ServletBase {
         Document doc = reader.read(is);
         return new ActionSequenceDocument(doc);
       } else {
-        throw new PentahoSystemException(Messages.getString("AnalysisViewService.ERROR_0009_TEMPLATE_DOES_NOT_EXIST", analysisViewTemplate)); //$NON-NLS-1$
+        throw new PentahoSystemException(Messages.getInstance().getString("AnalysisViewService.ERROR_0009_TEMPLATE_DOES_NOT_EXIST", analysisViewTemplate)); //$NON-NLS-1$
       }
     } catch (DocumentException e) {
-      throw new PentahoSystemException(Messages.getString("AnalysisViewService.ERROR_0010_TEMPLATE_DOES_NOT_PARSE", analysisViewTemplate), e); //$NON-NLS-1$
+      throw new PentahoSystemException(Messages.getInstance().getString("AnalysisViewService.ERROR_0010_TEMPLATE_DOES_NOT_PARSE", analysisViewTemplate), e); //$NON-NLS-1$
     } catch (IOException ioe) {
       throw new PentahoSystemException(ioe);
     } finally {

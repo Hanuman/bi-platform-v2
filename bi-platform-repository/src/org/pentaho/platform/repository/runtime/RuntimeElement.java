@@ -329,7 +329,7 @@ public class RuntimeElement extends PentahoBase implements IRuntimeElement {
    * @return The property.
    */
   public String getStringProperty(final String key, final String defaultValue) {
-    trace(Messages.getString("RTREPO.DEBUG_PROPERTY_GETSET", "getString", key)); //$NON-NLS-1$ //$NON-NLS-2$
+    trace(Messages.getInstance().getString("RTREPO.DEBUG_PROPERTY_GETSET", "getString", key)); //$NON-NLS-1$ //$NON-NLS-2$
     Object prop = getParamMapSS().get(key);
     if (prop == null) {
       prop = getParamMapLS().get(key);
@@ -342,7 +342,7 @@ public class RuntimeElement extends PentahoBase implements IRuntimeElement {
     String curType = (String) localTypesMap.get(key);
     if (curType != null) {
       if (!curType.equals(type)) {
-        throw new RepositoryException(Messages.getErrorString("RTREPO.ERROR_0001_INVALIDTYPE", curType, type)); //$NON-NLS-1$
+        throw new RepositoryException(Messages.getInstance().getErrorString("RTREPO.ERROR_0001_INVALIDTYPE", curType, type)); //$NON-NLS-1$
       }
     }
     if (setIt) {
@@ -362,7 +362,7 @@ public class RuntimeElement extends PentahoBase implements IRuntimeElement {
    */
   public void setStringProperty(final String key, final String value) {
     this.updateOk();
-    trace(Messages.getString("RTREPO.DEBUG_PROPERTY_GETSET", "setString", key)); //$NON-NLS-1$ //$NON-NLS-2$
+    trace(Messages.getInstance().getString("RTREPO.DEBUG_PROPERTY_GETSET", "setString", key)); //$NON-NLS-1$ //$NON-NLS-2$
     checkType(key, value.getClass().getName(), true);
     Map theMapSS = getParamMapSS();
     Map theMapLS = getParamMapLS();
@@ -389,7 +389,7 @@ public class RuntimeElement extends PentahoBase implements IRuntimeElement {
    * @return BigDecimal property
    */
   public BigDecimal getBigDecimalProperty(final String key) {
-    trace(Messages.getString("RTREPO.DEBUG_PROPERTY_GETSET", "getBigDecimal", key)); //$NON-NLS-1$ //$NON-NLS-2$
+    trace(Messages.getInstance().getString("RTREPO.DEBUG_PROPERTY_GETSET", "getBigDecimal", key)); //$NON-NLS-1$ //$NON-NLS-2$
     return getBigDecimalProperty(key, null);
   }
 
@@ -404,7 +404,7 @@ public class RuntimeElement extends PentahoBase implements IRuntimeElement {
    * @return Returns the property from the paramMap.
    */
   public BigDecimal getBigDecimalProperty(final String key, final BigDecimal defaultValue) {
-    trace(Messages.getString("RTREPO.DEBUG_PROPERTY_GETSET", "getBigDecimal", key)); //$NON-NLS-1$ //$NON-NLS-2$
+    trace(Messages.getInstance().getString("RTREPO.DEBUG_PROPERTY_GETSET", "getBigDecimal", key)); //$NON-NLS-1$ //$NON-NLS-2$
     Object prop = getParamMapBD().get(key);
     return (prop != null) ? new BigDecimal((String) prop) : defaultValue;
   }
@@ -421,7 +421,7 @@ public class RuntimeElement extends PentahoBase implements IRuntimeElement {
    */
   public void setBigDecimalProperty(final String key, final BigDecimal value) {
     this.updateOk();
-    trace(Messages.getString("RTREPO.DEBUG_PROPERTY_GETSET", "setBigDecimal", key)); //$NON-NLS-1$ //$NON-NLS-2$
+    trace(Messages.getInstance().getString("RTREPO.DEBUG_PROPERTY_GETSET", "setBigDecimal", key)); //$NON-NLS-1$ //$NON-NLS-2$
     checkType(key, value.getClass().getName(), true);
     Map theMap = getParamMapBD();
     if (value != null) {
@@ -439,7 +439,7 @@ public class RuntimeElement extends PentahoBase implements IRuntimeElement {
    * @return The property in the map.
    */
   public Date getDateProperty(final String key) {
-    trace(Messages.getString("RTREPO.DEBUG_PROPERTY_GETSET", "getDate", key)); //$NON-NLS-1$ //$NON-NLS-2$
+    trace(Messages.getInstance().getString("RTREPO.DEBUG_PROPERTY_GETSET", "getDate", key)); //$NON-NLS-1$ //$NON-NLS-2$
     return getDateProperty(key, null);
   }
 
@@ -455,7 +455,7 @@ public class RuntimeElement extends PentahoBase implements IRuntimeElement {
    * @return The property in the map.
    */
   public Date getDateProperty(final String key, final Date defaultValue) {
-    trace(Messages.getString("RTREPO.DEBUG_PROPERTY_GETSET", "getDate", key)); //$NON-NLS-1$ //$NON-NLS-2$
+    trace(Messages.getInstance().getString("RTREPO.DEBUG_PROPERTY_GETSET", "getDate", key)); //$NON-NLS-1$ //$NON-NLS-2$
     Object prop = getParamMapDT().get(key);
     return (prop != null) ? (Date) prop : defaultValue;
   }
@@ -473,7 +473,7 @@ public class RuntimeElement extends PentahoBase implements IRuntimeElement {
    */
   public void setDateProperty(final String key, final Date value) {
     this.updateOk();
-    trace(Messages.getString("RTREPO.DEBUG_PROPERTY_GETSET", "setDate", key)); //$NON-NLS-1$ //$NON-NLS-2$
+    trace(Messages.getInstance().getString("RTREPO.DEBUG_PROPERTY_GETSET", "setDate", key)); //$NON-NLS-1$ //$NON-NLS-2$
     checkType(key, value.getClass().getName(), true);
     Map theMap = getParamMapDT();
     if (value != null) {
@@ -495,7 +495,7 @@ public class RuntimeElement extends PentahoBase implements IRuntimeElement {
    * @return The property in the map.
    */
   public Long getLongProperty(final String key, final Long defaultValue) {
-    trace(Messages.getString("RTREPO.DEBUG_PROPERTY_GETSET", "getLong", key)); //$NON-NLS-1$ //$NON-NLS-2$
+    trace(Messages.getInstance().getString("RTREPO.DEBUG_PROPERTY_GETSET", "getLong", key)); //$NON-NLS-1$ //$NON-NLS-2$
     Object prop = getParamMapLong().get(key);
     return (prop != null) ? (Long) prop : defaultValue;
   }
@@ -512,7 +512,7 @@ public class RuntimeElement extends PentahoBase implements IRuntimeElement {
    * @return The property in the map.
    */
   public long getLongProperty(final String key, final long defaultValue) {
-    trace(Messages.getString("RTREPO.DEBUG_PROPERTY_GETSET", "getLong", key)); //$NON-NLS-1$ //$NON-NLS-2$
+    trace(Messages.getInstance().getString("RTREPO.DEBUG_PROPERTY_GETSET", "getLong", key)); //$NON-NLS-1$ //$NON-NLS-2$
     Object prop = getParamMapLong().get(key);
     return (prop != null) ? ((Long) prop).longValue() : defaultValue;
   }
@@ -530,7 +530,7 @@ public class RuntimeElement extends PentahoBase implements IRuntimeElement {
    */
   public void setLongProperty(final String key, final Long value) {
     this.updateOk();
-    trace(Messages.getString("RTREPO.DEBUG_PROPERTY_GETSET", "setLong", key)); //$NON-NLS-1$ //$NON-NLS-2$
+    trace(Messages.getInstance().getString("RTREPO.DEBUG_PROPERTY_GETSET", "setLong", key)); //$NON-NLS-1$ //$NON-NLS-2$
     checkType(key, value.getClass().getName(), true);
     Map theMap = getParamMapLong();
     if (value != null) {
@@ -561,7 +561,7 @@ public class RuntimeElement extends PentahoBase implements IRuntimeElement {
    * @return The list property in the paramMap.
    */
   public List getListProperty(final String key) {
-    trace(Messages.getString("RTREPO.DEBUG_PROPERTY_GETSET", "getList", key)); //$NON-NLS-1$ //$NON-NLS-2$
+    trace(Messages.getInstance().getString("RTREPO.DEBUG_PROPERTY_GETSET", "getList", key)); //$NON-NLS-1$ //$NON-NLS-2$
     Object prop = getParamMapCPLX().get(key);
     return (List) prop;
   }
@@ -574,7 +574,7 @@ public class RuntimeElement extends PentahoBase implements IRuntimeElement {
    * @return The map value in the paramMap.
    */
   public Map getMapProperty(final String key) {
-    trace(Messages.getString("RTREPO.DEBUG_PROPERTY_GETSET", "getMap", key)); //$NON-NLS-1$ //$NON-NLS-2$
+    trace(Messages.getInstance().getString("RTREPO.DEBUG_PROPERTY_GETSET", "getMap", key)); //$NON-NLS-1$ //$NON-NLS-2$
     Object prop = getParamMapCPLX().get(key);
     return (Map) prop;
   }
@@ -591,7 +591,7 @@ public class RuntimeElement extends PentahoBase implements IRuntimeElement {
    */
   public void setListProperty(final String key, final List value) {
     this.updateOk();
-    trace(Messages.getString("RTREPO.DEBUG_PROPERTY_GETSET", "setList", key)); //$NON-NLS-1$ //$NON-NLS-2$
+    trace(Messages.getInstance().getString("RTREPO.DEBUG_PROPERTY_GETSET", "setList", key)); //$NON-NLS-1$ //$NON-NLS-2$
     checkType(key, value.getClass().getName(), true);
     Map theMap = getParamMapCPLX();
     if (value != null) {
@@ -613,7 +613,7 @@ public class RuntimeElement extends PentahoBase implements IRuntimeElement {
    */
   public void setMapProperty(final String key, final Map value) {
     this.updateOk();
-    trace(Messages.getString("RTREPO.DEBUG_PROPERTY_GETSET", "setMap", key)); //$NON-NLS-1$ //$NON-NLS-2$
+    trace(Messages.getInstance().getString("RTREPO.DEBUG_PROPERTY_GETSET", "setMap", key)); //$NON-NLS-1$ //$NON-NLS-2$
     checkType(key, value.getClass().getName(), true);
     Map theMap = getParamMapCPLX();
     if (value != null) {
@@ -706,7 +706,7 @@ public class RuntimeElement extends PentahoBase implements IRuntimeElement {
       return;
     }
     if (readOnly) {
-      throw new IllegalStateException(Messages.getErrorString("RTELEMENT.ERROR_0001_INVALIDUPDATE")); //$NON-NLS-1$
+      throw new IllegalStateException(Messages.getInstance().getErrorString("RTELEMENT.ERROR_0001_INVALIDUPDATE")); //$NON-NLS-1$
     }
   }
 

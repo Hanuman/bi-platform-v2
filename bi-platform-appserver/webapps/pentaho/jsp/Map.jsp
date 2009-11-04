@@ -97,7 +97,7 @@
 			footer = sections[1];
 		}
 	} else {
-		intro = Messages.getString( "UI.ERROR_0002_BAD_TEMPLATE_OBJECT" );
+		intro = Messages.getInstance().getString( "UI.ERROR_0002_BAD_TEMPLATE_OBJECT" );
 	}
 
 		// Load the customer data. Do this by running an action sequence defined in pentaho-solutions/steel-wheels/google/map1.xaction

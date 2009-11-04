@@ -221,13 +221,13 @@ public abstract class ComponentBase extends PentahoMessenger implements ICompone
 
   public final int validate() {
 
-    logId = Messages.getString("Base.CODE_LOG_ID", instanceId, runtimeContext.getHandle(), actionName); //$NON-NLS-1$
+    logId = Messages.getInstance().getString("Base.CODE_LOG_ID", instanceId, runtimeContext.getHandle(), actionName); //$NON-NLS-1$
     if (ComponentBase.debug) {
-      debug(Messages.getString("Base.DEBUG_VALIDATING_COMPONENT", actionName)); //$NON-NLS-1$
+      debug(Messages.getInstance().getString("Base.DEBUG_VALIDATING_COMPONENT", actionName)); //$NON-NLS-1$
       // grab the parameters first
     }
 
-    id = Messages.getString("Base.CODE_COMPONENT_ID", processId, actionName); //$NON-NLS-1$
+    id = Messages.getInstance().getString("Base.CODE_COMPONENT_ID", processId, actionName); //$NON-NLS-1$
 
     // now get picky about values
     baseInitOk = ((instanceId != null) && (sessionContext != null) && (processId != null) && (actionName != null));
@@ -238,7 +238,7 @@ public abstract class ComponentBase extends PentahoMessenger implements ICompone
       try {
         componentInitOk = validateAction();
       } catch (Exception e) {
-        error(Messages.getErrorString("Base.ERROR_0004_VALIDATION_FAILED"), e); //$NON-NLS-1$                
+        error(Messages.getInstance().getErrorString("Base.ERROR_0004_VALIDATION_FAILED"), e); //$NON-NLS-1$                
       }
     }
     if (getInitOk()) {
@@ -403,19 +403,19 @@ public abstract class ComponentBase extends PentahoMessenger implements ICompone
   }
 
   public void inputMissingError(final String paramName) {
-    error(Messages.getErrorString("ComponentBase.ERROR_0003_INPUT_PARAM_MISSING", paramName)); //$NON-NLS-1$
+    error(Messages.getInstance().getErrorString("ComponentBase.ERROR_0003_INPUT_PARAM_MISSING", paramName)); //$NON-NLS-1$
   }
 
   public void outputMissingError(final String paramName) {
-    error(Messages.getErrorString("ComponentBase.ERROR_0004_OUTPUT_PARAM_MISSING", paramName)); //$NON-NLS-1$
+    error(Messages.getInstance().getErrorString("ComponentBase.ERROR_0004_OUTPUT_PARAM_MISSING", paramName)); //$NON-NLS-1$
   }
 
   public void resourceMissingError(final String paramName) {
-    error(Messages.getErrorString("ComponentBase.ERROR_0005_RESOURCE_PARAM_MISSING", paramName)); //$NON-NLS-1$
+    error(Messages.getInstance().getErrorString("ComponentBase.ERROR_0005_RESOURCE_PARAM_MISSING", paramName)); //$NON-NLS-1$
   }
 
   public void resourceComponentSettingError(final String paramName) {
-    error(Messages.getErrorString("ComponentBase.ERROR_0006_COMPONENT_SETTING_PARAM_MISSING", paramName)); //$NON-NLS-1$
+    error(Messages.getInstance().getErrorString("ComponentBase.ERROR_0006_COMPONENT_SETTING_PARAM_MISSING", paramName)); //$NON-NLS-1$
   }
 
   public int execute() {
@@ -442,18 +442,18 @@ public abstract class ComponentBase extends PentahoMessenger implements ICompone
     // Fix regression issue - BISERVER-3004 (MB) --- End
     
     if (loggingLevel == ILogger.UNKNOWN) {
-      warn(Messages.getString("Base.WARNING_LOGGING_LEVEL_UNKNOWN")); //$NON-NLS-1$
+      warn(Messages.getInstance().getString("Base.WARNING_LOGGING_LEVEL_UNKNOWN")); //$NON-NLS-1$
       loggingLevel = ILogger.DEBUG;
     }
     int result = IRuntimeContext.RUNTIME_STATUS_FAILURE;
 
     if (sessionContext == null) {
-      error(Messages.getErrorString("Base.ERROR_0001_INVALID_SESSION")); //$NON-NLS-1$
+      error(Messages.getInstance().getErrorString("Base.ERROR_0001_INVALID_SESSION")); //$NON-NLS-1$
       return result;
     }
 
     if (ComponentBase.debug) {
-      debug(Messages.getString("Base.DEBUG_VALIDATION_RESULT") + getInitOk()); //$NON-NLS-1$
+      debug(Messages.getInstance().getString("Base.DEBUG_VALIDATION_RESULT") + getInitOk()); //$NON-NLS-1$
     }
     if (!getInitOk()) {
       return result;
@@ -474,7 +474,7 @@ public abstract class ComponentBase extends PentahoMessenger implements ICompone
         //Since we want all exceptions including checked exceptions to propogate to the solution engine,
         //and we cannot change IComponent API on a minor release, we have to wrap all checked exceptions
         //in a RuntimeException.
-        throw new RuntimeException(Messages.getErrorString("Base.ERROR_0002_EXECUTION_FAILED"), e); //$NON-NLS-1$
+        throw new RuntimeException(Messages.getInstance().getErrorString("Base.ERROR_0002_EXECUTION_FAILED"), e); //$NON-NLS-1$
       }
     }
     return result;

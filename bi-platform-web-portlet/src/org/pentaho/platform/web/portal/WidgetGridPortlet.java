@@ -76,7 +76,7 @@ public class WidgetGridPortlet extends ViewPortlet {
     String widgetGridDataDefinition = getSetting(WIDGETGRID, null, request, requestParameters);
 
     if (widgetDefinition == null) {
-      response.getWriter().print(Messages.getString("Widget.USER_WIDGET_NOT_SPECIFIED")); //$NON-NLS-1$
+      response.getWriter().print(Messages.getInstance().getString("Widget.USER_WIDGET_NOT_SPECIFIED")); //$NON-NLS-1$
       return;
     }
 
@@ -99,7 +99,7 @@ public class WidgetGridPortlet extends ViewPortlet {
       if (content == null) {
         StringBuffer buffer = new StringBuffer();
         PentahoSystem.get(IMessageFormatter.class, userSession).formatErrorMessage(
-            "text/html", Messages.getString("Widget.ERROR_0001_COULD_NOT_CREATE_WIDGET"), messages, buffer); //$NON-NLS-1$ //$NON-NLS-2$
+            "text/html", Messages.getInstance().getString("Widget.ERROR_0001_COULD_NOT_CREATE_WIDGET"), messages, buffer); //$NON-NLS-1$ //$NON-NLS-2$
         content = buffer.toString();
       }
       if ((content == null) || content.equals("")) { //$NON-NLS-1$

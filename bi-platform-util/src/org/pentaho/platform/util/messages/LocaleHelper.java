@@ -89,7 +89,7 @@ public class LocaleHelper {
     Charset defaultCharset = Charset.defaultCharset();
 
     if (platformCharset.compareTo(defaultCharset) != 0) {
-      Logger.warn(LocaleHelper.class.getName(), Messages.getString("LocaleHelper.WARN_CHARSETS_DONT_MATCH",
+      Logger.warn(LocaleHelper.class.getName(), Messages.getInstance().getString("LocaleHelper.WARN_CHARSETS_DONT_MATCH",
           platformCharset.name(), defaultCharset.name()));
     }
 

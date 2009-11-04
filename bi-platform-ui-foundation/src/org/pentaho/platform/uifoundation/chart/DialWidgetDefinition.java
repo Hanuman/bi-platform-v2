@@ -235,9 +235,9 @@ public class DialWidgetDefinition extends WidgetDefinition implements ChartDefin
     } else {
       // log a deprecation warning for background-color ...
       DialWidgetDefinition.getLogger().warn(
-          Messages.getString("CHART.WARN_DEPRECATED_PROPERTY", "background-color", "chart-background"));//$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$    
+          Messages.getInstance().getString("CHART.WARN_DEPRECATED_PROPERTY", "background-color", "chart-background"));//$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$    
       DialWidgetDefinition.getLogger().warn(
-          Messages.getString("CHART.WARN_PROPERTY_WILL_NOT_VALIDATE", "background-color"));//$NON-NLS-1$ //$NON-NLS-2$     
+          Messages.getInstance().getString("CHART.WARN_PROPERTY_WILL_NOT_VALIDATE", "background-color"));//$NON-NLS-1$ //$NON-NLS-2$     
     }
 
     if (paint != null) {
@@ -259,9 +259,9 @@ public class DialWidgetDefinition extends WidgetDefinition implements ChartDefin
     } else {
       // log a deprecation warning for plot-background-color ...
       DialWidgetDefinition.getLogger().warn(
-          Messages.getString("CHART.WARN_DEPRECATED_PROPERTY", "plot-background-color", "plot-background"));//$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$    
+          Messages.getInstance().getString("CHART.WARN_DEPRECATED_PROPERTY", "plot-background-color", "plot-background"));//$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$    
       DialWidgetDefinition.getLogger().warn(
-          Messages.getString("CHART.WARN_PROPERTY_WILL_NOT_VALIDATE", "plot-background-color"));//$NON-NLS-1$ //$NON-NLS-2$     
+          Messages.getInstance().getString("CHART.WARN_PROPERTY_WILL_NOT_VALIDATE", "plot-background-color"));//$NON-NLS-1$ //$NON-NLS-2$     
     }
 
     if (paint != null) {
@@ -346,8 +346,8 @@ public class DialWidgetDefinition extends WidgetDefinition implements ChartDefin
       }
     } else {
       // log a deprecation warning for this property...
-      DialWidgetDefinition.getLogger().warn(Messages.getString("CHART.WARN_DEPRECATED_CHILD", "interval", "intervals"));//$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$    
-      DialWidgetDefinition.getLogger().warn(Messages.getString("CHART.WARN_PROPERTY_WILL_NOT_VALIDATE", "interval"));//$NON-NLS-1$ //$NON-NLS-2$     
+      DialWidgetDefinition.getLogger().warn(Messages.getInstance().getString("CHART.WARN_DEPRECATED_CHILD", "interval", "intervals"));//$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$    
+      DialWidgetDefinition.getLogger().warn(Messages.getInstance().getString("CHART.WARN_PROPERTY_WILL_NOT_VALIDATE", "interval"));//$NON-NLS-1$ //$NON-NLS-2$     
     }
 
     if (intervals != null) {
@@ -413,10 +413,10 @@ public class DialWidgetDefinition extends WidgetDefinition implements ChartDefin
     } else {
       // log a deprecation warning for this property...
       DialWidgetDefinition.getLogger().warn(
-          Messages.getString(
+          Messages.getInstance().getString(
               "CHART.WARN_DEPRECATED_CHILD", ChartDefinition.SUBTITLE_NODE_NAME, ChartDefinition.SUBTITLES_NODE_NAME));//$NON-NLS-1$ 
       DialWidgetDefinition.getLogger().warn(
-          Messages.getString("CHART.WARN_PROPERTY_WILL_NOT_VALIDATE", ChartDefinition.SUBTITLE_NODE_NAME));//$NON-NLS-1$  
+          Messages.getInstance().getString("CHART.WARN_PROPERTY_WILL_NOT_VALIDATE", ChartDefinition.SUBTITLE_NODE_NAME));//$NON-NLS-1$  
     }
 
     if (subtitles != null) {
@@ -440,7 +440,7 @@ public class DialWidgetDefinition extends WidgetDefinition implements ChartDefin
   private void setDataByRow(final IPentahoResultSet data) {
 
     if (data == null) {
-      noDataMessage = Messages.getString("CHART.USER_NO_DATA_AVAILABLE"); //$NON-NLS-1$
+      noDataMessage = Messages.getInstance().getString("CHART.USER_NO_DATA_AVAILABLE"); //$NON-NLS-1$
       return;
     }
 

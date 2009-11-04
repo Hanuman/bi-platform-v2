@@ -105,7 +105,7 @@ public class FileBasedSolutionRepository extends SolutionRepositoryBase {
       URLClassLoader loader = new URLClassLoader(new URL[] { localeDir.toURL() }, null);
       return loader;
     } catch (Exception e) {
-      error(Messages.getErrorString("SolutionRepository.ERROR_0024_CREATING_CLASSLOADER")); //$NON-NLS-1$
+      error(Messages.getInstance().getErrorString("SolutionRepository.ERROR_0024_CREATING_CLASSLOADER")); //$NON-NLS-1$
     }
     return null;
   }
@@ -135,7 +135,7 @@ public class FileBasedSolutionRepository extends SolutionRepositoryBase {
     actionSequence = SequenceDefinition.ActionSequenceFactory(actionSequenceDocument, sequenceName, actionPath,
         solutionName, this, PentahoSystem.getApplicationContext(), localLoggingLevel);
     if (actionSequence == null) {
-      error(Messages.getErrorString("SolutionRepository.ERROR_0016_FAILED_TO_CREATE_ACTION_SEQUENCE", action)); //$NON-NLS-1$
+      error(Messages.getInstance().getErrorString("SolutionRepository.ERROR_0016_FAILED_TO_CREATE_ACTION_SEQUENCE", action)); //$NON-NLS-1$
       return null;
     }
 
@@ -156,14 +156,14 @@ public class FileBasedSolutionRepository extends SolutionRepositoryBase {
     // Handle the exception when you have the best knowledge about it.
     if (null == file) {
       // takes care of null pointer exception
-      error(Messages.getErrorString("SolutionRepository.ERROR_0001_FILE_DOES_NOT_EXIST", documentPath)); //$NON-NLS-1$
+      error(Messages.getInstance().getErrorString("SolutionRepository.ERROR_0001_FILE_DOES_NOT_EXIST", documentPath)); //$NON-NLS-1$
       return null;
     } else {
       if (!file.exists()) {
-        error(Messages.getErrorString("SolutionRepository.ERROR_0001_FILE_DOES_NOT_EXIST", documentPath)); //$NON-NLS-1$
+        error(Messages.getInstance().getErrorString("SolutionRepository.ERROR_0001_FILE_DOES_NOT_EXIST", documentPath)); //$NON-NLS-1$
         return null;
       } else if (!file.canRead()) {
-        error(Messages.getErrorString("SolutionRepository.ERROR_0020_FILE_IS_NOT_READABLE", documentPath)); //$NON-NLS-1$
+        error(Messages.getInstance().getErrorString("SolutionRepository.ERROR_0020_FILE_IS_NOT_READABLE", documentPath)); //$NON-NLS-1$
         return null;
       }
     }
@@ -172,7 +172,7 @@ public class FileBasedSolutionRepository extends SolutionRepositoryBase {
     try {
       document = XmlDom4JHelper.getDocFromFile(file, this.getResourceLoader());
     } catch (Exception e) {
-      error(Messages.getString("SolutionRepository.ERROR_0009_INVALID_DOCUMENT", documentPath)); //$NON-NLS-1$
+      error(Messages.getInstance().getString("SolutionRepository.ERROR_0009_INVALID_DOCUMENT", documentPath)); //$NON-NLS-1$
       return null;
     }
     localizeDoc(document, new FileSolutionFile(file, ((FileSolutionFile) getRootFolder(actionOperation)).getFile()));
@@ -181,17 +181,17 @@ public class FileBasedSolutionRepository extends SolutionRepositoryBase {
 
   private File getFile(final IRuntimeContext runtimeContext, final String path) {
     if (runtimeContext == null) {
-      error(Messages.getErrorString("SolutionRepository.ERROR_0002_NULL_RUNTIME_CONTEXT")); //$NON-NLS-1$
+      error(Messages.getInstance().getErrorString("SolutionRepository.ERROR_0002_NULL_RUNTIME_CONTEXT")); //$NON-NLS-1$
       return null;
     }
     File f = getFile(runtimeContext.getSolutionName() + File.separator + path, false);
     if (!f.exists()) {
-      error(Messages.getErrorString("SolutionRepository.ERROR_0003_NULL_SOLUTION_FILE", path)); //$NON-NLS-1$
+      error(Messages.getInstance().getErrorString("SolutionRepository.ERROR_0003_NULL_SOLUTION_FILE", path)); //$NON-NLS-1$
       return null;
     }
     // TODO: caching
     if (SolutionRepositoryBase.debug) {
-      debug(Messages.getString("SolutionRepository.DEBUG_FILE_PATH", f.getAbsolutePath())); //$NON-NLS-1$
+      debug(Messages.getInstance().getString("SolutionRepository.DEBUG_FILE_PATH", f.getAbsolutePath())); //$NON-NLS-1$
     }
     return f;
   }
@@ -200,12 +200,12 @@ public class FileBasedSolutionRepository extends SolutionRepositoryBase {
     // TODO: caching
     if ((runtimeContext == null) || (runtimeContext.getInstanceId() == null)
         || (runtimeContext.getActionName() == null)) {
-      error(Messages.getErrorString("SolutionRepository.ERROR_0004_INVALID_CONTEXT")); //$NON-NLS-1$
+      error(Messages.getInstance().getErrorString("SolutionRepository.ERROR_0004_INVALID_CONTEXT")); //$NON-NLS-1$
     }
     genLogIdFromInfo(runtimeContext.getInstanceId(), SolutionRepositoryBase.LOG_NAME, runtimeContext.getActionName());
     File f = getFile(runtimeContext, actionPath);
     if (f == null) {
-      error(Messages.getErrorString("SolutionRepository.ERROR_0005_INVALID_SOLUTION_FILE") + actionPath); //$NON-NLS-1$
+      error(Messages.getInstance().getErrorString("SolutionRepository.ERROR_0005_INVALID_SOLUTION_FILE") + actionPath); //$NON-NLS-1$
     }
     return FileHelper.getStringFromFile(f);
   }
@@ -221,7 +221,7 @@ public class FileBasedSolutionRepository extends SolutionRepositoryBase {
     try {
       document = XmlDom4JHelper.getDocFromFile(f, this.getResourceLoader());
     } catch (Exception e) {
-      error(Messages.getString("SolutionRepository.ERROR_0009_INVALID_DOCUMENT", actionPath), e); //$NON-NLS-1$
+      error(Messages.getInstance().getString("SolutionRepository.ERROR_0009_INVALID_DOCUMENT", actionPath), e); //$NON-NLS-1$
       return null;
     }
     return document;
@@ -327,10 +327,10 @@ protected void processFile( String fileName, File element, final Element parentN
       }
       if (fileName.toLowerCase().endsWith(".xaction")) { //$NON-NLS-1$ 
         // create an action sequence document from this
-        info(Messages.getString("SolutionRepository.DEBUG_ADDING_ACTION", fileName)); //$NON-NLS-1$
+        info(Messages.getInstance().getString("SolutionRepository.DEBUG_ADDING_ACTION", fileName)); //$NON-NLS-1$
         IActionSequence actionSequence = getActionSequence(solutionId, path, fileName, loggingLevel, actionOperation);
         if (actionSequence == null) {
-          error(Messages.getErrorString("SolutionRepository.ERROR_0006_INVALID_SEQUENCE_DOCUMENT", fileName)); //$NON-NLS-1$
+          error(Messages.getInstance().getErrorString("SolutionRepository.ERROR_0006_INVALID_SEQUENCE_DOCUMENT", fileName)); //$NON-NLS-1$
         } else {
           addToRepository(actionSequence, parentNode, element);
         }
@@ -341,7 +341,7 @@ protected void processFile( String fileName, File element, final Element parentN
             IFileInfo fileInfo = getFileInfo( solutionId, path, fileName, extension, pluginManager, ACTION_EXECUTE );
               addToRepository( fileInfo, solutionId, path, fileName, parentNode, element);
         } catch (Exception e) {
-          error( Messages.getErrorString( "SolutionRepository.ERROR_0021_FILE_NOT_ADDED", fullPath ), e ); //$NON-NLS-1$
+          error( Messages.getInstance().getErrorString( "SolutionRepository.ERROR_0021_FILE_NOT_ADDED", fullPath ), e ); //$NON-NLS-1$
         }
       }
 
@@ -426,7 +426,7 @@ private void addToRepository( final IFileInfo info, final String solution, final
           return localeText;
         }
         // if we get to here, we couldn't use the resource bundle to find the string, so we will use this another approach
-        // change the basename to messages (messages.properties) and go up a directory in our searching
+        // change the basename to messages (Messages.getInstance().properties) and go up a directory in our searching
         if (searching) {
           if (!baseName.equals("messages")) { //$NON-NLS-1$
             baseName = "messages"; //$NON-NLS-1$
@@ -442,7 +442,7 @@ private void addToRepository( final IFileInfo info, final String solution, final
       return null;
     } catch (Exception e) {
       error(
-          Messages.getErrorString("SolutionRepository.ERROR_0007_COULD_NOT_READ_PROPERTIES", baseFile.getFullPath()), e); //$NON-NLS-1$
+          Messages.getInstance().getErrorString("SolutionRepository.ERROR_0007_COULD_NOT_READ_PROPERTIES", baseFile.getFullPath()), e); //$NON-NLS-1$
     }
     return null;
   }
@@ -576,7 +576,7 @@ private void addToRepository( final IFileInfo info, final String solution, final
     dirNode.addAttribute("type", FileInfo.FILE_TYPE_ACTIVITY); //$NON-NLS-1$
     if ((actionSequence.getSequenceName() == null) || (actionSequence.getSolutionPath() == null)
         || (actionSequence.getSolutionName() == null)) {
-      error(Messages.getString("SolutionRepository.ERROR_0008_ACTION_SEQUENCE_NAME_INVALID")); //$NON-NLS-1$
+      error(Messages.getInstance().getString("SolutionRepository.ERROR_0008_ACTION_SEQUENCE_NAME_INVALID")); //$NON-NLS-1$
       return;
     }
     dirNode.addElement("filename").setText(actionSequence.getSequenceName()); //$NON-NLS-1$
@@ -789,7 +789,7 @@ private void addToRepository( final IFileInfo info, final String solution, final
       xPath = "descendant-or-self::" + xPath; //$NON-NLS-1$
     }
     if (SolutionRepositoryBase.debug) {
-      debug(Messages.getString("SolutionRepository.DEBUG_FILE_LIST_XPATH", xPath)); //$NON-NLS-1$
+      debug(Messages.getInstance().getString("SolutionRepository.DEBUG_FILE_LIST_XPATH", xPath)); //$NON-NLS-1$
     }
     return repository.selectNodes(xPath);
   }

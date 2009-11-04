@@ -63,7 +63,7 @@ public class SchedulerAdminComponent extends ComponentBase {
     try {
       sched = QuartzSystemListener.getSchedulerInstance();
     } catch (Exception e) {
-      error(Messages.getErrorString("JobSchedulerComponent.ERROR_0001_NoScheduler"), e); //$NON-NLS-1$
+      error(Messages.getInstance().getErrorString("JobSchedulerComponent.ERROR_0001_NoScheduler"), e); //$NON-NLS-1$
       return false;
     }
     return true;
@@ -128,12 +128,12 @@ public class SchedulerAdminComponent extends ComponentBase {
   private boolean doIsSchedulerPaused() {
     if (feedbackAllowed()) {
       try {
-        String resultBool = sched.isInStandbyMode() ? Messages.getString("SchedulerAdminComponent.CODE_true") : Messages.getString("SchedulerAdminComponent.CODE_false"); //$NON-NLS-1$ //$NON-NLS-2$
+        String resultBool = sched.isInStandbyMode() ? Messages.getInstance().getString("SchedulerAdminComponent.CODE_true") : Messages.getInstance().getString("SchedulerAdminComponent.CODE_false"); //$NON-NLS-1$ //$NON-NLS-2$
         createFeedbackParameter(
-            "isPaused", Messages.getString("SchedulerAdminComponent.USER_IS_PAUSED"), "", resultBool, true); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+            "isPaused", Messages.getInstance().getString("SchedulerAdminComponent.USER_IS_PAUSED"), "", resultBool, true); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
         return true;
       } catch (SchedulerException e) {
-        error(Messages.getErrorString("SchedulerAdminComponent.ERROR_0001_SchedulerError"), e); //$NON-NLS-1$
+        error(Messages.getInstance().getErrorString("SchedulerAdminComponent.ERROR_0001_SchedulerError"), e); //$NON-NLS-1$
         return false;
       }
     }
@@ -152,10 +152,10 @@ public class SchedulerAdminComponent extends ComponentBase {
           values.add(element);
         }
         createFeedbackParameter(
-            "jobNames", Messages.getString("SchedulerAdminComponent.USER_JOB_NAMES"), "", null, values, null, null); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+            "jobNames", Messages.getInstance().getString("SchedulerAdminComponent.USER_JOB_NAMES"), "", null, values, null, null); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
         return true;
       } catch (SchedulerException e) {
-        error(Messages.getErrorString("SchedulerAdminComponent.ERROR_0001_SchedulerError"), e); //$NON-NLS-1$
+        error(Messages.getInstance().getErrorString("SchedulerAdminComponent.ERROR_0001_SchedulerError"), e); //$NON-NLS-1$
         return false;
       }
     }
@@ -169,7 +169,7 @@ public class SchedulerAdminComponent extends ComponentBase {
     try {
       sched.resumeAll();
     } catch (SchedulerException e) {
-      error(Messages.getErrorString("SchedulerAdminComponent.ERROR_0001_SchedulerError"), e); //$NON-NLS-1$
+      error(Messages.getInstance().getErrorString("SchedulerAdminComponent.ERROR_0001_SchedulerError"), e); //$NON-NLS-1$
       return false;
     }
     return true;
@@ -182,7 +182,7 @@ public class SchedulerAdminComponent extends ComponentBase {
     try {
       sched.pauseAll();
     } catch (SchedulerException e) {
-      error(Messages.getErrorString("SchedulerAdminComponent.ERROR_0001_SchedulerError"), e); //$NON-NLS-1$
+      error(Messages.getInstance().getErrorString("SchedulerAdminComponent.ERROR_0001_SchedulerError"), e); //$NON-NLS-1$
       return false;
     }
     return true;

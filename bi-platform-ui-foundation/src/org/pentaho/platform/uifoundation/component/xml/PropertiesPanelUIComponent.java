@@ -158,7 +158,7 @@ public class PropertiesPanelUIComponent extends XmlComponent {
     setXslProperty("baseUrl", urlFactory.getDisplayUrlBuilder().getUrl()); //$NON-NLS-1$ 
     repository = PentahoSystem.get(ISolutionRepository.class, session);
     if (!repository.supportsAccessControls()) {
-      error(Messages.getString("PropertiesPanelUIComponent.ERROR_0001_BAD_CONFIGURATION")); //$NON-NLS-1$
+      error(Messages.getInstance().getString("PropertiesPanelUIComponent.ERROR_0001_BAD_CONFIGURATION")); //$NON-NLS-1$
     }
     userDetailsRoleListService = PentahoSystem.get(IUserDetailsRoleListService.class);
   }
@@ -300,7 +300,7 @@ public class PropertiesPanelUIComponent extends XmlComponent {
   private Document noPathPage() {
     Document document = DocumentHelper.createDocument();
     document.addElement(PropertiesPanelUIComponent.NO_FILE_PATH_NODE_NAME).addText(
-        Messages.getString("PropertiesPanelUIComponent.USER_NO_FILE_SELECTED")); //$NON-NLS-1$
+        Messages.getInstance().getString("PropertiesPanelUIComponent.USER_NO_FILE_SELECTED")); //$NON-NLS-1$
 
     return document;
   }
@@ -315,7 +315,7 @@ public class PropertiesPanelUIComponent extends XmlComponent {
   private Document noACLSPage() {
     Document document = DocumentHelper.createDocument();
     document.addElement(PropertiesPanelUIComponent.NO_ACLS_NODE_NAME).addText(
-        Messages.getString("PropertiesPanelUIComponent.ERROR_0001_BAD_CONFIGURATION")); //$NON-NLS-1$
+        Messages.getInstance().getString("PropertiesPanelUIComponent.ERROR_0001_BAD_CONFIGURATION")); //$NON-NLS-1$
 
     return document;
   }
@@ -356,7 +356,7 @@ public class PropertiesPanelUIComponent extends XmlComponent {
     }
     // Add the names of all the permissions
     Map permissionsMap = PentahoAclEntry.getValidPermissionsNameMap();
-    // permissionsMap.remove(Messages.getString("PentahoAclEntry.USER_SUBSCRIBE")); //$NON-NLS-1$
+    // permissionsMap.remove(Messages.getInstance().getString("PentahoAclEntry.USER_SUBSCRIBE")); //$NON-NLS-1$
     Iterator keyIter = permissionsMap.keySet().iterator();
     Element permNames = root.addElement(PropertiesPanelUIComponent.PERMISSION_NAMES_NODE_NAME);
     while (keyIter.hasNext()) {

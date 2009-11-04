@@ -41,11 +41,11 @@ public class UploadFileServlet extends HttpServlet implements Servlet {
       response.setContentType("text/plain");
       FileItem uploadItem = getFileItem(request);
       if (uploadItem == null) {
-        response.getWriter().write(Messages.getErrorString("UploadFileServlet.ERROR_0001_NO_FILE_TO_UPLOAD"));
+        response.getWriter().write(Messages.getInstance().getErrorString("UploadFileServlet.ERROR_0001_NO_FILE_TO_UPLOAD"));
         return;
       }
       if(Long.parseLong(maxFileLimit) < uploadItem.getSize()) {
-        response.getWriter().write(Messages.getErrorString("UploadFileServlet.ERROR_0003_FILE_TOO_BIG"));
+        response.getWriter().write(Messages.getInstance().getErrorString("UploadFileServlet.ERROR_0003_FILE_TOO_BIG"));
         return;        
       }
       
@@ -58,7 +58,7 @@ public class UploadFileServlet extends HttpServlet implements Servlet {
       }
       
       if(uploadItem.getSize() + getFolderSize(pathDir) > Long.parseLong(maxFolderLimit)) {
-        response.getWriter().write(Messages.getErrorString("UploadFileServlet.ERROR_0004_FOLDER_SIZE_LIMIT_REACHED"));
+        response.getWriter().write(Messages.getInstance().getErrorString("UploadFileServlet.ERROR_0004_FOLDER_SIZE_LIMIT_REACHED"));
         return;                
       }
       byte[] fileContents = uploadItem.get();
@@ -66,7 +66,7 @@ public class UploadFileServlet extends HttpServlet implements Servlet {
       String filename = id.toString() + CSV_EXT;
       
       if(doesFileExists(new File(path+filename))) {
-        response.getWriter().write(Messages.getErrorString("UploadFileServlet.ERROR_0002_FILE_ALREADY_EXIST"));
+        response.getWriter().write(Messages.getInstance().getErrorString("UploadFileServlet.ERROR_0002_FILE_ALREADY_EXIST"));
         return;                        
       }
       FileOutputStream outputStream = new FileOutputStream(path+filename);
@@ -75,7 +75,7 @@ public class UploadFileServlet extends HttpServlet implements Servlet {
       outputStream.close();
       response.getWriter().write(new String(filename));
       } catch(Exception e) {
-        response.getWriter().write(Messages.getErrorString("UploadFileServlet.ERROR_0005_UNKNOWN_ERROR",e.getLocalizedMessage()));
+        response.getWriter().write(Messages.getInstance().getErrorString("UploadFileServlet.ERROR_0005_UNKNOWN_ERROR",e.getLocalizedMessage()));
       }
  }
 

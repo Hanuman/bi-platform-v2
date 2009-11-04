@@ -63,7 +63,7 @@ public class JFreeReportValidateParametersComponent extends AbstractJFreeReportC
       // We could not get an output stream for the feedback, but we are
       // allowed
       // to generate UI, so return an error
-      error(Messages.getErrorString("JFreeReport.ERROR_0020_INVALID_FEEDBACK_STREAM")); //$NON-NLS-1$
+      error(Messages.getInstance().getErrorString("JFreeReport.ERROR_0020_INVALID_FEEDBACK_STREAM")); //$NON-NLS-1$
       return false;
     }
     // We need input from the user, we have delivered an input form into the

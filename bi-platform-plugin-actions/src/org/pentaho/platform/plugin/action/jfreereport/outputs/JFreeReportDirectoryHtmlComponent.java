@@ -76,7 +76,7 @@ public class JFreeReportDirectoryHtmlComponent extends AbstractGenerateContentCo
       if (dataDirectory.exists() && (dataDirectory.isDirectory() == false)) {
         dataDirectory = dataDirectory.getParentFile();
         if (dataDirectory.isDirectory() == false) {
-          String msg = Messages.getErrorString("JFreeReportDirectoryComponent.ERROR_0001_INVALID_DIR", //$NON-NLS-1$
+          String msg = Messages.getInstance().getErrorString("JFreeReportDirectoryComponent.ERROR_0001_INVALID_DIR", //$NON-NLS-1$
               dataDirectory.getPath());
           throw new ReportProcessingException(msg);
         }

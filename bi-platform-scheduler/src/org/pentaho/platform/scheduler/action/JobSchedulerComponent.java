@@ -118,7 +118,7 @@ public class JobSchedulerComponent extends ComponentBase {
     try {
       sched = QuartzSystemListener.getSchedulerInstance();
     } catch (Exception e) {
-      error(Messages.getErrorString("JobSchedulerComponent.ERROR_0001_NoScheduler"), e); //$NON-NLS-1$
+      error(Messages.getInstance().getErrorString("JobSchedulerComponent.ERROR_0001_NoScheduler"), e); //$NON-NLS-1$
       return false;
     }
     return true;
@@ -168,7 +168,7 @@ public class JobSchedulerComponent extends ComponentBase {
       Trigger trigger = createTrigger((StartScheduledJobAction) actionDefinition);
 
       if ((trigger == null) || (jobDetail == null)) {
-        error(Messages.getErrorString("JobSchedulerComponent.ERROR_0002_UnableToCreateTriggerOrJob")); //$NON-NLS-1$ 
+        error(Messages.getInstance().getErrorString("JobSchedulerComponent.ERROR_0002_UnableToCreateTriggerOrJob")); //$NON-NLS-1$ 
         return false;
       }
       return startJob(jobDetail, trigger);
@@ -261,7 +261,7 @@ public class JobSchedulerComponent extends ComponentBase {
       Trigger trigger = new CronTrigger(triggerName, Scheduler.DEFAULT_GROUP, cronExpression);
       return trigger;
     } catch (ParseException e) {
-      error(Messages.getErrorString("JobSchedulerComponent.ERROR_0003_UnableToParse", cronExpression), e); //$NON-NLS-1$
+      error(Messages.getInstance().getErrorString("JobSchedulerComponent.ERROR_0003_UnableToParse", cronExpression), e); //$NON-NLS-1$
       return null;
     }
   }
@@ -323,7 +323,7 @@ public class JobSchedulerComponent extends ComponentBase {
       sched.scheduleJob(jobDetail, trigger);
       OutputStream feedbackOutputStream = getFeedbackOutputStream();
       if (feedbackOutputStream != null) {
-        feedbackOutputStream.write(Messages.getString("JobSchedulerComponent.INFO_0001").getBytes()); //$NON-NLS-1$
+        feedbackOutputStream.write(Messages.getInstance().getString("JobSchedulerComponent.INFO_0001").getBytes()); //$NON-NLS-1$
       }
     } catch (SchedulerException e) {
       error(e.getLocalizedMessage());

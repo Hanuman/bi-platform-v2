@@ -41,7 +41,7 @@ public class ContentRepositoryOutputHandler extends BaseOutputHandler {
     // get an output stream to hand to the caller
     IContentRepository contentRepository = PentahoSystem.get(IContentRepository.class, getSession());
     if (contentRepository == null) {
-      Logger.error(this.getClass().getName(), Messages
+      Logger.error(this.getClass().getName(), Messages.getInstance()
           .getErrorString("RuntimeContext.ERROR_0024_NO_CONTENT_REPOSITORY")); //$NON-NLS-1$
       return null;
     }
@@ -89,7 +89,7 @@ public class ContentRepositoryOutputHandler extends BaseOutputHandler {
             true);
       }
       if (contentLocation == null) {
-        Logger.error(this.getClass().getName(), Messages
+        Logger.error(this.getClass().getName(), Messages.getInstance()
             .getErrorString("RuntimeContext.ERROR_0025_INVALID_CONTENT_LOCATION")); //$NON-NLS-1$
         return null;
       }

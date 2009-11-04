@@ -56,11 +56,11 @@ public class MetadataPublisher extends BasePublisher {
   }
 
   public String getName() {
-    return Messages.getString("MetadataPublisher.USER_PUBLISHER_NAME"); //$NON-NLS-1$
+    return Messages.getInstance().getString("MetadataPublisher.USER_PUBLISHER_NAME"); //$NON-NLS-1$
   }
 
   public String getDescription() {
-    return Messages.getString("MetadataPublisher.USER_PUBLISHER_DESCRIPTION"); //$NON-NLS-1$
+    return Messages.getInstance().getString("MetadataPublisher.USER_PUBLISHER_DESCRIPTION"); //$NON-NLS-1$
   }
 
   @Override
@@ -72,11 +72,11 @@ public class MetadataPublisher extends BasePublisher {
       IMetadataDomainRepository repo = PentahoSystem.get(IMetadataDomainRepository.class, session);
       repo.reloadDomains();
       MetadataPublisher.numberUpdated = repo.getDomainIds().size();
-      return Messages.getString(
+      return Messages.getInstance().getString(
             "MetadataPublisher.USER_METADATA_RELOADED", Integer.toString(MetadataPublisher.numberUpdated)); //$NON-NLS-1$
     } catch (Exception e) {
-      logger.error(Messages.getErrorString("MetadataPublisher.ERROR_0001_USER_IMPORT_META_FAILED"), e); //$NON-NLS-1$
-      messages.add(Messages.getString("MetadataPublisher.ERROR_0001_USER_IMPORT_META_FAILED")); //$NON-NLS-1$
+      logger.error(Messages.getInstance().getErrorString("MetadataPublisher.ERROR_0001_USER_IMPORT_META_FAILED"), e); //$NON-NLS-1$
+      messages.add(Messages.getInstance().getString("MetadataPublisher.ERROR_0001_USER_IMPORT_META_FAILED")); //$NON-NLS-1$
     }
     
     StringBuffer buffer = new StringBuffer();
@@ -84,7 +84,7 @@ public class MetadataPublisher extends BasePublisher {
     for (String str : messages) {
       buffer.append("<br/>" + str); //$NON-NLS-1$
     }
-    buffer.append("<br/><b>" + Messages.getString("MetadataPublisher.INFO_0001_CHECK_LOG") + "</b></small>"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+    buffer.append("<br/><b>" + Messages.getInstance().getString("MetadataPublisher.INFO_0001_CHECK_LOG") + "</b></small>"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
     return buffer.toString();
   }
 }

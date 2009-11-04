@@ -174,7 +174,7 @@ public class AxisUtil {
     IPluginManager pluginMgr = PentahoSystem.get(IPluginManager.class, null);
     String relUrl = pluginMgr.getContentGeneratorIdForType(WS_EXECUTE_SERVICE_ID, null);
     if (relUrl == null) {
-      throw new IllegalStateException(Messages.getErrorString(
+      throw new IllegalStateException(Messages.getInstance().getErrorString(
           "AxisUtil.ERROR_0001_NO_CONTENT_GENERATOR_FOR_WS", WS_EXECUTE_SERVICE_ID)); //$NON-NLS-1$
     }
     String url = PentahoSystem.getApplicationContext().getBaseUrl() + "content/" + relUrl + "/"; //$NON-NLS-1$ //$NON-NLS-2$
@@ -185,7 +185,7 @@ public class AxisUtil {
     IPluginManager pluginMgr = PentahoSystem.get(IPluginManager.class, null);
     String relUrl = pluginMgr.getContentGeneratorIdForType(WSDL_SERVICE_ID, null);
     if (relUrl == null) {
-      throw new IllegalStateException(Messages.getErrorString(
+      throw new IllegalStateException(Messages.getInstance().getErrorString(
           "AxisUtil.ERROR_0002_NO_CONTENT_GENERATOR_FOR_WSDL", WSDL_SERVICE_ID)); //$NON-NLS-1$
     }
     String url = PentahoSystem.getApplicationContext().getBaseUrl() + "content/" + relUrl + "/"; //$NON-NLS-1$ //$NON-NLS-2$

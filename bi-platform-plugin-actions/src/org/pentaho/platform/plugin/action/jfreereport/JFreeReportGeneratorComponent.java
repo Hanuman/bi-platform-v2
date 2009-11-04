@@ -181,7 +181,7 @@ public class JFreeReportGeneratorComponent extends ComponentBase {
     JFreeReportGenAction genAction = null;
 
     if (!(getActionDefinition() instanceof JFreeReportGenAction)) {
-      error(Messages.getErrorString(
+      error(Messages.getInstance().getErrorString(
           "JFreeReportGeneratorComponent.ERROR_0001_UNKNOWN_ACTION_TYPE", getActionDefinition().getElement().asXML())); //$NON-NLS-1$
       return false;
     } else {

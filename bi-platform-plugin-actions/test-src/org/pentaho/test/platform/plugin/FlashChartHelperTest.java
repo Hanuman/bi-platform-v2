@@ -44,7 +44,7 @@ public class FlashChartHelperTest extends BaseTest {
     parameters.setParameter("image-width", "450"); //$NON-NLS-1$ //$NON-NLS-2$
     parameters.setParameter("image-height", "300"); //$NON-NLS-1$ //$NON-NLS-2$
     StringBuffer content = new StringBuffer();
-    StandaloneSession session = new StandaloneSession(Messages.getString("BaseTest.DEBUG_JUNIT_SESSION")); //$NON-NLS-1$
+    StandaloneSession session = new StandaloneSession(Messages.getInstance().getString("BaseTest.DEBUG_JUNIT_SESSION")); //$NON-NLS-1$
 
     FlashChartHelper.doFlashChart(
         "samples", "dashboard", "regions.widget.xml", parameters, content, session, messages, null); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
@@ -67,7 +67,7 @@ public class FlashChartHelperTest extends BaseTest {
     parameters.setParameter("image-width", "450"); //$NON-NLS-1$ //$NON-NLS-2$
     parameters.setParameter("image-height", "300"); //$NON-NLS-1$ //$NON-NLS-2$
     StringBuffer content = new StringBuffer();
-    StandaloneSession session = new StandaloneSession(Messages.getString("BaseTest.DEBUG_JUNIT_SESSION")); //$NON-NLS-1$
+    StandaloneSession session = new StandaloneSession(Messages.getInstance().getString("BaseTest.DEBUG_JUNIT_SESSION")); //$NON-NLS-1$
 
     FlashChartHelper.doFlashDial(
         "samples", "dashboard", "regions.widget.xml", parameters, content, session, messages, null); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$

@@ -28,7 +28,7 @@ public class SimpleLogger implements ILogger {
   private Object id;
 
   public SimpleLogger(final Object caller) {
-    id = (caller == null) ? Messages.getString("Logger.DEBUG_LOG_UNKNOWN") : caller.getClass().getName(); //$NON-NLS-1$
+    id = (caller == null) ? Messages.getInstance().getString("Logger.DEBUG_LOG_UNKNOWN") : caller.getClass().getName(); //$NON-NLS-1$
   }
 
   public SimpleLogger(final String callerName) {

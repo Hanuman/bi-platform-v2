@@ -70,7 +70,7 @@ public class JFreeReportConfigParameterComponent extends AbstractJFreeReportComp
           } else if (reportConfigParams instanceof Map) {
             setReportConfigParameters(report, (Map) reportConfigParams);
           } else {
-            error(Messages.getErrorString("JFreeReport.ERROR_0026_UNKNOWN_REPORT_CONFIGURATION_PARAMETERS")); //$NON-NLS-1$
+            error(Messages.getInstance().getErrorString("JFreeReport.ERROR_0026_UNKNOWN_REPORT_CONFIGURATION_PARAMETERS")); //$NON-NLS-1$
             result = false;
             ;
           }
@@ -106,7 +106,7 @@ public class JFreeReportConfigParameterComponent extends AbstractJFreeReportComp
       parmName = XmlDom4JHelper.getNodeText("@name", aNode, null); //$NON-NLS-1$
       if ((parmName == null) || (parmName.length() == 0)) {
         // Ignore configuration settings without name=
-        error(Messages.getErrorString("JFreeReport.ERROR_0027_REPORT_CONFIGURATION_PARAMETER_IGNORED")); //$NON-NLS-1$
+        error(Messages.getInstance().getErrorString("JFreeReport.ERROR_0027_REPORT_CONFIGURATION_PARAMETER_IGNORED")); //$NON-NLS-1$
         continue;
       }
       parmValue = aNode.getText();
@@ -115,10 +115,10 @@ public class JFreeReportConfigParameterComponent extends AbstractJFreeReportComp
         if (parmValue.length() > 0) {
           report.getReportConfiguration().setConfigProperty(parmName, applyInputsToFormat(parmValue));
         } else {
-          error(Messages.getErrorString("JFreeReport.ERROR_0027_REPORT_CONFIGURATION_PARAMETER_IGNORED")); //$NON-NLS-1$            
+          error(Messages.getInstance().getErrorString("JFreeReport.ERROR_0027_REPORT_CONFIGURATION_PARAMETER_IGNORED")); //$NON-NLS-1$            
         }
       } else {
-        error(Messages.getErrorString("JFreeReport.ERROR_0027_REPORT_CONFIGURATION_PARAMETER_IGNORED")); //$NON-NLS-1$          
+        error(Messages.getInstance().getErrorString("JFreeReport.ERROR_0027_REPORT_CONFIGURATION_PARAMETER_IGNORED")); //$NON-NLS-1$          
       }
     }
 
@@ -157,7 +157,7 @@ public class JFreeReportConfigParameterComponent extends AbstractJFreeReportComp
         }
       }
     } else {
-      error(Messages.getErrorString("JFreeReport.ERROR_0025_INVALID_REPORT_CONFIGURATION_PARAMETERS")); //$NON-NLS-1$
+      error(Messages.getInstance().getErrorString("JFreeReport.ERROR_0025_INVALID_REPORT_CONFIGURATION_PARAMETERS")); //$NON-NLS-1$
     }
   }
 

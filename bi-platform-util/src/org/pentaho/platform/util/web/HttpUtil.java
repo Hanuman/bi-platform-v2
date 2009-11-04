@@ -125,7 +125,7 @@ public class HttpUtil {
       // TODO: handle this error
       Logger
           .error(
-              "org.pentaho.platform.util.web.HttpUtil", Messages.getErrorString("HttpUtil.ERROR_0001_URL_ERROR", e.getMessage()), e); //$NON-NLS-1$ //$NON-NLS-2$
+              "org.pentaho.platform.util.web.HttpUtil", Messages.getInstance().getErrorString("HttpUtil.ERROR_0001_URL_ERROR", e.getMessage()), e); //$NON-NLS-1$ //$NON-NLS-2$
       return null;
     }
   }
@@ -142,7 +142,7 @@ public class HttpUtil {
       // TODO: handle this error
       Logger
           .error(
-              "org.pentaho.platform.util.web.HttpUtil", Messages.getErrorString("HttpUtil.ERROR_0001_URL_ERROR", e.getMessage()), e); //$NON-NLS-1$ //$NON-NLS-2$
+              "org.pentaho.platform.util.web.HttpUtil", Messages.getInstance().getErrorString("HttpUtil.ERROR_0001_URL_ERROR", e.getMessage()), e); //$NON-NLS-1$ //$NON-NLS-2$
       return null;
     }
 
@@ -159,7 +159,7 @@ public class HttpUtil {
     } catch (Exception e) {
       // TODO: handle this error
       Logger.error(HttpUtil.class.getName(),
-          Messages.getErrorString("HttpUtil.ERROR_0001_URL_ERROR", e.getMessage()), e); //$NON-NLS-1$
+          Messages.getInstance().getErrorString("HttpUtil.ERROR_0001_URL_ERROR", e.getMessage()), e); //$NON-NLS-1$
       return null;
     }
 

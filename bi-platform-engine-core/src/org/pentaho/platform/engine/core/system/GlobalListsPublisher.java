@@ -38,11 +38,11 @@ public class GlobalListsPublisher extends BasePublisher {
   }
 
   public String getName() {
-    return Messages.getString("GlobalListsPublisher.USER_SYSTEM_SETTINGS"); //$NON-NLS-1$
+    return Messages.getInstance().getString("GlobalListsPublisher.USER_SYSTEM_SETTINGS"); //$NON-NLS-1$
   }
 
   public String getDescription() {
-    return Messages.getString("GlobalListsPublisher.USER_DESCRIPTION"); //$NON-NLS-1$
+    return Messages.getInstance().getString("GlobalListsPublisher.USER_DESCRIPTION"); //$NON-NLS-1$
   }
 
   @Override
@@ -51,10 +51,10 @@ public class GlobalListsPublisher extends BasePublisher {
       PentahoSystem.clearGlobals();
       PentahoSystem.globalStartup(localSession);
     } catch (Throwable t) {
-      error(Messages.getErrorString("GlobalListsPublisher.ERROR_0001_PUBLISH_FAILED"), t); //$NON-NLS-1$
-      return Messages.getString("GlobalListsPublisher.USER_ERROR_PUBLISH_FAILED") + t.getLocalizedMessage(); //$NON-NLS-1$
+      error(Messages.getInstance().getErrorString("GlobalListsPublisher.ERROR_0001_PUBLISH_FAILED"), t); //$NON-NLS-1$
+      return Messages.getInstance().getString("GlobalListsPublisher.USER_ERROR_PUBLISH_FAILED") + t.getLocalizedMessage(); //$NON-NLS-1$
     }
-    return Messages.getString("GlobalListsPublisher.USER_SYSTEM_SETTINGS_UPDATED"); //$NON-NLS-1$
+    return Messages.getInstance().getString("GlobalListsPublisher.USER_SYSTEM_SETTINGS_UPDATED"); //$NON-NLS-1$
   }
 
 }

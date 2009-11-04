@@ -41,7 +41,7 @@ public class TemplateTest extends BaseTest {
 
     IRuntimeContext context = run("test", "template", "template1.xaction", parameterProvider); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
     assertEquals(
-        Messages.getString("BaseTest.USER_RUNNING_ACTION_SEQUENCE"), IRuntimeContext.RUNTIME_STATUS_SUCCESS, context.getStatus()); //$NON-NLS-1$
+        Messages.getInstance().getString("BaseTest.USER_RUNNING_ACTION_SEQUENCE"), IRuntimeContext.RUNTIME_STATUS_SUCCESS, context.getStatus()); //$NON-NLS-1$
     assertNotNull("", context.getOutputParameter("output")); //$NON-NLS-1$ //$NON-NLS-2$
     assertEquals("", "Customer 'Acme' is in region West", context.getOutputParameter("output").getStringValue()); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 
@@ -54,7 +54,7 @@ public class TemplateTest extends BaseTest {
 
     IRuntimeContext context = run("test", "template", "template2.xaction", parameterProvider); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
     assertEquals(
-        Messages.getString("BaseTest.USER_RUNNING_ACTION_SEQUENCE"), IRuntimeContext.RUNTIME_STATUS_SUCCESS, context.getStatus()); //$NON-NLS-1$
+        Messages.getInstance().getString("BaseTest.USER_RUNNING_ACTION_SEQUENCE"), IRuntimeContext.RUNTIME_STATUS_SUCCESS, context.getStatus()); //$NON-NLS-1$
     assertNotNull("", context.getOutputParameter("output")); //$NON-NLS-1$ //$NON-NLS-2$
     assertEquals(
         "", "Eastern is 120000 with a color of #00ff00, Western is 90000 with a color of #ffff00, Southern is 75000 with a color of #ff0000", context.getOutputParameter("output").getStringValue()); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
@@ -69,11 +69,11 @@ public class TemplateTest extends BaseTest {
     parameterProvider.setParameter("type", "html"); //$NON-NLS-1$ //$NON-NLS-2$
     OutputStream outputStream = getOutputStream("TemplateTest.testTemplate3", ".svg"); //$NON-NLS-1$ //$NON-NLS-2$
     SimpleOutputHandler outputHandler = new SimpleOutputHandler(outputStream, true);
-    StandaloneSession session = new StandaloneSession(Messages.getString("BaseTest.DEBUG_JUNIT_SESSION")); //$NON-NLS-1$
+    StandaloneSession session = new StandaloneSession(Messages.getInstance().getString("BaseTest.DEBUG_JUNIT_SESSION")); //$NON-NLS-1$
     IRuntimeContext context = run(
         "test", "template", "europemap.xaction", null, false, parameterProvider, outputHandler, session); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
     assertEquals(
-        Messages.getString("BaseTest.USER_RUNNING_ACTION_SEQUENCE"), IRuntimeContext.RUNTIME_STATUS_SUCCESS, context.getStatus()); //$NON-NLS-1$
+        Messages.getInstance().getString("BaseTest.USER_RUNNING_ACTION_SEQUENCE"), IRuntimeContext.RUNTIME_STATUS_SUCCESS, context.getStatus()); //$NON-NLS-1$
 
     assertNotNull("", context.getOutputParameter("svg")); //$NON-NLS-1$ //$NON-NLS-2$
 

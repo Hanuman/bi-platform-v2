@@ -62,7 +62,7 @@ public class DbRepositoryClassLoader extends ClassLoader {
         // This situation indicates the resource could not be found. This is a common and correct situation 
         // and this exception should be ignored.
         if (DbRepositoryClassLoader.logger.isTraceEnabled()) {
-          DbRepositoryClassLoader.logger.trace(Messages.getString("DbRepositoryClassLoader.RESOURCE_NOT_FOUND", name)); //$NON-NLS-1$
+          DbRepositoryClassLoader.logger.trace(Messages.getInstance().getString("DbRepositoryClassLoader.RESOURCE_NOT_FOUND", name)); //$NON-NLS-1$
         }
 
         // Return null to indicate that the resource could not be found (and this is ok) 

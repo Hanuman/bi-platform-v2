@@ -64,7 +64,7 @@ public class JFreeReportPdfComponent extends AbstractGenerateStreamContentCompon
       close();
       return true;
     } catch (Exception e) {
-      Log.error(Messages.getErrorString("JFreeReportPdfComponent.ERROR_0001_WRITING_PDF_FAILED", //$NON-NLS-1$
+      Log.error(Messages.getInstance().getErrorString("JFreeReportPdfComponent.ERROR_0001_WRITING_PDF_FAILED", //$NON-NLS-1$
           e.getLocalizedMessage()), e);
       return false;
     } finally {

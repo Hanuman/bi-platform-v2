@@ -98,17 +98,17 @@ public class ContentRepository extends PentahoBase implements IContentRepository
 
   public IContentLocation newContentLocation(final String thePath, final String theName, final String description,
       final String solId, final boolean createIfNotExists) {
-    debug(Messages.getString("CONTREP.DEBUG_NEW_LOCATION", thePath)); //$NON-NLS-1$
+    debug(Messages.getInstance().getString("CONTREP.DEBUG_NEW_LOCATION", thePath)); //$NON-NLS-1$
     Session session = HibernateUtil.getSession();
     String locId = UUIDUtil.getUUIDAsString();
     ContentLocation cl = new ContentLocation(locId, thePath, theName, description, solId, createIfNotExists);
-    debug(Messages.getString("CONTREP.DEBUG_CREATE_LOCATION_ID", locId)); //$NON-NLS-1$
+    debug(Messages.getInstance().getString("CONTREP.DEBUG_CREATE_LOCATION_ID", locId)); //$NON-NLS-1$
     try {
       session.save(cl);
       session.flush();
     } catch (HibernateException ex) {
-      error(Messages.getErrorString("CONTREP.ERROR_0004_SAVING_LOCATION"), ex); //$NON-NLS-1$
-      throw new RepositoryException(Messages.getErrorString("CONTREP.ERROR_0004_SAVING_LOCATION"), ex); //$NON-NLS-1$
+      error(Messages.getInstance().getErrorString("CONTREP.ERROR_0004_SAVING_LOCATION"), ex); //$NON-NLS-1$
+      throw new RepositoryException(Messages.getInstance().getErrorString("CONTREP.ERROR_0004_SAVING_LOCATION"), ex); //$NON-NLS-1$
     }
     return cl;
   }
@@ -118,7 +118,7 @@ public class ContentRepository extends PentahoBase implements IContentRepository
     try {
       return (ContentLocation) session.get(ContentLocation.class, theId);
     } catch (HibernateException ex) {
-      throw new ContentException(Messages.getErrorString("CONTREP.ERROR_0002_GETTING_LOCATION", theId), ex); //$NON-NLS-1$
+      throw new ContentException(Messages.getInstance().getErrorString("CONTREP.ERROR_0002_GETTING_LOCATION", theId), ex); //$NON-NLS-1$
     }
   }
 
@@ -152,7 +152,7 @@ public class ContentRepository extends PentahoBase implements IContentRepository
     try {
       return (IContentItem) session.get(ContentItem.class, theId);
     } catch (HibernateException ex) {
-      throw new ContentException(Messages.getErrorString("CONTREP.ERROR_0003_GETTING_CONTENT_BY_ID", theId), ex); //$NON-NLS-1$
+      throw new ContentException(Messages.getInstance().getErrorString("CONTREP.ERROR_0003_GETTING_CONTENT_BY_ID", theId), ex); //$NON-NLS-1$
     }
   }
 
@@ -224,8 +224,8 @@ public class ContentRepository extends PentahoBase implements IContentRepository
     try {
       hibSession.save(beci);
     } catch (HibernateException ex) {
-      error(Messages.getErrorString("CONTREP.ERROR_0005_SAVING_BACKGROUND_CONTENT_ID", contentId), ex); //$NON-NLS-1$
-      throw new RepositoryException(Messages.getErrorString(
+      error(Messages.getInstance().getErrorString("CONTREP.ERROR_0005_SAVING_BACKGROUND_CONTENT_ID", contentId), ex); //$NON-NLS-1$
+      throw new RepositoryException(Messages.getInstance().getErrorString(
           "CONTREP.ERROR_0005_SAVING_BACKGROUND_CONTENT_ID", contentId), ex); //$NON-NLS-1$
     }
     return beci;

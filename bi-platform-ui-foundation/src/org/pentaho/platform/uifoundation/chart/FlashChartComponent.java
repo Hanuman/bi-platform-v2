@@ -125,7 +125,7 @@ public class FlashChartComponent extends AbstractChartComponent {
             chartTemplate = templateDocument.getRootElement();
           } catch (Exception e) {
             // the chart template document is not valid
-            error(Messages.getErrorString("FlashChartComponent.ERROR_0001_CHART_TEMPLATE_INVALID"), e); //$NON-NLS-1$
+            error(Messages.getInstance().getErrorString("FlashChartComponent.ERROR_0001_CHART_TEMPLATE_INVALID"), e); //$NON-NLS-1$
           }
         }
       }
@@ -144,7 +144,7 @@ public class FlashChartComponent extends AbstractChartComponent {
         height = (int) XmlDom4JHelper.getNodeText("chart/height", dataActionDocument, 300); //$NON-NLS-1$
       }
     } catch (Exception e) {
-      error(Messages.getErrorString(
+      error(Messages.getInstance().getErrorString(
           "CategoryDatasetChartComponent.ERROR_0001_INVALID_CHART_DEFINITION", chartDefinition), e); //$NON-NLS-1$
       return false;
     }
@@ -188,13 +188,13 @@ public class FlashChartComponent extends AbstractChartComponent {
       }
       if (nameColumnNo == -1) {
         // we did not find the specified name column
-        error(Messages.getErrorString("FlashDial.ERROR_0001_NAME_COLUMN_MISSING", nameItem)); //$NON-NLS-1$
+        error(Messages.getInstance().getErrorString("FlashDial.ERROR_0001_NAME_COLUMN_MISSING", nameItem)); //$NON-NLS-1$
         return null;
       }
 
       if (valueColumnNo == -1) {
         // we did not find the specified name column
-        error(Messages.getErrorString("FlashDial.ERROR_0002_VALUE_COLUMN_MISSING", valueItem)); //$NON-NLS-1$
+        error(Messages.getInstance().getErrorString("FlashDial.ERROR_0002_VALUE_COLUMN_MISSING", valueItem)); //$NON-NLS-1$
         return null;
       }
 
@@ -238,7 +238,7 @@ public class FlashChartComponent extends AbstractChartComponent {
       }
 
       if (data == null) {
-        return Messages.getErrorString("FlashChartComponent.ERROR_0002_DIAL_DATA_INVALID", String.valueOf(tmpVal)); //$NON-NLS-1$
+        return Messages.getInstance().getErrorString("FlashChartComponent.ERROR_0002_DIAL_DATA_INVALID", String.valueOf(tmpVal)); //$NON-NLS-1$
       }
     }
 
@@ -354,7 +354,7 @@ public class FlashChartComponent extends AbstractChartComponent {
         data = new Object[] { inTitle, new Double(value.toString()) };
       }
     } catch (Throwable t) {
-      error(Messages.getErrorString("FlashChartComponent.ERROR_0002_DIAL_DATA_INVALID", value.toString())); //$NON-NLS-1$
+      error(Messages.getInstance().getErrorString("FlashChartComponent.ERROR_0002_DIAL_DATA_INVALID", value.toString())); //$NON-NLS-1$
     }
     return (data);
   }
@@ -375,7 +375,7 @@ public class FlashChartComponent extends AbstractChartComponent {
       String param_name = XmlDom4JHelper.getNodeText("@param_name", node, null); //$NON-NLS-1$
       return (template.replaceAll("\\{" + param_name + "\\}", xml)); //$NON-NLS-1$ //$NON-NLS-2$
     } catch (Throwable t) {
-      error(Messages.getString(
+      error(Messages.getInstance().getString(
           "FlashChartComponent.ERROR_0003_INVALID_XML_ATTRIBUTES_FOR_DIAL", "radial_ticks", node.asXML())); //$NON-NLS-1$ //$NON-NLS-2$
     }
     return (template);
@@ -411,7 +411,7 @@ public class FlashChartComponent extends AbstractChartComponent {
       String param_name = XmlDom4JHelper.getNodeText("@param_name", node, null); //$NON-NLS-1$
       return (template.replaceAll("\\{" + param_name + "\\}", xml)); //$NON-NLS-1$ //$NON-NLS-2$
     } catch (Throwable t) {
-      error(Messages.getString(
+      error(Messages.getInstance().getString(
           "FlashChartComponent.ERROR_0003_INVALID_XML_ATTRIBUTES_FOR_DIAL", "radial_numbers", node.asXML())); //$NON-NLS-1$ //$NON-NLS-2$
     }
     return (template);
@@ -446,7 +446,7 @@ public class FlashChartComponent extends AbstractChartComponent {
     if ((data == null) || (data.getRowCount() == 0)) {
       // there is no data to display, prevent the default chart from showing
       // TODO surface any error to the UI
-      return Messages.getString("FlashChartComponent.USER_NO_DATA"); //$NON-NLS-1$
+      return Messages.getInstance().getString("FlashChartComponent.USER_NO_DATA"); //$NON-NLS-1$
     }
 
     ArrayList nameList = new ArrayList();

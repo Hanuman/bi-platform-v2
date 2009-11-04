@@ -80,7 +80,7 @@ public abstract class AbstractDatasetChartPortlet extends ViewPortlet {
     String chartDefinitionStr = getSetting(AbstractDatasetChartPortlet.CHART, null, request, requestParameters);
 
     if (chartDefinitionStr == null) {
-      response.getWriter().print(Messages.getString("AbstractDatasetChartPortlet.ERROR_0001.NO_CHART_DEF")); //$NON-NLS-1$
+      response.getWriter().print(Messages.getInstance().getString("AbstractDatasetChartPortlet.ERROR_0001.NO_CHART_DEF")); //$NON-NLS-1$
       return;
     }
 
@@ -120,7 +120,7 @@ public abstract class AbstractDatasetChartPortlet extends ViewPortlet {
         StringBuffer buffer = new StringBuffer();
         PentahoSystem.get(IMessageFormatter.class, userSession)
             .formatErrorMessage(
-                "text/html", Messages.getString("AbstractDatasetChartPortlet.ERROR_0002.COULD_NOT_CREATE"), messages, buffer); //$NON-NLS-1$ //$NON-NLS-2$
+                "text/html", Messages.getInstance().getString("AbstractDatasetChartPortlet.ERROR_0002.COULD_NOT_CREATE"), messages, buffer); //$NON-NLS-1$ //$NON-NLS-2$
         content = buffer.toString();
       }
     } finally {

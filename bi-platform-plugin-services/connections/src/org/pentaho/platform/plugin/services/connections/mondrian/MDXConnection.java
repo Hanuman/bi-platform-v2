@@ -188,15 +188,15 @@ public class MDXConnection implements IPentahoLoggingConnection {
       }
       
       if (nativeConnection == null) {
-        logger.error(Messages.getErrorString(
+        logger.error(Messages.getInstance().getErrorString(
             "MDXConnection.ERROR_0002_INVALID_CONNECTION", properties != null ? properties.toString() : "null")); //$NON-NLS-1$ //$NON-NLS-2$
       }
     } catch (Throwable t) {
       if (logger != null) {
-        logger.error(Messages.getErrorString(
+        logger.error(Messages.getInstance().getErrorString(
             "MDXConnection.ERROR_0002_INVALID_CONNECTION", properties != null ? properties.toString() : "null"), t); //$NON-NLS-1$ //$NON-NLS-2$
       } else {
-        Logger.error(this.getClass().getName(), Messages.getErrorString(
+        Logger.error(this.getClass().getName(), Messages.getInstance().getErrorString(
             "MDXConnection.ERROR_0002_INVALID_CONNECTION", properties != null ? properties.toString() : "null"), t); //$NON-NLS-1$ //$NON-NLS-2$
       }
     }

@@ -512,7 +512,7 @@ public class SolutionRepositoryServiceImpl implements ISolutionRepositoryService
       IOException, PentahoAccessControlException {
 
     if (StringUtil.doesPathContainParentPathSegment(solution) || StringUtil.doesPathContainParentPathSegment(path)) {
-      String msg = Messages.getString("AdhocWebService.ERROR_0008_MISSING_OR_INVALID_REPORT_NAME"); //$NON-NLS-1$
+      String msg = Messages.getInstance().getString("AdhocWebService.ERROR_0008_MISSING_OR_INVALID_REPORT_NAME"); //$NON-NLS-1$
       throw new SolutionRepositoryServiceException(msg);
     }
 
@@ -551,7 +551,7 @@ public class SolutionRepositoryServiceImpl implements ISolutionRepositoryService
   public String getAclXml(final String solution, final String path, final String filename, final IPentahoSession userSession) throws SolutionRepositoryServiceException,
       IOException {
     if (StringUtil.doesPathContainParentPathSegment(solution) || StringUtil.doesPathContainParentPathSegment(path)) {
-      String msg = Messages.getString("AdhocWebService.ERROR_0008_MISSING_OR_INVALID_REPORT_NAME"); //$NON-NLS-1$
+      String msg = Messages.getInstance().getString("AdhocWebService.ERROR_0008_MISSING_OR_INVALID_REPORT_NAME"); //$NON-NLS-1$
       throw new SolutionRepositoryServiceException(msg);
     }
 

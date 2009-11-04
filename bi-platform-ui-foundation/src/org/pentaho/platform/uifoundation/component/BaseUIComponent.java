@@ -77,7 +77,7 @@ public abstract class BaseUIComponent extends PentahoMessenger implements IUICom
     if (content != null) {
       outputStream.write(content.getBytes(LocaleHelper.getSystemEncoding()));
     } else {
-      error(Messages.getString("BaseUI.ERROR_0001_NO_CONTENT")); //$NON-NLS-1$
+      error(Messages.getInstance().getString("BaseUI.ERROR_0001_NO_CONTENT")); //$NON-NLS-1$
     }
   }
 

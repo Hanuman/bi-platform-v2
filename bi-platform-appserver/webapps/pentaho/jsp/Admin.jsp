@@ -40,7 +40,7 @@
 
 	StringBuffer sb = new StringBuffer();
 
-	String header = Messages.getString( "UI.USER_ADMIN_INTRO" ); //$NON-NLS-1$
+	String header = Messages.getInstance().getString( "UI.USER_ADMIN_INTRO" ); //$NON-NLS-1$
 	String admin = getAdminLinks( userSession );
 	String publish = getPublisherContent( userSession );
 
@@ -56,7 +56,7 @@
 			footer = sections[1];
 		}
 	} else {
-		intro = Messages.getString( "UI.ERROR_0002_BAD_TEMPLATE_OBJECT" );
+		intro = Messages.getInstance().getString( "UI.ERROR_0002_BAD_TEMPLATE_OBJECT" );
 	}
 
 %>
@@ -114,10 +114,10 @@
 				return sb.toString();
 			} catch (TransformerException e )
 			{
-				return Messages.getErrorString( "PUBLISHERS.ERROR_0001_PUBLISHERS_ERROR" ); //$NON-NLS-1$
+				return Messages.getInstance().getErrorString( "PUBLISHERS.ERROR_0001_PUBLISHERS_ERROR" ); //$NON-NLS-1$
 			}
 		}
-		return Messages.getErrorString( "PUBLISHERS.ERROR_0001_PUBLISHERS_ERROR" ); //$NON-NLS-1$
+		return Messages.getInstance().getErrorString( "PUBLISHERS.ERROR_0001_PUBLISHERS_ERROR" ); //$NON-NLS-1$
 
 	}%>
 

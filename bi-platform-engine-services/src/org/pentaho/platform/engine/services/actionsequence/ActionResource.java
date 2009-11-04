@@ -68,7 +68,7 @@ public class ActionResource implements IActionSequenceResource {
       return solutionName + File.separator + location;
     } else if (location.startsWith("..", 0)) { //$NON-NLS-1$
       // TODO: support relative paths...
-      assert false : Messages.getErrorString("ActionResource.ERROR_0001_FEATURE_NOT_IMPLEMENTED"); //$NON-NLS-1$
+      assert false : Messages.getInstance().getErrorString("ActionResource.ERROR_0001_FEATURE_NOT_IMPLEMENTED"); //$NON-NLS-1$
       return null;
     } else {
       if ("".equals(solutionPath)) { //$NON-NLS-1$

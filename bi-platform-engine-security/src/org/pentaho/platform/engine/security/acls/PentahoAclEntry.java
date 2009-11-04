@@ -76,30 +76,30 @@ public class PentahoAclEntry extends AbstractBasicAclEntry implements IPentahoAc
     // TODO gmoran Are two lists really necessary any more? 
     // TODO mlowery Why does PentahoAclEntry know about what permissions are valid for solutions?
     solutionPermissionsMap.put(
-        Messages.getString("PentahoAclEntry.USER_ADMINISTER"), new Integer(PentahoAclEntry.PERM_FULL_CONTROL)); //$NON-NLS-1$
+        Messages.getInstance().getString("PentahoAclEntry.USER_ADMINISTER"), new Integer(PentahoAclEntry.PERM_FULL_CONTROL)); //$NON-NLS-1$
     solutionPermissionsMap.put(
-        Messages.getString("PentahoAclEntry.USER_MANAGE_PERMS"), new Integer(PentahoAclEntry.PERM_UPDATE_PERMS)); //$NON-NLS-1$
+        Messages.getInstance().getString("PentahoAclEntry.USER_MANAGE_PERMS"), new Integer(PentahoAclEntry.PERM_UPDATE_PERMS)); //$NON-NLS-1$
     solutionPermissionsMap.put(
-        Messages.getString("PentahoAclEntry.USER_UPDATE"), new Integer(PentahoAclEntry.PERM_UPDATE)); //$NON-NLS-1$
+        Messages.getInstance().getString("PentahoAclEntry.USER_UPDATE"), new Integer(PentahoAclEntry.PERM_UPDATE)); //$NON-NLS-1$
     solutionPermissionsMap.put(
-        Messages.getString("PentahoAclEntry.USER_CREATE"), new Integer(PentahoAclEntry.PERM_CREATE)); //$NON-NLS-1$
+        Messages.getInstance().getString("PentahoAclEntry.USER_CREATE"), new Integer(PentahoAclEntry.PERM_CREATE)); //$NON-NLS-1$
     solutionPermissionsMap.put(
-        Messages.getString("PentahoAclEntry.USER_DELETE"), new Integer(PentahoAclEntry.PERM_DELETE)); //$NON-NLS-1$
+        Messages.getInstance().getString("PentahoAclEntry.USER_DELETE"), new Integer(PentahoAclEntry.PERM_DELETE)); //$NON-NLS-1$
     solutionPermissionsMap.put(
-        Messages.getString("PentahoAclEntry.USER_EXECUTE"), new Integer(PentahoAclEntry.PERM_EXECUTE));//$NON-NLS-1$
+        Messages.getInstance().getString("PentahoAclEntry.USER_EXECUTE"), new Integer(PentahoAclEntry.PERM_EXECUTE));//$NON-NLS-1$
     solutionPermissionsMap.put(
-        Messages.getString("PentahoAclEntry.USER_SUBSCRIBE"), new Integer(PentahoAclEntry.PERM_SUBSCRIBE));//$NON-NLS-1$
+        Messages.getInstance().getString("PentahoAclEntry.USER_SUBSCRIBE"), new Integer(PentahoAclEntry.PERM_SUBSCRIBE));//$NON-NLS-1$
 
-    allPermissionsMap.put(Messages.getString("PentahoAclEntry.USER_NONE"), new Integer(0)); //$NON-NLS-1$
+    allPermissionsMap.put(Messages.getInstance().getString("PentahoAclEntry.USER_NONE"), new Integer(0)); //$NON-NLS-1$
     allPermissionsMap
-        .put(Messages.getString("PentahoAclEntry.USER_EXECUTE"), new Integer(PentahoAclEntry.PERM_EXECUTE)); //$NON-NLS-1$
+        .put(Messages.getInstance().getString("PentahoAclEntry.USER_EXECUTE"), new Integer(PentahoAclEntry.PERM_EXECUTE)); //$NON-NLS-1$
     allPermissionsMap.put(
-        Messages.getString("PentahoAclEntry.USER_SUBSCRIBE"), new Integer(PentahoAclEntry.PERM_SUBSCRIBE)); //$NON-NLS-1$
-    allPermissionsMap.put(Messages.getString("PentahoAclEntry.USER_CREATE"), new Integer(PentahoAclEntry.PERM_CREATE)); //$NON-NLS-1$
-    allPermissionsMap.put(Messages.getString("PentahoAclEntry.USER_UPDATE"), new Integer(PentahoAclEntry.PERM_UPDATE)); //$NON-NLS-1$
-    allPermissionsMap.put(Messages.getString("PentahoAclEntry.USER_DELETE"), new Integer(PentahoAclEntry.PERM_DELETE)); //$NON-NLS-1$
+        Messages.getInstance().getString("PentahoAclEntry.USER_SUBSCRIBE"), new Integer(PentahoAclEntry.PERM_SUBSCRIBE)); //$NON-NLS-1$
+    allPermissionsMap.put(Messages.getInstance().getString("PentahoAclEntry.USER_CREATE"), new Integer(PentahoAclEntry.PERM_CREATE)); //$NON-NLS-1$
+    allPermissionsMap.put(Messages.getInstance().getString("PentahoAclEntry.USER_UPDATE"), new Integer(PentahoAclEntry.PERM_UPDATE)); //$NON-NLS-1$
+    allPermissionsMap.put(Messages.getInstance().getString("PentahoAclEntry.USER_DELETE"), new Integer(PentahoAclEntry.PERM_DELETE)); //$NON-NLS-1$
     allPermissionsMap.put(
-        Messages.getString("PentahoAclEntry.USER_ALL"), new Integer(PentahoAclEntry.PERM_FULL_CONTROL)); //$NON-NLS-1$
+        Messages.getInstance().getString("PentahoAclEntry.USER_ALL"), new Integer(PentahoAclEntry.PERM_FULL_CONTROL)); //$NON-NLS-1$
 
     initializePermissionsArray();
   }

@@ -98,7 +98,7 @@ public class MondrianModelComponent extends ComponentBase {
     if (connection == null) {
       Logger
           .error(
-              "MondrianModelComponent", Messages.getErrorString("MondrianModel.ERROR_0001_INVALID_CONNECTION", properties.toString())); //$NON-NLS-1$ //$NON-NLS-2$
+              "MondrianModelComponent", Messages.getInstance().getErrorString("MondrianModel.ERROR_0001_INVALID_CONNECTION", properties.toString())); //$NON-NLS-1$ //$NON-NLS-2$
       return null;
     }
 
@@ -251,7 +251,7 @@ public class MondrianModelComponent extends ComponentBase {
       if (schema == null) {
         Logger
             .error(
-                "MondrianModelComponent", Messages.getErrorString("MondrianModel.ERROR_0002_INVALID_SCHEMA", connection.getConnectString())); //$NON-NLS-1$ //$NON-NLS-2$
+                "MondrianModelComponent", Messages.getInstance().getErrorString("MondrianModel.ERROR_0002_INVALID_SCHEMA", connection.getConnectString())); //$NON-NLS-1$ //$NON-NLS-2$
         return null;
       }
 
@@ -259,14 +259,14 @@ public class MondrianModelComponent extends ComponentBase {
       if ((cubes == null) || (cubes.length == 0)) {
         Logger
             .error(
-                "MondrianModelComponent", Messages.getErrorString("MondrianModel.ERROR_0003_NO_CUBES", connection.getConnectString())); //$NON-NLS-1$ //$NON-NLS-2$
+                "MondrianModelComponent", Messages.getInstance().getErrorString("MondrianModel.ERROR_0003_NO_CUBES", connection.getConnectString())); //$NON-NLS-1$ //$NON-NLS-2$
         return null;
       }
 
       if ((cubes.length > 1) && (cubeName == null)) {
         Logger
             .error(
-                "MondrianModelComponent", Messages.getErrorString("MondrianModel.ERROR_0004_CUBE_NOT_SPECIFIED", connection.getConnectString())); //$NON-NLS-1$ //$NON-NLS-2$
+                "MondrianModelComponent", Messages.getInstance().getErrorString("MondrianModel.ERROR_0004_CUBE_NOT_SPECIFIED", connection.getConnectString())); //$NON-NLS-1$ //$NON-NLS-2$
         return null;
       }
 
@@ -285,7 +285,7 @@ public class MondrianModelComponent extends ComponentBase {
       if (cube == null) {
         Logger
             .error(
-                "MondrianModelComponent", Messages.getErrorString("MondrianModel.ERROR_0005_CUBE_NOT_FOUND", cubeName, connection.getConnectString())); //$NON-NLS-1$ //$NON-NLS-2$
+                "MondrianModelComponent", Messages.getInstance().getErrorString("MondrianModel.ERROR_0005_CUBE_NOT_FOUND", cubeName, connection.getConnectString())); //$NON-NLS-1$ //$NON-NLS-2$
         return null;
       }
 
@@ -293,7 +293,7 @@ public class MondrianModelComponent extends ComponentBase {
       if ((dimensions == null) || (dimensions.length == 0)) {
         Logger
             .error(
-                "MondrianModelComponent", Messages.getErrorString("MondrianModel.ERROR_0006_NO_DIMENSIONS", cubeName, connection.getConnectString())); //$NON-NLS-1$ //$NON-NLS-2$
+                "MondrianModelComponent", Messages.getInstance().getErrorString("MondrianModel.ERROR_0006_NO_DIMENSIONS", cubeName, connection.getConnectString())); //$NON-NLS-1$ //$NON-NLS-2$
         return null;
       }
 
@@ -303,7 +303,7 @@ public class MondrianModelComponent extends ComponentBase {
         if (hierarchy == null) {
           Logger
               .error(
-                  "MondrianModelComponent", Messages.getErrorString("MondrianModel.ERROR_0007_NO_HIERARCHIES", element.getName(), cubeName, connection.getConnectString())); //$NON-NLS-1$ //$NON-NLS-2$
+                  "MondrianModelComponent", Messages.getInstance().getErrorString("MondrianModel.ERROR_0007_NO_HIERARCHIES", element.getName(), cubeName, connection.getConnectString())); //$NON-NLS-1$ //$NON-NLS-2$
           return null;
         }
 
@@ -312,7 +312,7 @@ public class MondrianModelComponent extends ComponentBase {
         if (member == null) {
           Logger
               .error(
-                  "MondrianModelComponent", Messages.getErrorString("MondrianModel.ERROR_0008_NO_DEFAULT_MEMBER", element.getName(), cubeName, connection.getConnectString())); //$NON-NLS-1$ //$NON-NLS-2$
+                  "MondrianModelComponent", Messages.getInstance().getErrorString("MondrianModel.ERROR_0008_NO_DEFAULT_MEMBER", element.getName(), cubeName, connection.getConnectString())); //$NON-NLS-1$ //$NON-NLS-2$
           return null;
         }
         if (element.isMeasures()) {
@@ -369,13 +369,13 @@ public class MondrianModelComponent extends ComponentBase {
       }
       if (connection == null) {
         Logger.error(
-            "MondrianModelComponent", Messages.getErrorString("SQLBaseComponent.ERROR_0005_INVALID_CONNECTION")); //$NON-NLS-1$ //$NON-NLS-2$
+            "MondrianModelComponent", Messages.getInstance().getErrorString("SQLBaseComponent.ERROR_0005_INVALID_CONNECTION")); //$NON-NLS-1$ //$NON-NLS-2$
         return null;
       }
       return connection;
     } catch (Exception e) {
       Logger.error(
-          "MondrianModelComponent", Messages.getErrorString("SQLBaseComponent.ERROR_0006_EXECUTE_FAILED", ""), e); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+          "MondrianModelComponent", Messages.getInstance().getErrorString("SQLBaseComponent.ERROR_0006_EXECUTE_FAILED", ""), e); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
     }
     return null;
   }

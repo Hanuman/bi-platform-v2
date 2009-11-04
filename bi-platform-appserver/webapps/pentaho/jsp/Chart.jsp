@@ -66,13 +66,13 @@
 			content = barChart.getContent( "text/html" ); //$NON-NLS-1$
 			if( content == null ) {
 				StringBuffer buffer = new StringBuffer();		
-				PentahoSystem.get(IMessageFormatter.class, userSession).formatErrorMessage( "text/html", Messages.getErrorString( "CHART.DISPLAY_ERROR" ), messages, buffer ); //$NON-NLS-1$ //$NON-NLS-2$
+				PentahoSystem.get(IMessageFormatter.class, userSession).formatErrorMessage( "text/html", Messages.getInstance().getErrorString( "CHART.DISPLAY_ERROR" ), messages, buffer ); //$NON-NLS-1$ //$NON-NLS-2$
 				content = buffer.toString();
 			}
 		
 			IUITemplater templater = PentahoSystem.get(IUITemplater.class, userSession );
 			if( templater != null ) {
-				String sections[] = templater.breakTemplate( "template-document.html", Messages.getString( "CHART.USER_SAMPLES" ), userSession ); //$NON-NLS-1$ //$NON-NLS-2$
+				String sections[] = templater.breakTemplate( "template-document.html", Messages.getInstance().getString( "CHART.USER_SAMPLES" ), userSession ); //$NON-NLS-1$ //$NON-NLS-2$
 				if( sections != null && sections.length > 0 ) {
 					intro = sections[0];
 				}
@@ -80,7 +80,7 @@
 					footer = sections[1];
 				}
 			} else {
-				intro = Messages.getString( "UI.ERROR_0002_BAD_TEMPLATE_OBJECT" ); //$NON-NLS-1$
+				intro = Messages.getInstance().getString( "UI.ERROR_0002_BAD_TEMPLATE_OBJECT" ); //$NON-NLS-1$
 			}
 	    } finally {
 	    	results.close();

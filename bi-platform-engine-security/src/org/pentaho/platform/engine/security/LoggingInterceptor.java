@@ -36,7 +36,7 @@ public class LoggingInterceptor implements MethodBeforeAdvice, AfterReturningAdv
   public void before(final Method method, final Object[] args, final Object target) throws Throwable {
     Log logger = LogFactory.getLog(target.getClass());
     if (logger.isDebugEnabled()) {
-      logger.debug(Messages.getString("LoggingInterceptor.DEBUG_BEGIN_METHOD")); //$NON-NLS-1$
+      logger.debug(Messages.getInstance().getString("LoggingInterceptor.DEBUG_BEGIN_METHOD")); //$NON-NLS-1$
       log(method, args, target);
     }
   }
@@ -45,9 +45,9 @@ public class LoggingInterceptor implements MethodBeforeAdvice, AfterReturningAdv
       throws Throwable {
     Log logger = LogFactory.getLog(target.getClass());
     if (logger.isDebugEnabled()) {
-      logger.debug(Messages.getString("LoggingInterceptor.DEBUG_END_METHOD")); //$NON-NLS-1$
+      logger.debug(Messages.getInstance().getString("LoggingInterceptor.DEBUG_END_METHOD")); //$NON-NLS-1$
       log(method, args, target);
-      logger.debug(Messages.getString(
+      logger.debug(Messages.getInstance().getString(
           "LoggingInterceptor.DEBUG_RETURN_VALUE", returnValue.getClass().getName(), toString(returnValue))); //$NON-NLS-1$
     }
   }
@@ -55,21 +55,21 @@ public class LoggingInterceptor implements MethodBeforeAdvice, AfterReturningAdv
   public void afterThrowing(final Method method, final Object[] args, final Object target, final Throwable exception) {
     Log logger = LogFactory.getLog(target.getClass());
     if (logger.isDebugEnabled()) {
-      logger.debug(Messages.getString("LoggingInterceptor.DEBUG_EXCEPTION_IN_METHOD")); //$NON-NLS-1$
+      logger.debug(Messages.getInstance().getString("LoggingInterceptor.DEBUG_EXCEPTION_IN_METHOD")); //$NON-NLS-1$
       log(method, args, target);
-      logger.debug(Messages.getString(
+      logger.debug(Messages.getInstance().getString(
           "LoggingInterceptor.DEBUG_EXCEPTION", exception.getClass().getName(), exception.getMessage())); //$NON-NLS-1$
-      logger.debug(Messages.getString("LoggingInterceptor.DEBUG_STACK_TRACE"), exception); //$NON-NLS-1$
+      logger.debug(Messages.getInstance().getString("LoggingInterceptor.DEBUG_STACK_TRACE"), exception); //$NON-NLS-1$
     }
   }
 
   private void log(final Method method, final Object[] args, final Object target) {
     Log logger = LogFactory.getLog(target.getClass());
     if (logger.isDebugEnabled()) {
-      logger.debug(Messages.getString("LoggingInterceptor.DEBUG_METHOD_NAME", method.getName())); //$NON-NLS-1$
-      logger.debug(Messages.getString(
+      logger.debug(Messages.getInstance().getString("LoggingInterceptor.DEBUG_METHOD_NAME", method.getName())); //$NON-NLS-1$
+      logger.debug(Messages.getInstance().getString(
           "LoggingInterceptor.DEBUG_TARGET_OBJECT", target.getClass().getName(), toString(target))); //$NON-NLS-1$
-      logger.debug(Messages.getString("LoggingInterceptor.DEBUG_METHOD_ARGS", arrayToString(args))); //$NON-NLS-1$
+      logger.debug(Messages.getInstance().getString("LoggingInterceptor.DEBUG_METHOD_ARGS", arrayToString(args))); //$NON-NLS-1$
     }
   }
 

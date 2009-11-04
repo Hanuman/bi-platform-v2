@@ -34,7 +34,7 @@ public class ResultsetCompareTest extends BaseTest {
     startTest();
     IRuntimeContext context = run("test", "rules", "ResultSetCompareTest.xaction"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
     assertEquals(
-        Messages.getString("BaseTest.USER_RUNNING_ACTION_SEQUENCE"), IRuntimeContext.RUNTIME_STATUS_SUCCESS, context.getStatus()); //$NON-NLS-1$
+        Messages.getInstance().getString("BaseTest.USER_RUNNING_ACTION_SEQUENCE"), IRuntimeContext.RUNTIME_STATUS_SUCCESS, context.getStatus()); //$NON-NLS-1$
     IActionParameter rtn = context.getOutputParameter("COMPARERESULT");//$NON-NLS-1$
     assertNotNull(rtn);
     String compareResult = rtn.getStringValue();
@@ -47,7 +47,7 @@ public class ResultsetCompareTest extends BaseTest {
     IRuntimeContext context = run("test", "rules", "ResultSetCompareTest_error1.xaction"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
     IActionParameter rtn = context.getOutputParameter("COMPARERESULT");//$NON-NLS-1$
     assertEquals(
-        Messages.getString("BaseTest.USER_RUNNING_ACTION_SEQUENCE"), IRuntimeContext.RUNTIME_STATUS_SUCCESS, context.getStatus()); //$NON-NLS-1$
+        Messages.getInstance().getString("BaseTest.USER_RUNNING_ACTION_SEQUENCE"), IRuntimeContext.RUNTIME_STATUS_SUCCESS, context.getStatus()); //$NON-NLS-1$
     assertNotNull(rtn);
     String compareResult = rtn.getStringValue();
     assertEquals(compareResult, "Eastern"); //$NON-NLS-1$

@@ -50,7 +50,7 @@ public class HQLLookupRule extends HQLBaseComponent {
     if ((outputs == null) || (outputs.size() == 0)) {
       // if( (outputs == null) || (outputs.size() == 0 ) ||
       // (outputs.size() > 1 ) ) {
-      error(Messages.getString("Template.ERROR_0002_OUTPUT_COUNT_WRONG")); //$NON-NLS-1$
+      error(Messages.getInstance().getString("Template.ERROR_0002_OUTPUT_COUNT_WRONG")); //$NON-NLS-1$
       return null;
     }
 

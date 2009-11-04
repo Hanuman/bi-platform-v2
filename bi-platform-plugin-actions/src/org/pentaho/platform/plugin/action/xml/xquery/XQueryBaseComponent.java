@@ -107,23 +107,23 @@ public abstract class XQueryBaseComponent extends ComponentBase implements IPrep
     if (actionDefinition instanceof XQueryAction) {
       XQueryAction xQueryAction = (XQueryAction) actionDefinition;
       if ((xQueryAction.getSourceXml() == ActionInputConstant.NULL_INPUT) && (xQueryAction.getXmlDocument() == null)) {
-        error(Messages.getString("XQueryBaseComponent.ERROR_0008_SOURCE_NOT_DEFINED", getActionName())); //$NON-NLS-1$
+        error(Messages.getInstance().getString("XQueryBaseComponent.ERROR_0008_SOURCE_NOT_DEFINED", getActionName())); //$NON-NLS-1$
       } else if (xQueryAction.getQuery() == ActionInputConstant.NULL_INPUT) {
-        error(Messages.getErrorString("XQueryBaseComponent.ERROR_0001_QUERY_NOT_SPECIFIED", getActionName())); //$NON-NLS-1$
+        error(Messages.getInstance().getErrorString("XQueryBaseComponent.ERROR_0001_QUERY_NOT_SPECIFIED", getActionName())); //$NON-NLS-1$
       } else if ((xQueryAction.getOutputPreparedStatement() == null) && (xQueryAction.getOutputResultSet() == null)) {
-        error(Messages.getErrorString("XQueryBaseComponent.ERROR_0003_OUTPUT_NOT_SPECIFIED", getActionName())); //$NON-NLS-1$
+        error(Messages.getInstance().getErrorString("XQueryBaseComponent.ERROR_0003_OUTPUT_NOT_SPECIFIED", getActionName())); //$NON-NLS-1$
       } else {
         result = true;
       }
     } else if (actionDefinition instanceof XQueryConnectionAction) {
       XQueryConnectionAction xQueryConnectionAction = (XQueryConnectionAction) actionDefinition;
       if (xQueryConnectionAction.getOutputConnection() == null) {
-        error(Messages.getErrorString("XQueryBaseComponent.ERROR_0003_OUTPUT_NOT_SPECIFIED", getActionName())); //$NON-NLS-1$
+        error(Messages.getInstance().getErrorString("XQueryBaseComponent.ERROR_0003_OUTPUT_NOT_SPECIFIED", getActionName())); //$NON-NLS-1$
       } else {
         result = true;
       }
     } else {
-      error(Messages.getErrorString(
+      error(Messages.getInstance().getErrorString(
           "ComponentBase.ERROR_0001_UNKNOWN_ACTION_TYPE", actionDefinition.getElement().asXML())); //$NON-NLS-1$
     }
     return result;
@@ -159,9 +159,9 @@ public abstract class XQueryBaseComponent extends ComponentBase implements IPrep
         connection = getConnection();
       }
       if (connection == null) {
-        error(Messages.getErrorString("IPreparedComponent.ERROR_0002_CONNECTION_NOT_AVAILABLE", getActionName())); //$NON-NLS-1$
+        error(Messages.getInstance().getErrorString("IPreparedComponent.ERROR_0002_CONNECTION_NOT_AVAILABLE", getActionName())); //$NON-NLS-1$
       } else if (connection.getDatasourceType() != IPentahoConnection.XML_DATASOURCE) {
-        error(Messages.getErrorString("IPreparedComponent.ERROR_0001_INVALID_CONNECTION_TYPE", getActionName())); //$NON-NLS-1$
+        error(Messages.getInstance().getErrorString("IPreparedComponent.ERROR_0001_INVALID_CONNECTION_TYPE", getActionName())); //$NON-NLS-1$
       } else {
         result = runQuery(connection, xQueryAction.getQuery().getStringValue());
       }
@@ -169,9 +169,9 @@ public abstract class XQueryBaseComponent extends ComponentBase implements IPrep
       XQueryConnectionAction xQueryConnectionAction = (XQueryConnectionAction) getActionDefinition();
       connection = getConnection();
       if (connection == null) {
-        error(Messages.getErrorString("IPreparedComponent.ERROR_0002_CONNECTION_NOT_AVAILABLE", getActionName())); //$NON-NLS-1$
+        error(Messages.getInstance().getErrorString("IPreparedComponent.ERROR_0002_CONNECTION_NOT_AVAILABLE", getActionName())); //$NON-NLS-1$
       } else if (connection.getDatasourceType() != IPentahoConnection.XML_DATASOURCE) {
-        error(Messages.getErrorString("IPreparedComponent.ERROR_0001_INVALID_CONNECTION_TYPE", getActionName())); //$NON-NLS-1$
+        error(Messages.getInstance().getErrorString("IPreparedComponent.ERROR_0001_INVALID_CONNECTION_TYPE", getActionName())); //$NON-NLS-1$
       } else {
         xQueryConnectionAction.getOutputConnection().setValue(this);
         result = true;
@@ -187,7 +187,7 @@ public abstract class XQueryBaseComponent extends ComponentBase implements IPrep
         return false;
       }
       if (ComponentBase.debug) {
-        debug(Messages.getString("XQueryBaseComponent.DEBUG_RUNNING_QUERY", rawQuery)); //$NON-NLS-1$
+        debug(Messages.getInstance().getString("XQueryBaseComponent.DEBUG_RUNNING_QUERY", rawQuery)); //$NON-NLS-1$
       }
       String documentPath = null;
       int resourceType = -1;
@@ -214,7 +214,7 @@ public abstract class XQueryBaseComponent extends ComponentBase implements IPrep
         // check that the document exists
         documentFile = new File(documentPath);
         if (!documentFile.exists()) {
-          error(Messages.getString("XQueryBaseComponent.ERROR_0007_FILE_NOT_FOUND", documentPath)); //$NON-NLS-1$
+          error(Messages.getInstance().getString("XQueryBaseComponent.ERROR_0007_FILE_NOT_FOUND", documentPath)); //$NON-NLS-1$
           return false;
         }
         // convert any '\' to '/'
@@ -245,7 +245,7 @@ public abstract class XQueryBaseComponent extends ComponentBase implements IPrep
             columnTypes = (String[]) columnTypesList.toArray(new String[0]);
           }
         } catch (Exception e) {
-          getLogger().warn(Messages.getString("XQueryBaseComponent.ERROR_0009_ERROR_BUILDING_COLUMN_TYPES"), e); //$NON-NLS-1$
+          getLogger().warn(Messages.getInstance().getString("XQueryBaseComponent.ERROR_0009_ERROR_BUILDING_COLUMN_TYPES"), e); //$NON-NLS-1$
         }
       }
 
@@ -263,7 +263,7 @@ public abstract class XQueryBaseComponent extends ComponentBase implements IPrep
         return runFinalQuery(localConnection, rawQuery, columnTypes);
       }
     } catch (Exception e) {
-      getLogger().error(Messages.getString("XQueryBaseComponent.ERROR_0010_ERROR_RUNNING_QUERY"), e); //$NON-NLS-1$
+      getLogger().error(Messages.getInstance().getString("XQueryBaseComponent.ERROR_0010_ERROR_RUNNING_QUERY"), e); //$NON-NLS-1$
       return false;
     }
   }
@@ -300,7 +300,7 @@ public abstract class XQueryBaseComponent extends ComponentBase implements IPrep
         }
       }
     } catch (XPathException e) {
-      error(Messages.getErrorString("XQueryBaseComponent.ERROR_0006_EXECUTE_FAILED", getActionName()), e); //$NON-NLS-1$
+      error(Messages.getInstance().getErrorString("XQueryBaseComponent.ERROR_0006_EXECUTE_FAILED", getActionName()), e); //$NON-NLS-1$
     }
     return success;
   }
@@ -318,7 +318,7 @@ public abstract class XQueryBaseComponent extends ComponentBase implements IPrep
       out.write(xmlString);
       out.close();
     } catch (IOException e) {
-      getLogger().error(Messages.getString("XQueryBaseComponent.ERROR_0011_ERROR_CREATING_TEMP_FILE"), e); //$NON-NLS-1$
+      getLogger().error(Messages.getInstance().getString("XQueryBaseComponent.ERROR_0011_ERROR_CREATING_TEMP_FILE"), e); //$NON-NLS-1$
     }
 
     documentPath = documentPath.replaceAll("\\\\", "/"); //$NON-NLS-1$ //$NON-NLS-2$
@@ -330,7 +330,7 @@ public abstract class XQueryBaseComponent extends ComponentBase implements IPrep
     try {
       conn = PentahoConnectionFactory.getConnection(IPentahoConnection.XML_DATASOURCE, getSession(), this);
       if (conn == null) {
-        error(Messages.getErrorString("XQueryBaseComponent.ERROR_0005_INVALID_CONNECTION")); //$NON-NLS-1$
+        error(Messages.getInstance().getErrorString("XQueryBaseComponent.ERROR_0005_INVALID_CONNECTION")); //$NON-NLS-1$
         return null;
       }
       if (this.getMaxRows() >=0) {
@@ -338,7 +338,7 @@ public abstract class XQueryBaseComponent extends ComponentBase implements IPrep
       }
       return conn;
     } catch (Exception e) {
-      error(Messages.getErrorString("XQueryBaseComponent.ERROR_0006_EXECUTE_FAILED", getActionName()), e); //$NON-NLS-1$
+      error(Messages.getInstance().getErrorString("XQueryBaseComponent.ERROR_0006_EXECUTE_FAILED", getActionName()), e); //$NON-NLS-1$
     }
     return null;
   }
@@ -368,16 +368,16 @@ public abstract class XQueryBaseComponent extends ComponentBase implements IPrep
   public IPentahoResultSet executePrepared(final Map preparedParams) {
 
     if (connection == null) {
-      error(Messages.getErrorString("XQueryBaseComponent.ERROR_0012_NO_CONNECTION", getActionName())); //$NON-NLS-1$
+      error(Messages.getInstance().getErrorString("XQueryBaseComponent.ERROR_0012_NO_CONNECTION", getActionName())); //$NON-NLS-1$
       return null;
     }
     if (!connection.initialized()) {
-      error(Messages.getErrorString("XQueryBaseComponent.ERROR_0012_NO_CONNECTION", getActionName())); //$NON-NLS-1$
+      error(Messages.getInstance().getErrorString("XQueryBaseComponent.ERROR_0012_NO_CONNECTION", getActionName())); //$NON-NLS-1$
       return null;
     }
 
     if (preparedQuery == null) {
-      error(Messages.getErrorString("XQueryBaseComponent.ERROR_0001_QUERY_NOT_SPECIFIED", getActionName())); //$NON-NLS-1$
+      error(Messages.getInstance().getErrorString("XQueryBaseComponent.ERROR_0001_QUERY_NOT_SPECIFIED", getActionName())); //$NON-NLS-1$
       return null;
     }
 
@@ -399,7 +399,7 @@ public abstract class XQueryBaseComponent extends ComponentBase implements IPrep
         }
       }
     } catch (XPathException e) {
-      error(Messages.getErrorString("XQueryBaseComponent.ERROR_0006_EXECUTE_FAILED", getActionName()), e); //$NON-NLS-1$
+      error(Messages.getInstance().getErrorString("XQueryBaseComponent.ERROR_0006_EXECUTE_FAILED", getActionName()), e); //$NON-NLS-1$
     }
     return null;
   }
@@ -419,7 +419,7 @@ public abstract class XQueryBaseComponent extends ComponentBase implements IPrep
     if (rSet == null) {
       this.maxRows = value;
     } else {
-      throw new UnsupportedOperationException(Messages.getErrorString("XQueryBaseComponent.ERROR_0013_INVALID_ORDER_OF_OPERATION")); //$NON-NLS-1$
+      throw new UnsupportedOperationException(Messages.getInstance().getErrorString("XQueryBaseComponent.ERROR_0013_INVALID_ORDER_OF_OPERATION")); //$NON-NLS-1$
     }
   }
   

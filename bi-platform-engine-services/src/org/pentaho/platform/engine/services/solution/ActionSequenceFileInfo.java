@@ -56,7 +56,7 @@ public class ActionSequenceFileInfo extends SolutionFileMetaAdapter {
       IActionSequence actionSequence = SequenceDefinition.ActionSequenceFactory(actionSequenceDocument, filename, path,
           solution, logger, PentahoSystem.getApplicationContext(), Logger.getLogLevel());
       if (actionSequence == null) {
-        Logger.error(getClass().toString(), Messages.getErrorString(
+        Logger.error(getClass().toString(), Messages.getInstance().getErrorString(
             "SolutionRepository.ERROR_0016_FAILED_TO_CREATE_ACTION_SEQUENCE", //$NON-NLS-1$
             solution + File.separator + path + File.separator + filename));
         return null;

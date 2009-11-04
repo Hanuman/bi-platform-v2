@@ -89,11 +89,11 @@ public class PrintComponent extends ComponentBase {
           && (printerAction.getReportOutput() == ActionInputConstant.NULL_INPUT)
           && (printerAction.getOutputPrinterName() == null)) {
         actionValidated = false;
-        error(Messages.getErrorString("PrintComponent.ERROR_0001_NO_PRINT_FILE_DEFINED") + getActionName()); //$NON-NLS-1$        
+        error(Messages.getInstance().getErrorString("PrintComponent.ERROR_0001_NO_PRINT_FILE_DEFINED") + getActionName()); //$NON-NLS-1$        
       }
     } else {
       actionValidated = false;
-      error(Messages.getErrorString(
+      error(Messages.getInstance().getErrorString(
           "ComponentBase.ERROR_0001_UNKNOWN_ACTION_TYPE", getActionDefinition().getElement().asXML())); //$NON-NLS-1$      
     }
 
@@ -131,7 +131,7 @@ public class PrintComponent extends ComponentBase {
     PrintService printer = getPrinterInternal(printerName, lastPrinter);
     if (printer == null) {
       if (!feedbackAllowed()) {
-        error(Messages.getErrorString("PrintComponent.ERROR_0002_NO_SUITABLE_PRINTER")); //$NON-NLS-1$
+        error(Messages.getInstance().getErrorString("PrintComponent.ERROR_0002_NO_SUITABLE_PRINTER")); //$NON-NLS-1$
         return false;
       }
       // we created the printer feedback entry already
@@ -225,7 +225,7 @@ public class PrintComponent extends ComponentBase {
         values.add(value);
       }
       createFeedbackParameter(StandardSettings.PRINTER_NAME,
-          Messages.getString("PrintComponent.USER_PRINTER_NAME"), "", lastPrinterName, values, null, "select"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+          Messages.getInstance().getString("PrintComponent.USER_PRINTER_NAME"), "", lastPrinterName, values, null, "select"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
       promptNeeded();
       return null;
     }
@@ -327,7 +327,7 @@ public class PrintComponent extends ComponentBase {
         printerJob.print();
       } catch (PrinterException e) {
         e.printStackTrace();
-        throw new IOException(Messages.getString(
+        throw new IOException(Messages.getInstance().getString(
             "PrintComponent.ERROR_0003_UNABLE_TO_PRINT", e.getClass().getName(), e.getMessage())); //$NON-NLS-1$
       }
     }

@@ -49,13 +49,13 @@
 	footer = sections[1];
 		}
 	} else {
-		intro = Messages.getString( "UI.ERROR_0002_BAD_TEMPLATE_OBJECT" ); //$NON-NLS-1$
+		intro = Messages.getInstance().getString( "UI.ERROR_0002_BAD_TEMPLATE_OBJECT" ); //$NON-NLS-1$
 	}
 
 	if( !SecurityHelper.isPentahoAdministrator(userSession) ) {
 %>
 	<%= intro %>
-	<%= Messages.getString( "UI.USER_PERMISSION_DENIED" ) %>
+	<%= Messages.getInstance().getString( "UI.USER_PERMISSION_DENIED" ) %>
 	<%= footer %>
 <%
 		return;

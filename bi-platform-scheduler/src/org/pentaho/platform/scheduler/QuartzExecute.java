@@ -92,7 +92,7 @@ public class QuartzExecute extends PentahoBase implements Job {
 
       Date now = new Date();
       QuartzExecute.logger
-          .info(Messages
+          .info(Messages.getInstance()
               .getString(
                   "QuartzExecute.INFO_TRIGGER_TIME", context.getJobDetail().getName(), DateFormat.getDateInstance().format(now), DateFormat.getTimeInstance().format(now))); //$NON-NLS-1$
 
@@ -123,21 +123,21 @@ public class QuartzExecute extends PentahoBase implements Job {
       IPentahoSession userSession = null;
 
       if (solutionName == null) {
-        error(Messages.getErrorString("QuartzExecute.ERROR_0001_SOLUTION_NAME_MISSING")); //$NON-NLS-1$
+        error(Messages.getInstance().getErrorString("QuartzExecute.ERROR_0001_SOLUTION_NAME_MISSING")); //$NON-NLS-1$
         return;
       }
 
       if (actionPath == null) {
-        error(Messages.getErrorString("QuartzExecute.ERROR_0002_ACTION_PATH_MISSING")); //$NON-NLS-1$
+        error(Messages.getInstance().getErrorString("QuartzExecute.ERROR_0002_ACTION_PATH_MISSING")); //$NON-NLS-1$
         return;
       }
 
       if (actionName == null) {
-        error(Messages.getErrorString("QuartzExecute.ERROR_0003_ACTION_NAME_MISSING")); //$NON-NLS-1$
+        error(Messages.getInstance().getErrorString("QuartzExecute.ERROR_0003_ACTION_NAME_MISSING")); //$NON-NLS-1$
         return;
       }
       if (QuartzExecute.debug) {
-        debug(Messages.getString("QuartzExecute.DEBUG_EXECUTION_INFO", solutionName + "/" + actionPath + "/" + actionName)); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+        debug(Messages.getInstance().getString("QuartzExecute.DEBUG_EXECUTION_INFO", solutionName + "/" + actionPath + "/" + actionName)); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
       }
 
       boolean backgroundExecution = "true".equals(dataMap.getString(QuartzBackgroundExecutionHelper.BACKGROUND_EXECUTION_FLAG)); //$NON-NLS-1$
@@ -253,7 +253,7 @@ public class QuartzExecute extends PentahoBase implements Job {
                 solutionName, instanceId, "text/html"); //$NON-NLS-1$
             outputContentItem.setMimeType("text/html"); //$NON-NLS-1$
 
-            String message = Messages.getString("QuartzExecute.DEBUG_FINISHED_EXECUTION", context.getJobDetail().getName());
+            String message = Messages.getInstance().getString("QuartzExecute.DEBUG_FINISHED_EXECUTION", context.getJobDetail().getName());
             OutputStream os = outputContentItem.getOutputStream(actionName);
             os.write(message.getBytes(LocaleHelper.getSystemEncoding()));
             os.close();
@@ -265,13 +265,13 @@ public class QuartzExecute extends PentahoBase implements Job {
             IContentItem outputContentItem = outputHandler.getOutputContentItem(IOutputHandler.RESPONSE, IOutputHandler.CONTENT, actionName, null, solutionName,
                 instanceId, "text/html"); //$NON-NLS-1$
             outputContentItem.setMimeType("text/html"); //$NON-NLS-1$
-            String message = Messages.getString("QuartzExecute.DEBUG_FAILED_EXECUTION", context.getJobDetail().getName());
+            String message = Messages.getInstance().getString("QuartzExecute.DEBUG_FAILED_EXECUTION", context.getJobDetail().getName());
             try {
               OutputStream os = outputContentItem.getOutputStream(actionName);
               os.write(message.getBytes(LocaleHelper.getSystemEncoding()));
               os.close();
             } catch (Exception ex) {
-              QuartzExecute.logger.debug(Messages.getString("QuartzExecute.DEBUG_FAILED_EXECUTION", context.getJobDetail().getName())); //$NON-NLS-1$
+              QuartzExecute.logger.debug(Messages.getInstance().getString("QuartzExecute.DEBUG_FAILED_EXECUTION", context.getJobDetail().getName())); //$NON-NLS-1$
             }
           }
         } finally {
@@ -282,7 +282,7 @@ public class QuartzExecute extends PentahoBase implements Job {
       }
 
       if (QuartzExecute.debug) {
-        QuartzExecute.logger.debug(Messages.getString("QuartzExecute.DEBUG_FINISHED_EXECUTION", context.getJobDetail().getName())); //$NON-NLS-1$
+        QuartzExecute.logger.debug(Messages.getInstance().getString("QuartzExecute.DEBUG_FINISHED_EXECUTION", context.getJobDetail().getName())); //$NON-NLS-1$
       }
     } finally {
       PentahoSystem.systemExitPoint();

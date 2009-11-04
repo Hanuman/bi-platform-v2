@@ -78,7 +78,7 @@ public class JFreeReportHtmlComponent extends AbstractGenerateStreamContentCompo
       try {
         contentRepository = PentahoSystem.get(IContentRepository.class, getSession());
       } catch (Throwable t) {
-        debug(Messages.getString("JFreeReportHtmlComponent.DEBUG_0044_PROCESSING_WITHOUT_CONTENT_REPOS"), t); //$NON-NLS-1$
+        debug(Messages.getInstance().getString("JFreeReportHtmlComponent.DEBUG_0044_PROCESSING_WITHOUT_CONTENT_REPOS"), t); //$NON-NLS-1$
       }
 
       String contentHandlerPattern = getInputStringValue(AbstractJFreeReportComponent.REPORTHTML_CONTENTHANDLER);
@@ -93,13 +93,13 @@ public class JFreeReportHtmlComponent extends AbstractGenerateStreamContentCompo
       final ContentLocation dataLocation;
       final NameGenerator dataNameGenerator;
       if ((contentRepository == null) || JFreeReportHtmlComponent.DO_NOT_USE_THE_CONTENT_REPOSITORY) {
-        debug(Messages.getString("JFreeReportHtmlComponent.DEBUG_0044_PROCESSING_WITHOUT_CONTENT_REPOS")); //$NON-NLS-1$
+        debug(Messages.getInstance().getString("JFreeReportHtmlComponent.DEBUG_0044_PROCESSING_WITHOUT_CONTENT_REPOS")); //$NON-NLS-1$
         if (ctx != null) {
           File dataDirectory = new File(ctx.getFileOutputPath("system/tmp/"));//$NON-NLS-1$
           if (dataDirectory.exists() && (dataDirectory.isDirectory() == false)) {
             dataDirectory = dataDirectory.getParentFile();
             if (dataDirectory.isDirectory() == false) {
-              throw new ReportProcessingException(Messages.getErrorString(
+              throw new ReportProcessingException(Messages.getInstance().getErrorString(
                   "JFreeReportDirectoryComponent.ERROR_0001_INVALID_DIR", dataDirectory.getPath())); //$NON-NLS-1$
             }
           } else if (dataDirectory.exists() == false) {
@@ -116,7 +116,7 @@ public class JFreeReportHtmlComponent extends AbstractGenerateStreamContentCompo
           rewriter = new PentahoURLRewriter(contentHandlerPattern);
         }
       } else {
-        debug(Messages.getString("JFreeReportHtmlComponent.DEBUG_045_PROCESSING_WITH_CONTENT_REPOS")); //$NON-NLS-1$
+        debug(Messages.getInstance().getString("JFreeReportHtmlComponent.DEBUG_045_PROCESSING_WITH_CONTENT_REPOS")); //$NON-NLS-1$
         final String thePath = getSolutionName() + "/" + getSolutionPath() + "/" + getSession().getId();//$NON-NLS-1$//$NON-NLS-2$
         final IContentLocation pentahoContentLocation = contentRepository.newContentLocation(thePath, getActionName(),
             getActionTitle(), getSolutionPath(), true);
@@ -149,13 +149,13 @@ public class JFreeReportHtmlComponent extends AbstractGenerateStreamContentCompo
       close();
       return true;
     } catch (ReportProcessingException e) {
-      error(Messages.getString("JFreeReportHtmlComponent.ERROR_0046_FAILED_TO_PROCESS_REPORT"), e); //$NON-NLS-1$
+      error(Messages.getInstance().getString("JFreeReportHtmlComponent.ERROR_0046_FAILED_TO_PROCESS_REPORT"), e); //$NON-NLS-1$
       return false;
     } catch (IOException e) {
-      error(Messages.getString("JFreeReportHtmlComponent.ERROR_0046_FAILED_TO_PROCESS_REPORT"), e); //$NON-NLS-1$
+      error(Messages.getInstance().getString("JFreeReportHtmlComponent.ERROR_0046_FAILED_TO_PROCESS_REPORT"), e); //$NON-NLS-1$
       return false;
     } catch (ContentIOException e) {
-      error(Messages.getString("JFreeReportHtmlComponent.ERROR_0046_FAILED_TO_PROCESS_REPORT"), e); //$NON-NLS-1$
+      error(Messages.getInstance().getString("JFreeReportHtmlComponent.ERROR_0046_FAILED_TO_PROCESS_REPORT"), e); //$NON-NLS-1$
       return false;
     }
   }

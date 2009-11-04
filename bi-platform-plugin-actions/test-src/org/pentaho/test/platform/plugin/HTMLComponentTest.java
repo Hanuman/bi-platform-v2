@@ -47,7 +47,7 @@ public class HTMLComponentTest extends BaseTest {
     SimpleUrlFactory urlFactory = new SimpleUrlFactory("/testurl?"); //$NON-NLS-1$
     ArrayList messages = new ArrayList();
     HtmlComponent component = new HtmlComponent(HtmlComponent.TYPE_URL, url, "", urlFactory, messages); //$NON-NLS-1$
-    StandaloneSession session = new StandaloneSession(Messages.getString("BaseTest.DEBUG_JUNIT_SESSION")); //$NON-NLS-1$
+    StandaloneSession session = new StandaloneSession(Messages.getInstance().getString("BaseTest.DEBUG_JUNIT_SESSION")); //$NON-NLS-1$
     try {
       OutputStream outputStream = getOutputStream("HTMLComponentTest.testComponent1", ".html"); //$NON-NLS-1$//$NON-NLS-2$
       component.validate(session, null);
@@ -62,7 +62,7 @@ public class HTMLComponentTest extends BaseTest {
 
   public void testComponent2() {
     startTest();
-    info(Messages.getString("HTMLComponentTest.USER_ERRORS_EXPECTED_CONTENT_TYPE_INVALID")); //$NON-NLS-1$
+    info(Messages.getInstance().getString("HTMLComponentTest.USER_ERRORS_EXPECTED_CONTENT_TYPE_INVALID")); //$NON-NLS-1$
     // this should fail because the requested content type is not supported
     String url = "http://www.pentaho.org/demo/news.html"; //$NON-NLS-1$
     SimpleUrlFactory urlFactory = new SimpleUrlFactory("/testurl?"); //$NON-NLS-1$
@@ -78,7 +78,7 @@ public class HTMLComponentTest extends BaseTest {
     HashMap parameterProviders = new HashMap();
     parameterProviders.put(IParameterProvider.SCOPE_REQUEST, requestParameters);
     parameterProviders.put(IParameterProvider.SCOPE_SESSION, sessionParameters);
-    StandaloneSession session = new StandaloneSession(Messages.getString("BaseTest.DEBUG_JUNIT_SESSION")); //$NON-NLS-1$
+    StandaloneSession session = new StandaloneSession(Messages.getInstance().getString("BaseTest.DEBUG_JUNIT_SESSION")); //$NON-NLS-1$
 
     SimpleOutputHandler outputHandler = new SimpleOutputHandler(outputStream, false);
     BaseRequestHandler requestHandler = new BaseRequestHandler(session, null, outputHandler, null, urlFactory);
@@ -95,12 +95,12 @@ public class HTMLComponentTest extends BaseTest {
 
   public void testComponent3() {
     startTest();
-    info(Messages.getString("HTMLComponentTest.USER_ERRORS_EXPECTED_URL_INVALID")); //$NON-NLS-1$
+    info(Messages.getInstance().getString("HTMLComponentTest.USER_ERRORS_EXPECTED_URL_INVALID")); //$NON-NLS-1$
     // this should fail because the url is bad
     String url = "xttp://a"; //$NON-NLS-1$
     SimpleUrlFactory urlFactory = new SimpleUrlFactory("/testurl?"); //$NON-NLS-1$
     ArrayList messages = new ArrayList();
-    HtmlComponent component = new HtmlComponent(HtmlComponent.TYPE_URL, url, Messages
+    HtmlComponent component = new HtmlComponent(HtmlComponent.TYPE_URL, url, Messages.getInstance()
         .getString("HTML.ERROR_0001_NOT_AVAILABLE"), urlFactory, messages); //$NON-NLS-1$
     component.setLoggingLevel(getLoggingLevel());
     OutputStream outputStream = getOutputStream("HTMLComponentTest.testComponent3", ".html"); //$NON-NLS-1$//$NON-NLS-2$
@@ -112,7 +112,7 @@ public class HTMLComponentTest extends BaseTest {
     HashMap parameterProviders = new HashMap();
     parameterProviders.put(IParameterProvider.SCOPE_REQUEST, requestParameters);
     parameterProviders.put(IParameterProvider.SCOPE_SESSION, sessionParameters);
-    StandaloneSession session = new StandaloneSession(Messages.getString("BaseTest.DEBUG_JUNIT_SESSION")); //$NON-NLS-1$
+    StandaloneSession session = new StandaloneSession(Messages.getInstance().getString("BaseTest.DEBUG_JUNIT_SESSION")); //$NON-NLS-1$
 
     SimpleOutputHandler outputHandler = new SimpleOutputHandler(outputStream, false);
     BaseRequestHandler requestHandler = new BaseRequestHandler(session, null, outputHandler, null, urlFactory);

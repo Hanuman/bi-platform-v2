@@ -66,7 +66,7 @@ public class ActionSequenceContentGenerator extends BaseContentGenerator {
 		// get the solution engine
 	    ISolutionEngine solutionEngine = getSolutionEngine();
 	    if (solutionEngine == null) {
-	    	String message = Messages.getErrorString("BaseRequestHandler.ERROR_0001_NO_SOLUTION_ENGINE"); //$NON-NLS-1$
+	    	String message = Messages.getInstance().getErrorString("BaseRequestHandler.ERROR_0001_NO_SOLUTION_ENGINE"); //$NON-NLS-1$
 	    	error( message );
 	    	throw new ObjectFactoryException( message );
 	    }

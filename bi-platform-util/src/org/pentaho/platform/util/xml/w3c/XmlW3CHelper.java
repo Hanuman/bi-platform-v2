@@ -47,7 +47,7 @@ public class XmlW3CHelper {
 
       return doc;
     } catch (Exception e) {
-      Logger.error(XmlW3CHelper.class.getName(), Messages.getErrorString(
+      Logger.error(XmlW3CHelper.class.getName(), Messages.getInstance().getErrorString(
           "XmlHelper.ERROR_0008_GET_DOM_FROM_STRING_ERROR", e.getMessage()), e); //$NON-NLS-1$
     }
     return null;

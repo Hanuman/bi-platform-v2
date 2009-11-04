@@ -49,11 +49,11 @@ public class JFreeReportAllContentComponent extends AbstractJFreeReportComponent
   @Override
   protected boolean executeAction() throws Throwable {
     if (component != null) {
-      debug(Messages.getString("JFreeReportAllContentComponent.DEBUG_EXECUTING_COMPONENT", component.toString())); //$NON-NLS-1$
+      debug(Messages.getInstance().getString("JFreeReportAllContentComponent.DEBUG_EXECUTING_COMPONENT", component.toString())); //$NON-NLS-1$
       return (component.execute() == IRuntimeContext.RUNTIME_STATUS_SUCCESS);
     }
 
-    debug(Messages.getString("JFreeReportAllContentComponent.DEBUG_NO_COMPONENT")); //$NON-NLS-1$
+    debug(Messages.getInstance().getString("JFreeReportAllContentComponent.DEBUG_NO_COMPONENT")); //$NON-NLS-1$
     return false;
   }
 
@@ -101,7 +101,7 @@ public class JFreeReportAllContentComponent extends AbstractJFreeReportComponent
 
       String reportOutputType = getInputStringValue(AbstractJFreeReportComponent.REPORTALLCONTENT_OUTPUTTYPE);
       if (getLogger().isDebugEnabled()) {
-        debug(Messages.getString("JFreeReport.DEBUG_OUTPUT_TYPE", reportOutputType)); //$NON-NLS-1$
+        debug(Messages.getInstance().getString("JFreeReport.DEBUG_OUTPUT_TYPE", reportOutputType)); //$NON-NLS-1$
       }
       if (AbstractJFreeReportComponent.REPORTALLCONTENT_OUTPUTTYPE_HTML.equals(reportOutputType)) {
         component = new JFreeReportHtmlComponent();
@@ -126,13 +126,13 @@ public class JFreeReportAllContentComponent extends AbstractJFreeReportComponent
           component = new JFreeReportPreviewSwingComponent();
           return initAndValidate(component);
         }
-        warn(Messages.getString("JFreeReportAllContentComponent.WARN_HEADLESSMODE_ACTIVE")); //$NON-NLS-1$
+        warn(Messages.getInstance().getString("JFreeReportAllContentComponent.WARN_HEADLESSMODE_ACTIVE")); //$NON-NLS-1$
         return false;
       } else {
         return false;
       }
     }
-    warn(Messages.getString("JFreeReportAllContentComponent.WARN_NO_PRINTER_GIVEN")); //$NON-NLS-1$
+    warn(Messages.getInstance().getString("JFreeReportAllContentComponent.WARN_NO_PRINTER_GIVEN")); //$NON-NLS-1$
     return false;
   }
 

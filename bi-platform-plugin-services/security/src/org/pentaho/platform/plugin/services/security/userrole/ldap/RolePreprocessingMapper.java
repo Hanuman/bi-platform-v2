@@ -83,7 +83,7 @@ public class RolePreprocessingMapper extends LdapUserDetailsMapper implements In
         }
       }
       if (RolePreprocessingMapper.logger.isWarnEnabled()) {
-        RolePreprocessingMapper.logger.warn(Messages.getString(
+        RolePreprocessingMapper.logger.warn(Messages.getInstance().getString(
             "RolePreprocessingMapper.WARN_TOKEN_NOT_FOUND", tokenName)); //$NON-NLS-1$
       }
       // return null so that superclass does not use the value of this

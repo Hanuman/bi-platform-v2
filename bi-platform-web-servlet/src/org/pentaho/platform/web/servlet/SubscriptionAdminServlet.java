@@ -105,7 +105,7 @@ public class SubscriptionAdminServlet extends ServletBase {
             footer = sections[1];
           }
         } else {
-          intro = Messages.getString("UI.ERROR_0002_BAD_TEMPLATE_OBJECT");
+          intro = Messages.getInstance().getString("UI.ERROR_0002_BAD_TEMPLATE_OBJECT");
         }
 
         content = content.replaceAll("\\\\", "\\\\\\\\");

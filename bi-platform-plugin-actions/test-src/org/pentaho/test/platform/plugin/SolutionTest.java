@@ -93,7 +93,7 @@ public class SolutionTest extends BaseTest {
 
       SimpleParameterProvider parameterProvider = new SimpleParameterProvider();
       parameterProvider.setParameter("type", "html"); //$NON-NLS-1$ //$NON-NLS-2$
-      StandaloneSession session = new StandaloneSession(Messages.getString("BaseTest.DEBUG_JUNIT_SESSION")); //$NON-NLS-1$
+      StandaloneSession session = new StandaloneSession(Messages.getInstance().getString("BaseTest.DEBUG_JUNIT_SESSION")); //$NON-NLS-1$
 
       SolutionHelper.execute("Test", session, "samples/portal/departments.rule.xaction", parameters, outputStream); //$NON-NLS-1$ //$NON-NLS-2$
       assertEquals(IRuntimeContext.RUNTIME_STATUS_SUCCESS, solutionEngine.getStatus());

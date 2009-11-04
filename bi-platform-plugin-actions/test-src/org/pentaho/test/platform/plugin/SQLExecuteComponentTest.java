@@ -111,7 +111,7 @@ public class SQLExecuteComponentTest extends BaseTest {
     info("Expected: Failed execution - should error out at the drop table statement"); //$NON-NLS-1$
     IRuntimeContext context = run("test", "rules", "sqlexecute_error1.xaction"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
     assertEquals(
-        Messages.getString("BaseTest.USER_RUNNING_ACTION_SEQUENCE"), IRuntimeContext.RUNTIME_STATUS_FAILURE, context.getStatus()); //$NON-NLS-1$
+        Messages.getInstance().getString("BaseTest.USER_RUNNING_ACTION_SEQUENCE"), IRuntimeContext.RUNTIME_STATUS_FAILURE, context.getStatus()); //$NON-NLS-1$
   }
 
   public void testSQLExecuteErrorSQLWithSemiColons() {
@@ -119,7 +119,7 @@ public class SQLExecuteComponentTest extends BaseTest {
     info("Expected: Failed execution - should error out because of the semi-colon"); //$NON-NLS-1$
     IRuntimeContext context = run("test", "rules", "sqlexecute_error2.xaction"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
     assertEquals(
-        Messages.getString("BaseTest.USER_RUNNING_ACTION_SEQUENCE"), IRuntimeContext.RUNTIME_STATUS_FAILURE, context.getStatus()); //$NON-NLS-1$
+        Messages.getInstance().getString("BaseTest.USER_RUNNING_ACTION_SEQUENCE"), IRuntimeContext.RUNTIME_STATUS_FAILURE, context.getStatus()); //$NON-NLS-1$
   }
 
   public void testSQLExecuteErrorDropTableSingleStatement() {
@@ -127,7 +127,7 @@ public class SQLExecuteComponentTest extends BaseTest {
     info("Expected: Failed execution - should error out at the drop table statement"); //$NON-NLS-1$
     IRuntimeContext context = run("test", "rules", "sqlexecute_error3.xaction"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
     assertEquals(
-        Messages.getString("BaseTest.USER_RUNNING_ACTION_SEQUENCE"), IRuntimeContext.RUNTIME_STATUS_FAILURE, context.getStatus()); //$NON-NLS-1$
+        Messages.getInstance().getString("BaseTest.USER_RUNNING_ACTION_SEQUENCE"), IRuntimeContext.RUNTIME_STATUS_FAILURE, context.getStatus()); //$NON-NLS-1$
   }
 
   public static void main(String[] args) {

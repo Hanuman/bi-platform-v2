@@ -355,7 +355,7 @@ A:hover {
 								<td class="btn_login_title">Pentaho User Console</td>
 							</tr>
 							<tr>
-								<td class="btn_login_text"><%=Messages.getString("UI.USER_LOGIN")%></td>
+								<td class="btn_login_text"><%=Messages.getInstance().getString("UI.USER_LOGIN")%></td>
 							</tr>
 							<%
 								}
@@ -480,14 +480,14 @@ A:hover {
 </html>
 <%!// reads the exception stored by AbstractProcessingFilter
 	private String getUserMessage(final AuthenticationException e) {
-		String userMessage = Messages
+		String userMessage = Messages.getInstance()
 				.getString("UI.USER_LOGIN_FAILED_DEFAULT_REASON");
 		if (null != e) {
 			String errorClassName = e.getClass().getName();
 			errorClassName = errorClassName.replace('.', '_');
 			errorClassName = errorClassName.toUpperCase();
 			String key = "UI.USER_LOGIN_FAILED_REASON_" + errorClassName;
-			String tmp = Messages.getString(key);
+			String tmp = Messages.getInstance().getString(key);
 			if (null != tmp && 0 != tmp.length() && !tmp.startsWith("!")) {
 				userMessage = tmp;
 			}

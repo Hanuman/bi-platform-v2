@@ -57,7 +57,7 @@
 		    IPentahoResultSet r2 = PentahoDataTransmuter.transmute(results, new Integer(0), null, null, columnsToInclude, true);
 		    
 		    pieChart.setValues(r2);
-			pieChart.setTitle( Messages.getString( "PIECHART.TEST_PIE_CHAR" )); //$NON-NLS-1$
+			pieChart.setTitle( Messages.getInstance().getString( "PIECHART.TEST_PIE_CHAR" )); //$NON-NLS-1$
 			pieChart.validate( userSession, null );
 			
 			pieChart.setParameterProvider( HttpRequestParameterProvider.SCOPE_REQUEST, requestParameters ); //$NON-NLS-1$
@@ -66,13 +66,13 @@
 			content = pieChart.getContent( "text/html" ); //$NON-NLS-1$
 			if( content == null ) {
 				StringBuffer buffer = new StringBuffer();
-				PentahoSystem.get(IMessageFormatter.class, userSession).formatErrorMessage( "text/html", Messages.getString("PIECHART.DISPLAY_ERROR"), messages, buffer ); //$NON-NLS-1$ //$NON-NLS-2$
+				PentahoSystem.get(IMessageFormatter.class, userSession).formatErrorMessage( "text/html", Messages.getInstance().getString("PIECHART.DISPLAY_ERROR"), messages, buffer ); //$NON-NLS-1$ //$NON-NLS-2$
 				content = buffer.toString();
 			}
 		
 			IUITemplater templater = PentahoSystem.get(IUITemplater.class, userSession );
 			if( templater != null ) {
-				String sections[] = templater.breakTemplate( "template-document.html", Messages.getString("PIECHART.USER_SAMPLES"), userSession ); //$NON-NLS-1$ //$NON-NLS-2$
+				String sections[] = templater.breakTemplate( "template-document.html", Messages.getInstance().getString("PIECHART.USER_SAMPLES"), userSession ); //$NON-NLS-1$ //$NON-NLS-2$
 				if( sections != null && sections.length > 0 ) {
 					intro = sections[0];
 				}
@@ -80,7 +80,7 @@
 					footer = sections[1];
 				}
 			} else {
-				intro = Messages.getString( "UI.ERROR_0002_BAD_TEMPLATE_OBJECT" ); //$NON-NLS-1$
+				intro = Messages.getInstance().getString( "UI.ERROR_0002_BAD_TEMPLATE_OBJECT" ); //$NON-NLS-1$
 			}
 	    } finally {
 	    	results.close();

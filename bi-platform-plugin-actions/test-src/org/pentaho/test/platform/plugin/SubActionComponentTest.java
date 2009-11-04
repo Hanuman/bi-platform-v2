@@ -75,7 +75,7 @@ public class SubActionComponentTest extends BaseTest {
 
     IRuntimeContext context = run(SOLUTION_NAME, "platform", TEST_XACTION, parameterProvider, testName, CO_TEST_EXTN);
     assertEquals(
-        Messages.getString("BaseTest.USER_RUNNING_ACTION_SEQUENCE"), IRuntimeContext.RUNTIME_STATUS_SUCCESS, context.getStatus()); //$NON-NLS-1$
+        Messages.getInstance().getString("BaseTest.USER_RUNNING_ACTION_SEQUENCE"), IRuntimeContext.RUNTIME_STATUS_SUCCESS, context.getStatus()); //$NON-NLS-1$
 
     IActionParameter rtn = context.getOutputParameter(TEST_OUTPUT_PARAM);
     Object value = rtn.getValue();
@@ -94,7 +94,7 @@ public class SubActionComponentTest extends BaseTest {
     info("Expected: Successful execution with object available"); //$NON-NLS-1$
     IRuntimeContext context = run("test", "platform", "SubActionConnectionTest4.xaction"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
     assertEquals(
-        Messages.getString("BaseTest.USER_RUNNING_ACTION_SEQUENCE"), IRuntimeContext.RUNTIME_STATUS_SUCCESS, context.getStatus()); //$NON-NLS-1$
+        Messages.getInstance().getString("BaseTest.USER_RUNNING_ACTION_SEQUENCE"), IRuntimeContext.RUNTIME_STATUS_SUCCESS, context.getStatus()); //$NON-NLS-1$
 
     IActionParameter rtn = context.getOutputParameter("query-results");//$NON-NLS-1$
     assertNotNull(rtn);
@@ -121,7 +121,7 @@ public class SubActionComponentTest extends BaseTest {
     info("Expected: Successful execution with object available"); //$NON-NLS-1$
     IRuntimeContext context = run("test", "platform", "SubActionConnectionTest3.xaction"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
     assertEquals(
-        Messages.getString("BaseTest.USER_RUNNING_ACTION_SEQUENCE"), IRuntimeContext.RUNTIME_STATUS_SUCCESS, context.getStatus()); //$NON-NLS-1$
+        Messages.getInstance().getString("BaseTest.USER_RUNNING_ACTION_SEQUENCE"), IRuntimeContext.RUNTIME_STATUS_SUCCESS, context.getStatus()); //$NON-NLS-1$
 
     IActionParameter rtn = context.getOutputParameter("query-results");//$NON-NLS-1$
     assertNotNull(rtn);
@@ -149,7 +149,7 @@ public class SubActionComponentTest extends BaseTest {
 
     // xaction should fail, because connection isn't available
     assertEquals(
-        Messages.getString("BaseTest.USER_RUNNING_ACTION_SEQUENCE"), IRuntimeContext.RUNTIME_STATUS_FAILURE, context.getStatus()); //$NON-NLS-1$
+        Messages.getInstance().getString("BaseTest.USER_RUNNING_ACTION_SEQUENCE"), IRuntimeContext.RUNTIME_STATUS_FAILURE, context.getStatus()); //$NON-NLS-1$
 
     finishTest();
   }
@@ -162,7 +162,7 @@ public class SubActionComponentTest extends BaseTest {
     info("Expected: Successful execution with object available"); //$NON-NLS-1$
     IRuntimeContext context = run("test", "platform", "SubActionConnectionTest1.xaction"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
     assertEquals(
-        Messages.getString("BaseTest.USER_RUNNING_ACTION_SEQUENCE"), IRuntimeContext.RUNTIME_STATUS_SUCCESS, context.getStatus()); //$NON-NLS-1$
+        Messages.getInstance().getString("BaseTest.USER_RUNNING_ACTION_SEQUENCE"), IRuntimeContext.RUNTIME_STATUS_SUCCESS, context.getStatus()); //$NON-NLS-1$
 
     IActionParameter rtn = context.getOutputParameter("prepared_component");//$NON-NLS-1$
     assertNotNull(rtn);

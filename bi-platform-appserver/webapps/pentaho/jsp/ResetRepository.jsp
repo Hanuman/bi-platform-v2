@@ -37,7 +37,7 @@
 	if( solutionRepository instanceof DbBasedSolutionRepository ) { 
 		content = ((DbBasedSolutionRepository)solutionRepository).resetSolutionFromFileSystem(userSession);
 	} else {
-		content = Messages.getString("SolutionManagerUI.ERROR_0001");
+		content = Messages.getInstance().getString("SolutionManagerUI.ERROR_0001");
 	}
 	String templateName="template-document.html";
 	
@@ -45,7 +45,7 @@
 	String footer = "";
 	IUITemplater templater = PentahoSystem.get(IUITemplater.class, userSession );
 	if( templater != null ) {
-		String sections[] = templater.breakTemplate( templateName, Messages.getString("UI.RESET_REPOSITORY_TITLE"), userSession ); //$NON-NLS-1$ //$NON-NLS-2$
+		String sections[] = templater.breakTemplate( templateName, Messages.getInstance().getString("UI.RESET_REPOSITORY_TITLE"), userSession ); //$NON-NLS-1$ //$NON-NLS-2$
 		if( sections != null && sections.length > 0 ) {
 			intro = sections[0];
 		}
@@ -53,7 +53,7 @@
 			footer = sections[1];
 		}
 	} else {
-		intro = Messages.getString( "UI.ERROR_0002_BAD_TEMPLATE_OBJECT" );
+		intro = Messages.getInstance().getString( "UI.ERROR_0002_BAD_TEMPLATE_OBJECT" );
 	}
 
 %>

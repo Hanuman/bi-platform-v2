@@ -80,10 +80,10 @@ public class PluginAdapterTest {
   public void testPluginAdapterAsPublisher() throws Exception {
     IPentahoPublisher asPublisher = (IPentahoPublisher) pluginAdapter;
 
-    assertEquals(Messages.getString("PluginAdapter.USER_PLUGIN_MANAGER"), asPublisher.getName()); //$NON-NLS-1$
+    assertEquals(Messages.getInstance().getString("PluginAdapter.USER_PLUGIN_MANAGER"), asPublisher.getName()); //$NON-NLS-1$
     assertNotSame("!PluginAdapter.USER_PLUGIN_MANAGER!", asPublisher.getName()); //$NON-NLS-1$
 
-    assertEquals(Messages.getString("PluginAdapter.USER_REFRESH_PLUGINS"), asPublisher.getDescription()); //$NON-NLS-1$
+    assertEquals(Messages.getInstance().getString("PluginAdapter.USER_REFRESH_PLUGINS"), asPublisher.getDescription()); //$NON-NLS-1$
     assertNotSame("!PluginAdapter.USER_REFRESH_PLUGINS!", asPublisher.getName()); //$NON-NLS-1$
 
     String str = asPublisher.publish(session, ILogger.DEBUG);

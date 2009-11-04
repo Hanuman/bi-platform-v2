@@ -38,11 +38,11 @@ public class SettingsPublisher extends BasePublisher {
   }
 
   public String getName() {
-    return Messages.getString("SettingsPublisher.USER_SYSTEM_SETTINGS"); //$NON-NLS-1$
+    return Messages.getInstance().getString("SettingsPublisher.USER_SYSTEM_SETTINGS"); //$NON-NLS-1$
   }
 
   public String getDescription() {
-    return Messages
+    return Messages.getInstance()
         .getString(
             "SettingsPublisher.USER_DESCRIPTION", PentahoSystem.getApplicationContext().getSolutionPath("system").replace('\\', '/')); //$NON-NLS-1$ //$NON-NLS-2$
   }
@@ -52,10 +52,10 @@ public class SettingsPublisher extends BasePublisher {
     try {
       PentahoSystem.refreshSettings();
     } catch (Throwable t) {
-      error(Messages.getErrorString("SettingsPublisher.ERROR_0001_PUBLISH_FAILED"), t); //$NON-NLS-1$
-      return Messages.getString("SettingsPublisher.USER_ERROR_PUBLISH_FAILED") + t.getLocalizedMessage(); //$NON-NLS-1$
+      error(Messages.getInstance().getErrorString("SettingsPublisher.ERROR_0001_PUBLISH_FAILED"), t); //$NON-NLS-1$
+      return Messages.getInstance().getString("SettingsPublisher.USER_ERROR_PUBLISH_FAILED") + t.getLocalizedMessage(); //$NON-NLS-1$
     }
-    return Messages.getString("SettingsPublisher.USER_SYSTEM_SETTINGS_UPDATED"); //$NON-NLS-1$
+    return Messages.getInstance().getString("SettingsPublisher.USER_SYSTEM_SETTINGS_UPDATED"); //$NON-NLS-1$
   }
 
 }

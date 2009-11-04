@@ -45,7 +45,7 @@ public class PivotViewComponentTest extends BaseTest {
     info("Expected: Successful test of query1"); //$NON-NLS-1$
     IRuntimeContext context = run("test", "analysis", "query1.xaction"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
     assertEquals(
-        Messages.getString("BaseTest.USER_RUNNING_ACTION_SEQUENCE"), IRuntimeContext.RUNTIME_STATUS_SUCCESS, context.getStatus()); //$NON-NLS-1$
+        Messages.getInstance().getString("BaseTest.USER_RUNNING_ACTION_SEQUENCE"), IRuntimeContext.RUNTIME_STATUS_SUCCESS, context.getStatus()); //$NON-NLS-1$
 
     assertTrue(true);
 
@@ -57,7 +57,7 @@ public class PivotViewComponentTest extends BaseTest {
     info("Expected: Successful test of query1"); //$NON-NLS-1$
     IRuntimeContext context = run("test", "analysis", "query_without_title.xaction"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
     assertEquals(
-        Messages.getString("BaseTest.USER_RUNNING_ACTION_SEQUENCE"), IRuntimeContext.RUNTIME_CONTEXT_VALIDATE_FAIL, context.getStatus()); //$NON-NLS-1$
+        Messages.getInstance().getString("BaseTest.USER_RUNNING_ACTION_SEQUENCE"), IRuntimeContext.RUNTIME_CONTEXT_VALIDATE_FAIL, context.getStatus()); //$NON-NLS-1$
 
     assertTrue(true);
 
@@ -69,7 +69,7 @@ public class PivotViewComponentTest extends BaseTest {
     info("Expected: Successful test of query1"); //$NON-NLS-1$
     IRuntimeContext context = run("test", "analysis", "query_without_mode.xaction"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
     assertEquals(
-        Messages.getString("BaseTest.USER_RUNNING_ACTION_SEQUENCE"), IRuntimeContext.RUNTIME_CONTEXT_VALIDATE_FAIL, context.getStatus()); //$NON-NLS-1$
+        Messages.getInstance().getString("BaseTest.USER_RUNNING_ACTION_SEQUENCE"), IRuntimeContext.RUNTIME_CONTEXT_VALIDATE_FAIL, context.getStatus()); //$NON-NLS-1$
 
     assertTrue(true);
 
@@ -81,7 +81,7 @@ public class PivotViewComponentTest extends BaseTest {
     info("Expected: Successful test of query1"); //$NON-NLS-1$
     IRuntimeContext context = run("test", "analysis", "query_without_mdx.xaction"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
     assertEquals(
-        Messages.getString("BaseTest.USER_RUNNING_ACTION_SEQUENCE"), IRuntimeContext.RUNTIME_CONTEXT_VALIDATE_FAIL, context.getStatus()); //$NON-NLS-1$
+        Messages.getInstance().getString("BaseTest.USER_RUNNING_ACTION_SEQUENCE"), IRuntimeContext.RUNTIME_CONTEXT_VALIDATE_FAIL, context.getStatus()); //$NON-NLS-1$
 
     assertTrue(true);
 
@@ -93,7 +93,7 @@ public class PivotViewComponentTest extends BaseTest {
     info("Expected: Successful test of query1"); //$NON-NLS-1$
     IRuntimeContext context = run("test", "analysis", "query_without_model.xaction"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
     assertEquals(
-        Messages.getString("BaseTest.USER_RUNNING_ACTION_SEQUENCE"), IRuntimeContext.RUNTIME_CONTEXT_VALIDATE_FAIL, context.getStatus()); //$NON-NLS-1$
+        Messages.getInstance().getString("BaseTest.USER_RUNNING_ACTION_SEQUENCE"), IRuntimeContext.RUNTIME_CONTEXT_VALIDATE_FAIL, context.getStatus()); //$NON-NLS-1$
 
     assertTrue(true);
 
@@ -105,7 +105,7 @@ public class PivotViewComponentTest extends BaseTest {
     info("Expected: Successful test of query1"); //$NON-NLS-1$
     IRuntimeContext context = run("test", "analysis", "query_without_options.xaction"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
     assertEquals(
-        Messages.getString("BaseTest.USER_RUNNING_ACTION_SEQUENCE"), IRuntimeContext.RUNTIME_CONTEXT_VALIDATE_FAIL, context.getStatus()); //$NON-NLS-1$
+        Messages.getInstance().getString("BaseTest.USER_RUNNING_ACTION_SEQUENCE"), IRuntimeContext.RUNTIME_CONTEXT_VALIDATE_FAIL, context.getStatus()); //$NON-NLS-1$
 
     assertTrue(true);
 
@@ -117,7 +117,7 @@ public class PivotViewComponentTest extends BaseTest {
     info("Expected: Successful test of query1"); //$NON-NLS-1$
     IRuntimeContext context = run("test", "analysis", "query_without_url.xaction"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
     assertEquals(
-        Messages.getString("BaseTest.USER_RUNNING_ACTION_SEQUENCE"), IRuntimeContext.RUNTIME_CONTEXT_VALIDATE_FAIL, context.getStatus()); //$NON-NLS-1$
+        Messages.getInstance().getString("BaseTest.USER_RUNNING_ACTION_SEQUENCE"), IRuntimeContext.RUNTIME_CONTEXT_VALIDATE_FAIL, context.getStatus()); //$NON-NLS-1$
 
     assertTrue(true);
 
@@ -129,7 +129,7 @@ public class PivotViewComponentTest extends BaseTest {
     info("Expected: Successful test of query1"); //$NON-NLS-1$
     IRuntimeContext context = run("test", "analysis", "query_without_connection.xaction"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
     assertEquals(
-        Messages.getString("BaseTest.USER_RUNNING_ACTION_SEQUENCE"), IRuntimeContext.RUNTIME_CONTEXT_VALIDATE_FAIL, context.getStatus()); //$NON-NLS-1$
+        Messages.getInstance().getString("BaseTest.USER_RUNNING_ACTION_SEQUENCE"), IRuntimeContext.RUNTIME_CONTEXT_VALIDATE_FAIL, context.getStatus()); //$NON-NLS-1$
 
     assertTrue(true);
 
@@ -140,11 +140,11 @@ public class PivotViewComponentTest extends BaseTest {
     startTest();
     info("Expected: Successful test of query1"); //$NON-NLS-1$
     SimpleParameterProvider parameterProvider = new SimpleParameterProvider();
-    StandaloneSession session = new StandaloneSession(Messages.getString("BaseTest.DEBUG_JUNIT_SESSION")); //$NON-NLS-1$
+    StandaloneSession session = new StandaloneSession(Messages.getInstance().getString("BaseTest.DEBUG_JUNIT_SESSION")); //$NON-NLS-1$
     parameterProvider.setParameter("mode", "execute"); //$NON-NLS-1$ //$NON-NLS-2$
     IRuntimeContext context = run("test", "analysis", "query1.xaction", null, false, parameterProvider, null, session); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
     assertEquals(
-        Messages.getString("BaseTest.USER_RUNNING_ACTION_SEQUENCE"), IRuntimeContext.RUNTIME_STATUS_SUCCESS, context.getStatus()); //$NON-NLS-1$
+        Messages.getInstance().getString("BaseTest.USER_RUNNING_ACTION_SEQUENCE"), IRuntimeContext.RUNTIME_STATUS_SUCCESS, context.getStatus()); //$NON-NLS-1$
 
     assertTrue(true);
 
@@ -155,7 +155,7 @@ public class PivotViewComponentTest extends BaseTest {
     startTest();
     info("Expected: Successful test of query1"); //$NON-NLS-1$
     SimpleParameterProvider parameterProvider = new SimpleParameterProvider();
-    StandaloneSession session = new StandaloneSession(Messages.getString("BaseTest.DEBUG_JUNIT_SESSION")); //$NON-NLS-1$
+    StandaloneSession session = new StandaloneSession(Messages.getInstance().getString("BaseTest.DEBUG_JUNIT_SESSION")); //$NON-NLS-1$
     parameterProvider.setParameter("charttype", "Bar"); //$NON-NLS-1$ //$NON-NLS-2$
     parameterProvider.setParameter("showgrid", "yes"); //$NON-NLS-1$ //$NON-NLS-2$
     parameterProvider.setParameter("chartlocation", "/chart.html"); //$NON-NLS-1$ //$NON-NLS-2$
@@ -191,7 +191,7 @@ public class PivotViewComponentTest extends BaseTest {
 
     IRuntimeContext context = run("test", "analysis", "query1.xaction", null, false, parameterProvider, null, session); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
     assertEquals(
-        Messages.getString("BaseTest.USER_RUNNING_ACTION_SEQUENCE"), IRuntimeContext.RUNTIME_STATUS_SUCCESS, context.getStatus()); //$NON-NLS-1$
+        Messages.getInstance().getString("BaseTest.USER_RUNNING_ACTION_SEQUENCE"), IRuntimeContext.RUNTIME_STATUS_SUCCESS, context.getStatus()); //$NON-NLS-1$
 
     assertTrue(true);
 

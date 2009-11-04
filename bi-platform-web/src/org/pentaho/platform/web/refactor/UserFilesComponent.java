@@ -150,12 +150,12 @@ public class UserFilesComponent extends XmlComponent {
       } catch(BackgroundExecutionException bex) {
         jobsList = new ArrayList<IJobDetail>();
         Element errorRoot = root.addElement("error"); //$NON-NLS-1$
-        errorRoot.addElement("error-message").setText(Messages.getErrorString("UI.USER_ERROR_0003_NO_BACKGROUND_EXECUTION")); //$NON-NLS-1$//$NON-NLS-2$ 
+        errorRoot.addElement("error-message").setText(Messages.getInstance().getErrorString("UI.USER_ERROR_0003_NO_BACKGROUND_EXECUTION")); //$NON-NLS-1$//$NON-NLS-2$ 
       }
     } else {
       jobsList = new ArrayList<IJobDetail>();
       Element errorRoot = root.addElement("error"); //$NON-NLS-1$
-      errorRoot.addElement("error-message").setText(Messages.getErrorString("UI.USER_ERROR_0003_NO_BACKGROUND_EXECUTION")); //$NON-NLS-1$//$NON-NLS-2$ 
+      errorRoot.addElement("error-message").setText(Messages.getInstance().getErrorString("UI.USER_ERROR_0003_NO_BACKGROUND_EXECUTION")); //$NON-NLS-1$//$NON-NLS-2$ 
     }
     if ((jobsList != null) && (jobsList.size() > 0)) {
       for (IJobDetail jobDetail : jobsList) {
@@ -164,7 +164,7 @@ public class UserFilesComponent extends XmlComponent {
         job.addElement(TIMESTAMP).setText(jobDetail.getSubmissionDate() != null?jobDetail.getSubmissionDate():(new Date()).toString());
         Element actions = job.addElement(ACTIONS);
         Element action = actions.addElement(ACTION);
-        action.addElement(TITLE).setText(Messages.getString("UI.USER_CANCEL")); //$NON-NLS-1$
+        action.addElement(TITLE).setText(Messages.getInstance().getString("UI.USER_CANCEL")); //$NON-NLS-1$
         Element params = action.addElement(PARAMS);
         Element param = params.addElement(PARAM);
         param.addElement(PARAM_NAME).setText("del-job-name"); //$NON-NLS-1$
@@ -208,7 +208,7 @@ public class UserFilesComponent extends XmlComponent {
 
       Element actions = job.addElement(UserFilesComponent.ACTIONS);
       Element action = actions.addElement(UserFilesComponent.ACTION);
-      action.addElement(UserFilesComponent.TITLE).setText(Messages.getString("UI.USER_VIEW")); //$NON-NLS-1$
+      action.addElement(UserFilesComponent.TITLE).setText(Messages.getInstance().getString("UI.USER_VIEW")); //$NON-NLS-1$
       Element params = action.addElement(UserFilesComponent.PARAMS);
       Element param = params.addElement(UserFilesComponent.PARAM);
       param.addElement(UserFilesComponent.PARAM_NAME).setText("action"); //$NON-NLS-1$
@@ -219,7 +219,7 @@ public class UserFilesComponent extends XmlComponent {
       param.addElement(UserFilesComponent.PARAM_VALUE).setText(item.getId());
 
       action = actions.addElement(UserFilesComponent.ACTION);
-      action.addElement(UserFilesComponent.TITLE).setText(Messages.getString("UI.USER_DELETE")); //$NON-NLS-1$
+      action.addElement(UserFilesComponent.TITLE).setText(Messages.getInstance().getString("UI.USER_DELETE")); //$NON-NLS-1$
       params = action.addElement(UserFilesComponent.PARAMS);
       param = params.addElement(UserFilesComponent.PARAM);
       param.addElement(UserFilesComponent.PARAM_NAME).setText("action"); //$NON-NLS-1$
@@ -237,7 +237,7 @@ public class UserFilesComponent extends XmlComponent {
       SchedulerHelper.deleteJob(getSession(), jobName, jobGroup);
       return true;
     } catch (Throwable t) {
-      error(Messages.getErrorString("Scheduler.ERROR_0001_SCHEDULER_CANNOT_CANCEL", t.getMessage()), t); //$NON-NLS-1$
+      error(Messages.getInstance().getErrorString("Scheduler.ERROR_0001_SCHEDULER_CANNOT_CANCEL", t.getMessage()), t); //$NON-NLS-1$
     }
     return false;
   }
@@ -253,7 +253,7 @@ public class UserFilesComponent extends XmlComponent {
         return false;
       }
     } catch (Throwable t) {
-      error(Messages.getErrorString("Scheduler.ERROR_0001_SCHEDULER_CANNOT_CANCEL", t.getMessage()), t); //$NON-NLS-1$
+      error(Messages.getInstance().getErrorString("Scheduler.ERROR_0001_SCHEDULER_CANNOT_CANCEL", t.getMessage()), t); //$NON-NLS-1$
     }
     return false;
   }
@@ -292,7 +292,7 @@ public class UserFilesComponent extends XmlComponent {
               subscriptionRepository.addSubscriptionToDocument(subscription, node, null, getSession());
               // subscriptionRepository.addSubscriptionsToDocument(getSession().getName(), actionRef, node, null, getSession());
             } catch (Throwable t) {
-              error(Messages.getErrorString("PRO_SUBSCRIPTREP.ERROR_0005_GENERAL_ERROR"), t); //$NON-NLS-1$
+              error(Messages.getInstance().getErrorString("PRO_SUBSCRIPTREP.ERROR_0005_GENERAL_ERROR"), t); //$NON-NLS-1$
             }
           }
         }
@@ -303,7 +303,7 @@ public class UserFilesComponent extends XmlComponent {
       root.add(subsRoot);
 
     } catch (Exception e) {
-      error(Messages.getErrorString("PRO_SUBSCRIPTREP.ERROR_0005_GENERAL_ERROR"), e); //$NON-NLS-1$
+      error(Messages.getInstance().getErrorString("PRO_SUBSCRIPTREP.ERROR_0005_GENERAL_ERROR"), e); //$NON-NLS-1$
     }
   }
 

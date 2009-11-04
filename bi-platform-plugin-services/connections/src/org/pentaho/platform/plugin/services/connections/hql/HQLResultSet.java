@@ -66,7 +66,7 @@ public class HQLResultSet implements IPentahoResultSet, IPeekable {
       metadata = new HQLMetaData(list, this, columnNames, columnTypes);
     } catch (Exception e) {
       // TODO Auto-generated catch block
-      HQLResultSet.log.error(Messages.getErrorString("SQLResultSet.ERROR_0004_GET_METADATA"), e); //$NON-NLS-1$
+      HQLResultSet.log.error(Messages.getInstance().getErrorString("SQLResultSet.ERROR_0004_GET_METADATA"), e); //$NON-NLS-1$
       // e.printStackTrace();
       throw new RuntimeException(e);
     }
@@ -117,7 +117,7 @@ public class HQLResultSet implements IPentahoResultSet, IPeekable {
         }
       }
     } catch (Exception e) {
-      HQLResultSet.log.error(Messages.getErrorString("SQLResultSet.ERROR_0005_NEXT"), e); //$NON-NLS-1$
+      HQLResultSet.log.error(Messages.getInstance().getErrorString("SQLResultSet.ERROR_0005_NEXT"), e); //$NON-NLS-1$
     }
     return null;
   }
@@ -216,7 +216,7 @@ public class HQLResultSet implements IPentahoResultSet, IPeekable {
     try {
       index = 0;
     } catch (Exception e) {
-      HQLResultSet.log.error(Messages.getErrorString("SQLResultSet.ERROR_0003_BEFORE_FIRST"), e); //$NON-NLS-1$
+      HQLResultSet.log.error(Messages.getInstance().getErrorString("SQLResultSet.ERROR_0003_BEFORE_FIRST"), e); //$NON-NLS-1$
     }
   }
 

@@ -60,10 +60,10 @@ public class JFreeReportXmlComponent extends AbstractGenerateStreamContentCompon
       close();
       return true;
     } catch (ReportProcessingException e) {
-      error(Messages.getString("JFreeReportXmlComponent.ERROR_0046_FAILED_TO_PROCESS_REPORT"), e); //$NON-NLS-1$
+      error(Messages.getInstance().getString("JFreeReportXmlComponent.ERROR_0046_FAILED_TO_PROCESS_REPORT"), e); //$NON-NLS-1$
       return false;
     } catch (IOException e) {
-      error(Messages.getString("JFreeReportXmlComponent.ERROR_0046_FAILED_TO_PROCESS_REPORT"), e); //$NON-NLS-1$
+      error(Messages.getInstance().getString("JFreeReportXmlComponent.ERROR_0046_FAILED_TO_PROCESS_REPORT"), e); //$NON-NLS-1$
       return false;
     }
   }

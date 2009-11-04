@@ -53,7 +53,7 @@ public class MQLRelationalDataComponent extends ComponentBase {
 
     boolean result = true;
     if (!(getActionDefinition() instanceof MQLAction)) {
-      error(Messages.getErrorString(
+      error(Messages.getInstance().getErrorString(
           "ComponentBase.ERROR_0001_UNKNOWN_ACTION_TYPE", getActionDefinition().getElement().asXML())); //$NON-NLS-1$
       result = false;
     } else if (!initialize()) {

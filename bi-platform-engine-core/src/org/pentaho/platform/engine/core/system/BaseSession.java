@@ -55,7 +55,7 @@ public abstract class BaseSession extends PentahoBase implements IPentahoSession
     this.id = id;
     this.locale = locale;
     actionName = ""; //$NON-NLS-1$
-    setLogId(Messages.getString("BaseSession.CODE_LOG_ID", id, ILogger.SESSION_LOG, name)); //$NON-NLS-1$
+    setLogId(Messages.getInstance().getString("BaseSession.CODE_LOG_ID", id, ILogger.SESSION_LOG, name)); //$NON-NLS-1$
     authenticated = false;
   }
 

@@ -61,12 +61,12 @@ public class UserRoleDaoUserDetailsService implements UserDetailsService {
     try {
       user = userRoleDao.getUser(username);
     } catch (UncategorizedUserRoleDaoException e) {
-      throw new UserRoleDaoUserDetailsServiceException(Messages
+      throw new UserRoleDaoUserDetailsServiceException(Messages.getInstance()
           .getString("UserRoleDaoUserDetailsService.ERROR_0003_DATA_ACCESS_EXCEPTION"), e); //$NON-NLS-1$
     }
 
     if (user == null) {
-      throw new UsernameNotFoundException(Messages.getString("UserRoleDaoUserDetailsService.ERROR_0001_USER_NOT_FOUND")); //$NON-NLS-1$
+      throw new UsernameNotFoundException(Messages.getInstance().getString("UserRoleDaoUserDetailsService.ERROR_0001_USER_NOT_FOUND")); //$NON-NLS-1$
     } else {
       // convert IPentahoUser to a UserDetails instance
       int authsSize = user.getRoles() != null ? user.getRoles().size() : 0;
@@ -79,7 +79,7 @@ public class UserRoleDaoUserDetailsService implements UserDetailsService {
       List<GrantedAuthority> dbAuths = Arrays.asList(auths);
       addCustomAuthorities(user.getUsername(), dbAuths);
       if (dbAuths.size() == 0) {
-        throw new UsernameNotFoundException(Messages
+        throw new UsernameNotFoundException(Messages.getInstance()
             .getString("UserRoleDaoUserDetailsService.ERROR_0002_NO_AUTHORITIES")); //$NON-NLS-1$
       }
       GrantedAuthority[] arrayAuths = dbAuths.toArray(new GrantedAuthority[dbAuths.size()]);

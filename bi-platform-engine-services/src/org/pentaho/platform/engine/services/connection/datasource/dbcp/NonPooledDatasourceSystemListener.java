@@ -59,11 +59,11 @@ public class NonPooledDatasourceSystemListener implements IPentahoSystemListener
       Logger.debug(this, "NonPooledDatasourceSystemListener: done with init"); //$NON-NLS-1$
       return true;
     } catch (ObjectFactoryException objface) {
-      Logger.error(this, Messages.getErrorString(
+      Logger.error(this, Messages.getInstance().getErrorString(
           "NonPooledDatasourceSystemListener.ERROR_0001_UNABLE_TO_INSTANTIATE_OBJECT",NonPooledDatasourceSystemListener.class.getName()), objface); //$NON-NLS-1$
       return false;
     } catch (DatasourceMgmtServiceException dmse) {
-      Logger.error(this, Messages.getErrorString(
+      Logger.error(this, Messages.getInstance().getErrorString(
           "NonPooledDatasourceSystemListener.ERROR_0002_UNABLE_TO_GET_DATASOURCE",NonPooledDatasourceSystemListener.class.getName()), dmse); //$NON-NLS-1$
       return false;        
     }

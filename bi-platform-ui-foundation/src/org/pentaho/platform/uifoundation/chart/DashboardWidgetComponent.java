@@ -195,11 +195,11 @@ public class DashboardWidgetComponent extends XmlComponent {
       try {
         dialDefinition = PentahoSystem.get(ISolutionRepository.class, getSession()).getResourceAsDocument(resource, ISolutionRepository.ACTION_EXECUTE);
       } catch (IOException e) {
-        error(Messages.getErrorString("Widget.ERROR_0002_INVALID_RESOURCE", definitionPath), e); //$NON-NLS-1$
+        error(Messages.getInstance().getErrorString("Widget.ERROR_0002_INVALID_RESOURCE", definitionPath), e); //$NON-NLS-1$
       }
 
       if (dialDefinition == null) {
-        error(Messages.getErrorString("Widget.ERROR_0002_INVALID_RESOURCE", definitionPath)); //$NON-NLS-1$
+        error(Messages.getInstance().getErrorString("Widget.ERROR_0002_INVALID_RESOURCE", definitionPath)); //$NON-NLS-1$
         return null;
       }
       // create a dial definition from the XML definition
@@ -210,7 +210,7 @@ public class DashboardWidgetComponent extends XmlComponent {
         widget.setValue(new Double(value));
 
       } else {
-        error(Messages.getString("Widget.ERROR_0001_COULD_NOT_CREATE")); //$NON-NLS-1$
+        error(Messages.getInstance().getString("Widget.ERROR_0001_COULD_NOT_CREATE")); //$NON-NLS-1$
         return null;
       }
     }
@@ -230,11 +230,11 @@ public class DashboardWidgetComponent extends XmlComponent {
      * widget.setValue( new Double(value) ); // Set the XSL file to be used
      * to generate the HTML setXsl( "text/html", "DialWidget.xsl" );
      * //$NON-NLS-1$ //$NON-NLS-2$ } else { error(
-     * Messages.getString("Widget.ERROR_0001_COULD_NOT_CREATE") );
+     * Messages.getInstance().getString("Widget.ERROR_0001_COULD_NOT_CREATE") );
      * //$NON-NLS-1$ return null; } }
      */
     if (widget == null) {
-      error(Messages.getString("Widget.ERROR_0001_COULD_NOT_CREATE")); //$NON-NLS-1$
+      error(Messages.getInstance().getString("Widget.ERROR_0001_COULD_NOT_CREATE")); //$NON-NLS-1$
       return null;
     }
     // create an image for the dial using the JFreeChart engine

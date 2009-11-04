@@ -110,7 +110,7 @@ public class PentahoVersionCheckComponent extends ComponentBase {
       List results = PentahoVersionCheckReflectHelper.performVersionCheck(ignoreExistingUpdates, versionRequestFlags);
       output = PentahoVersionCheckReflectHelper.logVersionCheck(results, getLogger());
     } else {
-      output = "<vercheck><error><[!CDATA[" + Messages.getString("VersionCheck.VERSION_CHECK_DISABLED") + "]]></error></vercheck>"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+      output = "<vercheck><error><[!CDATA[" + Messages.getInstance().getString("VersionCheck.VERSION_CHECK_DISABLED") + "]]></error></vercheck>"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
     }
 
     if (isDefinedOutput(PentahoVersionCheckComponent.DOCUMENT)) {

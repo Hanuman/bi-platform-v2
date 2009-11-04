@@ -54,7 +54,7 @@ public class MockUserDetailsRoleListService implements IUserDetailsRoleListServi
 
   public void afterPropertiesSet() throws Exception {
     if (this.userRoleListService == null) {
-      throw new Exception(Messages.getString("UserDetailsRoleListService.ERROR_0001_USERROLELISTSERVICE_NOT_SET")); //$NON-NLS-1$
+      throw new Exception(Messages.getInstance().getString("UserDetailsRoleListService.ERROR_0001_USERROLELISTSERVICE_NOT_SET")); //$NON-NLS-1$
     }
   }
 

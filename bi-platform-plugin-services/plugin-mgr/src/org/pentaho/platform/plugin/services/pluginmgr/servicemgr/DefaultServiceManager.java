@@ -44,10 +44,10 @@ public class DefaultServiceManager implements IServiceManager {
     for (IServiceTypeManager handler : serviceTypeManagers) {
       String type = handler.getSupportedServiceType();
       if (type == null) {
-        throw new IllegalArgumentException(Messages.getErrorString("DefaultServiceManager.ERROR_0001_INVALID_SERVICE_TYPE")); //$NON-NLS-1$
+        throw new IllegalArgumentException(Messages.getInstance().getErrorString("DefaultServiceManager.ERROR_0001_INVALID_SERVICE_TYPE")); //$NON-NLS-1$
       }
       serviceManagerMap.put(type, handler);
-      Logger.info(getClass().toString(), Messages.getString(
+      Logger.info(getClass().toString(), Messages.getInstance().getString(
           "DefaultServiceManager.REGISTERED_SERVICE_TYPES", handler.getSupportedServiceType())); //$NON-NLS-1$
     }
   }
@@ -57,8 +57,8 @@ public class DefaultServiceManager implements IServiceManager {
     String type = config.getServiceType();
     IServiceTypeManager mgr = serviceManagerMap.get(type);
     if (mgr == null) {
-      String availableTypes = StringUtils.join(serviceManagerMap.keySet().iterator(), Messages.getString(",")); //$NON-NLS-1$
-      throw new ServiceException(Messages.getErrorString(
+      String availableTypes = StringUtils.join(serviceManagerMap.keySet().iterator(), Messages.getInstance().getString(",")); //$NON-NLS-1$
+      throw new ServiceException(Messages.getInstance().getErrorString(
           "DefaultServiceManager.ERROR_0002_NO_SERVICE_MANAGER_FOR_TYPE", config.getId(), type.toString(), availableTypes)); //$NON-NLS-1$
     }
     mgr.registerService(config);
@@ -66,15 +66,15 @@ public class DefaultServiceManager implements IServiceManager {
 
   private static void validate(IServiceConfig config) {
     if (StringUtils.isEmpty(config.getId())) {
-      throw new IllegalStateException(Messages.getErrorString(
+      throw new IllegalStateException(Messages.getInstance().getErrorString(
           "DefaultServiceManager.ERROR_0003_INVALID_SERVICE_CONFIG", "id")); //$NON-NLS-1$//$NON-NLS-2$
     }
     if (config.getServiceClass() == null) {
-      throw new IllegalStateException(Messages.getErrorString(
+      throw new IllegalStateException(Messages.getInstance().getErrorString(
           "DefaultServiceManager.ERROR_0003_INVALID_SERVICE_CONFIG", "class")); //$NON-NLS-1$//$NON-NLS-2$
     }
     if (config.getServiceType() == null) {
-      throw new IllegalStateException(Messages.getErrorString(
+      throw new IllegalStateException(Messages.getInstance().getErrorString(
           "DefaultServiceManager.ERROR_0003_INVALID_SERVICE_CONFIG", "type")); //$NON-NLS-1$//$NON-NLS-2$
     }
   }

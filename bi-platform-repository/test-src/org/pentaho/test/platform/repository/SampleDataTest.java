@@ -75,7 +75,7 @@ public class SampleDataTest extends BaseTest {
             rs.next();
             int result = rs.getInt(1);
             assertTrue(
-                Messages
+                Messages.getInstance()
                     .getErrorString(
                         "SampleDataTest.ERROR_0001_TEST_FAILED", "sampledata.QUADRANT_ACTUALS", Integer.toString(148), Integer.toString(result)), result == 148); //$NON-NLS-1$ //$NON-NLS-2$
           } finally {
@@ -119,7 +119,7 @@ public class SampleDataTest extends BaseTest {
             rs.next();
             int result = rs.getInt(1);
             assertTrue(
-                Messages
+                Messages.getInstance()
                     .getErrorString(
                         "SampleDataTest.ERROR_0001_TEST_FAILED", "QRTZ_TRIGGERS", Integer.toString(5), Integer.toString(result)), result == 5); //$NON-NLS-1$ //$NON-NLS-2$
           } finally {

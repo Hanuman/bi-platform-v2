@@ -37,7 +37,7 @@ public class HtmlMenuProvider extends BaseMenuProvider {
 		  try {
 		      return new HtmlXulLoader();
 		  } catch (Exception e) {
-			  Logger.error( this.getClass().toString(), Messages.getString("HtmlMenuProvider.ERROR_0001_COULD_NOT_CREATE_XUL_LOADER"), e); //$NON-NLS-1$
+			  Logger.error( this.getClass().toString(), Messages.getInstance().getString("HtmlMenuProvider.ERROR_0001_COULD_NOT_CREATE_XUL_LOADER"), e); //$NON-NLS-1$
 		  }
 		  return null;
 	}

@@ -204,7 +204,7 @@ public class MultipleComponentTest extends BaseTest {
     SimpleParameterProvider parameterProvider = new SimpleParameterProvider();
     IRuntimeContext context = run("test", "platform", "HelloWorld.xaction", parameterProvider, testName, HW_TEST_EXTN); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
     assertEquals(
-        Messages.getString("BaseTest.USER_RUNNING_ACTION_SEQUENCE"), IRuntimeContext.RUNTIME_STATUS_SUCCESS, context.getStatus()); //$NON-NLS-1$
+        Messages.getInstance().getString("BaseTest.USER_RUNNING_ACTION_SEQUENCE"), IRuntimeContext.RUNTIME_STATUS_SUCCESS, context.getStatus()); //$NON-NLS-1$
     if (context != null) {
       // do nothing...
     }
@@ -220,7 +220,7 @@ public class MultipleComponentTest extends BaseTest {
     startTest();
     IRuntimeContext context = run("test", "rules", "CrossTabTest.xaction"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
     assertEquals(
-        Messages.getString("BaseTest.USER_RUNNING_ACTION_SEQUENCE"), IRuntimeContext.RUNTIME_STATUS_SUCCESS, context.getStatus()); //$NON-NLS-1$
+        Messages.getInstance().getString("BaseTest.USER_RUNNING_ACTION_SEQUENCE"), IRuntimeContext.RUNTIME_STATUS_SUCCESS, context.getStatus()); //$NON-NLS-1$
     IActionParameter rtn = context.getOutputParameter("rule-result");//$NON-NLS-1$
     assertNotNull(rtn);
     IPentahoResultSet resultset = (IPentahoResultSet) rtn.getValue();
@@ -269,7 +269,7 @@ public class MultipleComponentTest extends BaseTest {
     IRuntimeContext context = run(
         "test", "reporting/JFreeReportChartTypes", "JFreeReport_Chart_ChartTypes.xaction", parameterProvider, testName, RC_TEST_EXTN); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
     assertEquals(
-        Messages.getString("BaseTest.USER_RUNNING_ACTION_SEQUENCE"), IRuntimeContext.RUNTIME_STATUS_SUCCESS, context.getStatus()); //$NON-NLS-1$
+        Messages.getInstance().getString("BaseTest.USER_RUNNING_ACTION_SEQUENCE"), IRuntimeContext.RUNTIME_STATUS_SUCCESS, context.getStatus()); //$NON-NLS-1$
     InputStream is = this.getInputStreamFromOutput(testName, RC_TEST_EXTN);
     assertNotNull(is);
     try {
@@ -282,7 +282,7 @@ public class MultipleComponentTest extends BaseTest {
     context = run(
         "test", "reporting/JFreeReportChartTypes", "JFreeReport_Chart_ChartTypes.xaction", parameterProvider, testName, RC_TEST_EXTN); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
     assertEquals(
-        Messages.getString("BaseTest.USER_RUNNING_ACTION_SEQUENCE"), IRuntimeContext.RUNTIME_STATUS_SUCCESS, context.getStatus()); //$NON-NLS-1$
+        Messages.getInstance().getString("BaseTest.USER_RUNNING_ACTION_SEQUENCE"), IRuntimeContext.RUNTIME_STATUS_SUCCESS, context.getStatus()); //$NON-NLS-1$
     is = this.getInputStreamFromOutput(testName, RC_TEST_EXTN);
     assertNotNull(is);
     try {
@@ -295,7 +295,7 @@ public class MultipleComponentTest extends BaseTest {
     context = run(
         "test", "reporting/JFreeReportChartTypes", "JFreeReport_Chart_ChartTypes.xaction", parameterProvider, testName, RC_TEST_EXTN); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
     assertEquals(
-        Messages.getString("BaseTest.USER_RUNNING_ACTION_SEQUENCE"), IRuntimeContext.RUNTIME_STATUS_SUCCESS, context.getStatus()); //$NON-NLS-1$
+        Messages.getInstance().getString("BaseTest.USER_RUNNING_ACTION_SEQUENCE"), IRuntimeContext.RUNTIME_STATUS_SUCCESS, context.getStatus()); //$NON-NLS-1$
     is = this.getInputStreamFromOutput(testName, RC_TEST_EXTN);
     assertNotNull(is);
     try {
@@ -308,7 +308,7 @@ public class MultipleComponentTest extends BaseTest {
     context = run(
         "test", "reporting/JFreeReportChartTypes", "JFreeReport_Chart_ChartTypes.xaction", parameterProvider, testName, RC_TEST_EXTN); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
     assertEquals(
-        Messages.getString("BaseTest.USER_RUNNING_ACTION_SEQUENCE"), IRuntimeContext.RUNTIME_STATUS_SUCCESS, context.getStatus()); //$NON-NLS-1$
+        Messages.getInstance().getString("BaseTest.USER_RUNNING_ACTION_SEQUENCE"), IRuntimeContext.RUNTIME_STATUS_SUCCESS, context.getStatus()); //$NON-NLS-1$
     is = this.getInputStreamFromOutput(testName, RC_TEST_EXTN);
     assertNotNull(is);
     try {
@@ -321,7 +321,7 @@ public class MultipleComponentTest extends BaseTest {
     context = run(
         "test", "reporting/JFreeReportChartTypes", "JFreeReport_Chart_ChartTypes.xaction", parameterProvider, testName, RC_TEST_EXTN); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
     assertEquals(
-        Messages.getString("BaseTest.USER_RUNNING_ACTION_SEQUENCE"), IRuntimeContext.RUNTIME_STATUS_SUCCESS, context.getStatus()); //$NON-NLS-1$
+        Messages.getInstance().getString("BaseTest.USER_RUNNING_ACTION_SEQUENCE"), IRuntimeContext.RUNTIME_STATUS_SUCCESS, context.getStatus()); //$NON-NLS-1$
     is = this.getInputStreamFromOutput(testName, RC_TEST_EXTN);
     assertNotNull(is);
     try {
@@ -334,7 +334,7 @@ public class MultipleComponentTest extends BaseTest {
     context = run(
         "test", "reporting/JFreeReportChartTypes", "JFreeReport_Chart_ChartTypes.xaction", parameterProvider, testName, RC_TEST_EXTN); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
     assertEquals(
-        Messages.getString("BaseTest.USER_RUNNING_ACTION_SEQUENCE"), IRuntimeContext.RUNTIME_STATUS_SUCCESS, context.getStatus()); //$NON-NLS-1$
+        Messages.getInstance().getString("BaseTest.USER_RUNNING_ACTION_SEQUENCE"), IRuntimeContext.RUNTIME_STATUS_SUCCESS, context.getStatus()); //$NON-NLS-1$
     is = this.getInputStreamFromOutput(testName, RC_TEST_EXTN);
     assertNotNull(is);
     try {
@@ -347,7 +347,7 @@ public class MultipleComponentTest extends BaseTest {
     context = run(
         "test", "reporting/JFreeReportChartTypes", "JFreeReport_Chart_ChartTypes.xaction", parameterProvider, testName, RC_TEST_EXTN); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
     assertEquals(
-        Messages.getString("BaseTest.USER_RUNNING_ACTION_SEQUENCE"), IRuntimeContext.RUNTIME_STATUS_SUCCESS, context.getStatus()); //$NON-NLS-1$
+        Messages.getInstance().getString("BaseTest.USER_RUNNING_ACTION_SEQUENCE"), IRuntimeContext.RUNTIME_STATUS_SUCCESS, context.getStatus()); //$NON-NLS-1$
     is = this.getInputStreamFromOutput(testName, RC_TEST_EXTN);
     assertNotNull(is);
     try {
@@ -360,7 +360,7 @@ public class MultipleComponentTest extends BaseTest {
     context = run(
         "test", "reporting/JFreeReportChartTypes", "JFreeReport_Chart_ChartTypes.xaction", parameterProvider, testName, RC_TEST_EXTN); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
     assertEquals(
-        Messages.getString("BaseTest.USER_RUNNING_ACTION_SEQUENCE"), IRuntimeContext.RUNTIME_STATUS_SUCCESS, context.getStatus()); //$NON-NLS-1$
+        Messages.getInstance().getString("BaseTest.USER_RUNNING_ACTION_SEQUENCE"), IRuntimeContext.RUNTIME_STATUS_SUCCESS, context.getStatus()); //$NON-NLS-1$
     is = this.getInputStreamFromOutput(testName, RC_TEST_EXTN);
     assertNotNull(is);
     try {
@@ -379,7 +379,7 @@ public class MultipleComponentTest extends BaseTest {
     IRuntimeContext context = run(
         "test", "reporting", "DynamicSQLSample.xaction", parameterProvider, testName, DS_TEST_EXTN); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
     assertEquals(
-        Messages.getString("BaseTest.USER_RUNNING_ACTION_SEQUENCE"), IRuntimeContext.RUNTIME_STATUS_SUCCESS, context.getStatus()); //$NON-NLS-1$
+        Messages.getInstance().getString("BaseTest.USER_RUNNING_ACTION_SEQUENCE"), IRuntimeContext.RUNTIME_STATUS_SUCCESS, context.getStatus()); //$NON-NLS-1$
     // Should have created a Feedback html page in the output.
     InputStream is = this.getInputStreamFromOutput(testName, RC_TEST_EXTN);
     assertNotNull(is);
@@ -417,7 +417,7 @@ public class MultipleComponentTest extends BaseTest {
     String testExt = ".html";//$NON-NLS-1$
     IRuntimeContext context = run("test", "analysis", "query1.xaction", parameterProvider, testName, testExt); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
     assertEquals(
-        Messages.getString("BaseTest.USER_RUNNING_ACTION_SEQUENCE"), IRuntimeContext.RUNTIME_STATUS_SUCCESS, context.getStatus()); //$NON-NLS-1$
+        Messages.getInstance().getString("BaseTest.USER_RUNNING_ACTION_SEQUENCE"), IRuntimeContext.RUNTIME_STATUS_SUCCESS, context.getStatus()); //$NON-NLS-1$
     finishTest();
   }
 
@@ -425,7 +425,7 @@ public class MultipleComponentTest extends BaseTest {
     // The simple runtime is used by the standalone distribution. 
     // This provides some simple tests to exercise the code...
     startTest();
-    StandaloneSession session = new StandaloneSession(Messages.getString("BaseTest.DEBUG_JUNIT_SESSION")); //$NON-NLS-1$
+    StandaloneSession session = new StandaloneSession(Messages.getInstance().getString("BaseTest.DEBUG_JUNIT_SESSION")); //$NON-NLS-1$
     IRuntimeRepository srr = new SimpleRuntimeRepository();
     srr.setSession(session);
     IRuntimeElement ele1 = srr.loadElementById("instanceid", null); //$NON-NLS-1$

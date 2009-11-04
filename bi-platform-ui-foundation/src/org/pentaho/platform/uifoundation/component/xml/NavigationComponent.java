@@ -94,7 +94,7 @@ public class NavigationComponent extends XmlComponent implements INavigationComp
     ISolutionRepository repository = PentahoSystem.get(ISolutionRepository.class, getSession());
 
     if (repository == null) {
-      error(Messages.getErrorString("NavigationComponent.ERROR_0001_BAD_SOLUTION_REPOSITORY")); //$NON-NLS-1$
+      error(Messages.getInstance().getErrorString("NavigationComponent.ERROR_0001_BAD_SOLUTION_REPOSITORY")); //$NON-NLS-1$
       return null;
     }
 

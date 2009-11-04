@@ -89,7 +89,7 @@ public class SimpleRuntimeRepository extends PentahoBase implements IRuntimeRepo
   public IRuntimeElement loadElementById(final String instanceId, final Collection allowableReadAttributeNames)
       throws RepositoryException {
     if (SimpleRuntimeRepository.debug) {
-      debug(Messages.getString("RTREPO.DEBUG_CREATE_INSTANCE", instanceId)); //$NON-NLS-1$
+      debug(Messages.getInstance().getString("RTREPO.DEBUG_CREATE_INSTANCE", instanceId)); //$NON-NLS-1$
     }
     SimpleRuntimeElement re = new SimpleRuntimeElement(instanceId);
     return re;
@@ -107,11 +107,11 @@ public class SimpleRuntimeRepository extends PentahoBase implements IRuntimeRepo
    */
   public IRuntimeElement newRuntimeElement(final String parId, final String parType, final boolean transientOnly) {
     if (SimpleRuntimeRepository.debug) {
-      debug(Messages.getString("RTREPO.DEBUG_NEW_ELEMENT_PARENT", parId, parType)); //$NON-NLS-1$
+      debug(Messages.getInstance().getString("RTREPO.DEBUG_NEW_ELEMENT_PARENT", parId, parType)); //$NON-NLS-1$
     }
     String instanceId = UUIDUtil.getUUIDAsString();
     if (SimpleRuntimeRepository.debug) {
-      debug(Messages.getString("RTREPO.DEBUG_CREATE_INSTANCE", instanceId)); //$NON-NLS-1$
+      debug(Messages.getInstance().getString("RTREPO.DEBUG_CREATE_INSTANCE", instanceId)); //$NON-NLS-1$
     }
     SimpleRuntimeElement re = new SimpleRuntimeElement(instanceId, parId, parType);
     return re;
@@ -132,11 +132,11 @@ public class SimpleRuntimeRepository extends PentahoBase implements IRuntimeRepo
   public IRuntimeElement newRuntimeElement(final String parId, final String parType, final String solnId,
       final boolean transientOnly) {
     if (SimpleRuntimeRepository.debug) {
-      debug(Messages.getString("RTREPO.DEBUG_NEW_ELEMENT_PARENT_SOLN", parId, parType, solnId)); //$NON-NLS-1$
+      debug(Messages.getInstance().getString("RTREPO.DEBUG_NEW_ELEMENT_PARENT_SOLN", parId, parType, solnId)); //$NON-NLS-1$
     }
     String instanceId = UUIDUtil.getUUIDAsString();
     if (SimpleRuntimeRepository.debug) {
-      debug(Messages.getString("RTREPO.DEBUG_CREATE_INSTANCE", instanceId)); //$NON-NLS-1$
+      debug(Messages.getInstance().getString("RTREPO.DEBUG_CREATE_INSTANCE", instanceId)); //$NON-NLS-1$
     }
     SimpleRuntimeElement re = new SimpleRuntimeElement(instanceId, parId, parType, solnId);
     return re;

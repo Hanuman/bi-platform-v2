@@ -61,7 +61,7 @@ public class JFreeReportExcelComponent extends AbstractGenerateStreamContentComp
           final InputStream inputStream = getInputStream(AbstractJFreeReportComponent.WORKBOOK_PARAM);
           target.setTemplateInputStream(inputStream);
         } catch (Exception e) {
-          error(Messages.getString("JFreeReportExcelComponent.ERROR_0037_ERROR_READING_REPORT_INPUT"), e); //$NON-NLS-1$
+          error(Messages.getInstance().getString("JFreeReportExcelComponent.ERROR_0037_ERROR_READING_REPORT_INPUT"), e); //$NON-NLS-1$
           return false;
         }
       }

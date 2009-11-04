@@ -134,9 +134,9 @@ public class TestManager extends PentahoBase {
     // TODO find out the JDBC driver for the Sample Data connection
 
     // TODO find out the JDBC driver for the Hibernate connection
-    sampleDataDriver = Messages.getString("UI.USER_TEST_SUITE_UNKNOWN"); //$NON-NLS-1$
+    sampleDataDriver = Messages.getInstance().getString("UI.USER_TEST_SUITE_UNKNOWN"); //$NON-NLS-1$
 
-    hibernateDriver = Messages.getString("UI.USER_TEST_SUITE_UNKNOWN"); //$NON-NLS-1$
+    hibernateDriver = Messages.getInstance().getString("UI.USER_TEST_SUITE_UNKNOWN"); //$NON-NLS-1$
 
   }
 
@@ -164,7 +164,7 @@ public class TestManager extends PentahoBase {
 
     // add some standard settings
     Element propertyNode = propertiesNode.addElement("property"); //$NON-NLS-1$
-    propertyNode.addAttribute("name", Messages.getString("UI.USER_TEST_SUITE_SOLUTION_REPOSITORY")); //$NON-NLS-1$ //$NON-NLS-2$
+    propertyNode.addAttribute("name", Messages.getInstance().getString("UI.USER_TEST_SUITE_SOLUTION_REPOSITORY")); //$NON-NLS-1$ //$NON-NLS-2$
     propertyNode.addAttribute("value", PentahoSystem.get(ISolutionRepository.class, userSession).getClass().toString()); //$NON-NLS-1$
 
     propertyNode = propertiesNode.addElement("property"); //$NON-NLS-1$
@@ -283,7 +283,7 @@ public class TestManager extends PentahoBase {
     public void stop() {
       result.stop();
       status = NOT_RUNNING;
-      message = Messages.getString("UI.USER_TEST_SUITE_STOPPED"); //$NON-NLS-1$
+      message = Messages.getInstance().getString("UI.USER_TEST_SUITE_STOPPED"); //$NON-NLS-1$
     }
 
     public void addError(Test test, Throwable error) {
@@ -292,7 +292,7 @@ public class TestManager extends PentahoBase {
       status = FAIL;
       TestInfo testInfo = testMap.get(test);
       testInfo.addError(error);
-      message = Messages.getString("UI.USER_TEST_SUITE_FAILED"); //$NON-NLS-1$
+      message = Messages.getInstance().getString("UI.USER_TEST_SUITE_FAILED"); //$NON-NLS-1$
     }
 
     public void addFailure(Test test, AssertionFailedError error) {
@@ -301,7 +301,7 @@ public class TestManager extends PentahoBase {
       status = FAIL;
       TestInfo testInfo = testMap.get(test);
       testInfo.addFailure(error);
-      message = Messages.getString("UI.USER_TEST_SUITE_FAILED"); //$NON-NLS-1$
+      message = Messages.getInstance().getString("UI.USER_TEST_SUITE_FAILED"); //$NON-NLS-1$
     }
 
     public void endTest(Test test) {
@@ -318,7 +318,7 @@ public class TestManager extends PentahoBase {
       runCount++;
       TestInfo testInfo = testMap.get(test);
       testInfo.startTest();
-      message = Messages.getString("UI.USER_TEST_SUITE_RUNNING"); //$NON-NLS-1$
+      message = Messages.getInstance().getString("UI.USER_TEST_SUITE_RUNNING"); //$NON-NLS-1$
     }
 
     public Node getStatus(Element parent) {
@@ -348,13 +348,13 @@ public class TestManager extends PentahoBase {
         }
       }
       if (currentRunCount == 0) {
-        message = Messages.getString("UI.USER_TEST_SUITE_NOT_RUN"); //$NON-NLS-1$
+        message = Messages.getInstance().getString("UI.USER_TEST_SUITE_NOT_RUN"); //$NON-NLS-1$
       } else if (currentRunCount == currentPassCount && currentRunCount < testCount) {
-        message = Messages.getString("UI.USER_TEST_SUITE_SOME_PASSED"); //$NON-NLS-1$
+        message = Messages.getInstance().getString("UI.USER_TEST_SUITE_SOME_PASSED"); //$NON-NLS-1$
       } else if (currentRunCount == currentPassCount && currentRunCount == testCount) {
-        message = Messages.getString("UI.USER_TEST_SUITE_ALL_PASSED"); //$NON-NLS-1$
+        message = Messages.getInstance().getString("UI.USER_TEST_SUITE_ALL_PASSED"); //$NON-NLS-1$
       } else if (currentFailCount > 0) {
-        message = Messages.getString("UI.USER_TEST_SUITE_SOME_FAILURES"); //$NON-NLS-1$
+        message = Messages.getInstance().getString("UI.USER_TEST_SUITE_SOME_FAILURES"); //$NON-NLS-1$
       }
       messageNode.setText((message == null) ? "" : message); //$NON-NLS-1$
       return node;
@@ -410,7 +410,7 @@ public class TestManager extends PentahoBase {
       testName = testName.substring(0, testName.indexOf('('));
       methodName = testName;
       name = testName.substring(4);
-      message = Messages.getString("UI.USER_TEST_SUITE_NOT_RUN"); //$NON-NLS-1$
+      message = Messages.getInstance().getString("UI.USER_TEST_SUITE_NOT_RUN"); //$NON-NLS-1$
       result = new TestResult();
       result.addListener(this);
     }
@@ -459,7 +459,7 @@ public class TestManager extends PentahoBase {
         Date now = new Date();
         duration = (now.getTime() - timestamp.getTime());
         lastResult = PASS;
-        message = Messages.getString("UI.USER_TEST_SUITE_PASSED"); //$NON-NLS-1$
+        message = Messages.getInstance().getString("UI.USER_TEST_SUITE_PASSED"); //$NON-NLS-1$
       } else {
         lastResult = FAIL;
       }
@@ -473,7 +473,7 @@ public class TestManager extends PentahoBase {
     public void startTest() {
       runCount++;
       status = RUNNING;
-      message = Messages.getString("UI.USER_TEST_SUITE_RUNNING"); //$NON-NLS-1$
+      message = Messages.getInstance().getString("UI.USER_TEST_SUITE_RUNNING"); //$NON-NLS-1$
       timestamp = new Date();
     }
 
@@ -483,7 +483,7 @@ public class TestManager extends PentahoBase {
       node.addAttribute("name", name); //$NON-NLS-1$
       node
           .addAttribute(
-              "last-run", (timestamp == null) ? Messages.getString("UI.USER_TEST_SUITE_UNKNOWN") : DateFormat.getDateTimeInstance().format(timestamp)); //$NON-NLS-1$ //$NON-NLS-2$
+              "last-run", (timestamp == null) ? Messages.getInstance().getString("UI.USER_TEST_SUITE_UNKNOWN") : DateFormat.getDateTimeInstance().format(timestamp)); //$NON-NLS-1$ //$NON-NLS-2$
       node.addAttribute("run-count", Integer.toString(runCount)); //$NON-NLS-1$
       node.addAttribute("pass-count", Integer.toString(passCount)); //$NON-NLS-1$
       node.addAttribute("fail-count", Integer.toString(errorCount + failCount)); //$NON-NLS-1$

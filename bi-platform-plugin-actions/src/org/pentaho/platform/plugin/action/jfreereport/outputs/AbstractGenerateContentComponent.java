@@ -49,7 +49,7 @@ public abstract class AbstractGenerateContentComponent extends AbstractJFreeRepo
   @Override
   protected boolean validateAction() {
     if (!(isDefinedInput(AbstractJFreeReportComponent.DATACOMPONENT_REPORTTEMP_OBJINPUT))) {
-      warn(Messages.getString("AbstractGenerateContentComponent.JFreeReport.ERROR_0038_NO_REPORT_OBJECT_INPUT")); //$NON-NLS-1$
+      warn(Messages.getInstance().getString("AbstractGenerateContentComponent.JFreeReport.ERROR_0038_NO_REPORT_OBJECT_INPUT")); //$NON-NLS-1$
       return false;
     }
 
@@ -58,10 +58,10 @@ public abstract class AbstractGenerateContentComponent extends AbstractJFreeRepo
       if (inputValue instanceof Number) {
         final Number n = (Number) inputValue;
         if (n.intValue() < 0) {
-          warn(Messages.getString("AbstractGenerateContentComponent.JFreeReport.ERROR_0040_YIELD_RATE_POSITIVE")); //$NON-NLS-1$
+          warn(Messages.getInstance().getString("AbstractGenerateContentComponent.JFreeReport.ERROR_0040_YIELD_RATE_POSITIVE")); //$NON-NLS-1$
         }
       } else {
-        warn(Messages.getString("AbstractGenerateContentComponent.JFreeReport.ERROR_0041_YIELD_RATE_NUMERIC")); //$NON-NLS-1$
+        warn(Messages.getInstance().getString("AbstractGenerateContentComponent.JFreeReport.ERROR_0041_YIELD_RATE_NUMERIC")); //$NON-NLS-1$
         return false;
       }
     }
@@ -70,7 +70,7 @@ public abstract class AbstractGenerateContentComponent extends AbstractJFreeRepo
       if ( ( !(AbstractJFreeReportComponent.REPORTGENERATE_PRIORITYNORMAL.equals(inputValue)) )
           && ( !(AbstractJFreeReportComponent.REPORTGENERATE_PRIORITYLOWER.equals(inputValue)) )
           && ( !(AbstractJFreeReportComponent.REPORTGENERATE_PRIORITYLOWEST.equals(inputValue)) )) {
-        warn(Messages.getString("AbstractGenerateContentComponent.JFreeReport.ERROR_0042_PRIORITY_MUST_BE")); //$NON-NLS-1$
+        warn(Messages.getInstance().getString("AbstractGenerateContentComponent.JFreeReport.ERROR_0042_PRIORITY_MUST_BE")); //$NON-NLS-1$
       }
     }
     return true;
@@ -93,7 +93,7 @@ public abstract class AbstractGenerateContentComponent extends AbstractJFreeRepo
   protected boolean executeAction() throws Throwable {
 	  MasterReport report = getReport();
     if (report == null) {
-      warn(Messages.getString("AbstractGenerateContentComponent.JFreeReport.ERROR_0043_NO_REPORT_FOR_ACTION")); //$NON-NLS-1$
+      warn(Messages.getInstance().getString("AbstractGenerateContentComponent.JFreeReport.ERROR_0043_NO_REPORT_FOR_ACTION")); //$NON-NLS-1$
       return false;
     }
 
@@ -131,7 +131,7 @@ public abstract class AbstractGenerateContentComponent extends AbstractJFreeRepo
         }
       } catch (Exception e) {
         // Non fatal exception.
-        warn(Messages
+        warn(Messages.getInstance()
             .getString("AbstractGenerateContentComponent.JFreeReport.ERROR_0044_UNABLE_T0_SET_THREAD_PRIORITY")); //$NON-NLS-1$
       }
     }

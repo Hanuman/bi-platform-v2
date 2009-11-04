@@ -51,7 +51,7 @@
           footer = sections[1];
         }
       } else {
-        intro = Messages.getString("UI.ERROR_0002_BAD_TEMPLATE_OBJECT");
+        intro = Messages.getInstance().getString("UI.ERROR_0002_BAD_TEMPLATE_OBJECT");
       }
 
       List<MondrianCatalog> catalogs = MondrianCatalogHelper.getInstance().listCatalogs(
@@ -164,7 +164,7 @@
  %> </span> <%
  if (catalogs == null || catalogs.size() == 0) {
  %> <br />
-		<span style="text-align:center"> <%=Messages.getString("UI.ANALYSIS_VIEW.NO_CATALOGS_MESSAGE")%>
+		<span style="text-align:center"> <%=Messages.getInstance().getString("UI.ANALYSIS_VIEW.NO_CATALOGS_MESSAGE")%>
 		</span> <%
  } else {
  %>
@@ -186,7 +186,7 @@
 				<table width="100%" border='0' cellpadding='1' cellspacing='1'
 					style="background-color:#dddddd">
 					<tr>
-						<td><%=Messages.getString("UI.ANALYSIS_VIEW.TITLE")%></td>
+						<td><%=Messages.getInstance().getString("UI.ANALYSIS_VIEW.TITLE")%></td>
 					</tr>
 					<tr>
 						<td><input type="text" name="name" style="width:100%"
@@ -194,7 +194,7 @@
 						</td>
 					</tr>
 					<tr>
-						<td><%=Messages.getString("UI.ANALYSIS_VIEW.DESCRIPTION")%>
+						<td><%=Messages.getInstance().getString("UI.ANALYSIS_VIEW.DESCRIPTION")%>
 						</td>
 					</tr>
 					<tr>
@@ -204,7 +204,7 @@
 					</tr>
 
 					<tr>
-						<td><%=Messages.getString("UI.ANALYSIS_VIEW.FILENAME")%></td>
+						<td><%=Messages.getInstance().getString("UI.ANALYSIS_VIEW.FILENAME")%></td>
 					</tr>
 					<tr>
 						<td><input type="text" name="actionName" style="width:100%"
@@ -238,7 +238,7 @@
 										<td id="saveDlgWherePrompt" colspan="2"></td>
 									</tr>
 									<tr>
-										<td style="white-space: nowrap"><%=Messages.getString("UI.ANALYSIS_VIEW.WHERE")%></td>
+										<td style="white-space: nowrap"><%=Messages.getInstance().getString("UI.ANALYSIS_VIEW.WHERE")%></td>
 										<td width="100%">
 										<table style='width:100%;' border="0" cellspacing="0"
 											cellpadding="0">
@@ -252,7 +252,7 @@
 										</td>
 									</tr>
 									<tr style="display:none">
-										<td id="saveDlgSelectSltnTitle" colspan='2'><%=Messages.getString("UI.ANALYSIS_VIEW.SELECT_SOLUTION")%></td>
+										<td id="saveDlgSelectSltnTitle" colspan='2'><%=Messages.getInstance().getString("UI.ANALYSIS_VIEW.SELECT_SOLUTION")%></td>
 									</tr>
 									<tr>
 										<td id="browser.solutionFolderListTd" height="100%"
@@ -284,7 +284,7 @@
 				<table border='0' cellpadding='1' cellspacing='1'
 					style="background-color:#dddddd">
 					<tr>
-						<td><%=Messages.getString("UI.ANALYSIS_VIEW.SCHEMA")%></td>
+						<td><%=Messages.getInstance().getString("UI.ANALYSIS_VIEW.SCHEMA")%></td>
 					</tr>
 					<tr>
 						<td><select id="schemas" name="schema" style="width:350"
@@ -301,7 +301,7 @@
 												</script></td>
 					</tr>
 					<tr>
-						<td><%=Messages.getString("UI.ANALYSIS_VIEW.CUBE")%></td>
+						<td><%=Messages.getInstance().getString("UI.ANALYSIS_VIEW.CUBE")%></td>
 					</tr>
 					<tr>
 						<td><select style="width:350" id="cubes" name="cube" />

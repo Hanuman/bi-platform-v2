@@ -72,11 +72,11 @@ public class AuditConnection {
     
     String tmp = PentahoSystem.getSystemSetting(auditConfigFile, "auditConnection/driverURL", null);//$NON-NLS-1$
     DRIVER_URL = (tmp !=null) ? tmp:
-      PentahoSystem.getSystemSetting("auditConnection/driverURL", Messages.getString("AUDCONN.CODE_DEFAULT_CONNECT_URL"));//$NON-NLS-1$ //$NON-NLS-2$
+      PentahoSystem.getSystemSetting("auditConnection/driverURL", Messages.getInstance().getString("AUDCONN.CODE_DEFAULT_CONNECT_URL"));//$NON-NLS-1$ //$NON-NLS-2$
 
     tmp = PentahoSystem.getSystemSetting(auditConfigFile, "auditConnection/driverCLASS", null);//$NON-NLS-1$
     DRIVER_CLASS = (tmp !=null) ? tmp: 
-      PentahoSystem.getSystemSetting("auditConnection/driverCLASS", Messages.getString("AUDCONN.CODE_DEFAULT_CONNECT_DRIVER"));//$NON-NLS-1$ //$NON-NLS-2$
+      PentahoSystem.getSystemSetting("auditConnection/driverCLASS", Messages.getInstance().getString("AUDCONN.CODE_DEFAULT_CONNECT_DRIVER"));//$NON-NLS-1$ //$NON-NLS-2$
       
     tmp = PentahoSystem.getSystemSetting(auditConfigFile, "auditConnection/userid", null);//$NON-NLS-1$
     DRIVER_USERID = (tmp !=null) ? tmp:  
@@ -99,26 +99,26 @@ public class AuditConnection {
         IDatasourceService datasourceService = getDatasourceService(); 
         auditDs = datasourceService.getDataSource(AuditConnection.AUDIT_JNDI);
         if (auditDs != null) {
-          AuditConnection.logger.debug(Messages.getString(
+          AuditConnection.logger.debug(Messages.getInstance().getString(
               "AUDCONN.DEBUG_LOOKUP_FOUND_CLASS", auditDs.getClass().getName())); //$NON-NLS-1$
         }
       } catch (Exception dsException) {
         AuditConnection.logger.error(
-            Messages.getErrorString("AUDCONN.ERROR_0001_COULD_NOT_GET_DATASOURCE"), dsException); //$NON-NLS-1$
+            Messages.getInstance().getErrorString("AUDCONN.ERROR_0001_COULD_NOT_GET_DATASOURCE"), dsException); //$NON-NLS-1$
       }
       if (auditDs != null) {
         initialized = true;
       } else {
         try {
-          AuditConnection.logger.warn(Messages.getString("AUDCONN.WARN_FALLING_BACK_TO_DRIVERMGR")); //$NON-NLS-1$
+          AuditConnection.logger.warn(Messages.getInstance().getString("AUDCONN.WARN_FALLING_BACK_TO_DRIVERMGR")); //$NON-NLS-1$
           Class.forName(DRIVER_CLASS).newInstance();
           initialized = true;
         } catch (IllegalAccessException ex) {
-          AuditConnection.logger.error(Messages.getErrorString("AUDCONN.ERROR_0002_INSTANCE_DRIVER"), ex); //$NON-NLS-1$
+          AuditConnection.logger.error(Messages.getInstance().getErrorString("AUDCONN.ERROR_0002_INSTANCE_DRIVER"), ex); //$NON-NLS-1$
         } catch (ClassNotFoundException cfe) {
-          AuditConnection.logger.error(Messages.getErrorString("AUDCONN.ERROR_0002_INSTANCE_DRIVER"), cfe); //$NON-NLS-1$          
+          AuditConnection.logger.error(Messages.getInstance().getErrorString("AUDCONN.ERROR_0002_INSTANCE_DRIVER"), cfe); //$NON-NLS-1$          
         } catch (InstantiationException ie) {
-          AuditConnection.logger.error(Messages.getErrorString("AUDCONN.ERROR_0002_INSTANCE_DRIVER"), ie); //$NON-NLS-1$          
+          AuditConnection.logger.error(Messages.getInstance().getErrorString("AUDCONN.ERROR_0002_INSTANCE_DRIVER"), ie); //$NON-NLS-1$          
         }
       }
     }
@@ -186,7 +186,7 @@ public class AuditConnection {
         }
         return con;
       } catch (SQLException ex) {
-        AuditConnection.logger.warn(Messages.getString("AuditConnection.WARN_0001_CONNECTION_ATTEMPT_FAILED", "" //$NON-NLS-1$ //$NON-NLS-2$
+        AuditConnection.logger.warn(Messages.getInstance().getString("AuditConnection.WARN_0001_CONNECTION_ATTEMPT_FAILED", "" //$NON-NLS-1$ //$NON-NLS-2$
             + sleepTime[i]));
       }
     }

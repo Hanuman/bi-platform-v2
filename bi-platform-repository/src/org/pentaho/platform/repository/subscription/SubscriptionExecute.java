@@ -99,7 +99,7 @@ public class SubscriptionExecute extends PentahoBase {
       ISubscriptionRepository subscriptionRepository = PentahoSystem.get(ISubscriptionRepository.class, scheduleSession);
       ISchedule sched = subscriptionRepository.getScheduleByScheduleReference(scheduleReference);
       if (sched == null) {
-        error(Messages.getErrorString("SubscriptionExecute.ERROR_0001_UNABLE_TO_GET_SCHEDULE", scheduleReference)); //$NON-NLS-1$
+        error(Messages.getInstance().getErrorString("SubscriptionExecute.ERROR_0001_UNABLE_TO_GET_SCHEDULE", scheduleReference)); //$NON-NLS-1$
         return;
       }
 
@@ -143,7 +143,7 @@ public class SubscriptionExecute extends PentahoBase {
           }
           paramMap.put("SUB_SCHEDULE_REPEAT_TIME", sched.getRepeatInterval()); //$NON-NLS-1$
         } else {
-          throw new IllegalStateException( Messages.getErrorString( "SubscriptionExecute.ERROR_0005_INVALID_CRON_OR_REPEAT", sched.getId() ) ); //$NON-NLS-1$
+          throw new IllegalStateException( Messages.getInstance().getErrorString( "SubscriptionExecute.ERROR_0005_INVALID_CRON_OR_REPEAT", sched.getId() ) ); //$NON-NLS-1$
         }
         DateFormat fmt = SubscriptionHelper.getDateTimeFormatter();
         Date d = sched.getStartDate();
@@ -171,9 +171,9 @@ public class SubscriptionExecute extends PentahoBase {
         try {
           SubscriptionRepositoryHelper.deleteScheduleContentAndSubscription(subscriptionRepository, sched );
         } catch (SubscriptionRepositoryCheckedException e) {
-          logger.error( Messages.getErrorString( "SubscriptionExecute.ERROR_0004_SCHEDULE_DELETE_FAILED", scheduleReference ), e ); //$NON-NLS-1$
+          logger.error( Messages.getInstance().getErrorString( "SubscriptionExecute.ERROR_0004_SCHEDULE_DELETE_FAILED", scheduleReference ), e ); //$NON-NLS-1$
         } catch (SubscriptionSchedulerException e) {
-          logger.error( Messages.getErrorString( "SubscriptionExecute.ERROR_0004_SCHEDULE_DELETE_FAILED", scheduleReference ), e ); //$NON-NLS-1$
+          logger.error( Messages.getInstance().getErrorString( "SubscriptionExecute.ERROR_0004_SCHEDULE_DELETE_FAILED", scheduleReference ), e ); //$NON-NLS-1$
         }
       }
     } finally {
@@ -187,7 +187,7 @@ public class SubscriptionExecute extends PentahoBase {
       logId = "Pro Subscription:" + jobName; //$NON-NLS-1$
 
       Date now = new Date();
-      SubscriptionExecute.logger.info(Messages.getString("SubscriptionExecute.INFO_TRIGGER_TIME", jobName, //$NON-NLS-1$ 
+      SubscriptionExecute.logger.info(Messages.getInstance().getString("SubscriptionExecute.INFO_TRIGGER_TIME", jobName, //$NON-NLS-1$ 
           DateFormat.getDateInstance().format(now), DateFormat.getTimeInstance().format(now)));
 
       String solutionName = (String) parametersMap.get("solution"); //$NON-NLS-1$
@@ -198,20 +198,20 @@ public class SubscriptionExecute extends PentahoBase {
       String processId = this.getClass().getName();
 
       if (solutionName == null) {
-        error(Messages.getErrorString("SubscriptionExecute.ERROR_0001_SOLUTION_NAME_MISSING")); //$NON-NLS-1$
+        error(Messages.getInstance().getErrorString("SubscriptionExecute.ERROR_0001_SOLUTION_NAME_MISSING")); //$NON-NLS-1$
         return;
       }
       if (actionPath == null) {
-        error(Messages.getErrorString("SubscriptionExecute.ERROR_0002_ACTION_PATH_MISSING")); //$NON-NLS-1$
+        error(Messages.getInstance().getErrorString("SubscriptionExecute.ERROR_0002_ACTION_PATH_MISSING")); //$NON-NLS-1$
         return;
       }
       if (actionName == null) {
-        error(Messages.getErrorString("SubscriptionExecute.ERROR_0003_ACTION_NAME_MISSING")); //$NON-NLS-1$
+        error(Messages.getInstance().getErrorString("SubscriptionExecute.ERROR_0003_ACTION_NAME_MISSING")); //$NON-NLS-1$
         return;
       }
       if (SubscriptionExecute.debug) {
         if (SubscriptionExecute.debug) {
-          debug(Messages.getString(
+          debug(Messages.getInstance().getString(
               "SubscriptionExecute.DEBUG_EXECUTION_INFO", solutionName + "/" + actionPath + "/" + actionName)); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
         }
       }
@@ -288,21 +288,21 @@ public class SubscriptionExecute extends PentahoBase {
           generator.createContent();
           // we succeeded
           if (!ignoreSubscriptionOutput && !outputHandler.contentDone()) {
-            String message = Messages.getString("SubscriptionExecute.DEBUG_FINISHED_EXECUTION", jobName); //$NON-NLS-1$
+            String message = Messages.getInstance().getString("SubscriptionExecute.DEBUG_FINISHED_EXECUTION", jobName); //$NON-NLS-1$
             writeMessage( message.toString(), outputHandler, subscriptionName, solutionName, actionName, instanceId, userSession );
           }
         } catch (Exception e) {
           e.printStackTrace();
           // we need an error message...
           if (!ignoreSubscriptionOutput && !outputHandler.contentDone()) {
-            String message = Messages.getString("PRO_SUBSCRIPTREP.EXCEPTION_WITH_SCHEDULE", jobName); //$NON-NLS-1$
+            String message = Messages.getInstance().getString("PRO_SUBSCRIPTREP.EXCEPTION_WITH_SCHEDULE", jobName); //$NON-NLS-1$
             writeMessage( message.toString(), outputHandler, subscriptionName, solutionName, actionName, instanceId, userSession );
           }
         }
         
       }
       if (SubscriptionExecute.debug) {
-        SubscriptionExecute.logger.debug(Messages.getString("SubscriptionExecute.DEBUG_FINISHED_EXECUTION", jobName)); //$NON-NLS-1$
+        SubscriptionExecute.logger.debug(Messages.getInstance().getString("SubscriptionExecute.DEBUG_FINISHED_EXECUTION", jobName)); //$NON-NLS-1$
       }
     } catch (Throwable t) {
       SubscriptionExecute.logger.error("Error Executing Job", t); //$NON-NLS-1$

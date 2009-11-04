@@ -49,7 +49,7 @@ public abstract class PentahoMessenger extends PentahoBase {
   public void trace(final String message) {
     if (loggingLevel <= ILogger.TRACE) {
       if (messages != null) {
-        messages.add(Messages.getString("Message.USER_DEBUG", message, getClass().getName()));  //$NON-NLS-1$
+        messages.add(Messages.getInstance().getString("Message.USER_DEBUG", message, getClass().getName()));  //$NON-NLS-1$
       }
       super.trace(message);
     }
@@ -59,7 +59,7 @@ public abstract class PentahoMessenger extends PentahoBase {
   public void debug(final String message) {
     if (loggingLevel <= ILogger.DEBUG) {
       if (messages != null) {
-        messages.add(Messages.getString("Message.USER_DEBUG", message, getClass().getName()));  //$NON-NLS-1$
+        messages.add(Messages.getInstance().getString("Message.USER_DEBUG", message, getClass().getName()));  //$NON-NLS-1$
       }
       super.debug(message);
     }
@@ -69,7 +69,7 @@ public abstract class PentahoMessenger extends PentahoBase {
   public void info(final String message) {
     if (loggingLevel <= ILogger.INFO) {
       if (messages != null) {
-        messages.add(Messages.getString("Message.USER_INFO", message, getClass().getName()));  //$NON-NLS-1$
+        messages.add(Messages.getInstance().getString("Message.USER_INFO", message, getClass().getName()));  //$NON-NLS-1$
       }
       super.info(message);
     }
@@ -79,7 +79,7 @@ public abstract class PentahoMessenger extends PentahoBase {
   public void warn(final String message) {
     if (loggingLevel <= ILogger.WARN) {
       if (messages != null) {
-        messages.add(Messages.getString("Message.USER_WARNING", message, getClass().getName()));  //$NON-NLS-1$
+        messages.add(Messages.getInstance().getString("Message.USER_WARNING", message, getClass().getName()));  //$NON-NLS-1$
       }
       super.warn(message);
     }
@@ -93,23 +93,23 @@ public abstract class PentahoMessenger extends PentahoBase {
       }
       CharArrayWriter charWriter = new CharArrayWriter();
       PrintWriter printWriter = new PrintWriter(charWriter);
-      printWriter.println(getLogId() + Messages.getString("MessageFormatter.ACTION_SEQUENCE_EXECUTION_FAILED")); //$NON-NLS-1$
-      printWriter.println(Messages.getString("MessageFormatter.LOG_EXCEPTION_TIME", dateFormat.format(exception.getDate())));  //$NON-NLS-1$
-      printWriter.println(Messages.getString("MessageFormatter.LOG_EXCEPTION_SESSION_ID", (exception.getSessionId() == null ? "" : exception.getSessionId())));   //$NON-NLS-1$ //$NON-NLS-2$
-      printWriter.println(Messages.getString("MessageFormatter.LOG_EXCEPTION_INSTANCE_ID", (exception.getInstanceId() == null ? "" : exception.getInstanceId()))); //$NON-NLS-1$ //$NON-NLS-2$
-      printWriter.println(Messages.getString("MessageFormatter.LOG_EXCEPTION_ACTION_SEQUENCE", (exception.getActionSequenceName() == null ? "" : exception.getActionSequenceName()))); //$NON-NLS-1$ //$NON-NLS-2$
+      printWriter.println(getLogId() + Messages.getInstance().getString("MessageFormatter.ACTION_SEQUENCE_EXECUTION_FAILED")); //$NON-NLS-1$
+      printWriter.println(Messages.getInstance().getString("MessageFormatter.LOG_EXCEPTION_TIME", dateFormat.format(exception.getDate())));  //$NON-NLS-1$
+      printWriter.println(Messages.getInstance().getString("MessageFormatter.LOG_EXCEPTION_SESSION_ID", (exception.getSessionId() == null ? "" : exception.getSessionId())));   //$NON-NLS-1$ //$NON-NLS-2$
+      printWriter.println(Messages.getInstance().getString("MessageFormatter.LOG_EXCEPTION_INSTANCE_ID", (exception.getInstanceId() == null ? "" : exception.getInstanceId()))); //$NON-NLS-1$ //$NON-NLS-2$
+      printWriter.println(Messages.getInstance().getString("MessageFormatter.LOG_EXCEPTION_ACTION_SEQUENCE", (exception.getActionSequenceName() == null ? "" : exception.getActionSequenceName()))); //$NON-NLS-1$ //$NON-NLS-2$
       
-      printWriter.println(Messages.getString("MessageFormatter.LOG_EXCEPTION_ACTION_SEQUENCE_EXECUTION_STACK")); //$NON-NLS-1$
+      printWriter.println(Messages.getInstance().getString("MessageFormatter.LOG_EXCEPTION_ACTION_SEQUENCE_EXECUTION_STACK")); //$NON-NLS-1$
       exception.printActionExecutionStack(printWriter);
       
-      printWriter.println(Messages.getString("MessageFormatter.LOG_EXCEPTION_ACTION_CLASS", (exception.getActionClass() == null ? Messages.getString("MessageFormatter.EXCEPTION_FIELD_NOT_APPLICABLE") : exception.getActionClass()))); //$NON-NLS-1$ //$NON-NLS-2$
-      printWriter.println(Messages.getString("MessageFormatter.LOG_EXCEPTION_ACTION_DESC", (exception.getStepDescription() == null ? "" : exception.getStepDescription()))); //$NON-NLS-1$ //$NON-NLS-2$
-      printWriter.println(Messages.getString("MessageFormatter.LOG_EXCEPTION_LOOP_INDEX", (exception.getLoopIndex() == null ? Messages.getString("MessageFormatter.EXCEPTION_FIELD_NOT_APPLICABLE") : exception.getLoopIndex().toString()))); //$NON-NLS-1$ //$NON-NLS-2$
+      printWriter.println(Messages.getInstance().getString("MessageFormatter.LOG_EXCEPTION_ACTION_CLASS", (exception.getActionClass() == null ? Messages.getInstance().getString("MessageFormatter.EXCEPTION_FIELD_NOT_APPLICABLE") : exception.getActionClass()))); //$NON-NLS-1$ //$NON-NLS-2$
+      printWriter.println(Messages.getInstance().getString("MessageFormatter.LOG_EXCEPTION_ACTION_DESC", (exception.getStepDescription() == null ? "" : exception.getStepDescription()))); //$NON-NLS-1$ //$NON-NLS-2$
+      printWriter.println(Messages.getInstance().getString("MessageFormatter.LOG_EXCEPTION_LOOP_INDEX", (exception.getLoopIndex() == null ? Messages.getInstance().getString("MessageFormatter.EXCEPTION_FIELD_NOT_APPLICABLE") : exception.getLoopIndex().toString()))); //$NON-NLS-1$ //$NON-NLS-2$
 
       //STEP_NUM isn't working yet
-//      printWriter.println(Messages.getString("MessageFormatter.LOG_EXCEPTION_STEP_NUM", (exception.getStepNumber() == null ? Messages.getString("MessageFormatter.EXCEPTION_FIELD_NOT_APPLICABLE") : exception.getStepNumber().toString()))); //$NON-NLS-1$ //$NON-NLS-2$
+//      printWriter.println(Messages.getInstance().getString("MessageFormatter.LOG_EXCEPTION_STEP_NUM", (exception.getStepNumber() == null ? Messages.getInstance().getString("MessageFormatter.EXCEPTION_FIELD_NOT_APPLICABLE") : exception.getStepNumber().toString()))); //$NON-NLS-1$ //$NON-NLS-2$
       
-      printWriter.print(Messages.getString("MessageFormatter.EXCEPTION_STACK_TRACE")); //$NON-NLS-1$
+      printWriter.print(Messages.getInstance().getString("MessageFormatter.EXCEPTION_STACK_TRACE")); //$NON-NLS-1$
       exception.printStackTrace(printWriter);
       getLogger().error(charWriter.toString());
     }
@@ -119,7 +119,7 @@ public abstract class PentahoMessenger extends PentahoBase {
   public void error(final String message) {
     if (loggingLevel <= ILogger.ERROR) {
       if (messages != null) {
-        messages.add(Messages.getString("Message.USER_ERROR", message, getClass().getName())); //$NON-NLS-1$
+        messages.add(Messages.getInstance().getString("Message.USER_ERROR", message, getClass().getName())); //$NON-NLS-1$
       }
       super.error(message);
     }
@@ -129,7 +129,7 @@ public abstract class PentahoMessenger extends PentahoBase {
   public void fatal(final String message) {
     if (loggingLevel <= ILogger.FATAL) {
       if (messages != null) {
-        messages.add(Messages.getString("Message.USER_ERROR", message, getClass().getName())); //$NON-NLS-1$
+        messages.add(Messages.getInstance().getString("Message.USER_ERROR", message, getClass().getName())); //$NON-NLS-1$
       }
       super.fatal(message);
     }
@@ -139,7 +139,7 @@ public abstract class PentahoMessenger extends PentahoBase {
   public void trace(final String message, final Throwable error) {
     if (loggingLevel <= ILogger.TRACE) {
       if (messages != null) {
-        messages.add(Messages.getString("Message.USER_DEBUG", message, getClass().getName())); //$NON-NLS-1$
+        messages.add(Messages.getInstance().getString("Message.USER_DEBUG", message, getClass().getName())); //$NON-NLS-1$
       }
       super.trace(message, error);
     }
@@ -149,7 +149,7 @@ public abstract class PentahoMessenger extends PentahoBase {
   public void debug(final String message, final Throwable error) {
     if (loggingLevel <= ILogger.DEBUG) {
       if (messages != null) {
-        messages.add(Messages.getString("Message.USER_DEBUG", message, getClass().getName())); //$NON-NLS-1$
+        messages.add(Messages.getInstance().getString("Message.USER_DEBUG", message, getClass().getName())); //$NON-NLS-1$
       }
       super.debug(message, error);
     }
@@ -159,7 +159,7 @@ public abstract class PentahoMessenger extends PentahoBase {
   public void info(final String message, final Throwable error) {
     if (loggingLevel <= ILogger.INFO) {
       if (messages != null) {
-        messages.add(Messages.getString("Message.USER_INFO", message, getClass().getName())); //$NON-NLS-1$
+        messages.add(Messages.getInstance().getString("Message.USER_INFO", message, getClass().getName())); //$NON-NLS-1$
       }
       super.info(message, error);
     }
@@ -169,7 +169,7 @@ public abstract class PentahoMessenger extends PentahoBase {
   public void warn(final String message, final Throwable error) {
     if (loggingLevel <= ILogger.WARN) {
       if (messages != null) {
-        messages.add(Messages.getString("Message.USER_WARNING", message, getClass().getName())); //$NON-NLS-1$
+        messages.add(Messages.getInstance().getString("Message.USER_WARNING", message, getClass().getName())); //$NON-NLS-1$
       }
       super.warn(message, error);
     }
@@ -179,7 +179,7 @@ public abstract class PentahoMessenger extends PentahoBase {
   public void error(final String message, final Throwable error) {
     if (loggingLevel <= ILogger.ERROR) {
       if (messages != null) {
-        messages.add(Messages.getString("Message.USER_ERROR_EX", message, getClass().getName(), error.toString())); //$NON-NLS-1$
+        messages.add(Messages.getInstance().getString("Message.USER_ERROR_EX", message, getClass().getName(), error.toString())); //$NON-NLS-1$
       }
       super.error(message, error);
     }
@@ -189,14 +189,14 @@ public abstract class PentahoMessenger extends PentahoBase {
   public void fatal(final String message, final Throwable error) {
     if (loggingLevel <= ILogger.FATAL) {
       if (messages != null) {
-        messages.add(Messages.getString("Message.USER_ERROR_EX", message, getClass().getName(), error.toString())); //$NON-NLS-1$ 
+        messages.add(Messages.getInstance().getString("Message.USER_ERROR_EX", message, getClass().getName(), error.toString())); //$NON-NLS-1$ 
       }
       super.fatal(message, error);
     }
   }
 
   public static String getUserString(final String type) {
-    return Messages.getString("Message.USER_" + type); //$NON-NLS-1$
+    return Messages.getInstance().getString("Message.USER_" + type); //$NON-NLS-1$
   }
 
 }

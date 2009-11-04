@@ -47,7 +47,7 @@ public class SQLExecute extends SQLLookupRule {
   public boolean validateAction() {
     boolean result = true;
     if (!(getActionDefinition() instanceof SqlExecuteAction)) {
-      error(Messages.getErrorString(
+      error(Messages.getInstance().getErrorString(
           "ComponentBase.ERROR_0001_UNKNOWN_ACTION_TYPE", getActionDefinition().getElement().asXML())); //$NON-NLS-1$
       result = false;
     } else {
@@ -66,21 +66,21 @@ public class SQLExecute extends SQLLookupRule {
     SqlExecuteAction sqlExecuteAction = (SqlExecuteAction) getActionDefinition();
     boolean executed = false;
     boolean continueOnException = sqlExecuteAction.getContinueOnException().getBooleanValue(false);
-    String[] columnHeaders = new String[] { Messages.getString("SQLExecute.USER_AFFECTED_ROWS_COLUMN_NAME"), //$NON-NLS-1$
-        Messages.getString("SQLExecute.USER_AFFECTED_ROW_STATUS") //$NON-NLS-1$
+    String[] columnHeaders = new String[] { Messages.getInstance().getString("SQLExecute.USER_AFFECTED_ROWS_COLUMN_NAME"), //$NON-NLS-1$
+        Messages.getInstance().getString("SQLExecute.USER_AFFECTED_ROW_STATUS") //$NON-NLS-1$
     };
     MemoryMetaData metaData = new MemoryMetaData(new String[][] { columnHeaders }, null);
     metaData.setColumnTypes(new String[] { "int", "string" }); //$NON-NLS-1$ //$NON-NLS-2$
     MemoryResultSet affectedRowsResultSet = new MemoryResultSet(metaData);
-    String successMsg = Messages.getString("SQLExecute.USER_SUCCESS"); //$NON-NLS-1$
-    String failMsg = Messages.getString("SQLExecute.USER_FAILED"); //$NON-NLS-1$
+    String successMsg = Messages.getInstance().getString("SQLExecute.USER_SUCCESS"); //$NON-NLS-1$
+    String failMsg = Messages.getInstance().getString("SQLExecute.USER_FAILED"); //$NON-NLS-1$
     try {
       if (conn == null) {
-        error(Messages.getErrorString("SQLBaseComponent.ERROR_0007_NO_CONNECTION")); //$NON-NLS-1$
+        error(Messages.getInstance().getErrorString("SQLBaseComponent.ERROR_0007_NO_CONNECTION")); //$NON-NLS-1$
         return false;
       }
       if (!conn.initialized()) {
-        error(Messages.getErrorString("SQLBaseComponent.ERROR_0007_NO_CONNECTION")); //$NON-NLS-1$
+        error(Messages.getInstance().getErrorString("SQLBaseComponent.ERROR_0007_NO_CONNECTION")); //$NON-NLS-1$
         return false;
       }
 
@@ -103,7 +103,7 @@ public class SQLExecute extends SQLLookupRule {
         //
         String query = applyInputsToFormat(rawQuery);
         if (ComponentBase.debug) {
-          debug(Messages.getString("SQLBaseComponent.DEBUG_RUNNING_QUERY", query)); //$NON-NLS-1$
+          debug(Messages.getInstance().getString("SQLBaseComponent.DEBUG_RUNNING_QUERY", query)); //$NON-NLS-1$
         }
         int affectedRows = conn.execute(query);
         executed = true;
@@ -123,7 +123,7 @@ public class SQLExecute extends SQLLookupRule {
           rawQuery = st.nextToken();
           String query = applyInputsToFormat(rawQuery.trim());
           if (ComponentBase.debug) {
-            debug(Messages.getString("SQLBaseComponent.DEBUG_RUNNING_QUERY", query)); //$NON-NLS-1$
+            debug(Messages.getInstance().getString("SQLBaseComponent.DEBUG_RUNNING_QUERY", query)); //$NON-NLS-1$
           }
           try {
             int affectedRows = conn.execute(query);
@@ -131,9 +131,9 @@ public class SQLExecute extends SQLLookupRule {
             // some updated rows.
             affectedRowsResultSet.addRow(new Object[] { new Integer(affectedRows), successMsg });
             executed = true;
-            debug(Messages.getString("SQLBaseComponent.DEBUG_UPDATED_QUERY", query)); //$NON-NLS-1$
+            debug(Messages.getInstance().getString("SQLBaseComponent.DEBUG_UPDATED_QUERY", query)); //$NON-NLS-1$
           } catch (SQLException e) {
-            error(Messages.getErrorString(
+            error(Messages.getInstance().getErrorString(
                 "SQLBaseComponent.ERROR_0006_EXECUTE_FAILED", getActionName() + " : " + e.getLocalizedMessage())); //$NON-NLS-1$ //$NON-NLS-2$
             executed = continueOnException;
             if (!continueOnException) {
@@ -147,7 +147,7 @@ public class SQLExecute extends SQLLookupRule {
         setOutputValue(this.getResultOutputName(), affectedRowsResultSet);
       }
     } catch (SQLException e) {
-      error(Messages.getErrorString(
+      error(Messages.getInstance().getErrorString(
           "SQLBaseComponent.ERROR_0006_EXECUTE_FAILED", getActionName() + " : " + e.getLocalizedMessage())); //$NON-NLS-1$ //$NON-NLS-2$
       executed = continueOnException;
       addErrorCode(affectedRowsResultSet, e, e.getLocalizedMessage());

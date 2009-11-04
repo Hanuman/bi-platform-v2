@@ -53,9 +53,9 @@ public class UUIDUtil {
         com.ccg.net.ethernet.EthernetAddress ea = com.ccg.net.ethernet.EthernetAddress.getPrimaryAdapter();
         UUIDUtil.eAddr = new org.safehaus.uuid.EthernetAddress(ea.getBytes());
       } catch (Exception ex) {
-        UUIDUtil.log.error(Messages.getErrorString("UUIDUtil.ERROR_0002_GET_MAC_ADDR"), ex); //$NON-NLS-1$
+        UUIDUtil.log.error(Messages.getInstance().getErrorString("UUIDUtil.ERROR_0002_GET_MAC_ADDR"), ex); //$NON-NLS-1$
       } catch (UnsatisfiedLinkError ule) {
-        UUIDUtil.log.error(Messages.getErrorString("UUIDUtil.ERROR_0002_GET_MAC_ADDR"), ule); //$NON-NLS-1$
+        UUIDUtil.log.error(Messages.getInstance().getErrorString("UUIDUtil.ERROR_0002_GET_MAC_ADDR"), ule); //$NON-NLS-1$
         UUIDUtil.nativeInitialized = false;
       }
     }
@@ -85,7 +85,7 @@ public class UUIDUtil {
     // Generate a UUID to make sure everything is running OK.
     UUID olduuId = UUIDUtil.ug.generateTimeBasedUUID(UUIDUtil.eAddr);
     if (olduuId == null) {
-      UUIDUtil.log.error(Messages.getErrorString("UUIDUtil.ERROR_0003_GENERATEFAILED")); //$NON-NLS-1$
+      UUIDUtil.log.error(Messages.getInstance().getErrorString("UUIDUtil.ERROR_0003_GENERATEFAILED")); //$NON-NLS-1$
     }
 
   }

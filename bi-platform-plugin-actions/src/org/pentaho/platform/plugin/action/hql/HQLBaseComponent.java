@@ -85,26 +85,26 @@ public abstract class HQLBaseComponent extends ComponentBase implements IPrepare
         // Check if the query is defined.
         if (actionValidated && (queryAction.getQuery() == ActionInputConstant.NULL_INPUT)) {
           actionValidated = false;
-          error(Messages.getErrorString("HQLBaseComponent.ERROR_0004_QUERY_NOT_SPECIFIED", getActionName())); //$NON-NLS-1$
+          error(Messages.getInstance().getErrorString("HQLBaseComponent.ERROR_0004_QUERY_NOT_SPECIFIED", getActionName())); //$NON-NLS-1$
         }
 
         // Check if output for the query is correctly defined.                  
         if (actionValidated && (queryAction.getOutputResultSetName() == null)
             && (queryAction.getOutputPreparedStatementName() == null)) {
           actionValidated = false;
-          error(Messages.getErrorString("HQLBaseComponent.ERROR_0005_OUTPUT_NOT_SPECIFIED", getActionName())); //$NON-NLS-1$
+          error(Messages.getInstance().getErrorString("HQLBaseComponent.ERROR_0005_OUTPUT_NOT_SPECIFIED", getActionName())); //$NON-NLS-1$
         }
       } else if (getActionDefinition() instanceof HQLConnectionAction) {
         connAction = (HQLConnectionAction) getActionDefinition();
         actionValidated = isConnectionInfoSpecified(connAction);
       } else {
         actionValidated = false;
-        error(Messages.getErrorString(
+        error(Messages.getInstance().getErrorString(
             "ComponentBase.ERROR_0001_UNKNOWN_ACTION_TYPE", getActionDefinition().getElement().asXML())); //$NON-NLS-1$      
       }
     } catch (Exception e) {
       actionValidated = false;
-      error(Messages.getErrorString("HQLBaseComponent.ERROR_0006_VALIDATION_FAILED", getActionName()), e); //$NON-NLS-1$     
+      error(Messages.getInstance().getErrorString("HQLBaseComponent.ERROR_0006_VALIDATION_FAILED", getActionName()), e); //$NON-NLS-1$     
     }
 
     return actionValidated;
@@ -117,12 +117,12 @@ public abstract class HQLBaseComponent extends ComponentBase implements IPrepare
       if ((((HQLQueryAction) connAction).getInputSharedConnection() == ActionInputConstant.NULL_INPUT)
           && !isBasicConnectionInfoSpecified(connAction)) {
         value = false;
-        error(Messages.getErrorString("HQLBaseComponent.ERROR_0003_CONNECTION_INFO_NOT_SPECIFIED", getActionName())); //$NON-NLS-1$        
+        error(Messages.getInstance().getErrorString("HQLBaseComponent.ERROR_0003_CONNECTION_INFO_NOT_SPECIFIED", getActionName())); //$NON-NLS-1$        
       }
     } else {
       if (!isBasicConnectionInfoSpecified(connAction)) {
         value = false;
-        error(Messages.getErrorString("HQLBaseComponent.ERROR_0003_CONNECTION_INFO_NOT_SPECIFIED", getActionName())); //$NON-NLS-1$        
+        error(Messages.getInstance().getErrorString("HQLBaseComponent.ERROR_0003_CONNECTION_INFO_NOT_SPECIFIED", getActionName())); //$NON-NLS-1$        
       }
     }
     return value;
@@ -133,11 +133,11 @@ public abstract class HQLBaseComponent extends ComponentBase implements IPrepare
 
     if (connAction.getClassNames() == ActionInputConstant.NULL_INPUT) {
       value = false;
-      error(Messages.getErrorString("HQLBaseComponent.ERROR_0001_CLASS_NAMES_INFO_NOT_SPECIFIED", getActionName())); //$NON-NLS-1$  
+      error(Messages.getInstance().getErrorString("HQLBaseComponent.ERROR_0001_CLASS_NAMES_INFO_NOT_SPECIFIED", getActionName())); //$NON-NLS-1$  
     }
     if (connAction.getHibernateConfigResource() == null) {
       value = false;
-      error(Messages.getErrorString("HQLBaseComponent.ERROR_0002_HIBERNATE_CONFIG_INFO_NOT_SPECIFIED", getActionName())); //$NON-NLS-1$        
+      error(Messages.getInstance().getErrorString("HQLBaseComponent.ERROR_0002_HIBERNATE_CONFIG_INFO_NOT_SPECIFIED", getActionName())); //$NON-NLS-1$        
     }
 
     return value;
@@ -167,7 +167,7 @@ public abstract class HQLBaseComponent extends ComponentBase implements IPrepare
           } else {
             connection = null;
             returnValue = false;
-            error(Messages.getErrorString("IPreparedComponent.ERROR_0001_INVALID_CONNECTION_TYPE", getActionName())); //$NON-NLS-1$            
+            error(Messages.getInstance().getErrorString("IPreparedComponent.ERROR_0001_INVALID_CONNECTION_TYPE", getActionName())); //$NON-NLS-1$            
           }
         } else {
           createBasicConnection(queryAction, classNames);
@@ -197,11 +197,11 @@ public abstract class HQLBaseComponent extends ComponentBase implements IPrepare
         }
       } else {
         returnValue = false;
-        error(Messages.getErrorString("HQLBaseComponent.ERROR_00011_INVALID_HQL_COMPONENT", getActionName())); //$NON-NLS-1$
+        error(Messages.getInstance().getErrorString("HQLBaseComponent.ERROR_00011_INVALID_HQL_COMPONENT", getActionName())); //$NON-NLS-1$
       }
     } catch (Exception e) {
       returnValue = false;
-      error(Messages.getErrorString("HQLBaseComponent.ERROR_00012_EXECUTE_FAILED", getActionName()), e); //$NON-NLS-1$
+      error(Messages.getInstance().getErrorString("HQLBaseComponent.ERROR_00012_EXECUTE_FAILED", getActionName()), e); //$NON-NLS-1$
     }
     return returnValue;
   }
@@ -217,7 +217,7 @@ public abstract class HQLBaseComponent extends ComponentBase implements IPrepare
       classNames = getClassNames(connAction);
     } else {
       proceed = false;
-      error(Messages.getErrorString("HQLBaseComponent.ERROR_0001_CLASS_NAMES_INFO_NOT_SPECIFIED", getActionName())); //$NON-NLS-1$ 
+      error(Messages.getInstance().getErrorString("HQLBaseComponent.ERROR_0001_CLASS_NAMES_INFO_NOT_SPECIFIED", getActionName())); //$NON-NLS-1$ 
     }
 
     if (proceed) {
@@ -225,7 +225,7 @@ public abstract class HQLBaseComponent extends ComponentBase implements IPrepare
 
       if ((null == catalog) || (catalog.trim().length() <= 0)) {
         proceed = false;
-        error(Messages.getErrorString("HQLBaseComponent.ERROR_00010_CATALOG_INFO_NOT_SPECIFIED", getActionName())); //$NON-NLS-1$
+        error(Messages.getInstance().getErrorString("HQLBaseComponent.ERROR_00010_CATALOG_INFO_NOT_SPECIFIED", getActionName())); //$NON-NLS-1$
       }
     }
 
@@ -233,7 +233,7 @@ public abstract class HQLBaseComponent extends ComponentBase implements IPrepare
       connection = getConnection(new File(catalog), classNames);
 
       if (connection == null) {
-        error(Messages.getErrorString("HQLBaseComponent.ERROR_0009_COULD_NOT_ESTABLISH_CONNECTION", getActionName())); //$NON-NLS-1$
+        error(Messages.getInstance().getErrorString("HQLBaseComponent.ERROR_0009_COULD_NOT_ESTABLISH_CONNECTION", getActionName())); //$NON-NLS-1$
       }
     }
   }
@@ -255,7 +255,7 @@ public abstract class HQLBaseComponent extends ComponentBase implements IPrepare
       classNames = (String[]) classNamesList.toArray(new String[0]);
 
     } catch (Exception e) {
-      error(Messages.getErrorString("HQLBaseComponent.ERROR_0008_COULD_NOT_RETRIEVE_CLASS_NAMES", getActionName()), e); //$NON-NLS-1$
+      error(Messages.getInstance().getErrorString("HQLBaseComponent.ERROR_0008_COULD_NOT_RETRIEVE_CLASS_NAMES", getActionName()), e); //$NON-NLS-1$
     }
 
     return classNames;
@@ -294,11 +294,11 @@ public abstract class HQLBaseComponent extends ComponentBase implements IPrepare
 
     try {
       if (connection == null) {
-        error(Messages.getErrorString("HQLBaseComponent.ERROR_00013_NO_CONNECTION")); //$NON-NLS-1$
+        error(Messages.getInstance().getErrorString("HQLBaseComponent.ERROR_00013_NO_CONNECTION")); //$NON-NLS-1$
         return false;
       }
       if (!connection.initialized()) {
-        error(Messages.getErrorString("HQLBaseComponent.ERROR_00013_NO_CONNECTION")); //$NON-NLS-1$
+        error(Messages.getInstance().getErrorString("HQLBaseComponent.ERROR_00013_NO_CONNECTION")); //$NON-NLS-1$
         return false;
       }
       if (rawQuery != null) {
@@ -307,7 +307,7 @@ public abstract class HQLBaseComponent extends ComponentBase implements IPrepare
 
       return true;
     } catch (Exception e) {
-      error(Messages.getErrorString("HQLBaseComponent.ERROR_00014_COULD_NOT_PREPARE_QUERY", getActionName()), e); //$NON-NLS-1$
+      error(Messages.getInstance().getErrorString("HQLBaseComponent.ERROR_00014_COULD_NOT_PREPARE_QUERY", getActionName()), e); //$NON-NLS-1$
     }
 
     return false;
@@ -324,16 +324,16 @@ public abstract class HQLBaseComponent extends ComponentBase implements IPrepare
   public IPentahoResultSet executePrepared(final Map preparedParams) {
     try {
       if (connection == null) {
-        error(Messages.getErrorString("HQLBaseComponent.ERROR_0009_COULD_NOT_ESTABLISH_CONNECTION")); //$NON-NLS-1$
+        error(Messages.getInstance().getErrorString("HQLBaseComponent.ERROR_0009_COULD_NOT_ESTABLISH_CONNECTION")); //$NON-NLS-1$
         return null;
       }
       if (!connection.initialized()) {
-        error(Messages.getErrorString("HQLBaseComponent.ERROR_0009_COULD_NOT_ESTABLISH_CONNECTION")); //$NON-NLS-1$
+        error(Messages.getInstance().getErrorString("HQLBaseComponent.ERROR_0009_COULD_NOT_ESTABLISH_CONNECTION")); //$NON-NLS-1$
         return null;
       }
 
       if (preparedQuery == null) {
-        error(Messages.getErrorString("HQLBaseComponent.ERROR_00016_QUERY_NOT_SPECIFIED")); //$NON-NLS-1$
+        error(Messages.getInstance().getErrorString("HQLBaseComponent.ERROR_00016_QUERY_NOT_SPECIFIED")); //$NON-NLS-1$
         return null;
       }
 
@@ -342,7 +342,7 @@ public abstract class HQLBaseComponent extends ComponentBase implements IPrepare
           preparedParams, IPreparedComponent.PREPARE_LATER_PREFIX, getRuntimeContext()));
 
       if (ComponentBase.debug) {
-        debug(Messages.getString("HQLBaseComponent.DEBUG_RUNNING_QUERY", query)); //$NON-NLS-1$
+        debug(Messages.getInstance().getString("HQLBaseComponent.DEBUG_RUNNING_QUERY", query)); //$NON-NLS-1$
       }
 
       // evaluate 
@@ -350,7 +350,7 @@ public abstract class HQLBaseComponent extends ComponentBase implements IPrepare
       rSet = resultSet;
       return resultSet;
     } catch (Exception e) {
-      error(Messages.getErrorString("HQLBaseComponent.ERROR_00012_EXECUTE_FAILED", getActionName()), e); //$NON-NLS-1$
+      error(Messages.getInstance().getErrorString("HQLBaseComponent.ERROR_00012_EXECUTE_FAILED", getActionName()), e); //$NON-NLS-1$
     }
     return null;
   }
@@ -370,7 +370,7 @@ public abstract class HQLBaseComponent extends ComponentBase implements IPrepare
       }
       return true;
     } catch (Exception e) {
-      error(Messages.getErrorString("HQLBaseComponent.ERROR_0007_QUERY_EXECUTION_FAILED", getActionName()), e); //$NON-NLS-1$
+      error(Messages.getInstance().getErrorString("HQLBaseComponent.ERROR_0007_QUERY_EXECUTION_FAILED", getActionName()), e); //$NON-NLS-1$
       return false;
     }
   }
@@ -396,7 +396,7 @@ public abstract class HQLBaseComponent extends ComponentBase implements IPrepare
       hconn.setClassNames(classNames);
       return conn;
     } catch (Exception e) {
-      error(Messages.getErrorString("HQLBaseComponent.ERROR_0009_COULD_NOT_ESTABLISH_CONNECTION", getActionName()), e); //$NON-NLS-1$
+      error(Messages.getInstance().getErrorString("HQLBaseComponent.ERROR_0009_COULD_NOT_ESTABLISH_CONNECTION", getActionName()), e); //$NON-NLS-1$
     }
     return null;
   }

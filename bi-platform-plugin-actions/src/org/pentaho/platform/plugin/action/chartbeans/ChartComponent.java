@@ -235,13 +235,13 @@ public class ChartComponent {
           Graphics2D graphics = image.createGraphics();
           graphics.setFont(new Font("serif", Font.BOLD, 14)); //$NON-NLS-1$
           graphics.setColor(Color.BLACK);
-          graphics.drawString(Messages.getErrorString("ChartComponent.TOO_MANY_DATA_POINTS"), 5, 5);  //$NON-NLS-1$
-          graphics.drawString(Messages.getErrorString("ChartComponent.MAX_ALLOWED_DATA_POINTS", Integer.toString(ex.getMaxAllowedDataPoints())), 5, 25); //$NON-NLS-1$
+          graphics.drawString(Messages.getInstance().getErrorString("ChartComponent.TOO_MANY_DATA_POINTS"), 5, 5);  //$NON-NLS-1$
+          graphics.drawString(Messages.getInstance().getErrorString("ChartComponent.MAX_ALLOWED_DATA_POINTS", Integer.toString(ex.getMaxAllowedDataPoints())), 5, 25); //$NON-NLS-1$
          
           String outputType = getMimeType().equals("image/jpg") ? "jpeg" : "png"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
           ImageIO.write(image, outputType, outputStream);
         } else {
-          String flashContent = ChartBeansGeneratorUtil.buildEmptyOpenFlashChartHtmlFragment(Messages.getErrorString("ChartComponent.TOO_MANY_DATA_POINTS_HTML", Integer.toString(ex.getMaxAllowedDataPoints()))); //$NON-NLS-1$
+          String flashContent = ChartBeansGeneratorUtil.buildEmptyOpenFlashChartHtmlFragment(Messages.getInstance().getErrorString("ChartComponent.TOO_MANY_DATA_POINTS_HTML", Integer.toString(ex.getMaxAllowedDataPoints()))); //$NON-NLS-1$
           is = new ByteArrayInputStream(flashContent.getBytes("utf-8")); //$NON-NLS-1$
           int val = 0;          
           //TODO: Buffer for more efficiency

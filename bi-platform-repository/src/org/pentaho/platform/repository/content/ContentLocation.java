@@ -189,7 +189,7 @@ public class ContentLocation extends PentahoBase implements IContentLocation, IS
     if (newDir.mkdirs()) {
       return newDir;
     }
-    throwError(Messages.getErrorString("CONTLOC.ERROR_0003_MKDIR", newDir.getAbsolutePath())); //$NON-NLS-1$
+    throwError(Messages.getInstance().getErrorString("CONTLOC.ERROR_0003_MKDIR", newDir.getAbsolutePath())); //$NON-NLS-1$
     return null; // Unreachable
   }
 
@@ -208,10 +208,10 @@ public class ContentLocation extends PentahoBase implements IContentLocation, IS
     File f = new File(PentahoSystem.getApplicationContext().getFileOutputPath("system/content") + "/" + thePath); //$NON-NLS-1$ //$NON-NLS-2$
     if ((!f.exists()) || (!f.isDirectory())) {
       if (!createIfNotExist) {
-        throwError(Messages.getErrorString("CONTLOC.ERROR_0004_PATH_DOES_NOT_EXIST", thePath)); //$NON-NLS-1$
+        throwError(Messages.getInstance().getErrorString("CONTLOC.ERROR_0004_PATH_DOES_NOT_EXIST", thePath)); //$NON-NLS-1$
       } else {
         if (!f.mkdirs()) {
-          throwError(Messages.getErrorString("CONTLOC.ERROR_0003_MKDIR", thePath)); //$NON-NLS-1$
+          throwError(Messages.getInstance().getErrorString("CONTLOC.ERROR_0003_MKDIR", thePath)); //$NON-NLS-1$
         }
       }
     }

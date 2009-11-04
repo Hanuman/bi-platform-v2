@@ -112,7 +112,7 @@ public class AxisServiceExecutor extends AxisWebServiceRequestDispatcher impleme
         }
       } catch (Exception e) {
         processAxisFault(hooks.getMessageContext(), out, e);
-        error( Messages.getErrorString( "RunService.ERROR_0001_ERROR_DURING_EXECUTION" ), e ); //$NON-NLS-1$
+        error( Messages.getInstance().getErrorString( "RunService.ERROR_0001_ERROR_DURING_EXECUTION" ), e ); //$NON-NLS-1$
       }
     }
     

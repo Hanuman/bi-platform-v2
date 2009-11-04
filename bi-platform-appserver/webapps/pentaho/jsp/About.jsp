@@ -40,7 +40,7 @@
 
 	StringBuffer sb = new StringBuffer();
   IVersionHelper versionHelper = PentahoSystem.get(IVersionHelper.class, null);
-	String header = Messages.getString( "UI.USER_ABOUT_TITLE", versionHelper.getVersionInformation(PentahoSystem.class) );
+	String header = Messages.getInstance().getString( "UI.USER_ABOUT_TITLE", versionHelper.getVersionInformation(PentahoSystem.class) );
 
 	String intro = "";
 	String footer = "";
@@ -70,7 +70,7 @@
 			footer = sections[1];
 		}
 	} else {
-		intro = Messages.getString( "UI.ERROR_0002_BAD_TEMPLATE_OBJECT" );
+		intro = Messages.getInstance().getString( "UI.ERROR_0002_BAD_TEMPLATE_OBJECT" );
 	}
 
 %>
@@ -82,10 +82,10 @@
 	<tr>
 		<td height='100%' class='contentcell_half_left'>
 		<%
-				String copyright = Messages.getString( "UI.USER_COPYRIGHT" );
-				String aboutText = Messages.getString( "UI.USER_ABOUT_TEXT", copyright );
+				String copyright = Messages.getInstance().getString( "UI.USER_COPYRIGHT" );
+				String aboutText = Messages.getInstance().getString( "UI.USER_ABOUT_TEXT", copyright );
 				%> <%= aboutText %> <a href='javascript:void(0);'
-			onclick='javascript:window.open( "http://community.pentaho.org/contributors/" );'><%=Messages.getString( "UI.USER_SPECIAL_THANKS" )%></a>
+			onclick='javascript:window.open( "http://community.pentaho.org/contributors/" );'><%=Messages.getInstance().getString( "UI.USER_SPECIAL_THANKS" )%></a>
 		</td>
 	</tr>
 </table>

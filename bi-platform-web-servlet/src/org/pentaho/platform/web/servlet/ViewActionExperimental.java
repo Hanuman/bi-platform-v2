@@ -96,7 +96,7 @@ public class ViewActionExperimental extends ServletBase {
             footer = sections[1];
           }
         } else {
-          intro = Messages.getString("ViewAction.ERROR_0002_BAD_TEMPLATE_OBJECT"); //$NON-NLS-1$
+          intro = Messages.getInstance().getString("ViewAction.ERROR_0002_BAD_TEMPLATE_OBJECT"); //$NON-NLS-1$
         }
 
         response.getWriter().print(intro);
@@ -107,14 +107,14 @@ public class ViewActionExperimental extends ServletBase {
           backgroundResponse = bex.getLocalizedMessage();
           response.getWriter().print(backgroundResponse);
           response.getWriter().print(footer);
-          error(Messages.getErrorString("ViewAction.ERROR_0004_UNABLE_TO_PERFORM_BACKGROUND_EXECUTION")); //$NON-NLS-1$
+          error(Messages.getInstance().getErrorString("ViewAction.ERROR_0004_UNABLE_TO_PERFORM_BACKGROUND_EXECUTION")); //$NON-NLS-1$
           return false;          
         }
         response.getWriter().print(backgroundResponse);
         response.getWriter().print(footer);
         return true;
       } else {
-        error(Messages.getErrorString("ViewAction.ERROR_0001_BACKGROUND_EXECUTE_NOT_SUPPORTED")); //$NON-NLS-1$
+        error(Messages.getInstance().getErrorString("ViewAction.ERROR_0001_BACKGROUND_EXECUTE_NOT_SUPPORTED")); //$NON-NLS-1$
       }
     }
     return false;
@@ -252,7 +252,7 @@ public class ViewActionExperimental extends ServletBase {
         resp = SubscriptionHelper.createSubscriptionArchive(name, userSession, null, sessionParameters);  
       } catch(BackgroundExecutionException bex) {
         resp = bex.getLocalizedMessage();
-        error(Messages.getErrorString("ViewAction.ERROR_0003_UNABLE_TO_CREATE_SUBSCRIPTION_ARCHIVE")); //$NON-NLS-1$
+        error(Messages.getInstance().getErrorString("ViewAction.ERROR_0003_UNABLE_TO_CREATE_SUBSCRIPTION_ARCHIVE")); //$NON-NLS-1$
         outputStream.write(resp.getBytes());
         contentItem.closeOutputStream();
         return false; 

@@ -163,12 +163,12 @@ public class SQLConnection implements IPentahoLoggingConnection, ILimitableConne
       info.put("password", password); //$NON-NLS-1$
       nativeConnection = captureConnection(driver.connect(location, info));
       if (nativeConnection == null) {
-        logger.error(Messages.getErrorString("ConnectFactory.ERROR_0001_INVALID_CONNECTION2", driverName, location)); //$NON-NLS-1$
+        logger.error(Messages.getInstance().getErrorString("ConnectFactory.ERROR_0001_INVALID_CONNECTION2", driverName, location)); //$NON-NLS-1$
       } else {
         enhanceConnection(nativeConnection);
       }
     } catch (Throwable t) {
-      logger.error(Messages.getErrorString("ConnectFactory.ERROR_0001_INVALID_CONNECTION2", driverName, location), t); //$NON-NLS-1$
+      logger.error(Messages.getInstance().getErrorString("ConnectFactory.ERROR_0001_INVALID_CONNECTION2", driverName, location), t); //$NON-NLS-1$
     }
   }
 
@@ -193,25 +193,25 @@ public class SQLConnection implements IPentahoLoggingConnection, ILimitableConne
       if (dataSource != null) {
         nativeConnection = captureConnection(dataSource.getConnection());
         if (nativeConnection == null) {
-          logger.error(Messages.getErrorString("ConnectFactory.ERROR_0001_INVALID_CONNECTION", jndiName)); //$NON-NLS-1$
+          logger.error(Messages.getInstance().getErrorString("ConnectFactory.ERROR_0001_INVALID_CONNECTION", jndiName)); //$NON-NLS-1$
           // clear datasource cache
           datasourceService.clearDataSource(jndiName);
         } else {
           enhanceConnection(nativeConnection);
         }
       } else {
-        logger.error(Messages.getErrorString("ConnectFactory.ERROR_0001_INVALID_CONNECTION", jndiName)); //$NON-NLS-1$
+        logger.error(Messages.getInstance().getErrorString("ConnectFactory.ERROR_0001_INVALID_CONNECTION", jndiName)); //$NON-NLS-1$
         // clear datasource cache
         datasourceService.clearDataSource(jndiName);
       }
     } catch (Exception e) {
-      logger.error(Messages.getErrorString("ConnectFactory.ERROR_0001_INVALID_CONNECTION", jndiName), e); //$NON-NLS-1$
+      logger.error(Messages.getInstance().getErrorString("ConnectFactory.ERROR_0001_INVALID_CONNECTION", jndiName), e); //$NON-NLS-1$
       // clear datasource cache
       try {
       IDatasourceService datasourceService =  PentahoSystem.getObjectFactory().get(IDatasourceService.class ,null);
       datasourceService.clearDataSource(jndiName);
       } catch(ObjectFactoryException objface) {
-    	  logger.error(Messages.getErrorString("ConnectFactory.ERROR_0002_UNABLE_TO_FACTORY_OBJECT=Unable to factory object", jndiName), e); //$NON-NLS-1$
+    	  logger.error(Messages.getInstance().getErrorString("ConnectFactory.ERROR_0002_UNABLE_TO_FACTORY_OBJECT=Unable to factory object", jndiName), e); //$NON-NLS-1$
       }
     }
   }
@@ -406,7 +406,7 @@ public class SQLConnection implements IPentahoLoggingConnection, ILimitableConne
         } else {
           // exception here means either the number was out of bounds or
           // the driver doesn't support this setter.
-          throw new UnsupportedOperationException(Messages.getErrorString("SQLConnection.ERROR_0003_FETCHSIZE_NOT_SET", Integer.toString(this.getFetchSize())), ex); //$NON-NLS-1$
+          throw new UnsupportedOperationException(Messages.getInstance().getErrorString("SQLConnection.ERROR_0003_FETCHSIZE_NOT_SET", Integer.toString(this.getFetchSize())), ex); //$NON-NLS-1$
       }
       }
     }
@@ -420,7 +420,7 @@ public class SQLConnection implements IPentahoLoggingConnection, ILimitableConne
         } else {
         // exception here means either the number was out of bounds or
         // the driver doesn't support this setter.
-          throw new UnsupportedOperationException(Messages.getErrorString("SQLConnection.ERROR_0002_ROWLIMIT_NOT_SET", Integer.toString(this.getMaxRows())), ex); //$NON-NLS-1$
+          throw new UnsupportedOperationException(Messages.getInstance().getErrorString("SQLConnection.ERROR_0002_ROWLIMIT_NOT_SET", Integer.toString(this.getMaxRows())), ex); //$NON-NLS-1$
         }
       }
     }
@@ -432,7 +432,7 @@ public class SQLConnection implements IPentahoLoggingConnection, ILimitableConne
         if (e instanceof SQLException) {
           throw (SQLException)e;
         } else {
-          throw new UnsupportedOperationException(Messages.getErrorString("SQLConnection.ERROR_0001_TIMEOUT_NOT_SET", Integer.toString(this.getQueryTimeout())), e); //$NON-NLS-1$
+          throw new UnsupportedOperationException(Messages.getInstance().getErrorString("SQLConnection.ERROR_0001_TIMEOUT_NOT_SET", Integer.toString(this.getQueryTimeout())), e); //$NON-NLS-1$
         }
       }
   }

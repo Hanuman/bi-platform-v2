@@ -104,11 +104,11 @@ public class PentahoTableModel extends AbstractTableModel implements CloseableTa
       // data. So, log an info message and be done with it. We also don't want an if-check to be
       // done on every cell for this boundary case.
       //
-      getLogger().info(Messages.getErrorString("PentahoTableModel.ERROR_0001_GET_VALUE_AT")); //$NON-NLS-1$
+      getLogger().info(Messages.getInstance().getErrorString("PentahoTableModel.ERROR_0001_GET_VALUE_AT")); //$NON-NLS-1$
     } catch (Throwable t) {
       IVersionHelper versionHelper = PentahoSystem.get(IVersionHelper.class, null);
       getLogger().error("Error Start: Pentaho " + versionHelper.getVersionInformation(this.getClass())); //$NON-NLS-1$
-      getLogger().error(Messages.getErrorString("PentahoTableModel.ERROR_0001_GET_VALUE_AT"), t); //$NON-NLS-1$
+      getLogger().error(Messages.getInstance().getErrorString("PentahoTableModel.ERROR_0001_GET_VALUE_AT"), t); //$NON-NLS-1$
       getLogger().error("Error end:"); //$NON-NLS-1$
     }
 

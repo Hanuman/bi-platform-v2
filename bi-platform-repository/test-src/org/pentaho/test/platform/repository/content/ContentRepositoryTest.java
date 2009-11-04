@@ -130,7 +130,7 @@ public class ContentRepositoryTest extends RepositoryTestCase {
     // Check to see if it's there first...
     IContentLocation contLoc = repo.getContentLocationByPath(path);
     if (contLoc != null) {
-      info(Messages.getString("CONTREPTEST.USER_CLEANUPFIRST"));//$NON-NLS-1$
+      info(Messages.getInstance().getString("CONTREPTEST.USER_CLEANUPFIRST"));//$NON-NLS-1$
       cleanup(contLoc);
       HibernateUtil.beginTransaction();
     }
@@ -158,14 +158,14 @@ public class ContentRepositoryTest extends RepositoryTestCase {
 
     try {
       IContentLocation contLoc = repo.getContentLocationByPath(contPath);
-      assertNotNull(Messages.getString("CONTREPTEST.ASSERT_CONTENT_LOCATION_NULL"), contLoc); //$NON-NLS-1$
+      assertNotNull(Messages.getInstance().getString("CONTREPTEST.ASSERT_CONTENT_LOCATION_NULL"), contLoc); //$NON-NLS-1$
       IContentItem contItem;
       contItem = contLoc.getContentItemByName(itemName);
       if (contItem == null) {
         contItem = contLoc.newContentItem(itemName, itemTitle, itemExtension, mimeType, null,
             IContentItem.WRITEMODE_KEEPVERSIONS);
       }
-      assertNotNull(Messages.getString("CONTREPTEST.ASSERT_CONTENT_ITEM_NULL"), contItem); //$NON-NLS-1$
+      assertNotNull(Messages.getInstance().getString("CONTREPTEST.ASSERT_CONTENT_ITEM_NULL"), contItem); //$NON-NLS-1$
       createContentFile(contItem, theContent, actionName);
       return contItem;
     } finally {
@@ -179,11 +179,11 @@ public class ContentRepositoryTest extends RepositoryTestCase {
     IContentRepository repo = ContentRepository.getInstance(sess);
     try {
       IContentLocation contLoc = repo.getContentLocationByPath(folderPath);
-      assertNotNull(Messages.getString("CONTREPTEST.ASSERT_CONTENT_LOCATION_NOT_LOADED"), contLoc); //$NON-NLS-1$
-      info(Messages.getString("CONTREPTEST.DEBUG_RETRIEVED_LOCATION") + contLoc.getDirPath()); //$NON-NLS-1$
+      assertNotNull(Messages.getInstance().getString("CONTREPTEST.ASSERT_CONTENT_LOCATION_NOT_LOADED"), contLoc); //$NON-NLS-1$
+      info(Messages.getInstance().getString("CONTREPTEST.DEBUG_RETRIEVED_LOCATION") + contLoc.getDirPath()); //$NON-NLS-1$
       IContentItem contItem;
       contItem = contLoc.getContentItemByPath(folderPath + "/" + itemName); //$NON-NLS-1$
-      assertNotNull(Messages.getString("CONTREPTEST.ASSERT_CONTENT_ITEM_NOT_LOADED"), contItem); //$NON-NLS-1$
+      assertNotNull(Messages.getInstance().getString("CONTREPTEST.ASSERT_CONTENT_ITEM_NOT_LOADED"), contItem); //$NON-NLS-1$
       return contItem;
     } finally {
       HibernateUtil.commitTransaction();
@@ -199,19 +199,19 @@ public class ContentRepositoryTest extends RepositoryTestCase {
       os.flush();
       os.close();
     } catch (IOException ex) {
-      throw new ContentException(Messages.getString("CONTREPTEST.EXCEPTION_WRITING_FILE"), ex); //$NON-NLS-1$
+      throw new ContentException(Messages.getInstance().getString("CONTREPTEST.EXCEPTION_WRITING_FILE"), ex); //$NON-NLS-1$
     }
   }
 
   @SuppressWarnings("unused")
   private void exerciseContentItem(IContentItem contItem) {
-    info(Messages.getString("CONTREPTEST.DEBUG_CONTENT_ITEM") + contItem.getName()); //$NON-NLS-1$
-    info(Messages.getString("CONTREPTEST.DEBUG_PATH") + contItem.getPath()); //$NON-NLS-1$
-    info(Messages.getString("CONTREPTEST.DEBUG_MIME_TYPE") + contItem.getMimeType()); //$NON-NLS-1$
-    info(Messages.getString("CONTREPTEST.DEBUG_TITLE") + contItem.getTitle()); //$NON-NLS-1$
-    info(Messages.getString("CONTREPTEST.DEBUG_LATEST_FILE_ID") + contItem.getFileId()); //$NON-NLS-1$
-    info(Messages.getString("CONTREPTEST.DEBUG_LATEST_FILE_SIZE") + contItem.getFileSize()); //$NON-NLS-1$
-    info(Messages.getString("CONTREPTEST.DEBUG_LATEST_FILE_DATE") + contItem.getFileDateTime()); //$NON-NLS-1$
+    info(Messages.getInstance().getString("CONTREPTEST.DEBUG_CONTENT_ITEM") + contItem.getName()); //$NON-NLS-1$
+    info(Messages.getInstance().getString("CONTREPTEST.DEBUG_PATH") + contItem.getPath()); //$NON-NLS-1$
+    info(Messages.getInstance().getString("CONTREPTEST.DEBUG_MIME_TYPE") + contItem.getMimeType()); //$NON-NLS-1$
+    info(Messages.getInstance().getString("CONTREPTEST.DEBUG_TITLE") + contItem.getTitle()); //$NON-NLS-1$
+    info(Messages.getInstance().getString("CONTREPTEST.DEBUG_LATEST_FILE_ID") + contItem.getFileId()); //$NON-NLS-1$
+    info(Messages.getInstance().getString("CONTREPTEST.DEBUG_LATEST_FILE_SIZE") + contItem.getFileSize()); //$NON-NLS-1$
+    info(Messages.getInstance().getString("CONTREPTEST.DEBUG_LATEST_FILE_DATE") + contItem.getFileDateTime()); //$NON-NLS-1$
     BufferedReader rdr = new BufferedReader(contItem.getReader());
     assertNotNull(rdr);
     StringBuffer sb = new StringBuffer();

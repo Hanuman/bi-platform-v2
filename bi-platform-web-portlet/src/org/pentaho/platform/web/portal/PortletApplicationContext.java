@@ -45,7 +45,7 @@ public class PortletApplicationContext extends StandaloneApplicationContext {
 
   @Override
   public String getPentahoServerName() {
-    return PentahoSystem.getSystemSetting("name", Messages.getString("PentahoSystem.USER_SYSTEM_TITLE")); //$NON-NLS-1$ //$NON-NLS-2$
+    return PentahoSystem.getSystemSetting("name", Messages.getInstance().getString("PentahoSystem.USER_SYSTEM_TITLE")); //$NON-NLS-1$ //$NON-NLS-2$
   }
 
 }

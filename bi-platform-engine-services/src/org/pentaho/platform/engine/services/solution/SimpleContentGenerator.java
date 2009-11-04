@@ -34,8 +34,8 @@ public abstract class SimpleContentGenerator extends BaseContentGenerator {
   public void createContent() throws Exception {
     OutputStream out = null;
     if( outputHandler == null ) {
-      error( Messages.getErrorString("SimpleContentGenerator.ERROR_0001_NO_OUTPUT_HANDLER") ); //$NON-NLS-1$
-      throw new InvalidParameterException( Messages.getString("SimpleContentGenerator.ERROR_0001_NO_OUTPUT_HANDLER") );  //$NON-NLS-1$
+      error( Messages.getInstance().getErrorString("SimpleContentGenerator.ERROR_0001_NO_OUTPUT_HANDLER") ); //$NON-NLS-1$
+      throw new InvalidParameterException( Messages.getInstance().getString("SimpleContentGenerator.ERROR_0001_NO_OUTPUT_HANDLER") );  //$NON-NLS-1$
     }
 
     IParameterProvider requestParams = parameterProviders.get( IParameterProvider.SCOPE_REQUEST );
@@ -51,16 +51,16 @@ public abstract class SimpleContentGenerator extends BaseContentGenerator {
     }
     IContentItem contentItem = outputHandler.getOutputContentItem( "response", "content", solutionName, instanceId, getMimeType() ); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
     if( contentItem == null ) {
-      error( Messages.getErrorString("SimpleContentGenerator.ERROR_0002_NO_CONTENT_ITEM") ); //$NON-NLS-1$
-      throw new InvalidParameterException( Messages.getString("SimpleContentGenerator.ERROR_0002_NO_CONTENT_ITEM") );  //$NON-NLS-1$
+      error( Messages.getInstance().getErrorString("SimpleContentGenerator.ERROR_0002_NO_CONTENT_ITEM") ); //$NON-NLS-1$
+      throw new InvalidParameterException( Messages.getInstance().getString("SimpleContentGenerator.ERROR_0002_NO_CONTENT_ITEM") );  //$NON-NLS-1$
     }
     
     contentItem.setMimeType( getMimeType() );
     
     out = contentItem.getOutputStream( itemName );
     if( out == null ) {
-      error( Messages.getErrorString("SimpleContentGenerator.ERROR_0003_NO_OUTPUT_STREAM") ); //$NON-NLS-1$
-      throw new InvalidParameterException( Messages.getString("SimpleContentGenerator.ERROR_0003_NO_OUTPUT_STREAM") );  //$NON-NLS-1$
+      error( Messages.getInstance().getErrorString("SimpleContentGenerator.ERROR_0003_NO_OUTPUT_STREAM") ); //$NON-NLS-1$
+      throw new InvalidParameterException( Messages.getInstance().getString("SimpleContentGenerator.ERROR_0003_NO_OUTPUT_STREAM") );  //$NON-NLS-1$
     }
     
     createContent( out );

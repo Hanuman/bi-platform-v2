@@ -93,8 +93,8 @@ public class HtmlComponent extends BaseUIComponent {
       if (errorMessage != null) {
         return errorMessage;
       } else {
-        error(Messages.getErrorString("Html.ERROR_0001_COULD_NOT_GET_CONTENT", solutionPath)); //$NON-NLS-1$
-        return Messages.getErrorString("Html.ERROR_0001_COULD_NOT_GET_CONTENT", solutionPath); //$NON-NLS-1$
+        error(Messages.getInstance().getErrorString("Html.ERROR_0001_COULD_NOT_GET_CONTENT", solutionPath)); //$NON-NLS-1$
+        return Messages.getInstance().getErrorString("Html.ERROR_0001_COULD_NOT_GET_CONTENT", solutionPath); //$NON-NLS-1$
       }
     }
   }
@@ -107,7 +107,7 @@ public class HtmlComponent extends BaseUIComponent {
         return errorMessage;
       }
       if (BaseUIComponent.debug) {
-        debug(Messages.getString("Html.DEBUG_GETTING_CONTENT", url)); //$NON-NLS-1$
+        debug(Messages.getInstance().getString("Html.DEBUG_GETTING_CONTENT", url)); //$NON-NLS-1$
       }
       if (HttpUtil.getURLContent(url, content)) {
         return content.toString();
@@ -120,8 +120,8 @@ public class HtmlComponent extends BaseUIComponent {
       if (errorMessage != null) {
         return errorMessage;
       } else {
-        error(Messages.getErrorString("Html.ERROR_0001_COULD_NOT_GET_CONTENT", url)); //$NON-NLS-1$
-        return Messages.getErrorString("Html.ERROR_0001_COULD_NOT_GET_CONTENT", url); //$NON-NLS-1$
+        error(Messages.getInstance().getErrorString("Html.ERROR_0001_COULD_NOT_GET_CONTENT", url)); //$NON-NLS-1$
+        return Messages.getInstance().getErrorString("Html.ERROR_0001_COULD_NOT_GET_CONTENT", url); //$NON-NLS-1$
       }
     }
 

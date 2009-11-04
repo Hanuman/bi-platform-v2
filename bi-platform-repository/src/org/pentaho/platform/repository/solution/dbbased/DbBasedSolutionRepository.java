@@ -103,10 +103,10 @@ public class DbBasedSolutionRepository extends SolutionRepositoryBase implements
       String reposName = PentahoSystem.getSystemSetting("solution-repository/db-repository-name", null); //$NON-NLS-1$
       if (reposName != null) {
         setRepositoryName(reposName);
-        SolutionRepositoryBase.logger.info(Messages.getString(
+        SolutionRepositoryBase.logger.info(Messages.getInstance().getString(
             "SolutionRepository.WARN_0002_USING_SOLUTION_NAME", getRepositoryName())); //$NON-NLS-1$
       } else {
-        SolutionRepositoryBase.logger.info(Messages.getString("SolutionRepository.WARN_0001_UNDEFINED_SOLUTION_NAME")); //$NON-NLS-1$
+        SolutionRepositoryBase.logger.info(Messages.getInstance().getString("SolutionRepository.WARN_0001_UNDEFINED_SOLUTION_NAME")); //$NON-NLS-1$
       }
       RepositoryFile root = (RepositoryFile) internalGetRootFolder();
       if (root == null) {
@@ -123,7 +123,7 @@ public class DbBasedSolutionRepository extends SolutionRepositoryBase implements
     String action = buildDirectoryPath(solutionName, actionPath, sequenceName);
 
     if ((action == null) || (action.length() == 0)) {
-      error(Messages.getErrorString("SolutionRepository.ERROR_0008_ACTION_SEQUENCE_NAME_INVALID")); //$NON-NLS-1$
+      error(Messages.getInstance().getErrorString("SolutionRepository.ERROR_0008_ACTION_SEQUENCE_NAME_INVALID")); //$NON-NLS-1$
       return null;
     }
 
@@ -159,7 +159,7 @@ public class DbBasedSolutionRepository extends SolutionRepositoryBase implements
       if (file != null) {
         putRepositoryObjectInCache(documentPath, file);
       } else {
-        SolutionRepositoryBase.logger.info(Messages.getString("SolutionRepository.INFO_0010_DOCUMENT_NOT_FOUND", //$NON-NLS-1$
+        SolutionRepositoryBase.logger.info(Messages.getInstance().getString("SolutionRepository.INFO_0010_DOCUMENT_NOT_FOUND", //$NON-NLS-1$
             documentPath));
         return null; // If it's still null then it doesn't exist
       }
@@ -170,16 +170,16 @@ public class DbBasedSolutionRepository extends SolutionRepositoryBase implements
       try {
         document = XmlDom4JHelper.getDocFromString(new String(file.getData()), this.getResourceLoader());
       } catch (Throwable t) {
-        error(Messages.getErrorString("SolutionRepository.ERROR_0017_INVALID_XML_DOCUMENT", documentPath), t); //$NON-NLS-1$
+        error(Messages.getInstance().getErrorString("SolutionRepository.ERROR_0017_INVALID_XML_DOCUMENT", documentPath), t); //$NON-NLS-1$
         return null;
       }
     } else {
-      error(Messages.getErrorString("SolutionRepository.ERROR_0019_NO_DATA_IN_FILE", file.getFileName())); //$NON-NLS-1$
+      error(Messages.getInstance().getErrorString("SolutionRepository.ERROR_0019_NO_DATA_IN_FILE", file.getFileName())); //$NON-NLS-1$
       return null;
     }
     if ((document == null) && (file != null) && (file.getData() != null)) {
       // the document exists but cannot be parsed
-      error(Messages.getErrorString("SolutionRepository.ERROR_0009_INVALID_DOCUMENT", documentPath)); //$NON-NLS-1$
+      error(Messages.getInstance().getErrorString("SolutionRepository.ERROR_0009_INVALID_DOCUMENT", documentPath)); //$NON-NLS-1$
       return null;
     }
     localizeDoc(document, file);
@@ -343,13 +343,13 @@ public class DbBasedSolutionRepository extends SolutionRepositoryBase implements
     String path = getSolutionPath(element);
     if (fileName.toLowerCase().endsWith(".xaction")) { //$NON-NLS-1$ 
       // create an action sequence document from this
-      info(Messages.getString("SolutionRepository.DEBUG_ADDING_ACTION", fileName)); //$NON-NLS-1$
+      info(Messages.getInstance().getString("SolutionRepository.DEBUG_ADDING_ACTION", fileName)); //$NON-NLS-1$
       IActionSequence actionSequence = getActionSequence(solutionId, path, fileName, loggingLevel, actionOperation);
       if (actionSequence == null) {
         if (((solutionId == null) || (solutionId.length() == 0)) && ((path == null) || (path.length() == 0))) {
-          info(Messages.getString("SolutionRepository.INFO_0008_NOT_ADDED", fileName)); //$NON-NLS-1$
+          info(Messages.getInstance().getString("SolutionRepository.INFO_0008_NOT_ADDED", fileName)); //$NON-NLS-1$
         } else {
-          error(Messages.getErrorString("SolutionRepository.ERROR_0006_INVALID_SEQUENCE_DOCUMENT", fileName)); //$NON-NLS-1$
+          error(Messages.getInstance().getErrorString("SolutionRepository.ERROR_0006_INVALID_SEQUENCE_DOCUMENT", fileName)); //$NON-NLS-1$
         }
       } else {
         addToRepository(actionSequence, parentNode, element);
@@ -361,7 +361,7 @@ public class DbBasedSolutionRepository extends SolutionRepositoryBase implements
         IFileInfo fileInfo = getFileInfo(solutionId, path, fileName, extension, pluginManager, actionOperation);
         addToRepository(fileInfo, solutionId, path, fileName, parentNode, element);
       } catch (Exception e) {
-        error(Messages.getErrorString("SolutionRepository.ERROR_0021_FILE_NOT_ADDED", fullPath), e); //$NON-NLS-1$
+        error(Messages.getInstance().getErrorString("SolutionRepository.ERROR_0021_FILE_NOT_ADDED", fullPath), e); //$NON-NLS-1$
       }
     }
 
@@ -635,7 +635,7 @@ public class DbBasedSolutionRepository extends SolutionRepositoryBase implements
     defaultSolutionAtributeContributor.contributeAttributes(file, dirNode);
     if ((actionSequence.getSequenceName() == null) || (actionSequence.getSolutionPath() == null)
         || (actionSequence.getSolutionName() == null)) {
-      error(Messages.getString("SolutionRepository.ERROR_0008_ACTION_SEQUENCE_NAME_INVALID")); //$NON-NLS-1$
+      error(Messages.getInstance().getString("SolutionRepository.ERROR_0008_ACTION_SEQUENCE_NAME_INVALID")); //$NON-NLS-1$
       return;
     }
     dirNode.addElement("filename").setText(actionSequence.getSequenceName()); //$NON-NLS-1$
@@ -742,7 +742,7 @@ public class DbBasedSolutionRepository extends SolutionRepositoryBase implements
     getRootFolder(actionOperation);
     if (!hasAccess(rootDirectory, actionOperation)) {
       if (SolutionRepositoryBase.logger.isDebugEnabled()) {
-        SolutionRepositoryBase.logger.debug(Messages.getString(
+        SolutionRepositoryBase.logger.debug(Messages.getInstance().getString(
             "SolutionRepository.ACCESS_DENIED", rootDirectory.getFullPath(), Integer.toString(actionOperation))); //$NON-NLS-1$
       }
       return document; // Empty Document
@@ -789,9 +789,9 @@ public class DbBasedSolutionRepository extends SolutionRepositoryBase implements
 
   public String resetSolutionFromFileSystem(final IPentahoSession pSession) {
     if (synchronizeSolutionWithSolutionSource(pSession)) {
-      return Messages.getString("SolutionRepository.INFO_0009_RESET_SUCCESS"); //$NON-NLS-1$
+      return Messages.getInstance().getString("SolutionRepository.INFO_0009_RESET_SUCCESS"); //$NON-NLS-1$
     } else {
-      return Messages.getString("SolutionRepository.ERROR_0013_RESET_FAILED", "Error"); //$NON-NLS-1$ //$NON-NLS-2$
+      return Messages.getInstance().getString("SolutionRepository.ERROR_0013_RESET_FAILED", "Error"); //$NON-NLS-1$ //$NON-NLS-2$
     }
   }
 
@@ -809,7 +809,7 @@ public class DbBasedSolutionRepository extends SolutionRepositoryBase implements
   public List loadSolutionFromFileSystem(final IPentahoSession pSession, final String solutionRoot,
       final boolean deleteOrphans) throws RepositoryException {
     synchronized (lock) {
-      SolutionRepositoryBase.logger.info(Messages.getString("SolutionRepository.INFO_0001_BEGIN_LOAD_DB_REPOSITORY")); //$NON-NLS-1$
+      SolutionRepositoryBase.logger.info(Messages.getInstance().getString("SolutionRepository.INFO_0001_BEGIN_LOAD_DB_REPOSITORY")); //$NON-NLS-1$
       HibernateUtil.beginTransaction();
       File solutionFile = new File(solutionRoot);
       RepositoryFile solution = null;
@@ -839,7 +839,7 @@ public class DbBasedSolutionRepository extends SolutionRepositoryBase implements
             // entry
             // Put the created folder into the created map for later use
             updateHelper.createdOrRetrievedFolders.put(toBase, solution); // Store for later reference
-            SolutionRepositoryBase.logger.info(Messages.getString(
+            SolutionRepositoryBase.logger.info(Messages.getInstance().getString(
                 "SolutionRepository.INFO_0002_UPDATED_FOLDER", solution.getFullPath())); //$NON-NLS-1$
           }
           repositoryName = solution.getFullPath() + ISolutionRepository.SEPARATOR;
@@ -867,10 +867,10 @@ public class DbBasedSolutionRepository extends SolutionRepositoryBase implements
           HibernateUtil.flushSession();
           // The next two lines were from the old code
           resetRepository(); // Clear the cache of old stuff
-          SolutionRepositoryBase.logger.info(Messages.getString("SolutionRepository.INFO_0003_END_LOAD_DB_REPOSITORY")); //$NON-NLS-1$
+          SolutionRepositoryBase.logger.info(Messages.getInstance().getString("SolutionRepository.INFO_0003_END_LOAD_DB_REPOSITORY")); //$NON-NLS-1$
           return deletions;
         } else {
-          throw new RepositoryException(Messages.getString(
+          throw new RepositoryException(Messages.getInstance().getString(
               "SolutionRepository.ERROR_0012_INVALID_SOLUTION_ROOT", solutionRoot)); //$NON-NLS-1$
         }
       } catch (HibernateException hibernateException) {
@@ -945,7 +945,7 @@ public class DbBasedSolutionRepository extends SolutionRepositoryBase implements
     try {
       rtn = (RepositoryFile) qry.uniqueResult();
     } catch (HibernateException ex) {
-      logger.error(Messages.getString("SolutionRepository.ERROR_0022_HIBERNATE_EXCEPTION", rootRepositoryName), ex); //$NON-NLS-1$
+      logger.error(Messages.getInstance().getString("SolutionRepository.ERROR_0022_HIBERNATE_EXCEPTION", rootRepositoryName), ex); //$NON-NLS-1$
       throw ex;
     }
     return rtn;
@@ -959,7 +959,7 @@ public class DbBasedSolutionRepository extends SolutionRepositoryBase implements
       if (repositoryName != null) {
         rootDirectory = findRootRepositoryByName(getRepositoryName());
         if (null == rootDirectory) {
-          warn(Messages.getString("SolutionRepository.WARN_0003_REPOSITORY_NOT_FOUND_BY_NAME", getRepositoryName())); //$NON-NLS-1$            
+          warn(Messages.getInstance().getString("SolutionRepository.WARN_0003_REPOSITORY_NOT_FOUND_BY_NAME", getRepositoryName())); //$NON-NLS-1$            
         }
       } else {
         Session hibSession = HibernateUtil.getSession();
@@ -969,7 +969,7 @@ public class DbBasedSolutionRepository extends SolutionRepositoryBase implements
         try {
           rtn = (RepositoryFile) qry.uniqueResult();
         } catch (HibernateException ex) {
-          logger.error(Messages.getString("SolutionRepository.ERROR_0022_HIBERNATE_EXCEPTION", rootDirectory //$NON-NLS-1$
+          logger.error(Messages.getInstance().getString("SolutionRepository.ERROR_0022_HIBERNATE_EXCEPTION", rootDirectory //$NON-NLS-1$
               .getFullPath()), ex);
           throw ex;
         }
@@ -1062,7 +1062,7 @@ public class DbBasedSolutionRepository extends SolutionRepositoryBase implements
         try {
           rtn = (RepositoryFile) qry.uniqueResult();
         } catch (HibernateException ex) {
-          logger.error(Messages.getString("SolutionRepository.ERROR_0022_HIBERNATE_EXCEPTION", cleanPath), ex); //$NON-NLS-1$
+          logger.error(Messages.getInstance().getString("SolutionRepository.ERROR_0022_HIBERNATE_EXCEPTION", cleanPath), ex); //$NON-NLS-1$
           throw ex;
         }
         return rtn;
@@ -1247,7 +1247,7 @@ public class DbBasedSolutionRepository extends SolutionRepositoryBase implements
 
       // do not allow publishing to root path
       if (StringUtil.isEmpty(path)) {
-        logger.error(Messages.getErrorString("SolutionRepository.ERROR_0023_INVALID_PUBLISH_LOCATION_ROOT")); //$NON-NLS-1$
+        logger.error(Messages.getInstance().getErrorString("SolutionRepository.ERROR_0023_INVALID_PUBLISH_LOCATION_ROOT")); //$NON-NLS-1$
         return ISolutionRepository.FILE_ADD_FAILED;
       }
 
@@ -1316,7 +1316,7 @@ public class DbBasedSolutionRepository extends SolutionRepositoryBase implements
     try {
       bytes = FileHelper.getBytesFromFile(f);
     } catch (IOException e) {
-      error(Messages.getErrorString("SolutionRepository.ERROR_0014_COULD_NOT_SAVE_FILE", fileName), e); //$NON-NLS-1$
+      error(Messages.getInstance().getErrorString("SolutionRepository.ERROR_0014_COULD_NOT_SAVE_FILE", fileName), e); //$NON-NLS-1$
       return ISolutionRepository.FILE_ADD_FAILED;
     }
     return addSolutionFile(baseUrl, path, fileName, bytes, overwrite);
@@ -1403,7 +1403,7 @@ public class DbBasedSolutionRepository extends SolutionRepositoryBase implements
     try {
       bytes = FileHelper.getBytesFromFile(f);
     } catch (IOException e) {
-      error(Messages.getErrorString("SolutionRepository.ERROR_0014_COULD_NOT_SAVE_FILE", fileName), e); //$NON-NLS-1$
+      error(Messages.getInstance().getErrorString("SolutionRepository.ERROR_0014_COULD_NOT_SAVE_FILE", fileName), e); //$NON-NLS-1$
       return ISolutionRepository.FILE_ADD_FAILED;
     }
     return publish(baseUrl, path, fileName, bytes, overwrite);
@@ -1441,14 +1441,14 @@ public class DbBasedSolutionRepository extends SolutionRepositoryBase implements
   public void setPermissions(final ISolutionFile file, final Map<IPermissionRecipient, IPermissionMask> acl)
       throws PentahoAccessControlException {
     if (!SecurityHelper.canHaveACLS(file)) {
-      throw new PentahoAccessControlException(Messages.getString(
+      throw new PentahoAccessControlException(Messages.getInstance().getString(
           "SolutionRepository.ACCESS_DENIED", file.getFullPath(), Integer.toString(ISolutionRepository.ACTION_SHARE))); //$NON-NLS-1$
     }
     if (hasAccess(file, ISolutionRepository.ACTION_SHARE)) {
       SpringSecurityPermissionMgr permissionMgr = SpringSecurityPermissionMgr.instance();
       permissionMgr.setPermissions(acl, file);
     } else {
-      throw new PentahoAccessControlException(Messages.getString(
+      throw new PentahoAccessControlException(Messages.getInstance().getString(
           "SolutionRepository.ACCESS_DENIED", file.getFullPath(), Integer.toString(ISolutionRepository.ACTION_SHARE))); //$NON-NLS-1$    
     }
   }
@@ -1490,7 +1490,7 @@ public class DbBasedSolutionRepository extends SolutionRepositoryBase implements
       try {
 
         if (!(isPathedUnderSolutionRoot(newFolder))) {
-          throw new IOException(Messages.getErrorString("SolutionRepository.ERROR_0021_FILE_NOT_ADDED", newFolder //$NON-NLS-1$
+          throw new IOException(Messages.getInstance().getErrorString("SolutionRepository.ERROR_0021_FILE_NOT_ADDED", newFolder //$NON-NLS-1$
               .getName()));
         }
 

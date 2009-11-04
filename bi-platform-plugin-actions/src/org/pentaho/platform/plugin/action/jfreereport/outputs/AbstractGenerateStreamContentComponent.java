@@ -52,11 +52,11 @@ public abstract class AbstractGenerateStreamContentComponent extends AbstractGen
     }
 
     if (getOutputNames().size() == 0) {
-      warn(Messages.getString("Base.WARN_NO_OUTPUT_STREAM")); //$NON-NLS-1$
+      warn(Messages.getInstance().getString("Base.WARN_NO_OUTPUT_STREAM")); //$NON-NLS-1$
       return true;
     }
 
-    warn(Messages.getString("AbstractGenerateStreamContentComponent.JFreeReport.ERROR_0038_NO_OUTPUT_DEFINED")); //$NON-NLS-1$
+    warn(Messages.getInstance().getString("AbstractGenerateStreamContentComponent.JFreeReport.ERROR_0038_NO_OUTPUT_DEFINED")); //$NON-NLS-1$
     return false;
   }
 
@@ -69,7 +69,7 @@ public abstract class AbstractGenerateStreamContentComponent extends AbstractGen
     OutputStream outputStream = createOutputStream();
     if (outputStream == null) {
       // We could not get an output stream for the content
-      error(Messages.getErrorString("JFreeReport.ERROR_0008_INVALID_OUTPUT_STREAM")); //$NON-NLS-1$
+      error(Messages.getInstance().getErrorString("JFreeReport.ERROR_0008_INVALID_OUTPUT_STREAM")); //$NON-NLS-1$
       return false;
     }
 

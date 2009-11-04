@@ -78,39 +78,39 @@ public class DatasourceInMemoryServiceHelper {
 
     String driverClass = connection.getDriverClass();
     if (StringUtils.isEmpty(driverClass)) {
-      logger.error(Messages.getErrorString("DatasourceInMemoryServiceHelper.ERROR_0001_CONNECTION_ATTEMPT_FAILED"));//$NON-NLS-1$
-      throw new DatasourceServiceException(Messages.getErrorString("DatasourceInMemoryServiceHelper.ERROR_0001_CONNECTION_ATTEMPT_FAILED")); //$NON-NLS-1$
+      logger.error(Messages.getInstance().getErrorString("DatasourceInMemoryServiceHelper.ERROR_0001_CONNECTION_ATTEMPT_FAILED"));//$NON-NLS-1$
+      throw new DatasourceServiceException(Messages.getInstance().getErrorString("DatasourceInMemoryServiceHelper.ERROR_0001_CONNECTION_ATTEMPT_FAILED")); //$NON-NLS-1$
     }
     Class<?> driverC = null;
 
     try {
       driverC = Class.forName(driverClass);
     } catch (ClassNotFoundException e) {
-        logger.error(Messages.getErrorString("DatasourceInMemoryServiceHelper.ERROR_0002_DRIVER_NOT_FOUND_IN_CLASSPATH", driverClass),e);//$NON-NLS-1$
-        throw new DatasourceServiceException(Messages.getErrorString("DatasourceInMemoryServiceHelper.ERROR_0002_DRIVER_NOT_FOUND_IN_CLASSPATH"),e); //$NON-NLS-1$
+        logger.error(Messages.getInstance().getErrorString("DatasourceInMemoryServiceHelper.ERROR_0002_DRIVER_NOT_FOUND_IN_CLASSPATH", driverClass),e);//$NON-NLS-1$
+        throw new DatasourceServiceException(Messages.getInstance().getErrorString("DatasourceInMemoryServiceHelper.ERROR_0002_DRIVER_NOT_FOUND_IN_CLASSPATH"),e); //$NON-NLS-1$
     }
     if (!Driver.class.isAssignableFrom(driverC)) {
-      logger.error(Messages.getErrorString("DatasourceInMemoryServiceHelper.ERROR_0002_DRIVER_NOT_FOUND_IN_CLASSPATH", driverClass));//$NON-NLS-1$
-        throw new DatasourceServiceException(Messages.getErrorString("DatasourceInMemoryServiceHelper.ERROR_0002_DRIVER_NOT_FOUND_IN_CLASSPATH",driverClass)); //$NON-NLS-1$
+      logger.error(Messages.getInstance().getErrorString("DatasourceInMemoryServiceHelper.ERROR_0002_DRIVER_NOT_FOUND_IN_CLASSPATH", driverClass));//$NON-NLS-1$
+        throw new DatasourceServiceException(Messages.getInstance().getErrorString("DatasourceInMemoryServiceHelper.ERROR_0002_DRIVER_NOT_FOUND_IN_CLASSPATH",driverClass)); //$NON-NLS-1$
     }
     Driver driver = null;
     
     try {
       driver = driverC.asSubclass(Driver.class).newInstance();
     } catch (InstantiationException e) {
-        logger.error(Messages.getErrorString("DatasourceInMemoryServiceHelper.ERROR_0003_UNABLE_TO_INSTANCE_DRIVER", driverClass),e);//$NON-NLS-1$
-        throw new DatasourceServiceException(Messages.getErrorString("DatasourceInMemoryServiceHelper.ERROR_0003_UNABLE_TO_INSTANCE_DRIVER"), e); //$NON-NLS-1$
+        logger.error(Messages.getInstance().getErrorString("DatasourceInMemoryServiceHelper.ERROR_0003_UNABLE_TO_INSTANCE_DRIVER", driverClass),e);//$NON-NLS-1$
+        throw new DatasourceServiceException(Messages.getInstance().getErrorString("DatasourceInMemoryServiceHelper.ERROR_0003_UNABLE_TO_INSTANCE_DRIVER"), e); //$NON-NLS-1$
     } catch (IllegalAccessException e) {
-        logger.error(Messages.getErrorString("DatasourceInMemoryServiceHelper.ERROR_0003_UNABLE_TO_INSTANCE_DRIVER", driverClass),e);//$NON-NLS-1$
-        throw new DatasourceServiceException(Messages.getErrorString("DatasourceInMemoryServiceHelper.ERROR_0003_UNABLE_TO_INSTANCE_DRIVER"), e); //$NON-NLS-1$
+        logger.error(Messages.getInstance().getErrorString("DatasourceInMemoryServiceHelper.ERROR_0003_UNABLE_TO_INSTANCE_DRIVER", driverClass),e);//$NON-NLS-1$
+        throw new DatasourceServiceException(Messages.getInstance().getErrorString("DatasourceInMemoryServiceHelper.ERROR_0003_UNABLE_TO_INSTANCE_DRIVER"), e); //$NON-NLS-1$
     }
     try {
       DriverManager.registerDriver(driver);
       conn = DriverManager.getConnection(connection.getUrl(), connection.getUsername(), connection.getPassword());
       return conn;
     } catch (SQLException e) {
-      logger.error(Messages.getErrorString("DatasourceInMemoryServiceHelper.ERROR_0004_UNABLE_TO_CONNECT"), e);//$NON-NLS-1$
-      throw new DatasourceServiceException(Messages.getErrorString("DatasourceInMemoryServiceHelper.ERROR_0004_UNABLE_TO_CONNECT"), e); //$NON-NLS-1$
+      logger.error(Messages.getInstance().getErrorString("DatasourceInMemoryServiceHelper.ERROR_0004_UNABLE_TO_CONNECT"), e);//$NON-NLS-1$
+      throw new DatasourceServiceException(Messages.getInstance().getErrorString("DatasourceInMemoryServiceHelper.ERROR_0004_UNABLE_TO_CONNECT"), e); //$NON-NLS-1$
     }
   }
 
@@ -152,8 +152,8 @@ public class DatasourceInMemoryServiceHelper {
         serializedResultSet = new SerializedResultSet(columnTypes, marshallableResultSet.getColumnNames().getColumnName(), data);
       }
     } catch (Exception e) {
-      logger.error(Messages.getErrorString("DatasourceInMemoryServiceHelper.ERROR_0005_QUERY_VALIDATION_FAILED", e.getLocalizedMessage()),e);//$NON-NLS-1$
-      throw new DatasourceServiceException(Messages.getErrorString("DatasourceInMemoryServiceHelper.ERROR_0005_QUERY_VALIDATION_FAILED",e.getLocalizedMessage()), e); //$NON-NLS-1$      
+      logger.error(Messages.getInstance().getErrorString("DatasourceInMemoryServiceHelper.ERROR_0005_QUERY_VALIDATION_FAILED", e.getLocalizedMessage()),e);//$NON-NLS-1$
+      throw new DatasourceServiceException(Messages.getInstance().getErrorString("DatasourceInMemoryServiceHelper.ERROR_0005_QUERY_VALIDATION_FAILED",e.getLocalizedMessage()), e); //$NON-NLS-1$      
     } finally {
         if (sqlConnection != null) {
           sqlConnection.close();

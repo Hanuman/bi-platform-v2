@@ -41,15 +41,15 @@ import org.springframework.security.providers.encoding.PasswordEncoder;
 public class DefaultPentahoPasswordEncoder implements PasswordEncoder {
 
   public String encodePassword(final String rawPass, final Object salt) throws DataAccessException {
-    Validate.notNull(rawPass, Messages.getString("DefaultPentahoPasswordEncoder.ERROR_0001_RAWPASS_CANNOT_BE_NULL")); //$NON-NLS-1$
+    Validate.notNull(rawPass, Messages.getInstance().getString("DefaultPentahoPasswordEncoder.ERROR_0001_RAWPASS_CANNOT_BE_NULL")); //$NON-NLS-1$
     // same code as org.pentaho.platform.util.Base64PasswordService.encrypt()
     return StringUtil.isEmpty(rawPass) ? rawPass : new String(Base64.encodeBase64(rawPass.getBytes()));
   }
 
   public boolean isPasswordValid(final String encPass, final String rawPass, final Object salt)
       throws DataAccessException {
-    Validate.notNull(encPass, Messages.getString("DefaultPentahoPasswordEncoder.ERROR_0002_ENCPASS_CANNOT_BE_NULL")); //$NON-NLS-1$
-    Validate.notNull(rawPass, Messages.getString("DefaultPentahoPasswordEncoder.ERROR_0001_RAWPASS_CANNOT_BE_NULL")); //$NON-NLS-1$
+    Validate.notNull(encPass, Messages.getInstance().getString("DefaultPentahoPasswordEncoder.ERROR_0002_ENCPASS_CANNOT_BE_NULL")); //$NON-NLS-1$
+    Validate.notNull(rawPass, Messages.getInstance().getString("DefaultPentahoPasswordEncoder.ERROR_0001_RAWPASS_CANNOT_BE_NULL")); //$NON-NLS-1$
     String encodedRawPass = encodePassword(rawPass, salt);
     return encPass.equals(encodedRawPass);
   }

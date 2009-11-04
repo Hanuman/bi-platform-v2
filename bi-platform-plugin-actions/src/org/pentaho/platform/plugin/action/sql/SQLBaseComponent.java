@@ -124,13 +124,13 @@ public abstract class SQLBaseComponent extends ComponentBase implements IDataCom
       IActionInput sharedConnection = relationalDbAction.getSharedConnection();
       if (query == ActionInputConstant.NULL_INPUT) {
 
-        error(Messages.getErrorString("SQLBaseComponent.ERROR_0001_QUERY_NOT_SPECIFIED", actionName)); //$NON-NLS-1$
+        error(Messages.getInstance().getErrorString("SQLBaseComponent.ERROR_0001_QUERY_NOT_SPECIFIED", actionName)); //$NON-NLS-1$
         result = false;
       }
       
       if ((jndi == ActionInputConstant.NULL_INPUT) && (dbUrl == ActionInputConstant.NULL_INPUT)
           && (sharedConnection == ActionInputConstant.NULL_INPUT)) {
-        error(Messages.getErrorString("SQLBaseComponent.ERROR_0002_CONNECTION_NOT_SPECIFIED", actionName)); //$NON-NLS-1$
+        error(Messages.getInstance().getErrorString("SQLBaseComponent.ERROR_0002_CONNECTION_NOT_SPECIFIED", actionName)); //$NON-NLS-1$
         result = false;
       }
     } else if (actionDefinition instanceof SqlConnectionAction) {
@@ -138,11 +138,11 @@ public abstract class SQLBaseComponent extends ComponentBase implements IDataCom
       IActionInput dbUrl = sqlConnectionAction.getDbUrl();
       IActionInput jndi = sqlConnectionAction.getJndi();
       if ((jndi == ActionInputConstant.NULL_INPUT) && (dbUrl == ActionInputConstant.NULL_INPUT)) {
-        error(Messages.getErrorString("SQLBaseComponent.ERROR_0002_CONNECTION_NOT_SPECIFIED", actionName)); //$NON-NLS-1$
+        error(Messages.getInstance().getErrorString("SQLBaseComponent.ERROR_0002_CONNECTION_NOT_SPECIFIED", actionName)); //$NON-NLS-1$
         result = false;
       }
     } else {
-      error(Messages.getErrorString(
+      error(Messages.getInstance().getErrorString(
           "ComponentBase.ERROR_0001_UNKNOWN_ACTION_TYPE", actionDefinition.getElement().asXML())); //$NON-NLS-1$
       result = false;
     }
@@ -184,7 +184,7 @@ public abstract class SQLBaseComponent extends ComponentBase implements IDataCom
 
         String baseQuery = getQuery();
         if (baseQuery == null) {
-          error(Messages.getErrorString(
+          error(Messages.getInstance().getErrorString(
               "SQLBaseComponent.ERROR_0001_QUERY_NOT_SPECIFIED", actionDefinition.getDescription())); //$NON-NLS-1$
           return false;
         }
@@ -199,12 +199,12 @@ public abstract class SQLBaseComponent extends ComponentBase implements IDataCom
           connectionOwner = false;
           IPentahoConnection conn = sharedConnection.shareConnection();
           if (conn == null) {
-            error(Messages.getErrorString("IPreparedComponent.ERROR_0002_CONNECTION_NOT_AVAILABLE", getActionName())); //$NON-NLS-1$
+            error(Messages.getInstance().getErrorString("IPreparedComponent.ERROR_0002_CONNECTION_NOT_AVAILABLE", getActionName())); //$NON-NLS-1$
             return false;
           } else if (conn.getDatasourceType() == IPentahoConnection.SQL_DATASOURCE) {
             connection = conn;
           } else {
-            error(Messages.getErrorString("IPreparedComponent.ERROR_0001_INVALID_CONNECTION_TYPE", getActionName())); //$NON-NLS-1$
+            error(Messages.getInstance().getErrorString("IPreparedComponent.ERROR_0001_INVALID_CONNECTION_TYPE", getActionName())); //$NON-NLS-1$
             return false;
           }
         } else {
@@ -273,7 +273,7 @@ public abstract class SQLBaseComponent extends ComponentBase implements IDataCom
         }
       }
     } catch (Exception e) {
-      error(Messages.getErrorString("SQLBaseComponent.ERROR_0006_EXECUTE_FAILED", getActionName()), e); //$NON-NLS-1$
+      error(Messages.getInstance().getErrorString("SQLBaseComponent.ERROR_0006_EXECUTE_FAILED", getActionName()), e); //$NON-NLS-1$
     }
 
     return false;
@@ -378,7 +378,7 @@ public abstract class SQLBaseComponent extends ComponentBase implements IDataCom
                 columnIdx = md.getColumnIndex(new String[] { parameter });
               }
               if (columnIdx < 0) {
-                error(Messages.getErrorString("Template.ERROR_0005_COULD_NOT_DETERMINE_COLUMN")); //$NON-NLS-1$
+                error(Messages.getInstance().getErrorString("Template.ERROR_0005_COULD_NOT_DETERMINE_COLUMN")); //$NON-NLS-1$
                 return -1;
               }
               int rowCount = rs.getRowCount();
@@ -427,16 +427,16 @@ public abstract class SQLBaseComponent extends ComponentBase implements IDataCom
   public IPentahoResultSet executePrepared(final Map preparedParams) {
     try {
       if (connection == null) {
-        error(Messages.getErrorString("SQLBaseComponent.ERROR_0007_NO_CONNECTION")); //$NON-NLS-1$
+        error(Messages.getInstance().getErrorString("SQLBaseComponent.ERROR_0007_NO_CONNECTION")); //$NON-NLS-1$
         return null;
       }
       if (!connection.initialized()) {
-        error(Messages.getErrorString("SQLBaseComponent.ERROR_0007_NO_CONNECTION")); //$NON-NLS-1$
+        error(Messages.getInstance().getErrorString("SQLBaseComponent.ERROR_0007_NO_CONNECTION")); //$NON-NLS-1$
         return null;
       }
 
       if (preparedQuery == null) {
-        error(Messages.getErrorString("SQLBaseComponent.ERROR_0001_QUERY_NOT_SPECIFIED", getActionName())); //$NON-NLS-1$
+        error(Messages.getInstance().getErrorString("SQLBaseComponent.ERROR_0001_QUERY_NOT_SPECIFIED", getActionName())); //$NON-NLS-1$
         return null;
       }
 
@@ -461,14 +461,14 @@ public abstract class SQLBaseComponent extends ComponentBase implements IDataCom
 
       if (connection instanceof SQLConnection){
         if (((SQLConnection)connection).isForcedForwardOnly()){
-          warn(Messages.getString("SQLBaseComponent.WARN_FALL_BACK_TO_NONSCROLLABLE")); //$NON-NLS-1$
+          warn(Messages.getInstance().getString("SQLBaseComponent.WARN_FALL_BACK_TO_NONSCROLLABLE")); //$NON-NLS-1$
         }
       }
 
       rSet = resultSet;
       return resultSet;
     } catch (Exception e) {
-      error(Messages.getErrorString("SQLBaseComponent.ERROR_0006_EXECUTE_FAILED", getActionName()), e); //$NON-NLS-1$
+      error(Messages.getInstance().getErrorString("SQLBaseComponent.ERROR_0006_EXECUTE_FAILED", getActionName()), e); //$NON-NLS-1$
     }
     return null;
   }
@@ -484,11 +484,11 @@ public abstract class SQLBaseComponent extends ComponentBase implements IDataCom
 
     try {
       if (connection == null) {
-        error(Messages.getErrorString("SQLBaseComponent.ERROR_0007_NO_CONNECTION")); //$NON-NLS-1$
+        error(Messages.getInstance().getErrorString("SQLBaseComponent.ERROR_0007_NO_CONNECTION")); //$NON-NLS-1$
         return false;
       }
       if (!connection.initialized()) {
-        error(Messages.getErrorString("SQLBaseComponent.ERROR_0007_NO_CONNECTION")); //$NON-NLS-1$
+        error(Messages.getInstance().getErrorString("SQLBaseComponent.ERROR_0007_NO_CONNECTION")); //$NON-NLS-1$
         return false;
       }
 
@@ -496,7 +496,7 @@ public abstract class SQLBaseComponent extends ComponentBase implements IDataCom
 
       return true;
     } catch (Exception e) {
-      error(Messages.getErrorString("SQLBaseComponent.ERROR_0006_EXECUTE_FAILED", getActionName()), e); //$NON-NLS-1$
+      error(Messages.getInstance().getErrorString("SQLBaseComponent.ERROR_0006_EXECUTE_FAILED", getActionName()), e); //$NON-NLS-1$
     }
 
     return false;
@@ -514,7 +514,7 @@ public abstract class SQLBaseComponent extends ComponentBase implements IDataCom
   protected boolean runQuery(final String rawQuery, boolean live) {
     try {
       if ((connection == null) || !connection.initialized()) {
-        error(Messages.getErrorString("SQLBaseComponent.ERROR_0007_NO_CONNECTION")); //$NON-NLS-1$
+        error(Messages.getInstance().getErrorString("SQLBaseComponent.ERROR_0007_NO_CONNECTION")); //$NON-NLS-1$
         return false;
       }
 
@@ -547,7 +547,7 @@ public abstract class SQLBaseComponent extends ComponentBase implements IDataCom
       if (sqlConnection.isForcedForwardOnly()){
         isForwardOnly = true;
         live = false;
-        warn(Messages.getString("SQLBaseComponent.WARN_FALL_BACK_TO_NONSCROLLABLE")); //$NON-NLS-1$
+        warn(Messages.getInstance().getString("SQLBaseComponent.WARN_FALL_BACK_TO_NONSCROLLABLE")); //$NON-NLS-1$
       }
 
       if (live) {
@@ -567,7 +567,7 @@ public abstract class SQLBaseComponent extends ComponentBase implements IDataCom
           return true;
         } else {
           // close the connection if owner
-          error(Messages.getErrorString("SQLBaseComponent.ERROR_0006_EXECUTE_FAILED", getActionName())); //$NON-NLS-1$
+          error(Messages.getInstance().getErrorString("SQLBaseComponent.ERROR_0006_EXECUTE_FAILED", getActionName())); //$NON-NLS-1$
           if (connectionOwner) {
             connection.close();
           }
@@ -598,7 +598,7 @@ public abstract class SQLBaseComponent extends ComponentBase implements IDataCom
       }
       return true;
     } catch (Exception e) {
-      error(Messages.getErrorString("SQLBaseComponent.ERROR_0006_EXECUTE_FAILED", getActionName()), e); //$NON-NLS-1$
+      error(Messages.getInstance().getErrorString("SQLBaseComponent.ERROR_0006_EXECUTE_FAILED", getActionName()), e); //$NON-NLS-1$
     }
 
     return false;
@@ -627,7 +627,7 @@ public abstract class SQLBaseComponent extends ComponentBase implements IDataCom
           resultSet = sqlConnection.prepareAndExecuteQuery(query, preparedParameters,
               SQLConnection.RESULTSET_FORWARDONLY, SQLConnection.CONCUR_READONLY);
         } else {
-          throw new IllegalStateException(Messages.getErrorString("SQLBaseComponent.ERROR_0008_UNSUPPORTED_CURSOR_TYPE")); //$NON-NLS-1$
+          throw new IllegalStateException(Messages.getInstance().getErrorString("SQLBaseComponent.ERROR_0008_UNSUPPORTED_CURSOR_TYPE")); //$NON-NLS-1$
         }
       }
     } else {
@@ -638,7 +638,7 @@ public abstract class SQLBaseComponent extends ComponentBase implements IDataCom
           resultSet = sqlConnection.executeQuery(query, SQLConnection.RESULTSET_FORWARDONLY,
               SQLConnection.CONCUR_READONLY);
         } else {
-          throw new IllegalStateException(Messages.getErrorString("SQLBaseComponent.ERROR_0008_UNSUPPORTED_CURSOR_TYPE")); //$NON-NLS-1$
+          throw new IllegalStateException(Messages.getInstance().getErrorString("SQLBaseComponent.ERROR_0008_UNSUPPORTED_CURSOR_TYPE")); //$NON-NLS-1$
         }
       }
     }
@@ -687,7 +687,7 @@ public abstract class SQLBaseComponent extends ComponentBase implements IDataCom
       // mark a spot in the preparedParameters list and move on.
       if (parameterPrefix.equals(IPreparedComponent.PREPARE_LATER_PREFIX)) {
         if (!isDefinedOutput(IPreparedComponent.PREPARED_COMPONENT_NAME)) {
-          error(Messages.getErrorString("IPreparedComponent.ERROR_0003_INVALID_PARAMETER_STATE")); //$NON-NLS-1$
+          error(Messages.getInstance().getErrorString("IPreparedComponent.ERROR_0003_INVALID_PARAMETER_STATE")); //$NON-NLS-1$
           return -1;
         }
         preparedParameters.add(IPreparedComponent.PREPARE_LATER_PLACEHOLDER);
@@ -744,7 +744,7 @@ public abstract class SQLBaseComponent extends ComponentBase implements IDataCom
               columnIdx = md.getColumnIndex(new String[] { parameter });
             }
             if (columnIdx < 0) {
-              error(Messages.getErrorString("Template.ERROR_0005_COULD_NOT_DETERMINE_COLUMN")); //$NON-NLS-1$
+              error(Messages.getInstance().getErrorString("Template.ERROR_0005_COULD_NOT_DETERMINE_COLUMN")); //$NON-NLS-1$
               return -1;
             }
             int rowCount = rs.getRowCount();
@@ -818,7 +818,7 @@ public abstract class SQLBaseComponent extends ComponentBase implements IDataCom
   protected void waitFor(final int millis) {
     try {
       if (ComponentBase.debug) {
-        debug(Messages.getString("SQLBaseComponent.DEBUG_WAITING_FOR_CONNECTION", Integer.toString(millis))); //$NON-NLS-1$
+        debug(Messages.getInstance().getString("SQLBaseComponent.DEBUG_WAITING_FOR_CONNECTION", Integer.toString(millis))); //$NON-NLS-1$
       }
       Thread.sleep(millis);
     } catch (Exception ex) {
@@ -889,7 +889,7 @@ public abstract class SQLBaseComponent extends ComponentBase implements IDataCom
       }
       if (localConnection == null) {
         if (defaultConnection == null) {
-          error(Messages.getErrorString("SQLBaseComponent.ERROR_0005_INVALID_CONNECTION")); //$NON-NLS-1$
+          error(Messages.getInstance().getErrorString("SQLBaseComponent.ERROR_0005_INVALID_CONNECTION")); //$NON-NLS-1$
           return null;
         } else {
           localConnection = defaultConnection;
@@ -897,7 +897,7 @@ public abstract class SQLBaseComponent extends ComponentBase implements IDataCom
       }
       return localConnection;
     } catch (Exception e) {
-      error(Messages.getErrorString("SQLBaseComponent.ERROR_0006_EXECUTE_FAILED", getActionName()), e); //$NON-NLS-1$
+      error(Messages.getInstance().getErrorString("SQLBaseComponent.ERROR_0006_EXECUTE_FAILED", getActionName()), e); //$NON-NLS-1$
     }
     return null;
   }
@@ -947,9 +947,9 @@ public abstract class SQLBaseComponent extends ComponentBase implements IDataCom
 
   private void dumpQuery(final String query) {
     if (timeout == 0) {
-      debug(Messages.getString("SQLBaseComponent.DEBUG_RUNNING_QUERY", query)); //$NON-NLS-1$
+      debug(Messages.getInstance().getString("SQLBaseComponent.DEBUG_RUNNING_QUERY", query)); //$NON-NLS-1$
     } else {
-      debug(Messages.getString("SQLBaseComponent.DEBUG_RUNNING_QUERY_TIMEOUT", query, "" + timeout)); //$NON-NLS-1$ //$NON-NLS-2$
+      debug(Messages.getInstance().getString("SQLBaseComponent.DEBUG_RUNNING_QUERY_TIMEOUT", query, "" + timeout)); //$NON-NLS-1$ //$NON-NLS-2$
     }
   }
 }

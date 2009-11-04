@@ -245,7 +245,7 @@ public abstract class SolutionRepositoryBase extends PentahoMessenger implements
     }
     
     if (!f.exists() && !create) {
-      error(Messages.getErrorString("SolutionRepository.ERROR_0001_FILE_DOES_NOT_EXIST", path)); //$NON-NLS-1$
+      error(Messages.getInstance().getErrorString("SolutionRepository.ERROR_0001_FILE_DOES_NOT_EXIST", path)); //$NON-NLS-1$
       return null;
     }
     if (!f.exists()) {
@@ -253,7 +253,7 @@ public abstract class SolutionRepositoryBase extends PentahoMessenger implements
     }
     // TODO: caching
     if (SolutionRepositoryBase.debug) {
-      debug(Messages.getErrorString("SolutionRepository.DEBUG_FILE_PATH", f.getAbsolutePath())); //$NON-NLS-1$
+      debug(Messages.getInstance().getErrorString("SolutionRepository.DEBUG_FILE_PATH", f.getAbsolutePath())); //$NON-NLS-1$
     }
     return f;
   }
@@ -310,12 +310,12 @@ public abstract class SolutionRepositoryBase extends PentahoMessenger implements
               node.setText(localeText);
             }
           } catch (Exception e) {
-            warn(Messages.getString("SolutionRepository.WARN_MISSING_RESOURCE_PROPERTY", name.substring(1), baseName, getLocale().toString())); //$NON-NLS-1$
+            warn(Messages.getInstance().getString("SolutionRepository.WARN_MISSING_RESOURCE_PROPERTY", name.substring(1), baseName, getLocale().toString())); //$NON-NLS-1$
           }
         }
       }
     } catch (Exception e) {
-      error(Messages.getErrorString("SolutionRepository.ERROR_0007_COULD_NOT_READ_PROPERTIES", file.getFullPath()), e); //$NON-NLS-1$
+      error(Messages.getInstance().getErrorString("SolutionRepository.ERROR_0007_COULD_NOT_READ_PROPERTIES", file.getFullPath()), e); //$NON-NLS-1$
     }
   }
 
@@ -390,7 +390,7 @@ public abstract class SolutionRepositoryBase extends PentahoMessenger implements
       }
       return null;
     } catch (Exception e) {
-      error(Messages.getErrorString("SolutionRepository.ERROR_0007_COULD_NOT_READ_PROPERTIES", baseFile.getFullPath()), e); //$NON-NLS-1$
+      error(Messages.getInstance().getErrorString("SolutionRepository.ERROR_0007_COULD_NOT_READ_PROPERTIES", baseFile.getFullPath()), e); //$NON-NLS-1$
     }
     return null;
   }
@@ -531,7 +531,7 @@ public abstract class SolutionRepositoryBase extends PentahoMessenger implements
     try {
       document = XmlDom4JHelper.getDocFromString(xml, loader);
     } catch (Throwable t) {
-      error(Messages.getErrorString("SolutionRepository.ERROR_0009_INVALID_DOCUMENT", actionResource.getAddress()), t); //$NON-NLS-1$
+      error(Messages.getInstance().getErrorString("SolutionRepository.ERROR_0009_INVALID_DOCUMENT", actionResource.getAddress()), t); //$NON-NLS-1$
       return null;
     }
     return document;
@@ -547,7 +547,7 @@ public abstract class SolutionRepositoryBase extends PentahoMessenger implements
       InputStream in = getResourceInputStream(fullPath, true, actionOperation);
       fileInfo = pluginManager.getFileInfo(extension, getSession(), file, in);
     } catch (Exception e) {
-      error(Messages.getErrorString("SolutionRepository.ERROR_0021_FILE_NOT_ADDED", fullPath), e); //$NON-NLS-1$
+      error(Messages.getInstance().getErrorString("SolutionRepository.ERROR_0021_FILE_NOT_ADDED", fullPath), e); //$NON-NLS-1$
     }
     return fileInfo;
   }
@@ -661,7 +661,7 @@ public abstract class SolutionRepositoryBase extends PentahoMessenger implements
 
     // do not allow publishing to root path
     if (path.equals(File.separator)) {
-      logger.error(Messages.getErrorString("SolutionRepository.ERROR_0023_INVALID_PUBLISH_LOCATION_ROOT")); //$NON-NLS-1$
+      logger.error(Messages.getInstance().getErrorString("SolutionRepository.ERROR_0023_INVALID_PUBLISH_LOCATION_ROOT")); //$NON-NLS-1$
       return ISolutionRepository.FILE_ADD_FAILED;
     }
 
@@ -706,7 +706,7 @@ public abstract class SolutionRepositoryBase extends PentahoMessenger implements
           if (deleted) {
             AuditHelper
                 .audit(
-                    "", getSession().getName(), "", getClass().toString(), "", MessageTypes.UNKNOWN_ENTRY, Messages.getString("SOLREPO.AUDIT_DEL_FILE", solutionPath), "", 0.0f, null); //$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ 
+                    "", getSession().getName(), "", getClass().toString(), "", MessageTypes.UNKNOWN_ENTRY, Messages.getInstance().getString("SOLREPO.AUDIT_DEL_FILE", solutionPath), "", 0.0f, null); //$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ 
           }
           return deleted;
         } else { // recursively delete all the files under this directory
@@ -729,7 +729,7 @@ public abstract class SolutionRepositoryBase extends PentahoMessenger implements
 
   private boolean deleteFolder(final File dir) {
     if (!dir.isDirectory()) {
-      SolutionRepositoryBase.logger.warn(Messages.getString("SolutionRepository.USER_DELETE_FOLDER_WARNING")); //$NON-NLS-1$
+      SolutionRepositoryBase.logger.warn(Messages.getInstance().getString("SolutionRepository.USER_DELETE_FOLDER_WARNING")); //$NON-NLS-1$
       return false;
     }
     String[] files = dir.list();
@@ -740,13 +740,13 @@ public abstract class SolutionRepositoryBase extends PentahoMessenger implements
         if (deleteFolder(file)) {
           AuditHelper
               .audit(
-                  "", getSession().getName(), "", getClass().toString(), "", MessageTypes.UNKNOWN_ENTRY, Messages.getString("SOLREPO.AUDIT_DEL_FOLDER", filePath), "", 0.0f, null); //$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ 
+                  "", getSession().getName(), "", getClass().toString(), "", MessageTypes.UNKNOWN_ENTRY, Messages.getInstance().getString("SOLREPO.AUDIT_DEL_FOLDER", filePath), "", 0.0f, null); //$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ 
         }
       } else {
         if (file.delete()) {
           AuditHelper
               .audit(
-                  "", getSession().getName(), "", getClass().toString(), "", MessageTypes.UNKNOWN_ENTRY, Messages.getString("SOLREPO.AUDIT_DEL_FILE", filePath), "", 0.0f, null); //$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ 
+                  "", getSession().getName(), "", getClass().toString(), "", MessageTypes.UNKNOWN_ENTRY, Messages.getInstance().getString("SOLREPO.AUDIT_DEL_FILE", filePath), "", 0.0f, null); //$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ 
         }
       }
     }
@@ -755,7 +755,7 @@ public abstract class SolutionRepositoryBase extends PentahoMessenger implements
     if (deleted) {
       AuditHelper
           .audit(
-              "", getSession().getName(), "", getClass().toString(), "", MessageTypes.UNKNOWN_ENTRY, Messages.getString("SOLREPO.AUDIT_DEL_FOLDER", filePath), "", 0.0f, null); //$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ 
+              "", getSession().getName(), "", getClass().toString(), "", MessageTypes.UNKNOWN_ENTRY, Messages.getInstance().getString("SOLREPO.AUDIT_DEL_FOLDER", filePath), "", 0.0f, null); //$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ 
     }
     return deleted;
   }
@@ -853,7 +853,7 @@ public abstract class SolutionRepositoryBase extends PentahoMessenger implements
 
   public ISolutionFile createFolder(final File newFolder) throws IOException {
       if (!(isPathedUnderSolutionRoot(newFolder))) {
-        throw new IOException(Messages.getErrorString("SolutionRepository.ERROR_0021_FILE_NOT_ADDED", newFolder.getName())); //$NON-NLS-1$
+        throw new IOException(Messages.getInstance().getErrorString("SolutionRepository.ERROR_0021_FILE_NOT_ADDED", newFolder.getName())); //$NON-NLS-1$
       }
     newFolder.mkdirs();
     FileSolutionFile fsf = new FileSolutionFile(newFolder, rootFile);

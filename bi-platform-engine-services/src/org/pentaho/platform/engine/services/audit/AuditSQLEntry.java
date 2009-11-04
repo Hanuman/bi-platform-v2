@@ -53,7 +53,7 @@ public class AuditSQLEntry implements IAuditEntry {
     
     String tmp = PentahoSystem.getSystemSetting("audit_sql.xml", "auditConnection/insertSQL", null);//$NON-NLS-1$ //$NON-NLS-2$
     INSERT_STMT = (tmp != null) ? tmp:
-      PentahoSystem.getSystemSetting("auditConnection/insertSQL", Messages.getString("AUDSQLENT.CODE_AUDIT_INSERT_STATEMENT"));//$NON-NLS-1$ //$NON-NLS-2$
+      PentahoSystem.getSystemSetting("auditConnection/insertSQL", Messages.getInstance().getString("AUDSQLENT.CODE_AUDIT_INSERT_STATEMENT"));//$NON-NLS-1$ //$NON-NLS-2$
   }
 
 
@@ -62,7 +62,7 @@ public class AuditSQLEntry implements IAuditEntry {
       AuditSQLEntry.audc = new AuditConnection();
       AuditSQLEntry.audc.initialize();
     } catch (Exception ex) {
-      Logger.error(AuditHelper.class.getName(), Messages.getErrorString("AUDSQLENT.ERROR_0001_INVALID_CONNECTION"), ex); //$NON-NLS-1$
+      Logger.error(AuditHelper.class.getName(), Messages.getInstance().getErrorString("AUDSQLENT.ERROR_0001_INVALID_CONNECTION"), ex); //$NON-NLS-1$
     }
   }
 
@@ -81,7 +81,7 @@ public class AuditSQLEntry implements IAuditEntry {
     
     String tmp = PentahoSystem.getSystemSetting("audit_sql.xml", "auditConnection/insertSQL", null);//$NON-NLS-1$ //$NON-NLS-2$
     INSERT_STMT = (tmp !=null) ? tmp:
-      PentahoSystem.getSystemSetting("auditConnection/insertSQL", Messages.getString("AUDSQLENT.CODE_AUDIT_INSERT_STATEMENT"));//$NON-NLS-1$ //$NON-NLS-2$
+      PentahoSystem.getSystemSetting("auditConnection/insertSQL", Messages.getInstance().getString("AUDSQLENT.CODE_AUDIT_INSERT_STATEMENT"));//$NON-NLS-1$ //$NON-NLS-2$
   }
 
 

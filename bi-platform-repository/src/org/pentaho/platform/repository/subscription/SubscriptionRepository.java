@@ -81,7 +81,7 @@ public class SubscriptionRepository implements ISubscriptionRepository {
 
     if (doc == null) {
       Element ele = resultElement
-          .addElement("message").addText(Messages.getString("PRO_SUBSCRIPTREP.DOCUMENT_IS_NULL")); //$NON-NLS-1$ //$NON-NLS-2$
+          .addElement("message").addText(Messages.getInstance().getString("PRO_SUBSCRIPTREP.DOCUMENT_IS_NULL")); //$NON-NLS-1$ //$NON-NLS-2$
       ele.addAttribute("result", "ERROR"); //$NON-NLS-1$ //$NON-NLS-2$
       return (resultElement);
     }
@@ -89,7 +89,7 @@ public class SubscriptionRepository implements ISubscriptionRepository {
     List scheduleNodes = doc.selectNodes("//schedules/*"); //$NON-NLS-1$
     if (scheduleNodes.size() == 0) {
       Element ele = resultElement
-          .addElement("message").addText(Messages.getString("PRO_SUBSCRIPTREP.NO_SCHEDULES_DEFINED")); //$NON-NLS-1$ //$NON-NLS-2$
+          .addElement("message").addText(Messages.getInstance().getString("PRO_SUBSCRIPTREP.NO_SCHEDULES_DEFINED")); //$NON-NLS-1$ //$NON-NLS-2$
       ele.addAttribute("result", "WARNING"); //$NON-NLS-1$ //$NON-NLS-2$
       return (resultElement);
     }
@@ -102,7 +102,7 @@ public class SubscriptionRepository implements ISubscriptionRepository {
       // List schedList;
 
       try {
-        SubscriptionRepository.logger.info(Messages.getString(
+        SubscriptionRepository.logger.info(Messages.getInstance().getString(
             "PRO_SUBSCRIPTREP.USER_IMPORT_PROCESSING_SCHEDULES", Integer.toString(scheduleNodes.size()))); //$NON-NLS-1$
         for (int i = 0; i < scheduleNodes.size(); i++) {
           scheduleNode = (Node) scheduleNodes.get(i);
@@ -120,28 +120,28 @@ public class SubscriptionRepository implements ISubscriptionRepository {
               aSchedule.setGroup(schedGroup);
               aSchedule.setTitle(schedName);
               resultElement.addElement("modified").addText(schedRef); //$NON-NLS-1$
-              SubscriptionRepository.logger.info(Messages.getString(
+              SubscriptionRepository.logger.info(Messages.getInstance().getString(
                   "PRO_SUBSCRIPTREP.MODIFIED_SUBSCRIPTION_SCHEDULE", schedRef)); //$NON-NLS-1$
             } else {
               aSchedule = addCronSchedule(schedName, schedRef, schedDesc, cronString, schedGroup, null, null );
               resultElement.addElement("added").addText(schedRef); //$NON-NLS-1$
-              SubscriptionRepository.logger.info(Messages.getString(
+              SubscriptionRepository.logger.info(Messages.getInstance().getString(
                   "PRO_SUBSCRIPTREP.ADDED_SUBSCRIPTION_SCHEDULE", schedRef)); //$NON-NLS-1$
             }
             SubscriptionRepository.subscriptionScheduler.getCronSummary(cronString); // Throws an exception if invalid                        
           } catch (Exception e) {
             resultElement
-                .addElement("message").addText(Messages.getString("PRO_SUBSCRIPTREP.ERROR_OCCURRED_WITH_SCHEDULE", schedRef, e.getLocalizedMessage())); //$NON-NLS-1$ //$NON-NLS-2$
+                .addElement("message").addText(Messages.getInstance().getString("PRO_SUBSCRIPTREP.ERROR_OCCURRED_WITH_SCHEDULE", schedRef, e.getLocalizedMessage())); //$NON-NLS-1$ //$NON-NLS-2$
             SubscriptionRepository.logger.warn(
-                Messages.getString("PRO_SUBSCRIPTREP.EXCEPTION_WITH_SCHEDULE", schedRef), e); //$NON-NLS-1$
+                Messages.getInstance().getString("PRO_SUBSCRIPTREP.EXCEPTION_WITH_SCHEDULE", schedRef), e); //$NON-NLS-1$
           }
         }
 
       } catch (Exception e) {
         Element ele = resultElement
-            .addElement("message").addText(Messages.getString("PRO_SUBSCRIPTREP.ERROR_PROCESSING_IMPORTS") + e.getLocalizedMessage()); //$NON-NLS-1$ //$NON-NLS-2$
+            .addElement("message").addText(Messages.getInstance().getString("PRO_SUBSCRIPTREP.ERROR_PROCESSING_IMPORTS") + e.getLocalizedMessage()); //$NON-NLS-1$ //$NON-NLS-2$
         ele.addAttribute("result", "ERROR"); //$NON-NLS-1$ //$NON-NLS-2$
-        SubscriptionRepository.logger.error(Messages.getString("PRO_SUBSCRIPTREP.EXCEPTION_PROCESSING_IMPORTS"), e); //$NON-NLS-1$
+        SubscriptionRepository.logger.error(Messages.getInstance().getString("PRO_SUBSCRIPTREP.EXCEPTION_PROCESSING_IMPORTS"), e); //$NON-NLS-1$
         return (resultElement);
       }
     }
@@ -153,7 +153,7 @@ public class SubscriptionRepository implements ISubscriptionRepository {
 
     if (doc == null) {
       Element ele = resultElement
-          .addElement("message").addText(Messages.getString("PRO_SUBSCRIPTREP.DOCUMENT_IS_NULL")); //$NON-NLS-1$ //$NON-NLS-2$
+          .addElement("message").addText(Messages.getInstance().getString("PRO_SUBSCRIPTREP.DOCUMENT_IS_NULL")); //$NON-NLS-1$ //$NON-NLS-2$
       ele.addAttribute("result", "ERROR"); //$NON-NLS-1$//$NON-NLS-2$
       return (resultElement);
     }
@@ -161,7 +161,7 @@ public class SubscriptionRepository implements ISubscriptionRepository {
     List contentNodes = doc.selectNodes("//subscription-content/*"); //$NON-NLS-1$
     if (contentNodes.size() == 0) {
       Element ele = resultElement
-          .addElement("message").addText(Messages.getString("PRO_SUBSCRIPTREP.NO_SCHEDULES_DEFINED")); //$NON-NLS-1$ //$NON-NLS-2$
+          .addElement("message").addText(Messages.getInstance().getString("PRO_SUBSCRIPTREP.NO_SCHEDULES_DEFINED")); //$NON-NLS-1$ //$NON-NLS-2$
       ele.addAttribute("result", "WARNING"); //$NON-NLS-1$//$NON-NLS-2$
       return (resultElement);
     }
@@ -189,7 +189,7 @@ public class SubscriptionRepository implements ISubscriptionRepository {
       }
 
       try {
-        SubscriptionRepository.logger.info(Messages.getString(
+        SubscriptionRepository.logger.info(Messages.getInstance().getString(
             "PRO_SUBSCRIPTREP.USER_PROCESSING_CONTENT_NODES", Integer.toString(contentNodes.size()))); //$NON-NLS-1$
         for (int i = 0; i < contentNodes.size(); i++) {
           contentNode = (Node) contentNodes.get(i);
@@ -207,20 +207,20 @@ public class SubscriptionRepository implements ISubscriptionRepository {
             if (subscribeContent != null) {
               subscribeContent.setType(contentType);
               resultElement.addElement("modified").addText(actionRef); //$NON-NLS-1$
-              SubscriptionRepository.logger.info(Messages.getString(
+              SubscriptionRepository.logger.info(Messages.getInstance().getString(
                   "PRO_SUBSCRIPTREP.MODIFIED_SUBSCRIPTION_CONTENT", actionRef)); //$NON-NLS-1$
             } else {
               subscribeContent = addContent(actionRef, contentType);
               resultElement.addElement("added").addText(actionRef); //$NON-NLS-1$
-              SubscriptionRepository.logger.info(Messages.getString(
+              SubscriptionRepository.logger.info(Messages.getInstance().getString(
                   "PRO_SUBSCRIPTREP.ADDED_SUBSCRIPTION_CONTENT", actionRef)); //$NON-NLS-1$
             }
 
           } catch (Exception e) {
             resultElement
-                .addElement("message").addText(Messages.getString("PRO_SUBSCRIPTREP.ERROR_WITH_CONTENT", actionRef, e.getLocalizedMessage())); //$NON-NLS-1$ //$NON-NLS-2$ 
+                .addElement("message").addText(Messages.getInstance().getString("PRO_SUBSCRIPTREP.ERROR_WITH_CONTENT", actionRef, e.getLocalizedMessage())); //$NON-NLS-1$ //$NON-NLS-2$ 
             SubscriptionRepository.logger.warn(
-                Messages.getString("PRO_SUBSCRIPTREP.ERROR_WITH_CONTENT_LOG", actionRef), e); //$NON-NLS-1$ 
+                Messages.getInstance().getString("PRO_SUBSCRIPTREP.ERROR_WITH_CONTENT_LOG", actionRef), e); //$NON-NLS-1$ 
           }
 
           List contentSchedules = new ArrayList();
@@ -262,9 +262,9 @@ public class SubscriptionRepository implements ISubscriptionRepository {
         }
       } catch (Exception e) {
         Element ele = resultElement
-            .addElement("message").addText(Messages.getString("PRO_SUBSCRIPTREP.ERROR_PROCESSING_IMPORTS") + e.getLocalizedMessage()); //$NON-NLS-1$ //$NON-NLS-2$
+            .addElement("message").addText(Messages.getInstance().getString("PRO_SUBSCRIPTREP.ERROR_PROCESSING_IMPORTS") + e.getLocalizedMessage()); //$NON-NLS-1$ //$NON-NLS-2$
         ele.addAttribute("result", "ERROR"); //$NON-NLS-1$ //$NON-NLS-2$
-        SubscriptionRepository.logger.error(Messages.getString("PRO_SUBSCRIPTREP.EXCEPTION_PROCESSING_IMPORTS"), e); //$NON-NLS-1$
+        SubscriptionRepository.logger.error(Messages.getInstance().getString("PRO_SUBSCRIPTREP.EXCEPTION_PROCESSING_IMPORTS"), e); //$NON-NLS-1$
         return (resultElement);
       }
 
@@ -310,7 +310,7 @@ public class SubscriptionRepository implements ISubscriptionRepository {
 
   public void addContent(final ISubscribeContent content) {
     if (getContentByActionReference(content.getActionReference()) != null) {
-      throw new SubscriptionRepositoryException(Messages.getString(
+      throw new SubscriptionRepositoryException(Messages.getInstance().getString(
           "PRO_SUBSCRIPTREP.ACTION_SEQUENCE_ALREADY_EXISTS", content.getActionReference())); //$NON-NLS-1$ 
     }
 
@@ -488,7 +488,7 @@ public class SubscriptionRepository implements ISubscriptionRepository {
     try {
       return (ISubscribeContent) session.get(SubscribeContent.class, theId);
     } catch (HibernateException ex) {
-      throw new SubscriptionRepositoryException(Messages.getErrorString(
+      throw new SubscriptionRepositoryException(Messages.getInstance().getErrorString(
           "PRO_SUBSCRIPTREP.ERROR_0001_GETTING_SUBSCRIPTION", theId), ex); //$NON-NLS-1$
     }
   }
@@ -539,7 +539,7 @@ public class SubscriptionRepository implements ISubscriptionRepository {
     Query qry = session
         .getNamedQuery("org.pentaho.platform.repository.subscription.Subscription.findUserSubscriptionsForDeletion").setCacheable(true); //$NON-NLS-1$
     qry.setString("searchUser", user); //$NON-NLS-1$
-    SubscriptionRepository.logger.warn(Messages.getErrorString("PRO_SUBSCRIPTREP.USER_REMOVING_USER", user)); //$NON-NLS-1$
+    SubscriptionRepository.logger.warn(Messages.getInstance().getErrorString("PRO_SUBSCRIPTREP.USER_REMOVING_USER", user)); //$NON-NLS-1$
     List subscriptions = qry.list();
     Subscription subscriptToDelete = null;
     for (int i = 0; i < subscriptions.size(); i++) {
@@ -711,7 +711,7 @@ public class SubscriptionRepository implements ISubscriptionRepository {
     try {
       return (ISubscription) session.get(Subscription.class, theId);
     } catch (HibernateException ex) {
-      throw new SubscriptionRepositoryException(Messages.getErrorString(
+      throw new SubscriptionRepositoryException(Messages.getInstance().getErrorString(
           "PRO_SUBSCRIPTREP.ERROR_0001_GETTING_SUBSCRIPTION", theId), ex); //$NON-NLS-1$
     }
   }
@@ -793,7 +793,7 @@ public class SubscriptionRepository implements ISubscriptionRepository {
   public boolean deleteSubscription(final String subscriptionId) throws SubscriptionRepositoryCheckedException {
     ISubscription subscription = getSubscriptionById(subscriptionId);
     if (subscription == null) {
-      throw new SubscriptionRepositoryException(Messages.getString(
+      throw new SubscriptionRepositoryException(Messages.getInstance().getString(
           "PRO_SUBSCRIPTREP.SUBSCRIPTION_ID_NOT_FOUND", subscriptionId)); //$NON-NLS-1$         }
     }
     HibernateUtil.makeTransient(subscription);
@@ -829,7 +829,7 @@ public class SubscriptionRepository implements ISubscriptionRepository {
   public boolean deleteScheduleById(final String scheduleId) throws SubscriptionRepositoryCheckedException {
     ISchedule sched = getSchedule(scheduleId);
     if (sched == null) {
-      throw new SubscriptionRepositoryCheckedException(Messages
+      throw new SubscriptionRepositoryCheckedException(Messages.getInstance()
           .getString("PRO_SUBSCRIPTREP.SCHEDULE_ID_NOT_FOUND", scheduleId)); //$NON-NLS-1$         }
     }
     return deleteSchedule(sched);
@@ -849,7 +849,7 @@ public class SubscriptionRepository implements ISubscriptionRepository {
 
   public void addSchedule(final ISchedule schedule) throws SubscriptionRepositoryCheckedException {
     if (getScheduleByScheduleReference(schedule.getScheduleReference()) != null) {
-      throw new SubscriptionRepositoryCheckedException(Messages.getString(
+      throw new SubscriptionRepositoryCheckedException(Messages.getInstance().getString(
           "PRO_SUBSCRIPTREP.SCHEDULE_REF_NOT_UNIQUE_ADD", schedule.getScheduleReference())); //$NON-NLS-1$ 
     }
 // commented by sbarkdull     HibernateUtil.beginTransaction();
@@ -891,7 +891,7 @@ public class SubscriptionRepository implements ISubscriptionRepository {
       // Any null values keep previous values
       if (scheduleRef != null) {
         if ((!oldScheduleReference.equals(scheduleRef)) && (getScheduleByScheduleReference(scheduleRef) != null)) {
-          throw new SubscriptionRepositoryException(Messages.getString(
+          throw new SubscriptionRepositoryException(Messages.getInstance().getString(
               "PRO_SUBSCRIPTREP.SCHEDULE_REF_NOT_UNIQUE_EDIT", scheduleRef)); //$NON-NLS-1$
         }
         oldSched.setScheduleReference(scheduleRef);
@@ -914,7 +914,7 @@ public class SubscriptionRepository implements ISubscriptionRepository {
       try {
         SubscriptionRepository.subscriptionScheduler.syncSchedule(oldScheduleReference, oldSched);
       } catch (SubscriptionSchedulerException ex) {
-        throw new SubscriptionRepositoryException(Messages.getString("PRO_SUBSCRIPTREP.CANNOT_EDIT_SCHEDULE", id), ex); //$NON-NLS-1$
+        throw new SubscriptionRepositoryException(Messages.getInstance().getString("PRO_SUBSCRIPTREP.CANNOT_EDIT_SCHEDULE", id), ex); //$NON-NLS-1$
       }
       return (oldSched);
     }
@@ -931,7 +931,7 @@ public class SubscriptionRepository implements ISubscriptionRepository {
       // Any null values keep previous values
       if (scheduleRef != null) {
         if ((!oldScheduleReference.equals(scheduleRef)) && (getScheduleByScheduleReference(scheduleRef) != null)) {
-          throw new SubscriptionRepositoryException(Messages.getString(
+          throw new SubscriptionRepositoryException(Messages.getInstance().getString(
               "PRO_SUBSCRIPTREP.SCHEDULE_REF_NOT_UNIQUE_EDIT", scheduleRef)); //$NON-NLS-1$
         }
         oldSched.setScheduleReference(scheduleRef);
@@ -955,7 +955,7 @@ public class SubscriptionRepository implements ISubscriptionRepository {
       try {
         SubscriptionRepository.subscriptionScheduler.syncSchedule(oldScheduleReference, oldSched);
       } catch (SubscriptionSchedulerException ex) {
-        throw new SubscriptionRepositoryException(Messages.getString("PRO_SUBSCRIPTREP.CANNOT_EDIT_SCHEDULE", id), ex); //$NON-NLS-1$
+        throw new SubscriptionRepositoryException(Messages.getInstance().getString("PRO_SUBSCRIPTREP.CANNOT_EDIT_SCHEDULE", id), ex); //$NON-NLS-1$
       }
       return (oldSched);
     }
@@ -968,7 +968,7 @@ public class SubscriptionRepository implements ISubscriptionRepository {
     try {
       return (Schedule) session.get(Schedule.class, scheduleId);
     } catch (HibernateException ex) {
-      throw new SubscriptionRepositoryException(Messages.getErrorString(
+      throw new SubscriptionRepositoryException(Messages.getInstance().getErrorString(
           "PRO_SUBSCRIPTREP.ERROR_0002_GETTING_SCHEDULE", scheduleId), ex); //$NON-NLS-1$
     }
   }
@@ -1017,7 +1017,7 @@ public class SubscriptionRepository implements ISubscriptionRepository {
     IContentRepository contentRepository = PentahoSystem.get(IContentRepository.class, session);
     if (contentRepository == null) {
       // error(
-      // Messages.getErrorString("RuntimeContext.ERROR_0024_NO_CONTENT_REPOSITORY")
+      // Messages.getInstance().getErrorString("RuntimeContext.ERROR_0024_NO_CONTENT_REPOSITORY")
       // ); //$NON-NLS-1$
       return null;
     }
@@ -1035,7 +1035,7 @@ public class SubscriptionRepository implements ISubscriptionRepository {
     }
     if (contentLocation == null) {
       // error(
-      // Messages.getErrorString("RuntimeContext.ERROR_0025_INVALID_CONTENT_LOCATION")
+      // Messages.getInstance().getErrorString("RuntimeContext.ERROR_0025_INVALID_CONTENT_LOCATION")
       // ); //$NON-NLS-1$
       return null;
     }

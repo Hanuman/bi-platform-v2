@@ -99,7 +99,7 @@ public class MondrianCatalogPublisher extends RepositoryFilePublisher {
       fileItems = getFileItems(req);
     } catch (FileUploadException e) {
       if (MondrianCatalogPublisher.logger.isErrorEnabled()) {
-        MondrianCatalogPublisher.logger.error(Messages.getErrorString("MondrianCatalogPublisher.ERROR_0002_EXCEPTION_OCCURRED"), e); //$NON-NLS-1$
+        MondrianCatalogPublisher.logger.error(Messages.getInstance().getErrorString("MondrianCatalogPublisher.ERROR_0002_EXCEPTION_OCCURRED"), e); //$NON-NLS-1$
       }
       resp.getWriter().println(ISolutionRepository.FILE_ADD_FAILED);
       return;
@@ -109,7 +109,7 @@ public class MondrianCatalogPublisher extends RepositoryFilePublisher {
       status = doPublish(fileItems, publishPath, publishKey, null, null, null, null, null,
         overwrite, pentahoSession);
     } catch (Exception e) {
-      MondrianCatalogPublisher.logger.error(Messages.getErrorString("MondrianCatalogPublisher.ERROR_0005_PUBLISH_EXCEPTION"), e); //$NON-NLS-1$
+      MondrianCatalogPublisher.logger.error(Messages.getInstance().getErrorString("MondrianCatalogPublisher.ERROR_0005_PUBLISH_EXCEPTION"), e); //$NON-NLS-1$
     }
 
     if (status != ISolutionRepository.FILE_ADD_SUCCESSFUL) {
@@ -128,14 +128,14 @@ public class MondrianCatalogPublisher extends RepositoryFilePublisher {
       MondrianCatalogPublisher.logger.debug("jndiName=" + jndiName); //$NON-NLS-1$
     }
     if (StringUtils.isBlank(jndiName)) {
-      throw new ServletException(Messages.getErrorString("MondrianCatalogPublisher.ERROR_0003_JNDINAME_REQUIRED")); //$NON-NLS-1$
+      throw new ServletException(Messages.getInstance().getErrorString("MondrianCatalogPublisher.ERROR_0003_JNDINAME_REQUIRED")); //$NON-NLS-1$
     }
 
     // expecting exactly one file
     if (fileItems.size() != 1) {
       // when this is appended, FILE_ADD_SUCCESSFUL has already been appended from super
       if (MondrianCatalogPublisher.logger.isErrorEnabled()) {
-        MondrianCatalogPublisher.logger.error(Messages.getErrorString("MondrianCatalogPublisher.ERROR_0004_FILE_COUNT", "" + fileItems.size())); //$NON-NLS-1$ //$NON-NLS-2$
+        MondrianCatalogPublisher.logger.error(Messages.getInstance().getErrorString("MondrianCatalogPublisher.ERROR_0004_FILE_COUNT", "" + fileItems.size())); //$NON-NLS-1$ //$NON-NLS-2$
       }
       resp.getWriter().println(ISolutionRepository.FILE_ADD_FAILED);
       return;
@@ -156,9 +156,9 @@ public class MondrianCatalogPublisher extends RepositoryFilePublisher {
       IDatasourceService datasourceService =  PentahoSystem.getObjectFactory().get(IDatasourceService.class ,null);    	
       datasourceService.getDataSource(jndiName);
     } catch (ObjectFactoryException objface) {
-      	MondrianCatalogPublisher.logger.error(Messages.getErrorString("MondrianCatalogPublisher.ERROR_0006_UNABLE_TO_FACTORY_OBJECT", jndiName), objface); //$NON-NLS-1$      	
+      	MondrianCatalogPublisher.logger.error(Messages.getInstance().getErrorString("MondrianCatalogPublisher.ERROR_0006_UNABLE_TO_FACTORY_OBJECT", jndiName), objface); //$NON-NLS-1$      	
     } catch (DatasourceServiceException dse) {
-      MondrianCatalogPublisher.logger.error(Messages.getErrorString("MondrianCatalogPublisher.ERROR_0001_JNDI_NAMING_ERROR", jndiName), dse); //$NON-NLS-1$
+      MondrianCatalogPublisher.logger.error(Messages.getInstance().getErrorString("MondrianCatalogPublisher.ERROR_0001_JNDI_NAMING_ERROR", jndiName), dse); //$NON-NLS-1$
       resp.getWriter().println(FILE_ADD_DATASOURCE_PROBLEM);
       return;
     }
@@ -202,7 +202,7 @@ public class MondrianCatalogPublisher extends RepositoryFilePublisher {
       mondrianCatalogService.addCatalog(cat, overwrite, pentahoSession);
     } catch (MondrianCatalogServiceException e) {
       if (MondrianCatalogPublisher.logger.isErrorEnabled()) {
-        MondrianCatalogPublisher.logger.error(Messages.getErrorString("MondrianCatalogPublisher.ERROR_0002_EXCEPTION_OCCURRED"), e); //$NON-NLS-1$
+        MondrianCatalogPublisher.logger.error(Messages.getInstance().getErrorString("MondrianCatalogPublisher.ERROR_0002_EXCEPTION_OCCURRED"), e); //$NON-NLS-1$
       }
       resp.getWriter().println(ISolutionRepository.FILE_ADD_FAILED);
       return;

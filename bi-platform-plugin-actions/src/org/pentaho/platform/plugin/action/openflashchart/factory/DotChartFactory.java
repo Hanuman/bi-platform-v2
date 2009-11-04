@@ -35,7 +35,7 @@ public class DotChartFactory extends AbstractChartFactory {
   public void validateData() {
     super.validateData();
     if (getColumnCount() < 2) {
-      throw new RuntimeException(Messages.getErrorString("DotChartFactory.ERROR_0001_XY_COLUMN_COUNT")); //$NON-NLS-1$
+      throw new RuntimeException(Messages.getInstance().getErrorString("DotChartFactory.ERROR_0001_XY_COLUMN_COUNT")); //$NON-NLS-1$
     }
   } 
   

@@ -34,7 +34,7 @@ public class ResultSetExportComponentTest extends BaseTest {
     startTest();
     IRuntimeContext context = run("test", "rules", "ResultSetExportTest.xaction"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
     assertEquals(
-        Messages.getString("BaseTest.USER_RUNNING_ACTION_SEQUENCE"), IRuntimeContext.RUNTIME_STATUS_SUCCESS, context.getStatus()); //$NON-NLS-1$
+        Messages.getInstance().getString("BaseTest.USER_RUNNING_ACTION_SEQUENCE"), IRuntimeContext.RUNTIME_STATUS_SUCCESS, context.getStatus()); //$NON-NLS-1$
 
     IActionParameter rtn = context.getOutputParameter("EXPORTRESULT");//$NON-NLS-1$
     assertNotNull("Result is null", rtn); //$NON-NLS-1$
@@ -56,7 +56,7 @@ public class ResultSetExportComponentTest extends BaseTest {
     startTest();
     IRuntimeContext context = run("test", "rules", "ResultSetExportTest_error1.xaction"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
     assertEquals(
-        Messages.getString("BaseTest.USER_RUNNING_ACTION_SEQUENCE"), IRuntimeContext.RUNTIME_CONTEXT_VALIDATE_FAIL, context.getStatus()); //$NON-NLS-1$
+        Messages.getInstance().getString("BaseTest.USER_RUNNING_ACTION_SEQUENCE"), IRuntimeContext.RUNTIME_CONTEXT_VALIDATE_FAIL, context.getStatus()); //$NON-NLS-1$
     finishTest();
   }
 
@@ -68,7 +68,7 @@ public class ResultSetExportComponentTest extends BaseTest {
     startTest();
     IRuntimeContext context = run("test", "rules", "ResultSetExportTest_error2.xaction"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
     assertEquals(
-        Messages.getString("BaseTest.USER_RUNNING_ACTION_SEQUENCE"), IRuntimeContext.RUNTIME_CONTEXT_VALIDATE_FAIL, context.getStatus()); //$NON-NLS-1$
+        Messages.getInstance().getString("BaseTest.USER_RUNNING_ACTION_SEQUENCE"), IRuntimeContext.RUNTIME_CONTEXT_VALIDATE_FAIL, context.getStatus()); //$NON-NLS-1$
     finishTest();
   }
 

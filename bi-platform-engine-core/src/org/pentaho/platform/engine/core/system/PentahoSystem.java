@@ -301,11 +301,11 @@ public class PentahoSystem {
 	      PentahoSystem.systemEntryPoint(); // make sure all startups occur in the context of a transaction
 	      try {
 	        if (!systemListener.startup(session)) {
-	          throw new PentahoSystemException(Messages.getErrorString(
+	          throw new PentahoSystemException(Messages.getInstance().getErrorString(
 	              "PentahoSystem.ERROR_0014_STARTUP_FAILURE", systemListener.getClass().getName())); //$NON-NLS-1$
 	        }
 	      } catch (Throwable e) {
-	        throw new PentahoSystemException(Messages.getErrorString(
+	        throw new PentahoSystemException(Messages.getInstance().getErrorString(
 	            "PentahoSystem.ERROR_0014_STARTUP_FAILURE", systemListener.getClass().getName()), e); //$NON-NLS-1$
 	      } finally {
 	        PentahoSystem.systemExitPoint(); // commit transaction
@@ -354,7 +354,7 @@ public class PentahoSystem {
             String impl = implAttr.getText();
             System.setProperty(name, impl);
           } else {
-            Logger.error(PentahoSystem.class.getName(), Messages.getErrorString(
+            Logger.error(PentahoSystem.class.getName(), Messages.getInstance().getErrorString(
                 "PentahoSystem.ERROR_0025_LOAD_XML_FACTORY_PROPERTIES_FAILED", //$NON-NLS-1$ 
                 xpathToXMLFactoryNodes));
           }
@@ -379,7 +379,7 @@ public class PentahoSystem {
   public static List getInitializationFailureMessages() {
     List rtn = new ArrayList();
     if (PentahoSystem.hasFailed(PentahoSystem.SYSTEM_SETTINGS_FAILED)) {
-      rtn.add(Messages.getString(
+      rtn.add(Messages.getInstance().getString(
           "PentahoSystem.USER_INITIALIZATION_SYSTEM_SETTINGS_FAILED", PathBasedSystemSettings.SYSTEM_CFG_PATH_KEY));//$NON-NLS-1$
       List l = PentahoSystem.getAdditionalInitializationFailureMessages(PentahoSystem.SYSTEM_SETTINGS_FAILED);
       if (l != null) {
@@ -387,35 +387,35 @@ public class PentahoSystem {
       }
     }
     if (PentahoSystem.hasFailed(PentahoSystem.SYSTEM_PUBLISHERS_FAILED)) {
-      rtn.add(Messages.getString("PentahoSystem.USER_INITIALIZATION_SYSTEM_PUBLISHERS_FAILED"));//$NON-NLS-1$
+      rtn.add(Messages.getInstance().getString("PentahoSystem.USER_INITIALIZATION_SYSTEM_PUBLISHERS_FAILED"));//$NON-NLS-1$
       List l = PentahoSystem.getAdditionalInitializationFailureMessages(PentahoSystem.SYSTEM_PUBLISHERS_FAILED);
       if (l != null) {
         rtn.addAll(l);
       }
     }
     if (PentahoSystem.hasFailed(PentahoSystem.SYSTEM_OBJECTS_FAILED)) {
-      rtn.add(Messages.getString("PentahoSystem.USER_INITIALIZATION_SYSTEM_OBJECTS_FAILED"));//$NON-NLS-1$
+      rtn.add(Messages.getInstance().getString("PentahoSystem.USER_INITIALIZATION_SYSTEM_OBJECTS_FAILED"));//$NON-NLS-1$
       List l = PentahoSystem.getAdditionalInitializationFailureMessages(PentahoSystem.SYSTEM_OBJECTS_FAILED);
       if (l != null) {
         rtn.addAll(l);
       }
     }
     if (PentahoSystem.hasFailed(PentahoSystem.SYSTEM_AUDIT_FAILED)) {
-      rtn.add(Messages.getString("PentahoSystem.USER_INITIALIZATION_SYSTEM_AUDIT_FAILED"));//$NON-NLS-1$
+      rtn.add(Messages.getInstance().getString("PentahoSystem.USER_INITIALIZATION_SYSTEM_AUDIT_FAILED"));//$NON-NLS-1$
       List l = PentahoSystem.getAdditionalInitializationFailureMessages(PentahoSystem.SYSTEM_AUDIT_FAILED);
       if (l != null) {
         rtn.addAll(l);
       }
     }
     if (PentahoSystem.hasFailed(PentahoSystem.SYSTEM_LISTENERS_FAILED)) {
-      rtn.add(Messages.getString("PentahoSystem.USER_INITIALIZATION_SYSTEM_LISTENERS_FAILED"));//$NON-NLS-1$
+      rtn.add(Messages.getInstance().getString("PentahoSystem.USER_INITIALIZATION_SYSTEM_LISTENERS_FAILED"));//$NON-NLS-1$
       List l = PentahoSystem.getAdditionalInitializationFailureMessages(PentahoSystem.SYSTEM_LISTENERS_FAILED);
       if (l != null) {
         rtn.addAll(l);
       }
     }
     if (PentahoSystem.hasFailed(PentahoSystem.SYSTEM_PENTAHOXML_FAILED)) {
-      rtn.add(Messages.getString("PentahoSystem.USER_INITIALIZATION_SYSTEM_PENTAHOXML_FAILED"));//$NON-NLS-1$
+      rtn.add(Messages.getInstance().getString("PentahoSystem.USER_INITIALIZATION_SYSTEM_PENTAHOXML_FAILED"));//$NON-NLS-1$
       List l = PentahoSystem.getAdditionalInitializationFailureMessages(PentahoSystem.SYSTEM_PENTAHOXML_FAILED);
       if (l != null) {
         rtn.addAll(l);
@@ -444,7 +444,7 @@ public class PentahoSystem {
 
     int pos = contentTag.indexOf(':');
     if (pos == -1) {
-      Logger.error(PentahoSystem.class.getName(), Messages.getErrorString(
+      Logger.error(PentahoSystem.class.getName(), Messages.getInstance().getErrorString(
           "PentahoSystem.ERROR_0029_OUTPUT_HANDLER_NOT_SPECIFIED", contentTag)); //$NON-NLS-1$
       return null;
     }
@@ -498,21 +498,21 @@ public class PentahoSystem {
     try {
       if(!pentahoObjectFactory.objectDefined(key)) {
         //this may not be a failure case, but we should log a warning in case the object is truly required
-        Logger.warn( PentahoSystem.class.getName(), Messages.getErrorString("PentahoSystem.WARN_OBJECT_NOT_CONFIGURED", key)); //$NON-NLS-1$
+        Logger.warn( PentahoSystem.class.getName(), Messages.getInstance().getErrorString("PentahoSystem.WARN_OBJECT_NOT_CONFIGURED", key)); //$NON-NLS-1$
         return null;
       }
       IPentahoSession curSession = (session == null)?PentahoSessionHolder.getSession():session;
       return pentahoObjectFactory.get( interfaceClass, key, curSession );
     } catch (ObjectFactoryException e) {
       //something went wrong, we need to log this
-      Logger.error( PentahoSystem.class.getName(), Messages.getErrorString("PentahoSystem.ERROR_0026_COULD_NOT_RETRIEVE_CONFIGURED_OBJECT", key), e); //$NON-NLS-1$
+      Logger.error( PentahoSystem.class.getName(), Messages.getInstance().getErrorString("PentahoSystem.ERROR_0026_COULD_NOT_RETRIEVE_CONFIGURED_OBJECT", key), e); //$NON-NLS-1$
       //for backwards compatibility: callers expect a null return even in an error case
       return null;
     }
   }
 
   public static String getSystemName() {
-    return Messages.getString("PentahoSystem.USER_SYSTEM_TITLE"); //$NON-NLS-1$;
+    return Messages.getInstance().getString("PentahoSystem.USER_SYSTEM_TITLE"); //$NON-NLS-1$;
   }
 
   public static IParameterProvider getGlobalParameters() {
@@ -611,7 +611,7 @@ public class PentahoSystem {
 	        }
 	
 	      } else {
-	        Logger.error(PentahoSystem.class.getName(), Messages.getErrorString(
+	        Logger.error(PentahoSystem.class.getName(), Messages.getInstance().getErrorString(
 	            "PentahoSystem.ERROR_0016_COULD_NOT_PARSE_ACTION", sessionStartupAction.getActionPath())); //$NON-NLS-1$
 	      }
 	    }
@@ -708,7 +708,7 @@ public class PentahoSystem {
           }
   
         } else {
-          Logger.error(PentahoSystem.class.getName(), Messages.getErrorString(
+          Logger.error(PentahoSystem.class.getName(), Messages.getInstance().getErrorString(
               "PentahoSystem.ERROR_0016_COULD_NOT_PARSE_ACTION", globalStartupAction.getActionPath())); //$NON-NLS-1$
         }
       }
@@ -728,7 +728,7 @@ public class PentahoSystem {
           try {
             listener.shutdown();
           } catch (Throwable e) {
-            Logger.error(PentahoSystem.class.getName(), Messages.getErrorString(
+            Logger.error(PentahoSystem.class.getName(), Messages.getInstance().getErrorString(
                 "PentahoSystem.ERROR_0015_SHUTDOWN_FAILURE", listener.getClass().getName()), e); //$NON-NLS-1$
           }
         }
@@ -750,7 +750,7 @@ public class PentahoSystem {
       object = componentClass.newInstance();
 
     } catch (Throwable t) {
-      String msg = Messages.getErrorString("PentahoSystem.ERROR_0013_COULD_NOT_CREATE_OBEJCT", className); //$NON-NLS-1$
+      String msg = Messages.getInstance().getErrorString("PentahoSystem.ERROR_0013_COULD_NOT_CREATE_OBEJCT", className); //$NON-NLS-1$
       if (null == logger) {
         Logger.fatal(PentahoSystem.class.getName(), msg, t);
       } else {
@@ -803,7 +803,7 @@ public class PentahoSystem {
         }
       }
     }
-    return Messages.getErrorString("PentahoSystem.ERROR_0017_PUBLISHER_NOT_FOUND"); //$NON-NLS-1$
+    return Messages.getInstance().getErrorString("PentahoSystem.ERROR_0017_PUBLISHER_NOT_FOUND"); //$NON-NLS-1$
   }
 
   //FIXME: should be named getAdministrationPlugins
@@ -863,7 +863,7 @@ public class PentahoSystem {
         tmphost = url.getHost();
       } catch (MalformedURLException e) {
         Logger.warn(PentahoSystem.class.getName(),
-            Messages.getErrorString("PentahoSystem.ERROR_0030_VERIFIER_FAILED"), e); //$NON-NLS-1$
+            Messages.getInstance().getErrorString("PentahoSystem.ERROR_0030_VERIFIER_FAILED"), e); //$NON-NLS-1$
 
       }
       final String host = tmphost;
@@ -879,7 +879,7 @@ public class PentahoSystem {
       javax.net.ssl.HttpsURLConnection.setDefaultHostnameVerifier(myHv);
     } catch (Throwable t) {
       Logger
-          .warn(PentahoSystem.class.getName(), Messages.getErrorString("PentahoSystem.ERROR_0030_VERIFIER_FAILED"), t); //$NON-NLS-1$
+          .warn(PentahoSystem.class.getName(), Messages.getInstance().getErrorString("PentahoSystem.ERROR_0030_VERIFIER_FAILED"), t); //$NON-NLS-1$
     }
   }
 
@@ -1028,19 +1028,19 @@ public class PentahoSystem {
       boolean isValid = pentahoObjectFactory.objectDefined( interfaceName );
       isRequiredValid &= isValid;
       if ( !isValid ) {
-        Logger.fatal(PentahoSystem.class.getName(), Messages.getErrorString(
+        Logger.fatal(PentahoSystem.class.getName(), Messages.getInstance().getErrorString(
             "PentahoSystem.ERROR_0021_OBJECT_NOT_SPECIFIED", interfaceName )); //$NON-NLS-1$
       }
     }
     for ( String interfaceName : PentahoSystem.KnownOptionalObjects ) {
       boolean isValid = pentahoObjectFactory.objectDefined( interfaceName );
       if ( !isValid ) {
-        Logger.info(PentahoSystem.class.getName(), Messages.getString(
+        Logger.info(PentahoSystem.class.getName(), Messages.getInstance().getString(
             "PentahoSystem.ERROR_0021_OBJECT_NOT_SPECIFIED", interfaceName )); //$NON-NLS-1$
       }
     }
     if ( !isRequiredValid ) {
-      throw new PentahoSystemException( Messages.getErrorString("PentahoSystem.ERROR_0420_MISSING_REQUIRED_OBJECT") ); //$NON-NLS-1$
+      throw new PentahoSystemException( Messages.getInstance().getErrorString("PentahoSystem.ERROR_0420_MISSING_REQUIRED_OBJECT") ); //$NON-NLS-1$
     }
   }
   

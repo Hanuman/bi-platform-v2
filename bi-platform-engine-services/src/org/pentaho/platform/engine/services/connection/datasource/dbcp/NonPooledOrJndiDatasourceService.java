@@ -70,7 +70,7 @@ public class NonPooledOrJndiDatasourceService extends BaseDatasourceService {
         return getJndiDataSource(dsName);  
       }
       catch(DatasourceServiceException dse) {
-       throw new DatasourceServiceException(Messages.getErrorString("NonPooledOrJndiDatasourceService.ERROR_0003_UNABLE_TO_GET_JNDI_DATASOURCE") ,dse);  //$NON-NLS-1$
+       throw new DatasourceServiceException(Messages.getInstance().getErrorString("NonPooledOrJndiDatasourceService.ERROR_0003_UNABLE_TO_GET_JNDI_DATASOURCE") ,dse);  //$NON-NLS-1$
       }
 
     } catch (DatasourceMgmtServiceException daoe) {
@@ -78,7 +78,7 @@ public class NonPooledOrJndiDatasourceService extends BaseDatasourceService {
         return getJndiDataSource(dsName);  
       }
       catch(DatasourceServiceException dse) {
-       throw new DatasourceServiceException(Messages.getErrorString("NonPooledOrJndiDatasourceService.ERROR_0003_UNABLE_TO_GET_JNDI_DATASOURCE") ,dse);  //$NON-NLS-1$
+       throw new DatasourceServiceException(Messages.getInstance().getErrorString("NonPooledOrJndiDatasourceService.ERROR_0003_UNABLE_TO_GET_JNDI_DATASOURCE") ,dse);  //$NON-NLS-1$
       }
 
     }

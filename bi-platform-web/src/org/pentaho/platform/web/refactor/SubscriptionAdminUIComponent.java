@@ -222,8 +222,8 @@ public class SubscriptionAdminUIComponent extends XmlComponent {
 
     subscriptionRepository = PentahoSystem.get(ISubscriptionRepository.class, getSession());
     if (subscriptionRepository == null) {
-      error(Messages.getErrorString("PentahoSystem.ERROR_0003_SUBSCRIPTION_REPOSITORY_NOT_INITIALIZED")); //$NON-NLS-1$
-      throw (new SubscriptionAdminException(Messages.getErrorString("PentahoSystem.ERROR_0003_SUBSCRIPTION_REPOSITORY_NOT_INITIALIZED"))); //$NON-NLS-1$
+      error(Messages.getInstance().getErrorString("PentahoSystem.ERROR_0003_SUBSCRIPTION_REPOSITORY_NOT_INITIALIZED")); //$NON-NLS-1$
+      throw (new SubscriptionAdminException(Messages.getInstance().getErrorString("PentahoSystem.ERROR_0003_SUBSCRIPTION_REPOSITORY_NOT_INITIALIZED"))); //$NON-NLS-1$
     }
 
     // set the default XSL
@@ -433,11 +433,11 @@ public class SubscriptionAdminUIComponent extends XmlComponent {
       Element errorEl = getErrorMessage( e.getMessage() );
       return getDocument( NODE_EXCEPTION, errorEl );
     } catch ( Exception e ) {
-      return (showCommandResultUI(getErrorMessage(Messages.getString(
+      return (showCommandResultUI(getErrorMessage(Messages.getInstance().getString(
           "SubscriptionAdminUIComponent.UNABLE_TO_COMPLETE_REQUEST", e.getLocalizedMessage())), SubscriptionAdminUIComponent.NODE_STATUS_ERROR)); //$NON-NLS-1$
     }
 
-    Document document = showCommandResultUI(getInfoMessage(Messages.getString(
+    Document document = showCommandResultUI(getInfoMessage(Messages.getInstance().getString(
         "SubscriptionAdminUIComponent.INVALID_COMMAND", schedulerActionStr)), SubscriptionAdminUIComponent.NODE_STATUS_ERROR); //$NON-NLS-1$
     document.getRootElement().add(getReturnParams());
 
@@ -494,10 +494,10 @@ public class SubscriptionAdminUIComponent extends XmlComponent {
         job.addAttribute("triggerState", Integer.toString(schedJob.getExecutionState())); //$NON-NLS-1$
         Date date = schedJob.getNextTriggerTime();
         job
-            .addElement("nextFireTime").addText((date == null) ? Messages.getString("SubscriptionAdminUIComponent.USER_NEVER") : date.toString()); //$NON-NLS-1$ //$NON-NLS-2$
+            .addElement("nextFireTime").addText((date == null) ? Messages.getInstance().getString("SubscriptionAdminUIComponent.USER_NEVER") : date.toString()); //$NON-NLS-1$ //$NON-NLS-2$
         date = schedJob.getLastTriggerTime();
         job
-            .addElement("prevFireTime").addText((date == null) ? Messages.getString("SubscriptionAdminUIComponent.USER_NEVER") : date.toString()); //$NON-NLS-1$ //$NON-NLS-2$
+            .addElement("prevFireTime").addText((date == null) ? Messages.getInstance().getString("SubscriptionAdminUIComponent.USER_NEVER") : date.toString()); //$NON-NLS-1$ //$NON-NLS-2$
         job.addElement("jobId").addText(schedJob.getUniqueId()); //$NON-NLS-1$
         String errorMsg = schedJob.getErrorMessage();
         if (errorMsg != null) {
@@ -509,31 +509,31 @@ public class SubscriptionAdminUIComponent extends XmlComponent {
     }
 
     if (schedList.size() == 0) {
-      root.add(getInfoMessage(Messages.getString("SubscriptionAdminUIComponent.USER_NO_SUBSCRIPTIONS_DEFINED"))); //$NON-NLS-1$
+      root.add(getInfoMessage(Messages.getInstance().getString("SubscriptionAdminUIComponent.USER_NO_SUBSCRIPTIONS_DEFINED"))); //$NON-NLS-1$
     } else if (scheduledJobs.elements().size() == 0) {
       root.remove(scheduledJobs);
     }
 
     if (errorCounter > 0) {
       root.add(getErrorMessage(errorCounter
-          + Messages.getString("SubscriptionAdminUIComponent.USER_SCHEDULED_JOBS_ARE_IN_ERROR_STATE"))); //$NON-NLS-1$
+          + Messages.getInstance().getString("SubscriptionAdminUIComponent.USER_SCHEDULED_JOBS_ARE_IN_ERROR_STATE"))); //$NON-NLS-1$
     }
 
     if (pauseCounter > 0) {
       root.add(getWarningMessage(pauseCounter
-          + Messages.getString("SubscriptionAdminUIComponent.USER_SCHEDULED_JOBS_ARE_PAUSED"))); //$NON-NLS-1$
+          + Messages.getInstance().getString("SubscriptionAdminUIComponent.USER_SCHEDULED_JOBS_ARE_PAUSED"))); //$NON-NLS-1$
     }
 
     if (unScheduledJobs.elements().size() == 0) {
       root.remove(unScheduledJobs);
     } else {
-      root.add(getWarningMessage(Messages.getString("SubscriptionAdminUIComponent.USER_SUBSCRIPTIONS_NOT_SCHEDULED"))); //$NON-NLS-1$
+      root.add(getWarningMessage(Messages.getInstance().getString("SubscriptionAdminUIComponent.USER_SUBSCRIPTIONS_NOT_SCHEDULED"))); //$NON-NLS-1$
     }
 
     if (extraScheduledJobs.elements().size() == 0) {
       root.remove(extraScheduledJobs);
     } else {
-      root.add(getWarningMessage(Messages
+      root.add(getWarningMessage(Messages.getInstance()
           .getString("SubscriptionAdminUIComponent.SUBSCRIPTION_JOBS_WITHOUT_SUBSCRIPTION"))); //$NON-NLS-1$
     }
   }
@@ -584,7 +584,7 @@ public class SubscriptionAdminUIComponent extends XmlComponent {
       }
       job.addElement("repeat-time-millisecs").addText(Integer.toString(sched.getRepeatInterval())); //$NON-NLS-1$
     } else {
-      throw new IllegalStateException(Messages.getErrorString("SubscriptionAdminUIComponent.ERROR_0104_INCOMPLETE_SCHEDULE", sched.getId()));
+      throw new IllegalStateException(Messages.getInstance().getErrorString("SubscriptionAdminUIComponent.ERROR_0104_INCOMPLETE_SCHEDULE", sched.getId()));
       
     }
     DateFormat fmt = SubscriptionHelper.getDateTimeFormatter();
@@ -610,10 +610,10 @@ public class SubscriptionAdminUIComponent extends XmlComponent {
       job.addAttribute("triggerState", Integer.toString(jobState)); //$NON-NLS-1$1$
       Date date = schedJob.getNextTriggerTime();
       job
-          .addElement("nextFireTime").addText((date == null) ? Messages.getString("SubscriptionAdminUIComponent.USER_NEVER") : date.toString()); //$NON-NLS-1$ //$NON-NLS-2$
+          .addElement("nextFireTime").addText((date == null) ? Messages.getInstance().getString("SubscriptionAdminUIComponent.USER_NEVER") : date.toString()); //$NON-NLS-1$ //$NON-NLS-2$
       date = sched.getLastTrigger();
       job
-          .addElement("prevFireTime").addText(((date == null) || (date.getTime() == 0)) ? Messages.getString("SubscriptionAdminUIComponent.USER_NEVER") : date.toString()); //$NON-NLS-1$ //$NON-NLS-2$
+          .addElement("prevFireTime").addText(((date == null) || (date.getTime() == 0)) ? Messages.getInstance().getString("SubscriptionAdminUIComponent.USER_NEVER") : date.toString()); //$NON-NLS-1$ //$NON-NLS-2$
       job.addElement("jobId").addText(sched.getScheduleReference()); //$NON-NLS-1$
       String errorMsg = schedJob.getErrorMessage();
       if (errorMsg != null) {
@@ -629,7 +629,7 @@ public class SubscriptionAdminUIComponent extends XmlComponent {
     for ( ISubscribeContent content : scList ) {
       ActionInfo actionInfo = ActionInfo.parseActionString( content.getActionReference() );
       if ( null == actionInfo ) {
-        throw new ActionInfoParseException(Messages.getErrorString("SubscriptionAdminUIComponent.ERROR_0103_FAILED_PARSE_SOLUTION_REPOSITORY", content.getActionReference()));
+        throw new ActionInfoParseException(Messages.getInstance().getErrorString("SubscriptionAdminUIComponent.ERROR_0103_FAILED_PARSE_SOLUTION_REPOSITORY", content.getActionReference()));
       }
       Element actionEl = contentEl.addElement( "action" );
       actionEl.addAttribute( StandardSettings.SOLUTION, actionInfo.getSolutionName() );
@@ -641,7 +641,7 @@ public class SubscriptionAdminUIComponent extends XmlComponent {
   private void doListContent(Element ele) {
     List contentList = subscriptionRepository.getAllContent();
     if (contentList.size() == 0) {
-      ele.add(getInfoMessage(Messages.getString("SubscriptionAdminUIComponent.USER_NO_SUBSCRIPTION_CONTENT"))); //$NON-NLS-1$
+      ele.add(getInfoMessage(Messages.getInstance().getString("SubscriptionAdminUIComponent.USER_NO_SUBSCRIPTION_CONTENT"))); //$NON-NLS-1$
     } else {
       ele = ele.addElement(SubscriptionAdminUIComponent.ACTION_CONTENT_SHOW_LIST);
       ele.addAttribute("count", String.valueOf(contentList.size())); //$NON-NLS-1$
@@ -668,7 +668,7 @@ public class SubscriptionAdminUIComponent extends XmlComponent {
       schedulerState = subScheduler.getSchedulerState();
     } catch (Throwable t) {
       root
-          .add(getErrorMessage(Messages.getString("SubscriptionAdminUIComponent.ERROR_GETTING_SCHEDULER_STATUS") + t.getLocalizedMessage())); //$NON-NLS-1$
+          .add(getErrorMessage(Messages.getInstance().getString("SubscriptionAdminUIComponent.ERROR_GETTING_SCHEDULER_STATUS") + t.getLocalizedMessage())); //$NON-NLS-1$
     }
     root.addAttribute("state", String.valueOf(schedulerState)); //$NON-NLS-1$
   }
@@ -681,13 +681,13 @@ public class SubscriptionAdminUIComponent extends XmlComponent {
    */
   Element validateCronExpression(final String cronExpr) {
     if ((cronExpr == null) || (cronExpr.length() == 0)) {
-      return (getErrorMessage(Messages.getString("SubscriptionAdminUIComponent.CRON_EXPRESSION_EMPTY"))); //$NON-NLS-1$
+      return (getErrorMessage(Messages.getInstance().getString("SubscriptionAdminUIComponent.CRON_EXPRESSION_EMPTY"))); //$NON-NLS-1$
     }
     try {
       scheduler.getCronSummary(cronExpr); // Should throw execption for bad
       // string
     } catch (Throwable t) {
-      return (getException(Messages.getString("SubscriptionAdminUIComponent.INVALID_CRON_EXPRESSION") + cronExpr, t)); //$NON-NLS-1$
+      return (getException(Messages.getInstance().getString("SubscriptionAdminUIComponent.INVALID_CRON_EXPRESSION") + cronExpr, t)); //$NON-NLS-1$
     }
 
     return (null);
@@ -697,10 +697,10 @@ public class SubscriptionAdminUIComponent extends XmlComponent {
     if ( null == repeatCount || null == repeatInterval ) {
       StringBuilder sb = new StringBuilder();
       if ( null == repeatCount || repeatCount < 0 ) {
-        sb.append(Messages.getString("SubscriptionAdminUIComponent.INVALID_REPEAT_COUNT_IN_REPEAT_SCHEDULE")); //$NON-NLS-1$
+        sb.append(Messages.getInstance().getString("SubscriptionAdminUIComponent.INVALID_REPEAT_COUNT_IN_REPEAT_SCHEDULE")); //$NON-NLS-1$
       }
       if ( null == repeatInterval || repeatInterval < 0 ) {
-        sb.append(Messages.getString("SubscriptionAdminUIComponent.INVALID_REPEAT_INTERVAL_IN_REPEAT_SCHEDULE")); //$NON-NLS-1$
+        sb.append(Messages.getInstance().getString("SubscriptionAdminUIComponent.INVALID_REPEAT_INTERVAL_IN_REPEAT_SCHEDULE")); //$NON-NLS-1$
       }
       return getErrorMessage( sb.toString() );
     } else {
@@ -710,13 +710,13 @@ public class SubscriptionAdminUIComponent extends XmlComponent {
   
   private void validateCronExpressionEx(final String cronExpr) throws CronStringException {
     if ( StringUtils.isEmpty( cronExpr ) ) {
-      throw new CronStringException( Messages.getString("SubscriptionAdminUIComponent.CRON_EXPRESSION_EMPTY")); //$NON-NLS-1$
+      throw new CronStringException( Messages.getInstance().getString("SubscriptionAdminUIComponent.CRON_EXPRESSION_EMPTY")); //$NON-NLS-1$
     }
     try {
       scheduler.getCronSummary(cronExpr); // Should throw execption for bad
       // string
     } catch ( Exception e ) {
-      throw new CronStringException( Messages.getString("SubscriptionAdminUIComponent.INVALID_CRON_EXPRESSION") + cronExpr, e ); //$NON-NLS-1$
+      throw new CronStringException( Messages.getInstance().getString("SubscriptionAdminUIComponent.INVALID_CRON_EXPRESSION") + cronExpr, e ); //$NON-NLS-1$
     }
   }
 
@@ -734,7 +734,7 @@ public class SubscriptionAdminUIComponent extends XmlComponent {
       doGetSchedulerStatus(root);
       root.add(getReturnURL());
     } catch (Throwable t) {
-      root.add(getException(Messages.getString("SubscriptionAdminUIComponent.EXCEPTION_BUILDING_ADMIN_PAGE"), t)); //$NON-NLS-1$
+      root.add(getException(Messages.getInstance().getString("SubscriptionAdminUIComponent.EXCEPTION_BUILDING_ADMIN_PAGE"), t)); //$NON-NLS-1$
     }
     return (document);
   }
@@ -752,7 +752,7 @@ public class SubscriptionAdminUIComponent extends XmlComponent {
     String schedId = getParameter("schedId", null); //$NON-NLS-1$
     ISchedule sched = subscriptionRepository.getSchedule(schedId);
     if (sched == null) {
-      return (showCommandResultUI(getErrorMessage(Messages.getString(
+      return (showCommandResultUI(getErrorMessage(Messages.getInstance().getString(
           "SubscriptionAdminUIComponent.SCHEDULE_NOT_FOUND", getParameter("schedRef", schedId))), SubscriptionAdminUIComponent.NODE_STATUS_ERROR)); //$NON-NLS-1$ //$NON-NLS-2$
     }
 
@@ -765,7 +765,7 @@ public class SubscriptionAdminUIComponent extends XmlComponent {
     try {
       schedJob = subScheduler.getScheduledJob(sched.getScheduleReference());
     } catch (SubscriptionSchedulerException e) {
-      return showCommandResultUI( getErrorMessage( Messages.getString(
+      return showCommandResultUI( getErrorMessage( Messages.getInstance().getString(
           "SubscriptionAdminUIComponent.SCHEDULE_NOT_FOUND", sched.getScheduleReference())), SubscriptionAdminUIComponent.NODE_STATUS_ERROR );
     }
 
@@ -823,14 +823,14 @@ public class SubscriptionAdminUIComponent extends XmlComponent {
               getParameter("title", null), getParameter("schedRef", null), getParameter("desc", null), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
               cronExpr, getParameter("group", null), null, null); //$NON-NLS-1$
     } catch (Throwable t) {
-      Document document = showEditScheduleUI(getException(Messages.getString(
+      Document document = showEditScheduleUI(getException(Messages.getInstance().getString(
           "SubscriptionAdminUIComponent.ERROR_EDITING_SCHEDULE", getParameter("schedRef", schedId)), t)); //$NON-NLS-1$ //$NON-NLS-2$
       setParametersAsNodes(document.getRootElement(), paramNames);
       return (document);
     }
 
     // TODO maybe success should return to details page
-    return (showCommandResultUI(getOkMessage(Messages.getString(
+    return (showCommandResultUI(getOkMessage(Messages.getInstance().getString(
         "SubscriptionAdminUIComponent.USER_MODIFIED_SCHEDULE", sched.getScheduleReference())), SubscriptionAdminUIComponent.NODE_STATUS_OK)); //$NON-NLS-1$
   }
 
@@ -855,30 +855,30 @@ public class SubscriptionAdminUIComponent extends XmlComponent {
       validateCronExpressionEx(cronExpr);
     } else {
       if ( null == strRepeatInterval ) {
-        throw new ParameterValidationException(Messages.getErrorString("SubscriptionAdminUIComponent.ERROR_0102_INVALID_SCHEDULE_PARAM"));
+        throw new ParameterValidationException(Messages.getInstance().getErrorString("SubscriptionAdminUIComponent.ERROR_0102_INVALID_SCHEDULE_PARAM"));
       }
     }
     Integer repeatCount = ( null != strRepeatCount ) ? Integer.parseInt( strRepeatCount ) : null;
     Integer repeatInterval = ( null != strRepeatInterval ) ? Integer.parseInt( strRepeatInterval ) : null;
-    assert repeatInterval == null || repeatInterval >= 0 : Messages.getString("SubscriptionAdminUIComponent.INVALID_REPEAT_INTERVAL",strRepeatInterval);
+    assert repeatInterval == null || repeatInterval >= 0 : Messages.getInstance().getString("SubscriptionAdminUIComponent.INVALID_REPEAT_INTERVAL",strRepeatInterval);
     DateFormat fmt = SubscriptionHelper.getDateTimeFormatter();
     Date startDate;
     Date endDate;
     try {
       startDate = ( null != strStartDate) ? fmt.parse( strStartDate ) : null;
     } catch (ParseException e) {
-      throw new ParameterValidationException(Messages.getErrorString("SubscriptionAdminUIComponent.ERROR_0100_INVALID_START_DATE_PARAM",strStartDate));
+      throw new ParameterValidationException(Messages.getInstance().getErrorString("SubscriptionAdminUIComponent.ERROR_0100_INVALID_START_DATE_PARAM",strStartDate));
     }
     try {
       endDate = ( null != strEndDate) ? fmt.parse( strEndDate ) : null;
     } catch (ParseException e) {
-      throw new ParameterValidationException(Messages.getErrorString("SubscriptionAdminUIComponent.ERROR_0100_INVALID_END_DATE_PARAM",strEndDate));
+      throw new ParameterValidationException(Messages.getInstance().getErrorString("SubscriptionAdminUIComponent.ERROR_0100_INVALID_END_DATE_PARAM",strEndDate));
     }
     
     SubscriptionRepositoryHelper.editScheduleWithoutContent( subscriptionRepository, schedId, title, schedRef, desc,
         cronExpr, repeatCount, repeatInterval, group, startDate, endDate);
     
-    return (showCommandResultUI(getOkMessage(Messages.getString(
+    return (showCommandResultUI(getOkMessage(Messages.getInstance().getString(
         "SubscriptionAdminUIComponent.USER_MODIFIED_SCHEDULE", schedRef)), SubscriptionAdminUIComponent.NODE_STATUS_OK)); //$NON-NLS-1$
 
   }
@@ -925,13 +925,13 @@ public class SubscriptionAdminUIComponent extends XmlComponent {
       subscriptionRepository.addCronSchedule(
           getParameter("title", null), schedRef, getParameter("desc", null), cronExpr, getParameter("group", null), null, null ); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
     } catch (Throwable t) {
-      Document document = showAddScheduleUI(getException(Messages.getString(
+      Document document = showAddScheduleUI(getException(Messages.getInstance().getString(
           "SubscriptionAdminUIComponent.ERROR_ADDING_SCHEDULE", schedRef), t)); //$NON-NLS-1$
       setParametersAsNodes(document.getRootElement(), paramNames);
       return (document);
     }
 
-    return (showCommandResultUI(getOkMessage(Messages.getString(
+    return (showCommandResultUI(getOkMessage(Messages.getInstance().getString(
         "SubscriptionAdminUIComponent.USER_ADDED_SCHEDULE", schedRef)), SubscriptionAdminUIComponent.NODE_STATUS_OK)); //$NON-NLS-1$
   }
 
@@ -958,7 +958,7 @@ public class SubscriptionAdminUIComponent extends XmlComponent {
       validateCronExpressionEx(cronExpr);
     } else {
       if ( null == strRepeatInterval ) {
-        throw new ParameterValidationException(Messages.getErrorString("SubscriptionAdminUIComponent.ERROR_0102_INVALID_SCHEDULE_PARAM"));
+        throw new ParameterValidationException(Messages.getInstance().getErrorString("SubscriptionAdminUIComponent.ERROR_0102_INVALID_SCHEDULE_PARAM"));
       }
     }
     Integer repeatCount = ( null != strRepeatCount ) ? Integer.parseInt( strRepeatCount ) : null;
@@ -969,18 +969,18 @@ public class SubscriptionAdminUIComponent extends XmlComponent {
     try {
       startDate = ( null != strStartDate) ? fmt.parse( strStartDate ) : null;
     } catch (ParseException e) {
-      throw new ParameterValidationException(Messages.getErrorString("SubscriptionAdminUIComponent.ERROR_0100_INVALID_START_DATE_PARAM",strStartDate),e);
+      throw new ParameterValidationException(Messages.getInstance().getErrorString("SubscriptionAdminUIComponent.ERROR_0100_INVALID_START_DATE_PARAM",strStartDate),e);
     }
     try {
       endDate = ( null != strEndDate) ? fmt.parse( strEndDate ) : null;
     } catch (ParseException e) {
-      throw new ParameterValidationException(Messages.getErrorString("SubscriptionAdminUIComponent.ERROR_0100_INVALID_END_DATE_PARAM",strEndDate),e);
+      throw new ParameterValidationException(Messages.getInstance().getErrorString("SubscriptionAdminUIComponent.ERROR_0100_INVALID_END_DATE_PARAM",strEndDate),e);
     }
     
     SubscriptionRepositoryHelper.addScheduleWithoutContent( subscriptionRepository, title, schedRef, desc,
         cronExpr, repeatCount, repeatInterval, group, startDate, endDate);
 
-    return (showCommandResultUI(getOkMessage(Messages.getString(
+    return (showCommandResultUI(getOkMessage(Messages.getInstance().getString(
         "SubscriptionAdminUIComponent.USER_ADDED_SCHEDULE", schedRef)), SubscriptionAdminUIComponent.NODE_STATUS_OK)); //$NON-NLS-1$ //$NON-NLS-2$
 
   }
@@ -998,7 +998,7 @@ public class SubscriptionAdminUIComponent extends XmlComponent {
     ISchedule sched = subscriptionRepository.getSchedule(schedId);
     if (sched == null) {
       return (showCommandResultUI(
-          getErrorMessage(Messages.getString(
+          getErrorMessage(Messages.getInstance().getString(
               "SubscriptionAdminUIComponent.ERROR_SCHEDULE_NOT_FOUND", getParameter("schedRef", schedId))), SubscriptionAdminUIComponent.NODE_STATUS_ERROR)); //$NON-NLS-1$ //$NON-NLS-2$
     }
 
@@ -1050,7 +1050,7 @@ public class SubscriptionAdminUIComponent extends XmlComponent {
       validateCronExpressionEx(cronExpr);
     } else {
       if ( null == strRepeatInterval ) {
-        throw new ParameterValidationException(Messages.getErrorString("SubscriptionAdminUIComponent.ERROR_0102_INVALID_SCHEDULE_PARAM"));
+        throw new ParameterValidationException(Messages.getInstance().getErrorString("SubscriptionAdminUIComponent.ERROR_0102_INVALID_SCHEDULE_PARAM"));
         
       }
     }
@@ -1062,18 +1062,18 @@ public class SubscriptionAdminUIComponent extends XmlComponent {
     try {
       startDate = ( null != strStartDate) ? fmt.parse( strStartDate ) : null;
     } catch (ParseException e) {
-      throw new ParameterValidationException(Messages.getErrorString("SubscriptionAdminUIComponent.ERROR_0100_INVALID_START_DATE_PARAM",strStartDate),e);
+      throw new ParameterValidationException(Messages.getInstance().getErrorString("SubscriptionAdminUIComponent.ERROR_0100_INVALID_START_DATE_PARAM",strStartDate),e);
     }
     try {
       endDate = ( null != strEndDate) ? fmt.parse( strEndDate ) : null;
     } catch (ParseException e) {
-      throw new ParameterValidationException(Messages.getErrorString("SubscriptionAdminUIComponent.ERROR_0100_INVALID_END_DATE_PARAM",strEndDate),e);
+      throw new ParameterValidationException(Messages.getInstance().getErrorString("SubscriptionAdminUIComponent.ERROR_0100_INVALID_END_DATE_PARAM",strEndDate),e);
     }
     
     SubscriptionRepositoryHelper.addScheduleAndContent( subscriptionRepository, title, schedRef, desc,
         cronExpr, repeatCount, repeatInterval, group, startDate, endDate, actionRefs );
 
-    return (showCommandResultUI(getOkMessage(Messages.getString(
+    return (showCommandResultUI(getOkMessage(Messages.getInstance().getString(
         "SubscriptionAdminUIComponent.USER_SCHEDULED", schedRef)), SubscriptionAdminUIComponent.NODE_STATUS_OK)); //$NON-NLS-1$ //$NON-NLS-2$
   }
   
@@ -1098,12 +1098,12 @@ public class SubscriptionAdminUIComponent extends XmlComponent {
       validateCronExpressionEx(cronExpr);
     } else {
       if ( null == strRepeatInterval ) {
-        throw new ParameterValidationException(Messages.getErrorString("SubscriptionAdminUIComponent.ERROR_0102_INVALID_SCHEDULE_PARAM"));
+        throw new ParameterValidationException(Messages.getInstance().getErrorString("SubscriptionAdminUIComponent.ERROR_0102_INVALID_SCHEDULE_PARAM"));
       }
     }
     Integer repeatCount = ( null != strRepeatCount ) ? Integer.parseInt( strRepeatCount ) : null;
     Integer repeatInterval = ( null != strRepeatInterval ) ? Integer.parseInt( strRepeatInterval ) : null;
-    assert repeatInterval == null || repeatInterval >= 0 : Messages.getString("SubscriptionAdminUIComponent.INVALID_REPEAT_INTERVAL",strRepeatInterval);
+    assert repeatInterval == null || repeatInterval >= 0 : Messages.getInstance().getString("SubscriptionAdminUIComponent.INVALID_REPEAT_INTERVAL",strRepeatInterval);
     
     DateFormat fmt = SubscriptionHelper.getDateTimeFormatter();
     Date startDate;
@@ -1111,18 +1111,18 @@ public class SubscriptionAdminUIComponent extends XmlComponent {
     try {
       startDate = ( null != strStartDate) ? fmt.parse( strStartDate ) : null;
     } catch (ParseException e) {
-      throw new ParameterValidationException(Messages.getErrorString("SubscriptionAdminUIComponent.ERROR_0100_INVALID_START_DATE_PARAM",strStartDate),e);
+      throw new ParameterValidationException(Messages.getInstance().getErrorString("SubscriptionAdminUIComponent.ERROR_0100_INVALID_START_DATE_PARAM",strStartDate),e);
     }
     try {
       endDate = ( null != strEndDate) ? fmt.parse( strEndDate ) : null;
     } catch (ParseException e) {
-      throw new ParameterValidationException(Messages.getErrorString("SubscriptionAdminUIComponent.ERROR_0100_INVALID_END_DATE_PARAM",strEndDate),e);
+      throw new ParameterValidationException(Messages.getInstance().getErrorString("SubscriptionAdminUIComponent.ERROR_0100_INVALID_END_DATE_PARAM",strEndDate),e);
     }
     
     SubscriptionRepositoryHelper.editScheduleAndContent( subscriptionRepository, schedId, title, schedRef, desc,
         cronExpr, repeatCount, repeatInterval, group, startDate, endDate, actionRefs );
     
-    return (showCommandResultUI(getOkMessage(Messages.getString(
+    return (showCommandResultUI(getOkMessage(Messages.getInstance().getString(
         "SubscriptionAdminUIComponent.USER_MODIFIED_SCHEDULE", schedRef)), SubscriptionAdminUIComponent.NODE_STATUS_OK)); //$NON-NLS-1$
 
   }
@@ -1140,7 +1140,7 @@ public class SubscriptionAdminUIComponent extends XmlComponent {
     ISchedule sched = subscriptionRepository.getSchedule(schedId);
     if (sched == null) {
       return (showCommandResultUI(
-          getErrorMessage(Messages.getString(
+          getErrorMessage(Messages.getInstance().getString(
               "SubscriptionAdminUIComponent.ERROR_SCHEDULE_NOT_FOUND", getParameter("schedRef", schedId))), SubscriptionAdminUIComponent.NODE_STATUS_ERROR)); //$NON-NLS-1$ //$NON-NLS-2$
     }
 
@@ -1150,12 +1150,12 @@ public class SubscriptionAdminUIComponent extends XmlComponent {
       subscriptionRepository.setContentForSchedule(contentArray, schedId);
     } catch (Throwable t) {
       return (showCommandResultUI(
-          getException(Messages.getString(
+          getException(Messages.getInstance().getString(
               "SubscriptionAdminUIComponent.ERROR_SETTING_CONTENT_FOR_SCHEDULE", getParameter("schedRef", schedId)), t), SubscriptionAdminUIComponent.NODE_STATUS_ERROR)); //$NON-NLS-1$ //$NON-NLS-2$
     }
 
     return (showCommandResultUI(
-        getOkMessage(Messages.getString(
+        getOkMessage(Messages.getInstance().getString(
             "SubscriptionAdminUIComponent.USER_SET_CONTENT_FOR_SCHEDULE", getParameter("schedRef", schedId))), SubscriptionAdminUIComponent.NODE_STATUS_OK)); //$NON-NLS-1$ //$NON-NLS-2$
   }
 
@@ -1171,7 +1171,7 @@ public class SubscriptionAdminUIComponent extends XmlComponent {
     String schedId = getParameter("schedId", null); //$NON-NLS-1$
     subscriptionRepository.deleteScheduleById(schedId);
 
-    return (showCommandResultUI(getOkMessage(Messages.getString(
+    return (showCommandResultUI(getOkMessage(Messages.getInstance().getString(
         "SubscriptionAdminUIComponent.USER_DELETED_SCHEDULE", getParameter("schedRef", schedId))), SubscriptionAdminUIComponent.NODE_STATUS_OK)); //$NON-NLS-1$ //$NON-NLS-2$
   }
 
@@ -1188,7 +1188,7 @@ public class SubscriptionAdminUIComponent extends XmlComponent {
     try {
       ISchedule sched = subscriptionRepository.getSchedule(schedId);
       if (sched == null) {
-        return (showCommandResultUI(getErrorMessage(Messages.getString(
+        return (showCommandResultUI(getErrorMessage(Messages.getInstance().getString(
             "SubscriptionAdminUIComponent.ERROR_SCHEDULE_NOT_FOUND", schedId)), SubscriptionAdminUIComponent.NODE_STATUS_ERROR)); //$NON-NLS-1$
       } else {
         if ( sched.isCronSchedule() ) {
@@ -1196,28 +1196,28 @@ public class SubscriptionAdminUIComponent extends XmlComponent {
         } else if ( sched.isRepeatSchedule() ){
           errorEle = validateRepeatSpec( sched.getRepeatCount(), sched.getRepeatInterval() );
         } else {
-          errorEle = getErrorMessage(Messages.getString("SubscriptionAdminUIComponent.INCOMPLETE_SCHEDULE", sched.getId()));
+          errorEle = getErrorMessage(Messages.getInstance().getString("SubscriptionAdminUIComponent.INCOMPLETE_SCHEDULE", sched.getId()));
           
         }
         if (errorEle != null) {
           Document document = showCommandResultUI(errorEle, SubscriptionAdminUIComponent.NODE_STATUS_ERROR);
           document.getRootElement().add(
-              getErrorMessage(Messages.getString("SubscriptionAdminUIComponent.ERROR_CANNOT_START_SCHEDULE"))); //$NON-NLS-1$
+              getErrorMessage(Messages.getInstance().getString("SubscriptionAdminUIComponent.ERROR_CANNOT_START_SCHEDULE"))); //$NON-NLS-1$
           return (document);
         }
 
         if (scheduler.syncSchedule(null, sched) == null) {
           return (showCommandResultUI(
-              getErrorMessage(Messages.getString(
+              getErrorMessage(Messages.getInstance().getString(
                   "SubscriptionAdminUIComponent.ERROR_UNABLE_TO_SCHEDULE_JOB", sched.getScheduleReference())), SubscriptionAdminUIComponent.NODE_STATUS_ERROR)); //$NON-NLS-1$
         }
       }
     } catch (Throwable t) {
-      return (showCommandResultUI(getException(Messages.getString(
+      return (showCommandResultUI(getException(Messages.getInstance().getString(
           "SubscriptionAdminUIComponent.ERROR_SCHEDULING", getParameter("schedRef", schedId)), t), SubscriptionAdminUIComponent.NODE_STATUS_ERROR)); //$NON-NLS-1$ //$NON-NLS-2$
     }
 
-    return (showCommandResultUI(getOkMessage(Messages.getString(
+    return (showCommandResultUI(getOkMessage(Messages.getInstance().getString(
         "SubscriptionAdminUIComponent.USER_SCHEDULED", getParameter("schedRef", schedId))), SubscriptionAdminUIComponent.NODE_STATUS_OK)); //$NON-NLS-1$ //$NON-NLS-2$
   }
 
@@ -1228,7 +1228,7 @@ public class SubscriptionAdminUIComponent extends XmlComponent {
     try {
       List errorMessages = subscriptionRepository.syncSchedules();
       if (errorMessages.size() > 0) {
-        Document document = showCommandResultUI(getWarningMessage(Messages
+        Document document = showCommandResultUI(getWarningMessage(Messages.getInstance()
             .getString("SubscriptionAdminUIComponent.WARNING_NOT_ALL_SCHEDULES_STARTED")), SubscriptionAdminUIComponent.NODE_STATUS_WARNING); //$NON-NLS-1$
         Element root = document.getRootElement();
         for (int i = 0; i < errorMessages.size(); ++i) {
@@ -1237,11 +1237,11 @@ public class SubscriptionAdminUIComponent extends XmlComponent {
         return (document);
       }
     } catch (Throwable t) {
-      return (showCommandResultUI(getException(Messages
+      return (showCommandResultUI(getException(Messages.getInstance()
           .getString("SubscriptionAdminUIComponent.ERROR_SYNCHRONIZING_SCHEDULES"), t), SubscriptionAdminUIComponent.NODE_STATUS_ERROR)); //$NON-NLS-1$
     }
 
-    return (showAdminPageUI(getOkMessage(Messages.getString("SubscriptionAdminUIComponent.USER_SYNCHRONIZE_COMPLETE")))); //$NON-NLS-1$
+    return (showAdminPageUI(getOkMessage(Messages.getInstance().getString("SubscriptionAdminUIComponent.USER_SYNCHRONIZE_COMPLETE")))); //$NON-NLS-1$
   }
 
   // TODO sbarkdull, needs to be broken up into 4 methods, pause, resume, delete, execute
@@ -1259,16 +1259,16 @@ public class SubscriptionAdminUIComponent extends XmlComponent {
     try {
       if (SubscriptionAdminUIComponent.ACTION_JOB_DO_PAUSE.equals(command)) {
         scheduler.pauseJob(jobId);
-        okMessage = Messages.getString("SubscriptionAdminUIComponent.USER_PAUSED_JOB"); //$NON-NLS-1$
+        okMessage = Messages.getInstance().getString("SubscriptionAdminUIComponent.USER_PAUSED_JOB"); //$NON-NLS-1$
       } else if (SubscriptionAdminUIComponent.ACTION_JOB_DO_RESUME.equals(command)) {
         scheduler.resumeJob(jobId);
-        okMessage = Messages.getString("SubscriptionAdminUIComponent.USER_RESUMED_JOB"); //$NON-NLS-1$
+        okMessage = Messages.getInstance().getString("SubscriptionAdminUIComponent.USER_RESUMED_JOB"); //$NON-NLS-1$
       } else if (SubscriptionAdminUIComponent.ACTION_JOB_DO_DELETE.equals(command)) {
         scheduler.deleteJob(jobId);
-        okMessage = Messages.getString("SubscriptionAdminUIComponent.USER_DELETED_JOB"); //$NON-NLS-1$
+        okMessage = Messages.getInstance().getString("SubscriptionAdminUIComponent.USER_DELETED_JOB"); //$NON-NLS-1$
       } else if (SubscriptionAdminUIComponent.ACTION_JOB_DO_EXECUTE.equals(command)) {
         scheduler.executeJob(jobId);
-        okMessage = Messages.getString("SubscriptionAdminUIComponent.USER_SUBMITTED_JOB"); //$NON-NLS-1$
+        okMessage = Messages.getInstance().getString("SubscriptionAdminUIComponent.USER_SUBMITTED_JOB"); //$NON-NLS-1$
       }
     } catch (Throwable t) {
       return (showCommandResultUI(getException("", t), SubscriptionAdminUIComponent.NODE_STATUS_ERROR)); //$NON-NLS-1$
@@ -1281,22 +1281,22 @@ public class SubscriptionAdminUIComponent extends XmlComponent {
     try {
       scheduler.resumeScheduler();
     } catch (Throwable t) {
-      return (showCommandResultUI(getException(Messages
+      return (showCommandResultUI(getException(Messages.getInstance()
           .getString("SubscriptionAdminUIComponent.ERROR_RESUMING_SCHEDULER"), t), SubscriptionAdminUIComponent.NODE_STATUS_ERROR)); //$NON-NLS-1$
     }
     return (showCommandResultUI(
-        getOkMessage(Messages.getString("SubscriptionAdminUIComponent.USER_SCHEDULER_RESUMED")), SubscriptionAdminUIComponent.NODE_STATUS_OK)); //$NON-NLS-1$
+        getOkMessage(Messages.getInstance().getString("SubscriptionAdminUIComponent.USER_SCHEDULER_RESUMED")), SubscriptionAdminUIComponent.NODE_STATUS_OK)); //$NON-NLS-1$
   }
 
   Document doPauseScheduler() {
     try {
       scheduler.pauseScheduler();
     } catch (Throwable t) {
-      return (showCommandResultUI(getException(Messages
+      return (showCommandResultUI(getException(Messages.getInstance()
           .getString("SubscriptionAdminUIComponent.ERROR_PAUSING_SCHEDULER"), t), SubscriptionAdminUIComponent.NODE_STATUS_ERROR)); //$NON-NLS-1$
     }
     return (showCommandResultUI(
-        getOkMessage(Messages.getString("SubscriptionAdminUIComponent.USER_PAUSED_SCHEDULER")), SubscriptionAdminUIComponent.NODE_STATUS_OK)); //$NON-NLS-1$
+        getOkMessage(Messages.getInstance().getString("SubscriptionAdminUIComponent.USER_PAUSED_SCHEDULER")), SubscriptionAdminUIComponent.NODE_STATUS_OK)); //$NON-NLS-1$
   }
 
   /**
@@ -1313,7 +1313,7 @@ public class SubscriptionAdminUIComponent extends XmlComponent {
     ISubscribeContent subContent = subscriptionRepository.getContentById(contentId);
     if (subContent == null) {
       return (showCommandResultUI(
-          getErrorMessage(Messages.getString(
+          getErrorMessage(Messages.getInstance().getString(
               "SubscriptionAdminUIComponent.ERROR_CONTENT_NOT_FOUND", getParameter("actionRef", contentId))), SubscriptionAdminUIComponent.NODE_STATUS_ERROR)); //$NON-NLS-1$ //$NON-NLS-2$
     }
 
@@ -1382,14 +1382,14 @@ public class SubscriptionAdminUIComponent extends XmlComponent {
       subContent = subscriptionRepository.editContent(contentId,
           getParameter("actionRef", null), getParameter("type", null)); //$NON-NLS-1$ //$NON-NLS-2$
     } catch (Throwable t) {
-      Document document = showEditContentUI(getException(Messages.getString(
+      Document document = showEditContentUI(getException(Messages.getInstance().getString(
           "SubscriptionAdminUIComponent.ERROR_EDITING_CONTENT", getParameter("actionRef", contentId)), t)); //$NON-NLS-1$ //$NON-NLS-2$
       setParametersAsNodes(document.getRootElement(), paramNames);
       return (document);
     }
 
     // TODO maybe success should return to details page
-    return (showCommandResultUI(getOkMessage(Messages.getString(
+    return (showCommandResultUI(getOkMessage(Messages.getInstance().getString(
         "SubscriptionAdminUIComponent.USER_MODIFIED_CONTENT", subContent.getActionReference())), SubscriptionAdminUIComponent.NODE_STATUS_OK)); //$NON-NLS-1$
   }
 
@@ -1467,13 +1467,13 @@ public class SubscriptionAdminUIComponent extends XmlComponent {
     try {
       subscriptionRepository.addContent(actionRef);
     } catch (Throwable t) {
-      Document document = showAddContentUI(getException(Messages
+      Document document = showAddContentUI(getException(Messages.getInstance()
           .getString("SubscriptionAdminUIComponent.ERROR_SETTING_CONTENT"), t)); //$NON-NLS-1$
       setParametersAsNodes(document.getRootElement(), paramNames);
       return (document);
     }
 
-    return (showCommandResultUI(getOkMessage(Messages
+    return (showCommandResultUI(getOkMessage(Messages.getInstance()
         .getString("SubscriptionAdminUIComponent.USER_SET_SUBSCRIPTION_CONTENT")), SubscriptionAdminUIComponent.NODE_STATUS_OK)); //$NON-NLS-1$
   }
   
@@ -1496,13 +1496,13 @@ public class SubscriptionAdminUIComponent extends XmlComponent {
     try {
       subscriptionRepository.setContent(actionRef);
     } catch (Throwable t) {
-      Document document = showAddContentUI(getException(Messages
+      Document document = showAddContentUI(getException(Messages.getInstance()
           .getString("SubscriptionAdminUIComponent.ERROR_SETTING_CONTENT"), t)); //$NON-NLS-1$
       setParametersAsNodes(document.getRootElement(), paramNames);
       return (document);
     }
 
-    return (showCommandResultUI(getOkMessage(Messages
+    return (showCommandResultUI(getOkMessage(Messages.getInstance()
         .getString("SubscriptionAdminUIComponent.USER_SET_SUBSCRIPTION_CONTENT")), SubscriptionAdminUIComponent.NODE_STATUS_OK)); //$NON-NLS-1$
   }
 
@@ -1520,11 +1520,11 @@ public class SubscriptionAdminUIComponent extends XmlComponent {
       subscriptionRepository.deleteSubscribeContentById(contentId);
     } catch (Throwable t) {
       return (showCommandResultUI(
-          getException(Messages.getString(
+          getException(Messages.getInstance().getString(
               "SubscriptionAdminUIComponent.ERROR_DELETING_CONTENT", getParameter("actionRef", contentId)), t), SubscriptionAdminUIComponent.NODE_STATUS_ERROR)); //$NON-NLS-1$ //$NON-NLS-2$
     }
 
-    return (showCommandResultUI(getOkMessage(Messages.getString(
+    return (showCommandResultUI(getOkMessage(Messages.getInstance().getString(
         "SubscriptionAdminUIComponent.USER_DELETED_CONTENT", getParameter("actionRef", contentId))), SubscriptionAdminUIComponent.NODE_STATUS_OK)); //$NON-NLS-1$ //$NON-NLS-2$
   }
 
@@ -1544,12 +1544,12 @@ public class SubscriptionAdminUIComponent extends XmlComponent {
     } catch (Exception e ) {
       return (showCommandResultUI(
           getException(
-              Messages
+              Messages.getInstance()
                   .getString(
                       "SubscriptionAdminUIComponent.ERROR_DELETING_CONTENT_FOR_SCHEDULE", getParameter("actionRef", contentId), getParameter("schedRef", schedId)), e), SubscriptionAdminUIComponent.NODE_STATUS_ERROR)); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
     }
 
-    return (showEditContentUI(getOkMessage(Messages
+    return (showEditContentUI(getOkMessage(Messages.getInstance()
         .getString(
             "SubscriptionAdminUIComponent.USER_DELETED_CONTENT_FOR_SCHEDULE", getParameter("actionRef", contentId), getParameter("schedRef", schedId))))); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
   }
@@ -1567,7 +1567,7 @@ public class SubscriptionAdminUIComponent extends XmlComponent {
     ISubscribeContent content = subscriptionRepository.getContentById(contentId);
     if (content == null) {
       return (showCommandResultUI(
-          getErrorMessage(Messages.getString(
+          getErrorMessage(Messages.getInstance().getString(
               "SubscriptionAdminUIComponent.ERROR_CONTENT_NOT_FOUND", getParameter("actionRef", contentId))), SubscriptionAdminUIComponent.NODE_STATUS_ERROR)); //$NON-NLS-1$ //$NON-NLS-2$
     }
 
@@ -1611,7 +1611,7 @@ public class SubscriptionAdminUIComponent extends XmlComponent {
     ISubscribeContent content = subscriptionRepository.getContentById(contentId);
     if (content == null) {
       return (showCommandResultUI(
-          getErrorMessage(Messages.getString(
+          getErrorMessage(Messages.getInstance().getString(
               "SubscriptionAdminUIComponent.ERROR_CONTENT_NOT_FOUND", getParameter("actionRef", contentId))), SubscriptionAdminUIComponent.NODE_STATUS_ERROR)); //$NON-NLS-1$ //$NON-NLS-2$
     }
     // schedId is an optional param?
@@ -1622,13 +1622,13 @@ public class SubscriptionAdminUIComponent extends XmlComponent {
     } catch (Throwable t) {
       return (showCommandResultUI(
           getException(
-              Messages
+              Messages.getInstance()
                   .getString(
                       "SubscriptionAdminUIComponent.ERROR_SETTING_SCHEDULES_FOR_CONTENT", getParameter("actionRef", contentId)), t), SubscriptionAdminUIComponent.NODE_STATUS_ERROR)); //$NON-NLS-1$ //$NON-NLS-2$
     }
 
     return (showCommandResultUI(
-        getOkMessage(Messages.getString(
+        getOkMessage(Messages.getInstance().getString(
             "SubscriptionAdminUIComponent.USER_SET_SCHEDULES_FOR_CONTENT", getParameter("actionRef", contentId))), SubscriptionAdminUIComponent.NODE_STATUS_OK)); //$NON-NLS-1$ //$NON-NLS-2$
   }
 
@@ -1645,7 +1645,7 @@ public class SubscriptionAdminUIComponent extends XmlComponent {
     String contentType = request.getContentType();
     if ((contentType == null)
         || ((contentType.indexOf("multipart/form-data") < 0) && (contentType.indexOf("multipart/mixed stream") < 0))) { //$NON-NLS-1$ //$NON-NLS-2$
-      return (showCommandResultUI(getErrorMessage(Messages
+      return (showCommandResultUI(getErrorMessage(Messages.getInstance()
           .getString("SubscriptionAdminUIComponent.ERROR_IMPORT_FILE_NOT_UPLOADED")), SubscriptionAdminUIComponent.NODE_STATUS_ERROR)); //$NON-NLS-1$
     }
     Enumeration enumer = request.getParameterNames();
@@ -1671,11 +1671,11 @@ public class SubscriptionAdminUIComponent extends XmlComponent {
       }
       saveFileItem(publishFile, publishPassword);
     } catch (Throwable t) {
-      return (showCommandResultUI(getException(Messages
+      return (showCommandResultUI(getException(Messages.getInstance()
           .getString("SubscriptionAdminUIComponent.ERROR_UNABLE_TO_PARSE_FILE"), t), SubscriptionAdminUIComponent.NODE_STATUS_ERROR)); //$NON-NLS-1$
     }
 
-    return (showCommandResultUI(getOkMessage(Messages.getString("SubscriptionAdminUIComponent.USER_IMPORT_SUCCESSFUL")), SubscriptionAdminUIComponent.NODE_STATUS_OK)); //$NON-NLS-1$
+    return (showCommandResultUI(getOkMessage(Messages.getInstance().getString("SubscriptionAdminUIComponent.USER_IMPORT_SUCCESSFUL")), SubscriptionAdminUIComponent.NODE_STATUS_OK)); //$NON-NLS-1$
 
   }
 
@@ -1697,7 +1697,7 @@ public class SubscriptionAdminUIComponent extends XmlComponent {
       } catch (PentahoAccessControlException e) {
         status = ISolutionRepository.FILE_ADD_FAILED;
         if (SubscriptionAdminUIComponent.logger.isErrorEnabled()) {
-          SubscriptionAdminUIComponent.logger.error(Messages.getErrorString("SubscriptionAdminUIComponent.ERROR_0104_USER_ERROR"), e);
+          SubscriptionAdminUIComponent.logger.error(Messages.getInstance().getErrorString("SubscriptionAdminUIComponent.ERROR_0104_USER_ERROR"), e);
         }
       } finally {
         PentahoSystem.systemExitPoint();
@@ -1723,7 +1723,7 @@ public class SubscriptionAdminUIComponent extends XmlComponent {
       }
       root.add(getSubscriptions(allSubscriptions, true));
     } catch (Throwable t) {
-      root.add(getException(Messages.getString("SubscriptionAdminUIComponent.ERROR_BUILDING_SUBSCRIPTION_PAGE"), t)); //$NON-NLS-1$
+      root.add(getException(Messages.getInstance().getString("SubscriptionAdminUIComponent.ERROR_BUILDING_SUBSCRIPTION_PAGE"), t)); //$NON-NLS-1$
     }
     return (document);
   }
@@ -1739,7 +1739,7 @@ public class SubscriptionAdminUIComponent extends XmlComponent {
     ISchedule schedule = subscriptionRepository.getSchedule( schedId );
     SubscriptionRepositoryHelper.deleteScheduleContentAndSubscription( subscriptionRepository, schedule );
 
-    return (showCommandResultUI(getOkMessage(Messages.getString(
+    return (showCommandResultUI(getOkMessage(Messages.getInstance().getString(
         "SubscriptionAdminUIComponent.USER_DELETED_SCHEDULE", getParameter("schedRef", schedId))), SubscriptionAdminUIComponent.NODE_STATUS_OK)); //$NON-NLS-1$ //$NON-NLS-2$
   }
   
@@ -1757,12 +1757,12 @@ public class SubscriptionAdminUIComponent extends XmlComponent {
       subscriptionRepository.deleteSubscription(subscriptionId);
     } catch (Throwable t) {
       return (showCommandResultUI(
-          getException(Messages.getString(
+          getException(Messages.getInstance().getString(
               "SubscriptionAdminUIComponent.ERROR_DELETING_SUBSCRIPTION", getParameter("title", subscriptionId)), t), SubscriptionAdminUIComponent.NODE_STATUS_ERROR)); //$NON-NLS-1$ //$NON-NLS-2$
     }
 
     return (showCommandResultUI(
-        getOkMessage(Messages.getString(
+        getOkMessage(Messages.getInstance().getString(
             "SubscriptionAdminUIComponent.USER_DELETED_SUBSCRIPTION", getParameter("title", subscriptionId))), SubscriptionAdminUIComponent.NODE_STATUS_OK)); //$NON-NLS-1$ //$NON-NLS-2$
   }
 
@@ -1845,7 +1845,7 @@ public class SubscriptionAdminUIComponent extends XmlComponent {
     }
 
     root
-        .addElement("exceptionMessage").addText((exMsg != null) ? exMsg : Messages.getString("SubscriptionAdminUIComponent.ERROR_CAUSE_UNKNOWN", t.getClass().getName())); //$NON-NLS-1$ //$NON-NLS-2$
+        .addElement("exceptionMessage").addText((exMsg != null) ? exMsg : Messages.getInstance().getString("SubscriptionAdminUIComponent.ERROR_CAUSE_UNKNOWN", t.getClass().getName())); //$NON-NLS-1$ //$NON-NLS-2$
     return (root);
   }
 
@@ -1908,7 +1908,7 @@ public class SubscriptionAdminUIComponent extends XmlComponent {
     }
     if ( missingParams.size() > 0 ) {
       StringBuilder sb = new StringBuilder();
-      sb.append(Messages.getString("SubscriptionAdminUIComponent.MISSING_PARAMETERS"));
+      sb.append(Messages.getInstance().getString("SubscriptionAdminUIComponent.MISSING_PARAMETERS"));
       for ( String paramName : missingParams ) {
         String friendlyName = PARAM_NAME_TO_FRIENDLY_NAME.get( paramName );
         sb.append( friendlyName ).append( ", " ); //$NON-NLS-1$

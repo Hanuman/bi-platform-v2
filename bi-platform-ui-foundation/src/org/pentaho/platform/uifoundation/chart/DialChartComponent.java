@@ -99,7 +99,7 @@ public class DialChartComponent extends AbstractJFreeChartComponent {
         try {
           val = Double.parseDouble(valueNode.getText());
         } catch (Exception e) {
-          AbstractChartComponent.logger.error(Messages.getErrorString(
+          AbstractChartComponent.logger.error(Messages.getInstance().getErrorString(
               "DIALCHARTCOMPONENT.ERROR_0001_ERROR_PARSING_VALUE", valueNode.getText()), e); //$NON-NLS-1$
           val = 0;
         }
@@ -110,7 +110,7 @@ public class DialChartComponent extends AbstractJFreeChartComponent {
             min = Double.parseDouble(minValueNode.getText());
             max = Double.parseDouble(maxValueNode.getText());
           } catch (Exception e) {
-            AbstractChartComponent.logger.error(Messages.getErrorString(
+            AbstractChartComponent.logger.error(Messages.getInstance().getErrorString(
                 "DIALCHARTCOMPONENT.ERROR_0001_ERROR_PARSING_VALUE", //$NON-NLS-1$
                 minValueNode.getText(), maxValueNode.getText()), e);
             min = -1;
@@ -185,8 +185,8 @@ public class DialChartComponent extends AbstractJFreeChartComponent {
     if (chartDefinition == null) {
       Element errorElement = result.addElement("error"); //$NON-NLS-1$
       errorElement
-          .addElement("title").setText(Messages.getString("ABSTRACTCHARTEXPRESSION.ERROR_0001_ERROR_GENERATING_CHART")); //$NON-NLS-1$ //$NON-NLS-2$
-      String message = Messages.getString("CHARTS.ERROR_0001_CHART_DEFINIION_MISSING", definitionPath); //$NON-NLS-1$
+          .addElement("title").setText(Messages.getInstance().getString("ABSTRACTCHARTEXPRESSION.ERROR_0001_ERROR_GENERATING_CHART")); //$NON-NLS-1$ //$NON-NLS-2$
+      String message = Messages.getInstance().getString("CHARTS.ERROR_0001_CHART_DEFINIION_MISSING", definitionPath); //$NON-NLS-1$
       errorElement.addElement("message").setText(message); //$NON-NLS-1$
       error(message);
       return result;
@@ -197,8 +197,8 @@ public class DialChartComponent extends AbstractJFreeChartComponent {
     if (dataDefinition == null) {
       Element errorElement = result.addElement("error"); //$NON-NLS-1$
       errorElement
-          .addElement("title").setText(Messages.getString("ABSTRACTCHARTEXPRESSION.ERROR_0001_ERROR_GENERATING_CHART")); //$NON-NLS-1$ //$NON-NLS-2$
-      String message = Messages.getString(
+          .addElement("title").setText(Messages.getInstance().getString("ABSTRACTCHARTEXPRESSION.ERROR_0001_ERROR_GENERATING_CHART")); //$NON-NLS-1$ //$NON-NLS-2$
+      String message = Messages.getInstance().getString(
           "CHARTS.ERROR_0002_CHART_DATA_MISSING", solution + "/" + actionPath + "/" + actionName); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
       errorElement.addElement("message").setText(message); //$NON-NLS-1$
       //System .out.println( result.asXML() );

@@ -38,7 +38,7 @@ public class JFreeReportSystemListener implements IPentahoSystemListener {
         ClassicEngineBoot.getInstance().start();
       }
     } catch (Exception ex) {
-      Logger.warn(JFreeReportSystemListener.class.getName(), Messages
+      Logger.warn(JFreeReportSystemListener.class.getName(), Messages.getInstance()
           .getErrorString("JFreeReportSystemListener.ERROR_0001_JFREEREPORT_INITIALIZATION_FAILED"), //$NON-NLS-1$
           ex);
     }

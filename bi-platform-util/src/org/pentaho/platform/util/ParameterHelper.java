@@ -51,7 +51,7 @@ public class ParameterHelper {
       long longValue = Long.valueOf(value).longValue();
       return longValue;
     } catch (Exception e) {
-      Logger.error(ParameterHelper.class.getName(), Messages
+      Logger.error(ParameterHelper.class.getName(), Messages.getInstance()
           .getErrorString("ParameterHelper.ERROR_0001_INVALID_NUMERIC"), e); //$NON-NLS-1$
     }
     return defaultValue;
@@ -77,7 +77,7 @@ public class ParameterHelper {
       BigDecimal decimal = new BigDecimal(value);
       return decimal;
     } catch (Exception e) {
-      Logger.error(ParameterHelper.class.getName(), Messages
+      Logger.error(ParameterHelper.class.getName(), Messages.getInstance()
           .getErrorString("ParameterHelper.ERROR_0001_INVALID_NUMERIC"), e); //$NON-NLS-1$
     }
     return defaultValue;

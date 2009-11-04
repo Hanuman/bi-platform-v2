@@ -212,7 +212,7 @@ public class HttpOutputHandler implements IOutputHandler, IMimeTypeListener {
 
   public void setOutput(final String name, final Object value) {
     if (value == null) {
-      HttpOutputHandler.logger.warn(Messages.getString("HttpOutputHandler.WARN_0001_VALUE_IS_NULL")); //$NON-NLS-1$
+      HttpOutputHandler.logger.warn(Messages.getInstance().getString("HttpOutputHandler.WARN_0001_VALUE_IS_NULL")); //$NON-NLS-1$
       return;
     }
     
@@ -226,7 +226,7 @@ public class HttpOutputHandler implements IOutputHandler, IMimeTypeListener {
       try {
         response.sendRedirect(value.toString());
       } catch (IOException ioe) {
-        HttpOutputHandler.logger.error(Messages.getString("HttpOutputHandler.ERROR_0001_REDIRECT_FAILED",value.toString()), ioe); //$NON-NLS-1$
+        HttpOutputHandler.logger.error(Messages.getInstance().getString("HttpOutputHandler.ERROR_0001_REDIRECT_FAILED",value.toString()), ioe); //$NON-NLS-1$
       }
     } else if ("header".equalsIgnoreCase(name)) { //$NON-NLS-1$
       try {

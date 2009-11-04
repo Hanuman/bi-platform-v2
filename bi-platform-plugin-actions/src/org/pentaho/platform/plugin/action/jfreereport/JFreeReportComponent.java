@@ -225,13 +225,13 @@ public class JFreeReportComponent extends AbstractJFreeReportComponent {
 
     boolean result = true;
     if (!(getActionDefinition() instanceof JFreeReportAction)) {
-      error(Messages.getErrorString(
+      error(Messages.getInstance().getErrorString(
           "ComponentBase.ERROR_0001_UNKNOWN_ACTION_TYPE", getActionDefinition().getElement().asXML())); //$NON-NLS-1$
       result = false;
     } else {
       validateParametersComponent = new JFreeReportValidateParametersComponent();
       if (initAndValidate(validateParametersComponent) == false) {
-        error(Messages.getString("JFreeReportComponent.ERROR_0025_COULD_NOT_VALIDATE")); //$NON-NLS-1$
+        error(Messages.getInstance().getString("JFreeReportComponent.ERROR_0025_COULD_NOT_VALIDATE")); //$NON-NLS-1$
         result = false;
       }
     }
@@ -247,7 +247,7 @@ public class JFreeReportComponent extends AbstractJFreeReportComponent {
       // We could not get an output stream for the feedback, but we are
       // allowed
       // to generate UI, so return an error
-      error(Messages.getErrorString("JFreeReport.ERROR_0020_INVALID_FEEDBACK_STREAM")); //$NON-NLS-1$
+      error(Messages.getInstance().getErrorString("JFreeReport.ERROR_0020_INVALID_FEEDBACK_STREAM")); //$NON-NLS-1$
       return false;
     }
     // We need input from the user, we have delivered an input form into the
@@ -315,13 +315,13 @@ public class JFreeReportComponent extends AbstractJFreeReportComponent {
         }
       }
     } catch (ClassNotFoundException ex) {
-      error(Messages.getErrorString("JFreeReport.ERROR_0021_DATA_COMPONENT_FAILED"), ex); //$NON-NLS-1$
+      error(Messages.getInstance().getErrorString("JFreeReport.ERROR_0021_DATA_COMPONENT_FAILED"), ex); //$NON-NLS-1$
     } catch (InstantiationException ex) {
-      error(Messages.getErrorString("JFreeReport.ERROR_0021_DATA_COMPONENT_FAILED"), ex); //$NON-NLS-1$
+      error(Messages.getInstance().getErrorString("JFreeReport.ERROR_0021_DATA_COMPONENT_FAILED"), ex); //$NON-NLS-1$
     } catch (IllegalAccessException ex) {
-      error(Messages.getErrorString("JFreeReport.ERROR_0021_DATA_COMPONENT_FAILED"), ex); //$NON-NLS-1$
+      error(Messages.getInstance().getErrorString("JFreeReport.ERROR_0021_DATA_COMPONENT_FAILED"), ex); //$NON-NLS-1$
     } catch (IOException ex) {
-      error(Messages.getErrorString("JFreeReport.ERROR_0008_INVALID_OUTPUT_STREAM"), ex); //$NON-NLS-1$
+      error(Messages.getInstance().getErrorString("JFreeReport.ERROR_0008_INVALID_OUTPUT_STREAM"), ex); //$NON-NLS-1$
     } catch (Exception ex) {
       error(ex.getMessage());
     }
@@ -339,7 +339,7 @@ public class JFreeReportComponent extends AbstractJFreeReportComponent {
       factory = getJarDataFactory();
     }
     if (factory == null) {
-      throw new Exception(Messages.getString("JFreeReport.ERROR_0022_DATA_INPUT_INVALID_OBJECT")); //$NON-NLS-1$
+      throw new Exception(Messages.getInstance().getString("JFreeReport.ERROR_0022_DATA_INPUT_INVALID_OBJECT")); //$NON-NLS-1$
     }
     return factory;
   }
@@ -385,7 +385,7 @@ public class JFreeReportComponent extends AbstractJFreeReportComponent {
           factory = new PentahoTableDataFactory(AbstractJFreeReportComponent.DATACOMPONENT_DEFAULTINPUT,
               new PentahoTableModel(resultset));
         } else {
-          throw new IllegalArgumentException(Messages.getErrorString("JFreeReport.ERROR_0021_DATA_COMPONENT_FAILED")); //$NON-NLS-1$
+          throw new IllegalArgumentException(Messages.getInstance().getErrorString("JFreeReport.ERROR_0021_DATA_COMPONENT_FAILED")); //$NON-NLS-1$
         }
       } catch (ClassNotFoundException e) {
         JFreeReportComponent.logger.error(null, e);
@@ -411,14 +411,14 @@ public class JFreeReportComponent extends AbstractJFreeReportComponent {
         try {
           // not being able to read a single char is definitly a big boo ..
           if (in.read() == -1) {
-            throw new Exception(Messages.getErrorString("JFreeReport.ERROR_0009_REPORT_JAR_UNREADABLE")); //$NON-NLS-1$
+            throw new Exception(Messages.getInstance().getErrorString("JFreeReport.ERROR_0009_REPORT_JAR_UNREADABLE")); //$NON-NLS-1$
           } else {
             final ClassLoader loader = ReportUtils.createJarLoader(getSession(), getResource(actionResource.getName()));
             if (loader == null) {
-              throw new Exception(Messages
+              throw new Exception(Messages.getInstance()
                   .getString("JFreeReportDataComponent.ERROR_0035_COULD_NOT_CREATE_CLASSLOADER")); //$NON-NLS-1$
             } else if (!isDefinedInput(AbstractJFreeReportComponent.DATACOMPONENT_CLASSLOCINPUT)) {
-              throw new Exception(Messages.getErrorString("JFreeReport.ERROR_0012_CLASS_LOCATION_MISSING")); //$NON-NLS-1$
+              throw new Exception(Messages.getInstance().getErrorString("JFreeReport.ERROR_0012_CLASS_LOCATION_MISSING")); //$NON-NLS-1$
             } else {
               // Get input parameters, and set them as properties in the report
               // object.
@@ -451,11 +451,11 @@ public class JFreeReportComponent extends AbstractJFreeReportComponent {
             }
           }
         } catch (Exception e) {
-          throw new Exception(Messages.getErrorString("JFreeReport.ERROR_0009_REPORT_JAR_UNREADABLE")); //$NON-NLS-1$
+          throw new Exception(Messages.getInstance().getErrorString("JFreeReport.ERROR_0009_REPORT_JAR_UNREADABLE")); //$NON-NLS-1$
         }
       }
     } catch (FileNotFoundException e1) {
-      throw new Exception(Messages.getErrorString("JFreeReport.ERROR_0010_REPORT_JAR_MISSING", jFreeReportAction //$NON-NLS-1$
+      throw new Exception(Messages.getInstance().getErrorString("JFreeReport.ERROR_0010_REPORT_JAR_MISSING", jFreeReportAction //$NON-NLS-1$
           .getDataJar().toString()));
     }
     return factory;
@@ -563,7 +563,7 @@ public class JFreeReportComponent extends AbstractJFreeReportComponent {
       return ReportGenerator.getInstance().parseReport(resourceManager, key, contextKey);
 
     } catch (Exception ex) {
-      error(Messages.getErrorString("JFreeReport.ERROR_0007_COULD_NOT_PARSE", resource.getAddress()), ex); //$NON-NLS-1$
+      error(Messages.getInstance().getErrorString("JFreeReport.ERROR_0007_COULD_NOT_PARSE", resource.getAddress()), ex); //$NON-NLS-1$
       return null;
     }
   }
@@ -638,7 +638,7 @@ public class JFreeReportComponent extends AbstractJFreeReportComponent {
       url = new URL(baseURL);
     } catch (Exception e) {
       // a null URL is ok
-      warn(Messages.getString("JFreeReportLoadComponent.WARN_COULD_NOT_CREATE_URL")); //$NON-NLS-1$
+      warn(Messages.getInstance().getString("JFreeReportLoadComponent.WARN_COULD_NOT_CREATE_URL")); //$NON-NLS-1$
     }
 
     // Read the encoding from the XML file - see BISERVER-895
@@ -656,13 +656,13 @@ public class JFreeReportComponent extends AbstractJFreeReportComponent {
     final IActionSequenceResource resource = getResource(reportJar.getName());
     final ClassLoader loader = ReportUtils.createJarLoader(getSession(), resource);
     if (loader == null) {
-      throw new Exception(Messages.getString("JFreeReportLoadComponent.ERROR_0035_COULD_NOT_CREATE_CLASSLOADER")); //$NON-NLS-1$
+      throw new Exception(Messages.getInstance().getString("JFreeReportLoadComponent.ERROR_0035_COULD_NOT_CREATE_CLASSLOADER")); //$NON-NLS-1$
     }
 
     String reportLocation = jFreeReportAction.getReportDefinitionJar().getReportLocation();
     URL resourceUrl = loader.getResource(reportLocation);
     if (resourceUrl == null) {
-      throw new Exception(Messages.getErrorString("JFreeReport.ERROR_0016_REPORT_RESOURCE_INVALID", //$NON-NLS-1$
+      throw new Exception(Messages.getInstance().getErrorString("JFreeReport.ERROR_0016_REPORT_RESOURCE_INVALID", //$NON-NLS-1$
           reportLocation, resource.getAddress()));
     }
 
@@ -674,7 +674,7 @@ public class JFreeReportComponent extends AbstractJFreeReportComponent {
 
       report = generator.parseReport(resourceUrl, getDefinedResourceURL(resourceUrl));
     } catch (Exception ex) {
-      throw new Exception(Messages.getErrorString("JFreeReport.ERROR_0007_COULD_NOT_PARSE", reportLocation), ex); //$NON-NLS-1$
+      throw new Exception(Messages.getInstance().getErrorString("JFreeReport.ERROR_0007_COULD_NOT_PARSE", reportLocation), ex); //$NON-NLS-1$
     }
     return report;
   }
@@ -685,7 +685,7 @@ public class JFreeReportComponent extends AbstractJFreeReportComponent {
     }
 
     try {
-      final String inputStringValue = getInputStringValue(Messages
+      final String inputStringValue = getInputStringValue(Messages.getInstance()
           .getString(AbstractJFreeReportComponent.REPORTLOAD_RESURL));
       return new URL(inputStringValue);
     } catch (Exception e) {
@@ -706,7 +706,7 @@ public class JFreeReportComponent extends AbstractJFreeReportComponent {
         } else if (reportConfigParams instanceof JFreeReportAction.StaticReportConfig) {
           setReportConfigParameters(report, (JFreeReportAction.StaticReportConfig) reportConfigParams);
         } else {
-          error(Messages.getErrorString("JFreeReport.ERROR_0026_UNKNOWN_REPORT_CONFIGURATION_PARAMETERS")); //$NON-NLS-1$
+          error(Messages.getInstance().getErrorString("JFreeReport.ERROR_0026_UNKNOWN_REPORT_CONFIGURATION_PARAMETERS")); //$NON-NLS-1$
           result = false;
           ;
         }
@@ -725,7 +725,7 @@ public class JFreeReportComponent extends AbstractJFreeReportComponent {
       String parmValue = staticReportConfigItem.getValue();
       if ((parmName == null) || (parmName.length() == 0)) {
         // Ignore configuration settings without name=
-        error(Messages.getErrorString("JFreeReport.ERROR_0027_REPORT_CONFIGURATION_PARAMETER_IGNORED")); //$NON-NLS-1$
+        error(Messages.getInstance().getErrorString("JFreeReport.ERROR_0027_REPORT_CONFIGURATION_PARAMETER_IGNORED")); //$NON-NLS-1$
         continue;
       }
       if (parmValue != null) {
@@ -733,10 +733,10 @@ public class JFreeReportComponent extends AbstractJFreeReportComponent {
         if (parmValue.length() > 0) {
           report.getReportConfiguration().setConfigProperty(parmName, applyInputsToFormat(parmValue));
         } else {
-          error(Messages.getErrorString("JFreeReport.ERROR_0027_REPORT_CONFIGURATION_PARAMETER_IGNORED")); //$NON-NLS-1$            
+          error(Messages.getInstance().getErrorString("JFreeReport.ERROR_0027_REPORT_CONFIGURATION_PARAMETER_IGNORED")); //$NON-NLS-1$            
         }
       } else {
-        error(Messages.getErrorString("JFreeReport.ERROR_0027_REPORT_CONFIGURATION_PARAMETER_IGNORED")); //$NON-NLS-1$          
+        error(Messages.getInstance().getErrorString("JFreeReport.ERROR_0027_REPORT_CONFIGURATION_PARAMETER_IGNORED")); //$NON-NLS-1$          
       }
     }
 
@@ -775,7 +775,7 @@ public class JFreeReportComponent extends AbstractJFreeReportComponent {
         }
       }
     } else {
-      error(Messages.getErrorString("JFreeReport.ERROR_0025_INVALID_REPORT_CONFIGURATION_PARAMETERS")); //$NON-NLS-1$
+      error(Messages.getInstance().getErrorString("JFreeReport.ERROR_0025_INVALID_REPORT_CONFIGURATION_PARAMETERS")); //$NON-NLS-1$
     }
   }
 
@@ -899,7 +899,7 @@ public class JFreeReportComponent extends AbstractJFreeReportComponent {
       if (GraphicsEnvironment.isHeadless()) {
         result = writeSwingPreview(report);
       }
-      warn(Messages.getString("JFreeReportAllContentComponent.WARN_HEADLESSMODE_ACTIVE")); //$NON-NLS-1$
+      warn(Messages.getInstance().getString("JFreeReportAllContentComponent.WARN_HEADLESSMODE_ACTIVE")); //$NON-NLS-1$
     } else if (AbstractJFreeReportComponent.REPORTALLCONTENT_OUTPUTTYPE_HTML.equals(outputFormat)
         || AbstractJFreeReportComponent.REPORTALLCONTENT_OUTPUTTYPE_PDF.equals(outputFormat)
         || AbstractJFreeReportComponent.REPORTALLCONTENT_OUTPUTTYPE_XLS.equals(outputFormat)
@@ -923,7 +923,7 @@ public class JFreeReportComponent extends AbstractJFreeReportComponent {
       // force close the factory
       factory.finalize();
     } else {
-      warn(Messages.getString("JFreeReportAllContentComponent.WARN_NO_PRINTER_GIVEN")); //$NON-NLS-1$
+      warn(Messages.getInstance().getString("JFreeReportAllContentComponent.WARN_NO_PRINTER_GIVEN")); //$NON-NLS-1$
     }
     return result;
   }
@@ -938,7 +938,7 @@ public class JFreeReportComponent extends AbstractJFreeReportComponent {
       }
     } catch (Exception e) {
       // Non fatal exception.
-      warn(Messages.getString("AbstractGenerateContentComponent.JFreeReport.ERROR_0044_UNABLE_T0_SET_THREAD_PRIORITY")); //$NON-NLS-1$
+      warn(Messages.getInstance().getString("AbstractGenerateContentComponent.JFreeReport.ERROR_0044_UNABLE_T0_SET_THREAD_PRIORITY")); //$NON-NLS-1$
     }
   }
 
@@ -984,7 +984,7 @@ public class JFreeReportComponent extends AbstractJFreeReportComponent {
       if( PentahoSystem.getObjectFactory().objectDefined( IContentRepository.class.getSimpleName() ) ) {
         contentRepository = PentahoSystem.get( IContentRepository.class, getSession() );
       } else {
-        debug(Messages.getString("JFreeReportHtmlComponent.DEBUG_0044_PROCESSING_WITHOUT_CONTENT_REPOS") ); //$NON-NLS-1$
+        debug(Messages.getInstance().getString("JFreeReportHtmlComponent.DEBUG_0044_PROCESSING_WITHOUT_CONTENT_REPOS") ); //$NON-NLS-1$
       }
 
       if (htmlContentHandlerUrlPattern == null) {
@@ -998,13 +998,13 @@ public class JFreeReportComponent extends AbstractJFreeReportComponent {
       final ContentLocation dataLocation;
       final NameGenerator dataNameGenerator;
       if ((contentRepository == null) || JFreeReportComponent.DO_NOT_USE_THE_CONTENT_REPOSITORY) {
-        debug(Messages.getString("JFreeReportHtmlComponent.DEBUG_0044_PROCESSING_WITHOUT_CONTENT_REPOS")); //$NON-NLS-1$
+        debug(Messages.getInstance().getString("JFreeReportHtmlComponent.DEBUG_0044_PROCESSING_WITHOUT_CONTENT_REPOS")); //$NON-NLS-1$
         if (ctx != null) {
           File dataDirectory = new File(ctx.getFileOutputPath("system/tmp/"));//$NON-NLS-1$
           if (dataDirectory.exists() && (dataDirectory.isDirectory() == false)) {
             dataDirectory = dataDirectory.getParentFile();
             if (dataDirectory.isDirectory() == false) {
-              throw new ReportProcessingException(Messages.getErrorString(
+              throw new ReportProcessingException(Messages.getInstance().getErrorString(
                   "JFreeReportDirectoryComponent.ERROR_0001_INVALID_DIR", dataDirectory.getPath())); //$NON-NLS-1$
             }
           } else if (dataDirectory.exists() == false) {
@@ -1021,7 +1021,7 @@ public class JFreeReportComponent extends AbstractJFreeReportComponent {
           rewriter = new PentahoURLRewriter(htmlContentHandlerUrlPattern);
         }
       } else {
-        debug(Messages.getString("JFreeReportHtmlComponent.DEBUG_045_PROCESSING_WITH_CONTENT_REPOS")); //$NON-NLS-1$
+        debug(Messages.getInstance().getString("JFreeReportHtmlComponent.DEBUG_045_PROCESSING_WITH_CONTENT_REPOS")); //$NON-NLS-1$
         final String thePath = getSolutionName() + "/" + getSolutionPath() + "/" + getSession().getId();//$NON-NLS-1$//$NON-NLS-2$
         final IContentLocation pentahoContentLocation = contentRepository.newContentLocation(thePath, getActionName(),
             getActionTitle(), getSolutionPath(), true);
@@ -1052,13 +1052,13 @@ public class JFreeReportComponent extends AbstractJFreeReportComponent {
       outputStream.flush();
       return true;
     } catch (ReportProcessingException e) {
-      error(Messages.getString("JFreeReportHtmlComponent.ERROR_0046_FAILED_TO_PROCESS_REPORT"), e); //$NON-NLS-1$
+      error(Messages.getInstance().getString("JFreeReportHtmlComponent.ERROR_0046_FAILED_TO_PROCESS_REPORT"), e); //$NON-NLS-1$
       return false;
     } catch (IOException e) {
-      error(Messages.getString("JFreeReportHtmlComponent.ERROR_0046_FAILED_TO_PROCESS_REPORT"), e); //$NON-NLS-1$
+      error(Messages.getInstance().getString("JFreeReportHtmlComponent.ERROR_0046_FAILED_TO_PROCESS_REPORT"), e); //$NON-NLS-1$
       return false;
     } catch (ContentIOException e) {
-      error(Messages.getString("JFreeReportHtmlComponent.ERROR_0046_FAILED_TO_PROCESS_REPORT"), e); //$NON-NLS-1$
+      error(Messages.getInstance().getString("JFreeReportHtmlComponent.ERROR_0046_FAILED_TO_PROCESS_REPORT"), e); //$NON-NLS-1$
       return false;
     }
   }
@@ -1080,7 +1080,7 @@ public class JFreeReportComponent extends AbstractJFreeReportComponent {
       outputStream.flush();
       result = true;
     } catch (Exception e) {
-      error(Messages.getString("JFreeReportExcelComponent.ERROR_0037_ERROR_READING_REPORT_INPUT"), e); //$NON-NLS-1$
+      error(Messages.getInstance().getString("JFreeReportExcelComponent.ERROR_0037_ERROR_READING_REPORT_INPUT"), e); //$NON-NLS-1$
     }
     return result;
   }
@@ -1100,7 +1100,7 @@ public class JFreeReportComponent extends AbstractJFreeReportComponent {
       proc = null;
       result = true;
     } catch (Exception e) {
-      error(Messages.getErrorString("JFreeReportPdfComponent.ERROR_0001_WRITING_PDF_FAILED", //$NON-NLS-1$
+      error(Messages.getInstance().getErrorString("JFreeReportPdfComponent.ERROR_0001_WRITING_PDF_FAILED", //$NON-NLS-1$
           e.getLocalizedMessage()), e);
     } finally {
       if (proc != null) {
@@ -1183,9 +1183,9 @@ public class JFreeReportComponent extends AbstractJFreeReportComponent {
       writer.close();
       result = true;
     } catch (ReportProcessingException e) {
-      error(Messages.getString("JFreeReportXmlComponent.ERROR_0046_FAILED_TO_PROCESS_REPORT"), e); //$NON-NLS-1$
+      error(Messages.getInstance().getString("JFreeReportXmlComponent.ERROR_0046_FAILED_TO_PROCESS_REPORT"), e); //$NON-NLS-1$
     } catch (IOException e) {
-      error(Messages.getString("JFreeReportXmlComponent.ERROR_0046_FAILED_TO_PROCESS_REPORT"), e); //$NON-NLS-1$
+      error(Messages.getInstance().getString("JFreeReportXmlComponent.ERROR_0046_FAILED_TO_PROCESS_REPORT"), e); //$NON-NLS-1$
     }
     return result;
   }

@@ -102,24 +102,24 @@ public class PentahoXmlaServlet extends DefaultXmlaServlet {
     try {
       originalDocument = XmlDom4JHelper.getDocFromString(original, loader);
     } catch(XmlParseException e) {
-      PentahoXmlaServlet.logger.error(Messages.getString("PentahoXmlaServlet.ERROR_0004_UNABLE_TO_GET_DOCUMENT_FROM_STRING"), e); //$NON-NLS-1$
+      PentahoXmlaServlet.logger.error(Messages.getInstance().getString("PentahoXmlaServlet.ERROR_0004_UNABLE_TO_GET_DOCUMENT_FROM_STRING"), e); //$NON-NLS-1$
       return null;
     }
     if (PentahoXmlaServlet.logger.isDebugEnabled()) {
       PentahoXmlaServlet.logger
-          .debug(Messages.getString("PentahoXmlaServlet.DEBUG_ORIG_DOC", originalDocument.asXML())); //$NON-NLS-1$
+          .debug(Messages.getInstance().getString("PentahoXmlaServlet.DEBUG_ORIG_DOC", originalDocument.asXML())); //$NON-NLS-1$
     }
     Document modifiedDocument = (Document) originalDocument.clone();
     List<Node> nodesToRemove = modifiedDocument.selectNodes("/DataSources/DataSource/Catalogs/Catalog[contains(DataSourceInfo, 'EnableXmla=False')]"); //$NON-NLS-1$
     if (PentahoXmlaServlet.logger.isDebugEnabled()) {
-      PentahoXmlaServlet.logger.debug(Messages.getString(
+      PentahoXmlaServlet.logger.debug(Messages.getInstance().getString(
           "PentahoXmlaServlet.DEBUG_NODES_TO_REMOVE", String.valueOf(nodesToRemove.size()))); //$NON-NLS-1$
     }
     for (Node node : nodesToRemove) {
       node.detach();
     }
     if (PentahoXmlaServlet.logger.isDebugEnabled()) {
-      PentahoXmlaServlet.logger.debug(Messages.getString("PentahoXmlaServlet.DEBUG_MOD_DOC", modifiedDocument.asXML())); //$NON-NLS-1$
+      PentahoXmlaServlet.logger.debug(Messages.getInstance().getString("PentahoXmlaServlet.DEBUG_MOD_DOC", modifiedDocument.asXML())); //$NON-NLS-1$
     }
     return modifiedDocument.asXML();
   }
@@ -168,9 +168,9 @@ public class PentahoXmlaServlet extends DefaultXmlaServlet {
 
       if (logger.isDebugEnabled()) {
         if (catalogUrl == null) {
-          logger.debug(Messages.getString("PentahoXmlaServlet.DEBUG_CATALOGURL_NULL")); //$NON-NLS-1$
+          logger.debug(Messages.getInstance().getString("PentahoXmlaServlet.DEBUG_CATALOGURL_NULL")); //$NON-NLS-1$
         } else {
-          logger.debug(Messages.getString("PentahoXmlaServlet.DEBUG_CATALOGURL", catalogUrl)); //$NON-NLS-1$
+          logger.debug(Messages.getInstance().getString("PentahoXmlaServlet.DEBUG_CATALOGURL", catalogUrl)); //$NON-NLS-1$
         }
       }
 
@@ -180,7 +180,7 @@ public class PentahoXmlaServlet extends DefaultXmlaServlet {
       if (!DataSourcesConfig.DataSource.AUTH_MODE_UNAUTHENTICATED.equalsIgnoreCase(ds.getAuthenticationMode())
           && (role == null) && (roleName == null)) {
         throw new XmlaException(CLIENT_FAULT_FC, HSB_ACCESS_DENIED_CODE, HSB_ACCESS_DENIED_FAULT_FS,
-            new SecurityException(Messages.getString("PentahoXmlaServlet.ERROR_0001_ACCESS_DENIED_DATASOURCE"))); //$NON-NLS-1$
+            new SecurityException(Messages.getInstance().getString("PentahoXmlaServlet.ERROR_0001_ACCESS_DENIED_DATASOURCE"))); //$NON-NLS-1$
       }
 
       // Role in request overrides role in connect string, if present.
@@ -190,17 +190,17 @@ public class PentahoXmlaServlet extends DefaultXmlaServlet {
 
       String dsName = connectProperties.get(KEY_DATASOURCE);
 
-      logger.debug(Messages.getString("PentahoXmlaServlet.DEBUG_CONNECT_STRING_DATASOURCE", dsName)); //$NON-NLS-1$
+      logger.debug(Messages.getInstance().getString("PentahoXmlaServlet.DEBUG_CONNECT_STRING_DATASOURCE", dsName)); //$NON-NLS-1$
 
       javax.sql.DataSource datasource = getDataSource(dsName);
 
-      logger.debug(Messages.getString(
+      logger.debug(Messages.getInstance().getString(
           "PentahoXmlaServlet.DEBUG_DATASOURCE_FROM_PENTAHO", datasource != null ? datasource.toString() : null)); //$NON-NLS-1$
 
       RolapConnection conn = null;
       if (StringUtils.isNotBlank(dsName) && datasource != null) {
         conn = (RolapConnection) DriverManager.getConnection(connectProperties, null, datasource);
-        logger.debug(Messages.getString(
+        logger.debug(Messages.getInstance().getString(
             "PentahoXmlaServlet.DEBUG_CREATED_ROLAP_CONN", conn != null ? conn.toString() : null)); //$NON-NLS-1$
       } else {
         // either using jdbc or pentaho ds mgr does not know about dsName; fall back on "normal" behavior
@@ -213,9 +213,9 @@ public class PentahoXmlaServlet extends DefaultXmlaServlet {
 
       if (logger.isDebugEnabled()) {
         if (conn == null) {
-          logger.debug(Messages.getString("PentahoXmlaServlet.DEBUG_CONN_NULL")); //$NON-NLS-1$
+          logger.debug(Messages.getInstance().getString("PentahoXmlaServlet.DEBUG_CONN_NULL")); //$NON-NLS-1$
         } else {
-          logger.debug(Messages.getString("PentahoXmlaServlet.DEBUG_CONN_NOT_NULL")); //$NON-NLS-1$
+          logger.debug(Messages.getInstance().getString("PentahoXmlaServlet.DEBUG_CONN_NOT_NULL")); //$NON-NLS-1$
         }
       }
       return conn;
@@ -235,10 +235,10 @@ public class PentahoXmlaServlet extends DefaultXmlaServlet {
 
         return datasource;
       } catch (ObjectFactoryException e) {
-        logger.error(Messages.getErrorString("PentahoXmlaServlet.ERROR_0002_UNABLE_TO_INSTANTIATE"), e); //$NON-NLS-1$
+        logger.error(Messages.getInstance().getErrorString("PentahoXmlaServlet.ERROR_0002_UNABLE_TO_INSTANTIATE"), e); //$NON-NLS-1$
         return null;
       } catch (DatasourceServiceException e) {
-        logger.error(Messages.getErrorString("PentahoXmlaServlet.ERROR_0002_UNABLE_TO_INSTANTIATE"), e); //$NON-NLS-1$
+        logger.error(Messages.getInstance().getErrorString("PentahoXmlaServlet.ERROR_0002_UNABLE_TO_INSTANTIATE"), e); //$NON-NLS-1$
         return null;
       }
     }
@@ -264,7 +264,7 @@ public class PentahoXmlaServlet extends DefaultXmlaServlet {
       // this should be a runtime exception anyway
       throw new RuntimeException(e);
     } catch (DatasourceServiceException e) {
-      logger.error(Messages.getString("PentahoXmlaServlet.ERROR_0003_GETDSBOUNDNAME_FAILED"), e); //$NON-NLS-1$
+      logger.error(Messages.getInstance().getString("PentahoXmlaServlet.ERROR_0003_GETDSBOUNDNAME_FAILED"), e); //$NON-NLS-1$
 
     }
     newPropList.put(KEY_DATASOURCE, resolvedDatasource);

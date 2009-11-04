@@ -67,7 +67,7 @@ public class SubActionComponent extends ComponentBase {
         value = true;
       }
     } else {
-      error(Messages.getErrorString(
+      error(Messages.getInstance().getErrorString(
           "ComponentBase.ERROR_0001_UNKNOWN_ACTION_TYPE", getActionDefinition().getElement().asXML())); //$NON-NLS-1$      
     }
 

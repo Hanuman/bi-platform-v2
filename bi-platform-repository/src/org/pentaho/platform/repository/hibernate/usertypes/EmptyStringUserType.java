@@ -42,7 +42,7 @@ public class EmptyStringUserType implements UserType {
 
   private final static boolean debug = PentahoSystem.debug;
 
-  private static final String PENTAHOEMPTY = Messages.getString("EMPTYSTRTYPE.CODE_PENTAHO_EMPTY_STRING"); //$NON-NLS-1$
+  private static final String PENTAHOEMPTY = Messages.getInstance().getString("EMPTYSTRTYPE.CODE_PENTAHO_EMPTY_STRING"); //$NON-NLS-1$
 
   private static final int[] SQLTYPE = { Types.VARCHAR };
 
@@ -92,7 +92,7 @@ public class EmptyStringUserType implements UserType {
   public Object nullSafeGet(final ResultSet arg0, final String[] arg1, final Object arg2) throws HibernateException,
       SQLException {
     if (EmptyStringUserType.debug) {
-      EmptyStringUserType.log.debug(Messages.getString("EMPTYSTRTYPE.DEBUG_NULL_SAFE_GET")); //$NON-NLS-1$
+      EmptyStringUserType.log.debug(Messages.getInstance().getString("EMPTYSTRTYPE.DEBUG_NULL_SAFE_GET")); //$NON-NLS-1$
     }
     String colValue = (String) Hibernate.STRING.nullSafeGet(arg0, arg1[0]);
     // _PENTAHOEMPTY_ shouldn't appear in the wild. So, check the string in
@@ -111,7 +111,7 @@ public class EmptyStringUserType implements UserType {
       SQLException {
     // If this is an empty string, write _PENTAHOEMPTY_ into the database.
     if (EmptyStringUserType.debug) {
-      EmptyStringUserType.log.debug(Messages.getString("EMPTYSTRTYPE.DEBUG_NULL_SAFE_SET")); //$NON-NLS-1$
+      EmptyStringUserType.log.debug(Messages.getInstance().getString("EMPTYSTRTYPE.DEBUG_NULL_SAFE_SET")); //$NON-NLS-1$
     }
     Hibernate.STRING.nullSafeSet(arg0, (arg1 != null) ? ((((String) arg1).length() > 0) ? arg1
         : EmptyStringUserType.PENTAHOEMPTY) : arg1, arg2);

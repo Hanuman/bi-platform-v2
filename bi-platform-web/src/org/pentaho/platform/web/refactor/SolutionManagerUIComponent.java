@@ -104,7 +104,7 @@ public class SolutionManagerUIComponent extends XmlComponent {
           File tempFileRef = new File(fi.getName());
           repository.addSolutionFile(baseUrl, path, tempFileRef.getName(), fi.get(), true);
           SolutionManagerUIComponent.logger
-              .info(Messages.getString("SolutionManagerUIComponent.INFO_0001_FILE_SAVED") + path + "/" + tempFileRef.getName()); //$NON-NLS-1$ //$NON-NLS-2$
+              .info(Messages.getInstance().getString("SolutionManagerUIComponent.INFO_0001_FILE_SAVED") + path + "/" + tempFileRef.getName()); //$NON-NLS-1$ //$NON-NLS-2$
         }
       }
     } catch (FileUploadException e) {

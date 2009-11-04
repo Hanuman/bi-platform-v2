@@ -51,7 +51,7 @@ public class HQLConnectionTest extends BaseTestCase {
     SimpleOutputHandler outputHandler = new SimpleOutputHandler(outputStream, true);
     IRuntimeContext context = run(getSolutionPath() + "/test/datasource/", "HQL_Datasource.xaction", parameters, outputHandler); //$NON-NLS-1$
       assertEquals(
-          Messages.getString("BaseTest.USER_RUNNING_ACTION_SEQUENCE"), IRuntimeContext.RUNTIME_STATUS_SUCCESS, context.getStatus()); //$NON-NLS-1$
+          Messages.getInstance().getString("BaseTest.USER_RUNNING_ACTION_SEQUENCE"), IRuntimeContext.RUNTIME_STATUS_SUCCESS, context.getStatus()); //$NON-NLS-1$
   }
   
 

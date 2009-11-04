@@ -78,7 +78,7 @@ public class SystemSolutionAxisConfigurator extends AbstractAxisConfigurator {
       ByteArrayInputStream in = new ByteArrayInputStream( configBytes );
       return in;
     } catch (Exception e) {
-      logger.error( Messages.getErrorString("SystemSolutionAxisConfigurator.ERROR_0001_BAD_CONFIG_FILE", getAxisConfigPath()), e); //$NON-NLS-1$
+      logger.error( Messages.getInstance().getErrorString("SystemSolutionAxisConfigurator.ERROR_0001_BAD_CONFIG_FILE", getAxisConfigPath()), e); //$NON-NLS-1$
     }
     return null;
   }

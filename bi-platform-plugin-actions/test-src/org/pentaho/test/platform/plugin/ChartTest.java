@@ -235,7 +235,7 @@ public class ChartTest extends BaseTestCase {
     parameters.setParameter("series-name", "measure"); //$NON-NLS-1$ //$NON-NLS-2$
     parameters.setParameter("chart-type", ""); //$NON-NLS-1$ //$NON-NLS-2$      
     StringBuffer content = new StringBuffer();
-    StandaloneSession session = new StandaloneSession(Messages.getString("BaseTest.DEBUG_JUNIT_SESSION")); //$NON-NLS-1$
+    StandaloneSession session = new StandaloneSession(Messages.getInstance().getString("BaseTest.DEBUG_JUNIT_SESSION")); //$NON-NLS-1$
     ChartHelper.doChart("samples", "dashboard", "departments.widget.xml", parameters, content, session, messages, null); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
     try {
       OutputStream os = getOutputStream(SOLUTION_PATH, "ChartTest.testChartHelper_Null", ".html"); //$NON-NLS-1$ //$NON-NLS-2$
@@ -250,12 +250,12 @@ public class ChartTest extends BaseTestCase {
     parameterProvider.setParameter("type", "html"); //$NON-NLS-1$ //$NON-NLS-2$
     parameterProvider.setParameter("chart_type", "area"); //$NON-NLS-1$ //$NON-NLS-2$
     OutputStream outputStream = getOutputStream(SOLUTION_PATH, "Chart_Area", ".html"); //$NON-NLS-1$ //$NON-NLS-2$
-    StandaloneSession session = new StandaloneSession(Messages.getString("BaseTest.DEBUG_JUNIT_SESSION")); //$NON-NLS-1$
+    StandaloneSession session = new StandaloneSession(Messages.getInstance().getString("BaseTest.DEBUG_JUNIT_SESSION")); //$NON-NLS-1$
     SimpleOutputHandler outputHandler = new SimpleOutputHandler(outputStream, true);
     IRuntimeContext context = run(
         SOLUTION_PATH + "/test/charts/", "ChartComponent_ChartTypes.xaction", parameterProvider, outputHandler); //$NON-NLS-1$
     assertEquals(
-        Messages.getString("BaseTest.USER_RUNNING_ACTION_SEQUENCE"), IRuntimeContext.RUNTIME_STATUS_SUCCESS, context.getStatus()); //$NON-NLS-1$
+        Messages.getInstance().getString("BaseTest.USER_RUNNING_ACTION_SEQUENCE"), IRuntimeContext.RUNTIME_STATUS_SUCCESS, context.getStatus()); //$NON-NLS-1$
     // TODO need some validation of success
   }*/
 
@@ -264,12 +264,12 @@ public class ChartTest extends BaseTestCase {
     parameterProvider.setParameter("type", "html"); //$NON-NLS-1$ //$NON-NLS-2$
     parameterProvider.setParameter("chart_type", "bar"); //$NON-NLS-1$ //$NON-NLS-2$
     OutputStream outputStream = getOutputStream(SOLUTION_PATH, "Chart_Bar", ".html"); //$NON-NLS-1$ //$NON-NLS-2$
-    StandaloneSession session = new StandaloneSession(Messages.getString("BaseTest.DEBUG_JUNIT_SESSION")); //$NON-NLS-1$
+    StandaloneSession session = new StandaloneSession(Messages.getInstance().getString("BaseTest.DEBUG_JUNIT_SESSION")); //$NON-NLS-1$
     SimpleOutputHandler outputHandler = new SimpleOutputHandler(outputStream, true);
     IRuntimeContext context = run(
         SOLUTION_PATH + "/test/charts/", "ChartComponent_ChartTypes.xaction", parameterProvider, outputHandler); //$NON-NLS-1$
     assertEquals(
-        Messages.getString("BaseTest.USER_RUNNING_ACTION_SEQUENCE"), IRuntimeContext.RUNTIME_STATUS_SUCCESS, context.getStatus()); //$NON-NLS-1$
+        Messages.getInstance().getString("BaseTest.USER_RUNNING_ACTION_SEQUENCE"), IRuntimeContext.RUNTIME_STATUS_SUCCESS, context.getStatus()); //$NON-NLS-1$
     // TODO need some validation of success
   }*/
 
@@ -278,12 +278,12 @@ public class ChartTest extends BaseTestCase {
     parameterProvider.setParameter("type", "html"); //$NON-NLS-1$ //$NON-NLS-2$
     parameterProvider.setParameter("chart_type", "bubble"); //$NON-NLS-1$ //$NON-NLS-2$
     OutputStream outputStream = getOutputStream(SOLUTION_PATH, "Chart_Bubble", ".html"); //$NON-NLS-1$ //$NON-NLS-2$
-    StandaloneSession session = new StandaloneSession(Messages.getString("BaseTest.DEBUG_JUNIT_SESSION")); //$NON-NLS-1$
+    StandaloneSession session = new StandaloneSession(Messages.getInstance().getString("BaseTest.DEBUG_JUNIT_SESSION")); //$NON-NLS-1$
     SimpleOutputHandler outputHandler = new SimpleOutputHandler(outputStream, true);
     IRuntimeContext context = run(
         SOLUTION_PATH + "/test/charts/", "ChartComponent_ChartTypes.xaction", parameterProvider, outputHandler); //$NON-NLS-1$
     assertEquals(
-        Messages.getString("BaseTest.USER_RUNNING_ACTION_SEQUENCE"), IRuntimeContext.RUNTIME_STATUS_SUCCESS, context.getStatus()); //$NON-NLS-1$
+        Messages.getInstance().getString("BaseTest.USER_RUNNING_ACTION_SEQUENCE"), IRuntimeContext.RUNTIME_STATUS_SUCCESS, context.getStatus()); //$NON-NLS-1$
     // TODO need some validation of success
   }*/
 
@@ -292,12 +292,12 @@ public class ChartTest extends BaseTestCase {
     parameterProvider.setParameter("type", "html"); //$NON-NLS-1$ //$NON-NLS-2$
     parameterProvider.setParameter("chart_type", "barline"); //$NON-NLS-1$ //$NON-NLS-2$
     OutputStream outputStream = getOutputStream(SOLUTION_PATH, "Chart_BarLineCombo", ".html"); //$NON-NLS-1$ //$NON-NLS-2$
-    StandaloneSession session = new StandaloneSession(Messages.getString("BaseTest.DEBUG_JUNIT_SESSION")); //$NON-NLS-1$
+    StandaloneSession session = new StandaloneSession(Messages.getInstance().getString("BaseTest.DEBUG_JUNIT_SESSION")); //$NON-NLS-1$
     SimpleOutputHandler outputHandler = new SimpleOutputHandler(outputStream, true);
     IRuntimeContext context = run(
         SOLUTION_PATH + "/test/charts/", "ChartComponent_ChartTypes.xaction", parameterProvider, outputHandler); //$NON-NLS-1$
     assertEquals(
-        Messages.getString("BaseTest.USER_RUNNING_ACTION_SEQUENCE"), IRuntimeContext.RUNTIME_STATUS_SUCCESS, context.getStatus()); //$NON-NLS-1$
+        Messages.getInstance().getString("BaseTest.USER_RUNNING_ACTION_SEQUENCE"), IRuntimeContext.RUNTIME_STATUS_SUCCESS, context.getStatus()); //$NON-NLS-1$
     // TODO need some validation of success
   }
 
@@ -306,12 +306,12 @@ public class ChartTest extends BaseTestCase {
     parameterProvider.setParameter("type", "html"); //$NON-NLS-1$ //$NON-NLS-2$
     parameterProvider.setParameter("chart_type", "dial"); //$NON-NLS-1$ //$NON-NLS-2$
     OutputStream outputStream = getOutputStream(SOLUTION_PATH, "Chart_Dial", ".html"); //$NON-NLS-1$ //$NON-NLS-2$
-    StandaloneSession session = new StandaloneSession(Messages.getString("BaseTest.DEBUG_JUNIT_SESSION")); //$NON-NLS-1$
+    StandaloneSession session = new StandaloneSession(Messages.getInstance().getString("BaseTest.DEBUG_JUNIT_SESSION")); //$NON-NLS-1$
     SimpleOutputHandler outputHandler = new SimpleOutputHandler(outputStream, true);
     IRuntimeContext context = run(
         SOLUTION_PATH + "/test/charts/", "ChartComponent_ChartTypes.xaction", parameterProvider, outputHandler); //$NON-NLS-1$
     assertEquals(
-        Messages.getString("BaseTest.USER_RUNNING_ACTION_SEQUENCE"), IRuntimeContext.RUNTIME_STATUS_SUCCESS, context.getStatus()); //$NON-NLS-1$
+        Messages.getInstance().getString("BaseTest.USER_RUNNING_ACTION_SEQUENCE"), IRuntimeContext.RUNTIME_STATUS_SUCCESS, context.getStatus()); //$NON-NLS-1$
     // TODO need some validation of success
   }*/
 
@@ -320,12 +320,12 @@ public class ChartTest extends BaseTestCase {
     parameterProvider.setParameter("type", "html"); //$NON-NLS-1$ //$NON-NLS-2$
     parameterProvider.setParameter("chart_type", "line"); //$NON-NLS-1$ //$NON-NLS-2$
     OutputStream outputStream = getOutputStream(SOLUTION_PATH, "Chart_Line", ".html"); //$NON-NLS-1$ //$NON-NLS-2$
-    StandaloneSession session = new StandaloneSession(Messages.getString("BaseTest.DEBUG_JUNIT_SESSION")); //$NON-NLS-1$
+    StandaloneSession session = new StandaloneSession(Messages.getInstance().getString("BaseTest.DEBUG_JUNIT_SESSION")); //$NON-NLS-1$
     SimpleOutputHandler outputHandler = new SimpleOutputHandler(outputStream, true);
     IRuntimeContext context = run(
         SOLUTION_PATH + "/test/charts/", "ChartComponent_ChartTypes.xaction", parameterProvider, outputHandler); //$NON-NLS-1$
     assertEquals(
-        Messages.getString("BaseTest.USER_RUNNING_ACTION_SEQUENCE"), IRuntimeContext.RUNTIME_STATUS_SUCCESS, context.getStatus()); //$NON-NLS-1$
+        Messages.getInstance().getString("BaseTest.USER_RUNNING_ACTION_SEQUENCE"), IRuntimeContext.RUNTIME_STATUS_SUCCESS, context.getStatus()); //$NON-NLS-1$
     // TODO need some validation of success
   }*/
 
@@ -334,12 +334,12 @@ public class ChartTest extends BaseTestCase {
     parameterProvider.setParameter("type", "html"); //$NON-NLS-1$ //$NON-NLS-2$
     parameterProvider.setParameter("chart_type", "pie"); //$NON-NLS-1$ //$NON-NLS-2$
     OutputStream outputStream = getOutputStream(SOLUTION_PATH, "Chart_Pie", ".html"); //$NON-NLS-1$ //$NON-NLS-2$
-    StandaloneSession session = new StandaloneSession(Messages.getString("BaseTest.DEBUG_JUNIT_SESSION")); //$NON-NLS-1$
+    StandaloneSession session = new StandaloneSession(Messages.getInstance().getString("BaseTest.DEBUG_JUNIT_SESSION")); //$NON-NLS-1$
     SimpleOutputHandler outputHandler = new SimpleOutputHandler(outputStream, true);
     IRuntimeContext context = run(
         SOLUTION_PATH + "/test/charts/", "ChartComponent_ChartTypes.xaction", parameterProvider, outputHandler); //$NON-NLS-1$
     assertEquals(
-        Messages.getString("BaseTest.USER_RUNNING_ACTION_SEQUENCE"), IRuntimeContext.RUNTIME_STATUS_SUCCESS, context.getStatus()); //$NON-NLS-1$
+        Messages.getInstance().getString("BaseTest.USER_RUNNING_ACTION_SEQUENCE"), IRuntimeContext.RUNTIME_STATUS_SUCCESS, context.getStatus()); //$NON-NLS-1$
     // TODO need some validation of success
   }*/
 
@@ -348,12 +348,12 @@ public class ChartTest extends BaseTestCase {
     parameterProvider.setParameter("type", "html"); //$NON-NLS-1$ //$NON-NLS-2$
     parameterProvider.setParameter("chart_type", "piegrid"); //$NON-NLS-1$ //$NON-NLS-2$
     OutputStream outputStream = getOutputStream(SOLUTION_PATH, "Chart_PieGrid", ".html"); //$NON-NLS-1$ //$NON-NLS-2$
-    StandaloneSession session = new StandaloneSession(Messages.getString("BaseTest.DEBUG_JUNIT_SESSION")); //$NON-NLS-1$
+    StandaloneSession session = new StandaloneSession(Messages.getInstance().getString("BaseTest.DEBUG_JUNIT_SESSION")); //$NON-NLS-1$
     SimpleOutputHandler outputHandler = new SimpleOutputHandler(outputStream, true);
     IRuntimeContext context = run(
         SOLUTION_PATH + "/samples/charts/", "ChartComponent_ChartTypes.xaction", parameterProvider, outputHandler); //$NON-NLS-1$
     assertEquals(
-        Messages.getString("BaseTest.USER_RUNNING_ACTION_SEQUENCE"), IRuntimeContext.RUNTIME_STATUS_SUCCESS, context.getStatus()); //$NON-NLS-1$
+        Messages.getInstance().getString("BaseTest.USER_RUNNING_ACTION_SEQUENCE"), IRuntimeContext.RUNTIME_STATUS_SUCCESS, context.getStatus()); //$NON-NLS-1$
     // TODO need some validation of success
   }*/
 
@@ -362,12 +362,12 @@ public class ChartTest extends BaseTestCase {
     parameterProvider.setParameter("type", "html"); //$NON-NLS-1$ //$NON-NLS-2$
     parameterProvider.setParameter("chart_type", "timeseries"); //$NON-NLS-1$ //$NON-NLS-2$
     OutputStream outputStream = getOutputStream(SOLUTION_PATH, "Chart_TimeSeries", ".html"); //$NON-NLS-1$ //$NON-NLS-2$
-    StandaloneSession session = new StandaloneSession(Messages.getString("BaseTest.DEBUG_JUNIT_SESSION")); //$NON-NLS-1$
+    StandaloneSession session = new StandaloneSession(Messages.getInstance().getString("BaseTest.DEBUG_JUNIT_SESSION")); //$NON-NLS-1$
     SimpleOutputHandler outputHandler = new SimpleOutputHandler(outputStream, true);
     IRuntimeContext context = run(
         SOLUTION_PATH + "/test/charts/", "ChartComponent_ChartTypes.xaction", parameterProvider, outputHandler); //$NON-NLS-1$
     assertEquals(
-        Messages.getString("BaseTest.USER_RUNNING_ACTION_SEQUENCE"), IRuntimeContext.RUNTIME_STATUS_SUCCESS, context.getStatus()); //$NON-NLS-1$
+        Messages.getInstance().getString("BaseTest.USER_RUNNING_ACTION_SEQUENCE"), IRuntimeContext.RUNTIME_STATUS_SUCCESS, context.getStatus()); //$NON-NLS-1$
     // TODO need some validation of success
   }*/
 
@@ -375,12 +375,12 @@ public class ChartTest extends BaseTestCase {
     SimpleParameterProvider parameterProvider = new SimpleParameterProvider();
     parameterProvider.setParameter("type", "html"); //$NON-NLS-1$ //$NON-NLS-2$
     OutputStream outputStream = getOutputStream(SOLUTION_PATH, "Chart_TimeSeries", ".html"); //$NON-NLS-1$ //$NON-NLS-2$
-    StandaloneSession session = new StandaloneSession(Messages.getString("BaseTest.DEBUG_JUNIT_SESSION")); //$NON-NLS-1$
+    StandaloneSession session = new StandaloneSession(Messages.getInstance().getString("BaseTest.DEBUG_JUNIT_SESSION")); //$NON-NLS-1$
     SimpleOutputHandler outputHandler = new SimpleOutputHandler(outputStream, true);
     IRuntimeContext context = run(
         SOLUTION_PATH + "/test/charts/", "ChartComponent_ChartTypes.xaction", parameterProvider, outputHandler); //$NON-NLS-1$
     assertEquals(
-        Messages.getString("BaseTest.USER_RUNNING_ACTION_SEQUENCE"), IRuntimeContext.RUNTIME_STATUS_SUCCESS, context.getStatus()); //$NON-NLS-1$
+        Messages.getInstance().getString("BaseTest.USER_RUNNING_ACTION_SEQUENCE"), IRuntimeContext.RUNTIME_STATUS_SUCCESS, context.getStatus()); //$NON-NLS-1$
     // TODO need some validation of success
   }*/
 
@@ -389,12 +389,12 @@ public class ChartTest extends BaseTestCase {
     parameterProvider.setParameter("type", "html"); //$NON-NLS-1$ //$NON-NLS-2$
     OutputStream outputStream = getOutputStream(SOLUTION_PATH, "Chart_XYZ", ".html"); //$NON-NLS-1$ //$NON-NLS-2$
     parameterProvider.setParameter("chart_type", "xy"); //$NON-NLS-1$ //$NON-NLS-2$
-    StandaloneSession session = new StandaloneSession(Messages.getString("BaseTest.DEBUG_JUNIT_SESSION")); //$NON-NLS-1$
+    StandaloneSession session = new StandaloneSession(Messages.getInstance().getString("BaseTest.DEBUG_JUNIT_SESSION")); //$NON-NLS-1$
     SimpleOutputHandler outputHandler = new SimpleOutputHandler(outputStream, true);
     IRuntimeContext context = run(
         SOLUTION_PATH + "/test/charts/", "ChartComponent_ChartTypes.xaction", parameterProvider, outputHandler); //$NON-NLS-1$
     assertEquals(
-        Messages.getString("BaseTest.USER_RUNNING_ACTION_SEQUENCE"), IRuntimeContext.RUNTIME_STATUS_SUCCESS, context.getStatus()); //$NON-NLS-1$
+        Messages.getInstance().getString("BaseTest.USER_RUNNING_ACTION_SEQUENCE"), IRuntimeContext.RUNTIME_STATUS_SUCCESS, context.getStatus()); //$NON-NLS-1$
     // TODO need some validation of success
   }*/
 
@@ -422,7 +422,7 @@ public class ChartTest extends BaseTestCase {
     HashMap parameterProviders = new HashMap();
     parameterProviders.put(IParameterProvider.SCOPE_REQUEST, requestParameters);
     parameterProviders.put(IParameterProvider.SCOPE_SESSION, sessionParameters);
-    StandaloneSession session = new StandaloneSession(Messages.getString("BaseTest.DEBUG_JUNIT_SESSION")); //$NON-NLS-1$
+    StandaloneSession session = new StandaloneSession(Messages.getInstance().getString("BaseTest.DEBUG_JUNIT_SESSION")); //$NON-NLS-1$
     UserSession usession = new UserSession("Joe", Locale.US, true, requestParameters);//$NON-NLS-1$
     usession.doStartupActions(requestParameters);
     UserSession usessionNoAuth = new UserSession("Joe", Locale.US, requestParameters); //$NON-NLS-1$
@@ -462,7 +462,7 @@ public class ChartTest extends BaseTestCase {
     HashMap parameterProviders = new HashMap();
     parameterProviders.put(IParameterProvider.SCOPE_REQUEST, requestParameters);
     parameterProviders.put(IParameterProvider.SCOPE_SESSION, sessionParameters);
-    StandaloneSession session = new StandaloneSession(Messages.getString("BaseTest.DEBUG_JUNIT_SESSION")); //$NON-NLS-1$
+    StandaloneSession session = new StandaloneSession(Messages.getInstance().getString("BaseTest.DEBUG_JUNIT_SESSION")); //$NON-NLS-1$
 
     SimpleOutputHandler outputHandler = new SimpleOutputHandler(outputStream, false);
     BaseRequestHandler requestHandler = new BaseRequestHandler(session, null, outputHandler, null, urlFactory);
@@ -498,7 +498,7 @@ public class ChartTest extends BaseTestCase {
     HashMap parameterProviders = new HashMap();
     parameterProviders.put(IParameterProvider.SCOPE_REQUEST, requestParameters);
     parameterProviders.put(IParameterProvider.SCOPE_SESSION, sessionParameters);
-    StandaloneSession session = new StandaloneSession(Messages.getString("BaseTest.DEBUG_JUNIT_SESSION")); //$NON-NLS-1$
+    StandaloneSession session = new StandaloneSession(Messages.getInstance().getString("BaseTest.DEBUG_JUNIT_SESSION")); //$NON-NLS-1$
 
     SimpleOutputHandler outputHandler = new SimpleOutputHandler(outputStream, false);
     BaseRequestHandler requestHandler = new BaseRequestHandler(session, null, outputHandler, null, urlFactory);

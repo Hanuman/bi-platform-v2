@@ -53,7 +53,7 @@
 			footer = sections[1];
 		}
 	} else {
-		intro = Messages.getString( "UI.ERROR_0002_BAD_TEMPLATE_OBJECT" );
+		intro = Messages.getInstance().getString( "UI.ERROR_0002_BAD_TEMPLATE_OBJECT" );
 	}
 
 %>
@@ -71,7 +71,7 @@
 		location = "samples/launch/launch.htm";
 	}
 	messages = new ArrayList();
-	HtmlComponent html = new HtmlComponent( HtmlComponent.TYPE_SOLUTION_FILE, location, Messages.getString("UI.USER_OFFLINE"), null, messages);
+	HtmlComponent html = new HtmlComponent( HtmlComponent.TYPE_SOLUTION_FILE, location, Messages.getInstance().getString("UI.USER_OFFLINE"), null, messages);
 	html.validate( userSession, null ); %>
 
 	<%=  html.getContent( "text/html" ) %>		

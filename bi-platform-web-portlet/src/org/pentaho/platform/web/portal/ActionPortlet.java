@@ -188,10 +188,10 @@ public class ActionPortlet extends ViewPortlet {
     }
 
     if ((actionString == null) || (solutionName == null) || (actionPath == null) || (actionName == null)) {
-      error(Messages.getString("ActionPortlet.ERROR_0001_COULD_NOT_PARSE_ACTION")); //$NON-NLS-1$
+      error(Messages.getInstance().getString("ActionPortlet.ERROR_0001_COULD_NOT_PARSE_ACTION")); //$NON-NLS-1$
       PrintWriter writer = response.getWriter();
       response.setContentType("text/html"); //$NON-NLS-1$
-      writer.print(Messages.getString("ActionPortlet.ERROR_0001_COULD_NOT_PARSE_ACTION")); //$NON-NLS-1$
+      writer.print(Messages.getInstance().getString("ActionPortlet.ERROR_0001_COULD_NOT_PARSE_ACTION")); //$NON-NLS-1$
       return;
 
     }
@@ -214,7 +214,7 @@ public class ActionPortlet extends ViewPortlet {
             footer = sections[1];
           }
         } else {
-          intro = Messages.getString("UI.ERROR_0002_BAD_TEMPLATE_OBJECT"); //$NON-NLS-1$
+          intro = Messages.getInstance().getString("UI.ERROR_0002_BAD_TEMPLATE_OBJECT"); //$NON-NLS-1$
         }
         
         PrintWriter writer = response.getWriter();

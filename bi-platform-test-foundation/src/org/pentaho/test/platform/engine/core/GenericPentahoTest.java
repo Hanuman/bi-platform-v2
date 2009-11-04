@@ -145,7 +145,7 @@ public class GenericPentahoTest extends TestCase {
     } catch (Throwable e) {
       // this gets caught in the assert below
     }
-    assertNotNull(Messages.getString("GenericTest.USER_TEST_FILE_INVALID", filePath), tmpFileStream); //$NON-NLS-1$
+    assertNotNull(Messages.getInstance().getString("GenericTest.USER_TEST_FILE_INVALID", filePath), tmpFileStream); //$NON-NLS-1$
 
     filePath = PentahoSystem.getApplicationContext().getFileOutputPath("test/golden/" + testName + extension); //$NON-NLS-1$
     try {
@@ -154,7 +154,7 @@ public class GenericPentahoTest extends TestCase {
     } catch (Throwable e) {
       // this gets caught in the assert below
     }
-    assertNotNull(Messages.getString("GenericTest.USER_TEST_FILE_INVALID", filePath), goldenStream); //$NON-NLS-1$
+    assertNotNull(Messages.getInstance().getString("GenericTest.USER_TEST_FILE_INVALID", filePath), goldenStream); //$NON-NLS-1$
 
     // compare the two files
 
@@ -169,13 +169,13 @@ public class GenericPentahoTest extends TestCase {
       tmpPos = tmpFileStream.read(tmpBuffer);
       // assume lock-step
       if (goldPos != tmpPos) {
-        System.out.println(Messages.getString("GenericTest.USER_FILE_POINTERS_NOT_IN_STEP")); //$NON-NLS-1$
+        System.out.println(Messages.getInstance().getString("GenericTest.USER_FILE_POINTERS_NOT_IN_STEP")); //$NON-NLS-1$
         return false;
       }
       while (goldPos > 0 && tmpPos > 0) {
         for (int index = 0; index < goldPos; index++) {
           assertEquals(
-              Messages.getString("GenericTest.USER_FILES_DIFFER", Integer.toString(filePosition + index)), goldBuffer[index], tmpBuffer[index]); //$NON-NLS-1$
+              Messages.getInstance().getString("GenericTest.USER_FILES_DIFFER", Integer.toString(filePosition + index)), goldBuffer[index], tmpBuffer[index]); //$NON-NLS-1$
         }
         filePosition += goldPos;
         goldPos = goldenStream.read(goldBuffer);

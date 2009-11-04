@@ -91,14 +91,14 @@ public class RequestParameterAuthenticationFilter implements Filter, Initializin
   //~ Methods ================================================================
 
   public void afterPropertiesSet() throws Exception {
-    Assert.notNull(this.authenticationManager, Messages
+    Assert.notNull(this.authenticationManager, Messages.getInstance()
         .getErrorString("RequestParameterAuthenticationFilter.ERROR_0001_AUTHMGR_REQUIRED")); //$NON-NLS-1$
-    Assert.notNull(this.authenticationEntryPoint, Messages
+    Assert.notNull(this.authenticationEntryPoint, Messages.getInstance()
         .getErrorString("RequestParameterAuthenticationFilter.ERROR_0002_AUTHM_ENTRYPT_REQUIRED")); //$NON-NLS-1$
 
-    Assert.hasText(this.userNameParameter, Messages
+    Assert.hasText(this.userNameParameter, Messages.getInstance()
         .getString("RequestParameterAuthenticationFilter.ERROR_0003_USER_NAME_PARAMETER_MISSING")); //$NON-NLS-1$
-    Assert.hasText(this.passwordParameter, Messages
+    Assert.hasText(this.passwordParameter, Messages.getInstance()
         .getString("RequestParameterAuthenticationFilter.ERROR_0004_PASSWORD_PARAMETER_MISSING")); //$NON-NLS-1$
   }
 
@@ -108,12 +108,12 @@ public class RequestParameterAuthenticationFilter implements Filter, Initializin
   public void doFilter(final ServletRequest request, final ServletResponse response, final FilterChain chain) throws IOException,
       ServletException {
     if (!(request instanceof HttpServletRequest)) {
-      throw new ServletException(Messages
+      throw new ServletException(Messages.getInstance()
           .getErrorString("RequestParameterAuthenticationFilter.ERROR_0005_HTTP_SERVLET_REQUEST_REQUIRED")); //$NON-NLS-1$
     }
 
     if (!(response instanceof HttpServletResponse)) {
-      throw new ServletException(Messages
+      throw new ServletException(Messages.getInstance()
           .getErrorString("RequestParameterAuthenticationFilter.ERROR_0006_HTTP_SERVLET_RESPONSE_REQUIRED")); //$NON-NLS-1$
     }
 
@@ -123,7 +123,7 @@ public class RequestParameterAuthenticationFilter implements Filter, Initializin
     String password = httpRequest.getParameter(this.passwordParameter);
 
     if (RequestParameterAuthenticationFilter.logger.isDebugEnabled()) {
-      RequestParameterAuthenticationFilter.logger.debug(Messages.getString("RequestParameterAuthenticationFilter.DEBUG_AUTH_USERID", username)); //$NON-NLS-1$
+      RequestParameterAuthenticationFilter.logger.debug(Messages.getInstance().getString("RequestParameterAuthenticationFilter.DEBUG_AUTH_USERID", username)); //$NON-NLS-1$
     }
 
     if ((username != null) && (password != null)) {
@@ -141,7 +141,7 @@ public class RequestParameterAuthenticationFilter implements Filter, Initializin
         } catch (AuthenticationException failed) {
           // Authentication failed
           if (RequestParameterAuthenticationFilter.logger.isDebugEnabled()) {
-            RequestParameterAuthenticationFilter.logger.debug(Messages.getString(
+            RequestParameterAuthenticationFilter.logger.debug(Messages.getInstance().getString(
                 "RequestParameterAuthenticationFilter.DEBUG_AUTHENTICATION_REQUEST", username, failed.toString())); //$NON-NLS-1$
           }
 
@@ -158,7 +158,7 @@ public class RequestParameterAuthenticationFilter implements Filter, Initializin
 
         // Authentication success
         if (RequestParameterAuthenticationFilter.logger.isDebugEnabled()) {
-          RequestParameterAuthenticationFilter.logger.debug(Messages.getString(
+          RequestParameterAuthenticationFilter.logger.debug(Messages.getInstance().getString(
               "RequestParameterAuthenticationFilter.DEBUG_AUTH_SUCCESS", authResult.toString())); //$NON-NLS-1$
         }
 

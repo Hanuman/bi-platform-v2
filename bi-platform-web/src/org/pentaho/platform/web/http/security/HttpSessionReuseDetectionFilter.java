@@ -97,7 +97,7 @@ public class HttpSessionReuseDetectionFilter implements Filter, InitializingBean
 
     if (requiresAuthentication(httpRequest, httpResponse)) {
       if (HttpSessionReuseDetectionFilter.logger.isDebugEnabled()) {
-        HttpSessionReuseDetectionFilter.logger.debug(Messages.getString("HttpSessionReuseDetectionFilter.DEBUG_PROCESS_AUTHN")); //$NON-NLS-1$
+        HttpSessionReuseDetectionFilter.logger.debug(Messages.getInstance().getString("HttpSessionReuseDetectionFilter.DEBUG_PROCESS_AUTHN")); //$NON-NLS-1$
       }
 
       // TODO: this should use LogoutHandlers in latest Spring Security
@@ -107,13 +107,13 @@ public class HttpSessionReuseDetectionFilter implements Filter, InitializingBean
         if ((null != remoteUser) && (remoteUser.length() > 0)) {
           if (HttpSessionReuseDetectionFilter.logger.isDebugEnabled()) {
             HttpSessionReuseDetectionFilter.logger
-                .debug(Messages.getString("HttpSessionReuseDetectionFilter.DEBUG_USER_ALREADY_LOGGED_IN", remoteUser)); //$NON-NLS-1$
+                .debug(Messages.getInstance().getString("HttpSessionReuseDetectionFilter.DEBUG_USER_ALREADY_LOGGED_IN", remoteUser)); //$NON-NLS-1$
           }
 
           HttpSession session = httpRequest.getSession(false);
           if (null != session) {
             if (HttpSessionReuseDetectionFilter.logger.isDebugEnabled()) {
-              HttpSessionReuseDetectionFilter.logger.debug(Messages.getString("HttpSessionReuseDetectionFilter.DEBUG_INVALIDATING_SESSION")); //$NON-NLS-1$
+              HttpSessionReuseDetectionFilter.logger.debug(Messages.getInstance().getString("HttpSessionReuseDetectionFilter.DEBUG_INVALIDATING_SESSION")); //$NON-NLS-1$
             }
             session.invalidate();
           }
@@ -121,7 +121,7 @@ public class HttpSessionReuseDetectionFilter implements Filter, InitializingBean
           SecurityContextHolder.clearContext();
 
           if (HttpSessionReuseDetectionFilter.logger.isDebugEnabled()) {
-            HttpSessionReuseDetectionFilter.logger.debug(Messages.getString(
+            HttpSessionReuseDetectionFilter.logger.debug(Messages.getInstance().getString(
                 "HttpSessionReuseDetectionFilter.DEBUG_REDIRECTING", sessionReuseDetectedUrl)); //$NON-NLS-1$
           }
 
@@ -138,9 +138,9 @@ public class HttpSessionReuseDetectionFilter implements Filter, InitializingBean
   }
 
   public void afterPropertiesSet() throws Exception {
-    Assert.hasLength(filterProcessesUrl, Messages
+    Assert.hasLength(filterProcessesUrl, Messages.getInstance()
         .getString("HttpSessionReuseDetectionFilter.ERROR_0001_FILTERPROCESSESURL_NOT_SPECIFIED")); //$NON-NLS-1$
-    Assert.hasLength(sessionReuseDetectedUrl, Messages
+    Assert.hasLength(sessionReuseDetectedUrl, Messages.getInstance()
         .getString("HttpSessionReuseDetectionFilter.ERROR_0002_SESSIONREUSEDETECTEDURL_NOT_SPECIFIED")); //$NON-NLS-1$
   }
 

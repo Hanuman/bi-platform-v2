@@ -39,7 +39,7 @@ public class MondrianSystemListener implements IPentahoSystemListener {
     try {
       System.setProperty("pentaho.olap.xmladatasources", "system/olap/datasources.xml"); //$NON-NLS-1$ //$NON-NLS-2$
     } catch (Exception ex) {
-      Logger.error(MondrianSystemListener.class.getName(), Messages
+      Logger.error(MondrianSystemListener.class.getName(), Messages.getInstance()
           .getErrorString("MondrianSystemListener.ERROR_0001_PROPERTY_SET_FAILED"), ex); //$NON-NLS-1$
     }
 
@@ -61,14 +61,14 @@ public class MondrianSystemListener implements IPentahoSystemListener {
       if (repository.resourceExists(mondrianPropsFilename, ISolutionRepository.ACTION_EXECUTE)) {
         is = repository.getResourceInputStream(mondrianPropsFilename, false, ISolutionRepository.ACTION_EXECUTE);
         MondrianProperties.instance().load(is);
-        Logger.debug(MondrianSystemListener.class.getName(), Messages.getString(
+        Logger.debug(MondrianSystemListener.class.getName(), Messages.getInstance().getString(
             "MondrianSystemListener.PROPERTY_FILE_LOADED", mondrianPropsFilename)); //$NON-NLS-1$
       } else {
-        Logger.warn(MondrianSystemListener.class.getName(), Messages.getString(
+        Logger.warn(MondrianSystemListener.class.getName(), Messages.getInstance().getString(
             "MondrianSystemListener.PROPERTY_FILE_NOT_FOUND", mondrianPropsFilename)); //$NON-NLS-1$
       }
     } catch (IOException ioe) {
-      Logger.error(MondrianSystemListener.class.getName(), Messages.getString(
+      Logger.error(MondrianSystemListener.class.getName(), Messages.getInstance().getString(
           "MondrianSystemListener.ERROR_0002_PROPERTY_FILE_READ_FAILED", ioe.getMessage()), ioe); //$NON-NLS-1$
     } finally {
       try {

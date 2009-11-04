@@ -74,14 +74,14 @@ public class SystemPathXmlPluginProvider implements IPluginProvider {
 
     ISolutionRepository repo = PentahoSystem.get(ISolutionRepository.class, session);
     if (repo == null) {
-      throw new PlatformPluginRegistrationException(Messages
+      throw new PlatformPluginRegistrationException(Messages.getInstance()
           .getErrorString("PluginManager.ERROR_0008_CANNOT_GET_REPOSITORY")); //$NON-NLS-1$
     }
     // look in each of the system setting folders looking for plugin.xml files
     String systemPath = PentahoSystem.getApplicationContext().getSolutionPath("system"); //$NON-NLS-1$
     File systemDir = new File(systemPath);
     if (!systemDir.exists() || !systemDir.isDirectory()) {
-      throw new PlatformPluginRegistrationException(Messages
+      throw new PlatformPluginRegistrationException(Messages.getInstance()
           .getErrorString("PluginManager.ERROR_0004_CANNOT_FIND_SYSTEM_FOLDER")); //$NON-NLS-1$
     }
     File kids[] = systemDir.listFiles();
@@ -92,7 +92,7 @@ public class SystemPathXmlPluginProvider implements IPluginProvider {
           processDirectory(plugins, kid, repo, session);
         } catch (Throwable t) {
           //don't throw an exception.  we need to continue to process any remaining good plugins
-          String msg = Messages.getErrorString(
+          String msg = Messages.getInstance().getErrorString(
               "SystemPathXmlPluginProvider.ERROR_0001_FAILED_TO_PROCESS_PLUGIN", kid.getAbsolutePath()); //$NON-NLS-1$
           Logger.error(getClass().toString(), msg, t);
           PluginMessageLogger.add(msg);
@@ -127,11 +127,11 @@ public class SystemPathXmlPluginProvider implements IPluginProvider {
         plugins.add(createPlugin(doc, session, folder.getName(), repo, hasLib));
       }
     } catch (Exception e) {
-      throw new PlatformPluginRegistrationException(Messages.getErrorString(
+      throw new PlatformPluginRegistrationException(Messages.getInstance().getErrorString(
           "PluginManager.ERROR_0005_CANNOT_PROCESS_PLUGIN_XML", path), e); //$NON-NLS-1$
     }
     if (doc == null) {
-      throw new PlatformPluginRegistrationException(Messages.getErrorString(
+      throw new PlatformPluginRegistrationException(Messages.getInstance().getErrorString(
           "PluginManager.ERROR_0005_CANNOT_PROCESS_PLUGIN_XML", path)); //$NON-NLS-1$
     }
   }
@@ -152,7 +152,7 @@ public class SystemPathXmlPluginProvider implements IPluginProvider {
 
     String listenerCount = (StringUtils.isEmpty(plugin.getLifecycleListenerClassname())) ? "0" : "1"; //$NON-NLS-1$//$NON-NLS-2$
 
-    String msg = Messages.getString(
+    String msg = Messages.getInstance().getString(
         "SystemPathXmlPluginProvider.PLUGIN_PROVIDES", //$NON-NLS-1$
         Integer.toString(plugin.getMenuCustomizations().size()), Integer.toString(plugin.getContentInfos().size()),
         Integer.toString(plugin.getContentGenerators().size()), Integer.toString(plugin.getOverlays().size()),
@@ -225,7 +225,7 @@ public class SystemPathXmlPluginProvider implements IPluginProvider {
       pws.setExtraClasses(extraClasses);
 
       if (pws.getServiceBeanId() == null && pws.getServiceClass() == null) {
-        PluginMessageLogger.add(Messages.getString("PluginManager.NO_SERVICE_CLASS_FOUND")); //$NON-NLS-1$
+        PluginMessageLogger.add(Messages.getInstance().getString("PluginManager.NO_SERVICE_CLASS_FOUND")); //$NON-NLS-1$
       } else {
         plugin.addWebservice(pws);
       }
@@ -241,13 +241,13 @@ public class SystemPathXmlPluginProvider implements IPluginProvider {
     if (node != null) {
       String name = (node.attributeValue("name") != null)?node.attributeValue("name"):node.attributeValue("title"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
       if(StringUtils.isEmpty(name)) {
-        String msg = Messages.getErrorString("SystemPathXmlPluginProvider.ERROR_0002_PLUGIN_INVALID", folder); //$NON-NLS-1$
+        String msg = Messages.getInstance().getErrorString("SystemPathXmlPluginProvider.ERROR_0002_PLUGIN_INVALID", folder); //$NON-NLS-1$
         PluginMessageLogger.add(msg);
         Logger.error(getClass().toString(), msg);
       }
       
       plugin.setId(name);
-      PluginMessageLogger.add(Messages.getString("SystemPathXmlPluginProvider.DISCOVERED_PLUGIN", name, folder)); //$NON-NLS-1$
+      PluginMessageLogger.add(Messages.getInstance().getString("SystemPathXmlPluginProvider.DISCOVERED_PLUGIN", name, folder)); //$NON-NLS-1$
     }
   }
 
@@ -276,15 +276,15 @@ public class SystemPathXmlPluginProvider implements IPluginProvider {
         //        menuCustomizations.add( custom );
         plugin.addMenuCustomization(custom);
         if (customizationType == CustomizationType.DELETE) {
-          PluginMessageLogger.add(Messages.getString("PluginManager.USER_MENU_ITEM_DELETE", id)); //$NON-NLS-1$
+          PluginMessageLogger.add(Messages.getInstance().getString("PluginManager.USER_MENU_ITEM_DELETE", id)); //$NON-NLS-1$
         } else if (customizationType == CustomizationType.REPLACE) {
-          PluginMessageLogger.add(Messages.getString("PluginManager.USER_MENU_ITEM_REPLACE", id, label)); //$NON-NLS-1$
+          PluginMessageLogger.add(Messages.getInstance().getString("PluginManager.USER_MENU_ITEM_REPLACE", id, label)); //$NON-NLS-1$
         } else {
-          PluginMessageLogger.add(Messages.getString("PluginManager.USER_MENU_ITEM_ADDITION", id, label)); //$NON-NLS-1$
+          PluginMessageLogger.add(Messages.getInstance().getString("PluginManager.USER_MENU_ITEM_ADDITION", id, label)); //$NON-NLS-1$
         }
       } catch (Exception e) {
-        PluginMessageLogger.add(Messages.getString("PluginManager.ERROR_0009_MENU_CUSTOMIZATION_ERROR", id, label)); //$NON-NLS-1$
-        Logger.error(getClass().toString(), Messages.getErrorString(
+        PluginMessageLogger.add(Messages.getInstance().getString("PluginManager.ERROR_0009_MENU_CUSTOMIZATION_ERROR", id, label)); //$NON-NLS-1$
+        Logger.error(getClass().toString(), Messages.getInstance().getErrorString(
             "PluginManager.ERROR_0009_MENU_CUSTOMIZATION_ERROR", id, label), e); //$NON-NLS-1$
       }
     }
@@ -346,9 +346,9 @@ public class SystemPathXmlPluginProvider implements IPluginProvider {
         if (!StringUtils.isEmpty(metaProviderClass)) {
           plugin.getMetaProviderMap().put(contentInfo.getExtension(), metaProviderClass);
         }
-        PluginMessageLogger.add(Messages.getString("PluginManager.USER_CONTENT_TYPE_REGISTERED", extension, title)); //$NON-NLS-1$
+        PluginMessageLogger.add(Messages.getInstance().getString("PluginManager.USER_CONTENT_TYPE_REGISTERED", extension, title)); //$NON-NLS-1$
       } else {
-        PluginMessageLogger.add(Messages.getString("PluginManager.USER_CONTENT_TYPE_NOT_REGISTERED", extension, title)); //$NON-NLS-1$
+        PluginMessageLogger.add(Messages.getInstance().getString("PluginManager.USER_CONTENT_TYPE_NOT_REGISTERED", extension, title)); //$NON-NLS-1$
       }
     }
   }
@@ -391,7 +391,7 @@ public class SystemPathXmlPluginProvider implements IPluginProvider {
                 session, folder);
             plugin.addContentGenerator(info);
           } catch (Exception e) {
-            PluginMessageLogger.add(Messages.getString(
+            PluginMessageLogger.add(Messages.getInstance().getString(
                 "PluginManager.USER_CONTENT_GENERATOR_NOT_REGISTERED", id, folder)); //$NON-NLS-1$
           }
           if (!StringUtils.isEmpty(fileInfoClassName)) {
@@ -399,11 +399,11 @@ public class SystemPathXmlPluginProvider implements IPluginProvider {
           }
         } else {
           PluginMessageLogger
-              .add(Messages.getString("PluginManager.USER_CONTENT_GENERATOR_NOT_REGISTERED", id, folder)); //$NON-NLS-1$
+              .add(Messages.getInstance().getString("PluginManager.USER_CONTENT_GENERATOR_NOT_REGISTERED", id, folder)); //$NON-NLS-1$
         }
       } catch (Exception e) {
-        PluginMessageLogger.add(Messages.getString("PluginManager.USER_CONTENT_GENERATOR_NOT_REGISTERED", id, folder)); //$NON-NLS-1$
-        Logger.error(getClass().toString(), Messages.getErrorString(
+        PluginMessageLogger.add(Messages.getInstance().getString("PluginManager.USER_CONTENT_GENERATOR_NOT_REGISTERED", id, folder)); //$NON-NLS-1$
+        Logger.error(getClass().toString(), Messages.getInstance().getErrorString(
             "PluginManager.ERROR_0006_CANNOT_CREATE_CONTENT_GENERATOR_FACTORY", folder), e); //$NON-NLS-1$
       }
     }

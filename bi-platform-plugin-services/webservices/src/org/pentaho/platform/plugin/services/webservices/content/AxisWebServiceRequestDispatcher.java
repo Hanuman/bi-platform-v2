@@ -47,7 +47,7 @@ public abstract class AxisWebServiceRequestDispatcher extends AbstractAxisServic
     IParameterProvider pathParams = parameterProviders.get( "path" ); //$NON-NLS-1$
     if( pathParams == null ) {
       // return an error
-      String message = Messages.getErrorString("WebServiceContentGenerator.ERROR_0004_PATH_PARAMS_IS_MISSING"); //$NON-NLS-1$
+      String message = Messages.getInstance().getErrorString("WebServiceContentGenerator.ERROR_0004_PATH_PARAMS_IS_MISSING"); //$NON-NLS-1$
       getLogger().error( message );
       out.write( message.getBytes() );
       return;
@@ -57,7 +57,7 @@ public abstract class AxisWebServiceRequestDispatcher extends AbstractAxisServic
     String serviceName = pathParams.getStringParameter( "path", null); //$NON-NLS-1$
     if( serviceName == null ) {
       // return an error
-      String message = Messages.getErrorString("WebServiceContentGenerator.ERROR_0005_SERVICE_NAME_IS_MISSING"); //$NON-NLS-1$
+      String message = Messages.getInstance().getErrorString("WebServiceContentGenerator.ERROR_0005_SERVICE_NAME_IS_MISSING"); //$NON-NLS-1$
       getLogger().error( message );
       out.write( message.getBytes() );
       return;
@@ -85,7 +85,7 @@ public abstract class AxisWebServiceRequestDispatcher extends AbstractAxisServic
     AxisService axisService = axisConfiguration.getService( serviceName );
     if( axisService == null ) {
       // return an error
-      String message = Messages.getErrorString("WebServiceContentGenerator.ERROR_0006_SERVICE_IS_INVALID", serviceName ); //$NON-NLS-1$
+      String message = Messages.getInstance().getErrorString("WebServiceContentGenerator.ERROR_0006_SERVICE_IS_INVALID", serviceName ); //$NON-NLS-1$
       getLogger().error( message );
       out.write( message.getBytes() );
       return;

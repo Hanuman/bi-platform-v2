@@ -91,7 +91,7 @@ public class UIServlet extends ServletBase {
       StringBuffer buffer = new StringBuffer();
       PentahoSystem.get(IMessageFormatter.class, userSession)
           .formatErrorMessage(
-              "text/html", Messages.getString("UIServlet.ACTION_FAILED"), Messages.getErrorString("UIServlet.ERROR_0001_COMPONENT_NOT_SPECIFIED"), buffer); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+              "text/html", Messages.getInstance().getString("UIServlet.ACTION_FAILED"), Messages.getInstance().getErrorString("UIServlet.ERROR_0001_COMPONENT_NOT_SPECIFIED"), buffer); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
       outputStream.write(buffer.toString().getBytes(LocaleHelper.getSystemEncoding()));
       return;
 
@@ -106,7 +106,7 @@ public class UIServlet extends ServletBase {
         StringBuffer buffer = new StringBuffer();
         PentahoSystem.get(IMessageFormatter.class, userSession)
             .formatErrorMessage(
-                "text/html", Messages.getString("UIServlet.ACTION_FAILED"), Messages.getErrorString("UIServlet.ERROR_0002_COMPONENT_INVALID"), buffer); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+                "text/html", Messages.getInstance().getString("UIServlet.ACTION_FAILED"), Messages.getInstance().getErrorString("UIServlet.ERROR_0002_COMPONENT_INVALID"), buffer); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
         outputStream.write(buffer.toString().getBytes(LocaleHelper.getSystemEncoding()));
         return;
       }

@@ -135,22 +135,22 @@ public class SolutionEngine extends PentahoMessenger implements ISolutionEngine,
       final String processId) {
     if (processId == null) {
       // cannot allow this
-      error(Messages.getErrorString("SolutionEngine.ERROR_0001_PROCESS_NOT_SPECIFIED")); //$NON-NLS-1$
+      error(Messages.getInstance().getErrorString("SolutionEngine.ERROR_0001_PROCESS_NOT_SPECIFIED")); //$NON-NLS-1$
       return false;
     }
     if (solutionName == null) {
       // cannot allow this
-      error(Messages.getErrorString("SolutionEngine.ERROR_0002_SOLUTION_NOT_SPECIFIED")); //$NON-NLS-1$
+      error(Messages.getInstance().getErrorString("SolutionEngine.ERROR_0002_SOLUTION_NOT_SPECIFIED")); //$NON-NLS-1$
       return false;
     }
     if (sequencePath == null) {
       // cannot allow this
-      error(Messages.getErrorString("SolutionEngine.ERROR_0003_PATH_NOT_SPECIFIED")); //$NON-NLS-1$
+      error(Messages.getInstance().getErrorString("SolutionEngine.ERROR_0003_PATH_NOT_SPECIFIED")); //$NON-NLS-1$
       return false;
     }
     if (sequenceName == null) {
       // cannot allow this
-      error(Messages.getErrorString("SolutionEngine.ERROR_0004_ACTION_NOT_SPECIFIED")); //$NON-NLS-1$
+      error(Messages.getInstance().getErrorString("SolutionEngine.ERROR_0004_ACTION_NOT_SPECIFIED")); //$NON-NLS-1$
       return false;
     }
     return true;
@@ -180,7 +180,7 @@ public class SolutionEngine extends PentahoMessenger implements ISolutionEngine,
   protected void auditStart(final String solutionName, final String sequencePath, final String sequenceName,
       final String instanceId) {
     if (debug) {
-      debug(Messages.getString("SolutionEngine.DEBUG_STARTING_EXECUTION", solutionName, sequencePath, sequenceName)); //$NON-NLS-1$
+      debug(Messages.getInstance().getString("SolutionEngine.DEBUG_STARTING_EXECUTION", solutionName, sequencePath, sequenceName)); //$NON-NLS-1$
     }
     genLogIdFromInfo(instanceId, SolutionEngine.LOG_NAME, sequenceName);
   }
@@ -226,7 +226,7 @@ public class SolutionEngine extends PentahoMessenger implements ISolutionEngine,
 
     // create the runtime context object for this operation
     if (debug) {
-      debug(Messages.getString("SolutionEngine.DEBUG_GETTING_RUNTIME_CONTEXT")); //$NON-NLS-1$
+      debug(Messages.getInstance().getString("SolutionEngine.DEBUG_GETTING_RUNTIME_CONTEXT")); //$NON-NLS-1$
     }
     boolean newInstance = instanceId == null;
     IRuntimeRepository runtimeRepository = null;
@@ -246,7 +246,7 @@ public class SolutionEngine extends PentahoMessenger implements ISolutionEngine,
           runtimeData = runtimeRepository.newRuntimeElement(session.getId(), IParameterProvider.SCOPE_SESSION,
               !persisted);
         } catch (Throwable t) {
-          error(Messages.getErrorString("SolutionEngine.ERROR_0008_INVALID_INSTANCE", instanceId), t); //$NON-NLS-1$
+          error(Messages.getInstance().getErrorString("SolutionEngine.ERROR_0008_INVALID_INSTANCE", instanceId), t); //$NON-NLS-1$
           status = IRuntimeContext.RUNTIME_STATUS_SETUP_FAIL;
           return null;
         }
@@ -254,14 +254,14 @@ public class SolutionEngine extends PentahoMessenger implements ISolutionEngine,
         try {
           runtimeData = runtimeRepository.loadElementById(instanceId, null);
         } catch (Throwable t) {
-          error(Messages.getErrorString("SolutionEngine.ERROR_0008_INVALID_INSTANCE", instanceId), t); //$NON-NLS-1$
+          error(Messages.getInstance().getErrorString("SolutionEngine.ERROR_0008_INVALID_INSTANCE", instanceId), t); //$NON-NLS-1$
           status = IRuntimeContext.RUNTIME_STATUS_SETUP_FAIL;
           return null;
         }
       }
     }
     if (runtimeData == null) {
-      error(Messages.getErrorString("SolutionEngine.ERROR_0008_INVALID_INSTANCE", instanceId)); //$NON-NLS-1$
+      error(Messages.getInstance().getErrorString("SolutionEngine.ERROR_0008_INVALID_INSTANCE", instanceId)); //$NON-NLS-1$
       status = IRuntimeContext.RUNTIME_STATUS_SETUP_FAIL;
       return null;
     }
@@ -292,7 +292,7 @@ public class SolutionEngine extends PentahoMessenger implements ISolutionEngine,
      AuditHelper.audit(session.getId(), session.getName(), sequenceName, getObjectName(), processId,
      MessageTypes.INSTANCE_START, instanceId, "", 0, this); //$NON-NLS-1$
      } catch (Throwable t) {
-     error(Messages.getErrorString("SolutionEngine.ERROR_0008_INVALID_INSTANCE", instanceId), t); //$NON-NLS-1$
+     error(Messages.getInstance().getErrorString("SolutionEngine.ERROR_0008_INVALID_INSTANCE", instanceId), t); //$NON-NLS-1$
      status = IRuntimeContext.RUNTIME_STATUS_SETUP_FAIL;
      return null;
      }
@@ -305,7 +305,7 @@ public class SolutionEngine extends PentahoMessenger implements ISolutionEngine,
      instanceId = runtime.getInstanceId();
      genLogIdFromInfo(instanceId, SolutionEngine.LOG_NAME, sequenceName);
      } catch (Throwable t) {
-     error(Messages.getErrorString("SolutionEngine.ERROR_0008_INVALID_INSTANCE", instanceId), t); //$NON-NLS-1$
+     error(Messages.getInstance().getErrorString("SolutionEngine.ERROR_0008_INVALID_INSTANCE", instanceId), t); //$NON-NLS-1$
      status = IRuntimeContext.RUNTIME_STATUS_SETUP_FAIL;
      return null;
      }
@@ -355,7 +355,7 @@ public class SolutionEngine extends PentahoMessenger implements ISolutionEngine,
 
     // load the solution action document
     if (debug) {
-      debug(Messages.getString("SolutionEngine.DEBUG_LOADING_ACTION_DEFINITION")); //$NON-NLS-1$
+      debug(Messages.getInstance().getString("SolutionEngine.DEBUG_LOADING_ACTION_DEFINITION")); //$NON-NLS-1$
     }
 
     IActionSequence actionSequence = null;
@@ -365,7 +365,7 @@ public class SolutionEngine extends PentahoMessenger implements ISolutionEngine,
       actionSequence = createActionSequence(sequenceName, sequencePath, solutionName);
     }
     if (actionSequence == null) {
-      error(Messages.getErrorString("SolutionEngine.ERROR_0007_ACTION_EXECUTION_FAILED")); //$NON-NLS-1$
+      error(Messages.getInstance().getErrorString("SolutionEngine.ERROR_0007_ACTION_EXECUTION_FAILED")); //$NON-NLS-1$
       status = IRuntimeContext.RUNTIME_STATUS_FAILURE;
       long end = System.currentTimeMillis();
       AuditHelper
@@ -377,7 +377,7 @@ public class SolutionEngine extends PentahoMessenger implements ISolutionEngine,
               processId,
               MessageTypes.INSTANCE_FAILED,
               runtime.getInstanceId(),
-              Messages.getErrorString("SolutionEngine.ERROR_0007_ACTION_EXECUTION_FAILED"), ((float) (end - start) / 1000), this); //$NON-NLS-1$
+              Messages.getInstance().getErrorString("SolutionEngine.ERROR_0007_ACTION_EXECUTION_FAILED"), ((float) (end - start) / 1000), this); //$NON-NLS-1$
       return runtime;
     }
 

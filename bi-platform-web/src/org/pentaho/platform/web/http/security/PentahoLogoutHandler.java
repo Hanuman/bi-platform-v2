@@ -41,7 +41,7 @@ public class PentahoLogoutHandler implements LogoutHandler {
 
   public void logout(final HttpServletRequest request, final HttpServletResponse response, final Authentication authentication) {
     if (PentahoLogoutHandler.logger.isDebugEnabled()) {
-      PentahoLogoutHandler.logger.debug(Messages.getString("PentahoLogoutHandler.DEBUG_HANDLE_LOGOUT")); //$NON-NLS-1$
+      PentahoLogoutHandler.logger.debug(Messages.getInstance().getString("PentahoLogoutHandler.DEBUG_HANDLE_LOGOUT")); //$NON-NLS-1$
     }
     IPentahoSession userSession = PentahoHttpSessionHelper.getPentahoSession(request);
     PentahoSystem.invokeLogoutListeners(userSession);

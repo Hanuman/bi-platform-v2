@@ -57,7 +57,7 @@ public class ChartBeansSystemListener implements IPentahoSystemListener {
 			Logger
 					.warn(
 							ChartBeansSystemListener.class.getName(),
-							Messages.getString("ChartBeansSystemListener.ERROR_0004_LOAD_FAILED"),  //$NON-NLS-1$
+							Messages.getInstance().getString("ChartBeansSystemListener.ERROR_0004_LOAD_FAILED"),  //$NON-NLS-1$
 							ex);
 			return false;
 		}
@@ -82,7 +82,7 @@ public class ChartBeansSystemListener implements IPentahoSystemListener {
 		List<Element> nodes = PentahoSystem.getSystemSettings().getSystemSettings(configFile, "bean"); //$NON-NLS-1$
 
 		if (nodes == null || nodes.size() == 0) {
-			String msg = Messages.getString("ChartBeansSystemListener.ERROR_0001_CONFIG_MISSING"); //$NON-NLS-1$
+			String msg = Messages.getInstance().getString("ChartBeansSystemListener.ERROR_0001_CONFIG_MISSING"); //$NON-NLS-1$
 			Logger.warn(ChartBeansSystemListener.class.getName(), msg);
 			throw new ChartSystemInitializationException(msg);
 		}
@@ -104,7 +104,7 @@ public class ChartBeansSystemListener implements IPentahoSystemListener {
 					pluginMap.put(id, plugin);
 				} catch (PluginBeanException e) {
 					Logger.warn(ChartBeansSystemListener.class.getName(),
-									Messages.getString("ChartBeansSystemListener.ERROR_0002_PLUGINMANAGER_BEAN_MISSING", id),//$NON-NLS-1$
+									Messages.getInstance().getString("ChartBeansSystemListener.ERROR_0002_PLUGINMANAGER_BEAN_MISSING", id),//$NON-NLS-1$
 									e);
 				}
 			}
@@ -121,7 +121,7 @@ public class ChartBeansSystemListener implements IPentahoSystemListener {
 			  }
 			} catch (Exception ex) {
 				Logger.warn(ChartBeansSystemListener.class.getName(),
-						Messages.getString("ChartBeansSystemListener.ERROR_0003_CLASS_CREATION_PROBLEM") + clazz, ex); //$NON-NLS-1$
+						Messages.getInstance().getString("ChartBeansSystemListener.ERROR_0003_CLASS_CREATION_PROBLEM") + clazz, ex); //$NON-NLS-1$
 			}
 		}
 		return plugins;

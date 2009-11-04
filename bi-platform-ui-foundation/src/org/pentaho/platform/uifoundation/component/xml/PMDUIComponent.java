@@ -97,7 +97,7 @@ public class PMDUIComponent extends XmlComponent {
     } else if (action == PMDUIComponent.ACTION_LOOKUP) {
       return getLookup();
     } else {
-      throw new RuntimeException(Messages.getErrorString(
+      throw new RuntimeException(Messages.getInstance().getErrorString(
           "PMDUIComponent.ERROR_0002_ILLEGAL_ACTION", String.valueOf(action))); //$NON-NLS-1$
     }
   }
@@ -116,9 +116,9 @@ public class PMDUIComponent extends XmlComponent {
           addThinDomainModels(domain, modelsNode, root);
         }
       } catch (Throwable t) {
-        error(Messages.getString("PMDUIComponent.ERROR_0001_GET_MODEL_LIST")); //$NON-NLS-1$
+        error(Messages.getInstance().getString("PMDUIComponent.ERROR_0001_GET_MODEL_LIST")); //$NON-NLS-1$
         t.printStackTrace();
-        root.addElement("message").setText(Messages.getString("PMDUIComponent.USER_NO_DOMAIN_SPECIFIED")); //$NON-NLS-1$ //$NON-NLS-2$
+        root.addElement("message").setText(Messages.getInstance().getString("PMDUIComponent.USER_NO_DOMAIN_SPECIFIED")); //$NON-NLS-1$ //$NON-NLS-2$
       }
 
     } else {
@@ -165,13 +165,13 @@ public class PMDUIComponent extends XmlComponent {
 
     if (domainName == null) {
       // we can't do this without a model
-      root.addElement("message").setText(Messages.getString("PMDUIComponent.USER_NO_DOMAIN_SPECIFIED")); //$NON-NLS-1$ //$NON-NLS-2$
+      root.addElement("message").setText(Messages.getInstance().getString("PMDUIComponent.USER_NO_DOMAIN_SPECIFIED")); //$NON-NLS-1$ //$NON-NLS-2$
       return doc;
     }
 
     if (modelId == null) {
       // we can't do this without a model
-      root.addElement("message").setText(Messages.getString("PMDUIComponent.USER_NO_MODEL_SPECIFIED")); //$NON-NLS-1$ //$NON-NLS-2$
+      root.addElement("message").setText(Messages.getInstance().getString("PMDUIComponent.USER_NO_MODEL_SPECIFIED")); //$NON-NLS-1$ //$NON-NLS-2$
       return doc;
     }
 
@@ -180,15 +180,15 @@ public class PMDUIComponent extends XmlComponent {
     // because it's lighter weight, check the thin model
     Domain domain = getMetadataRepository().getDomain(domainName);
     if (domain == null) {
-      root.addElement("message").setText(Messages.getString("PMDUIComponent.USER_DOMAIN_LOADING_ERROR", domainName)); //$NON-NLS-1$ //$NON-NLS-2$
+      root.addElement("message").setText(Messages.getInstance().getString("PMDUIComponent.USER_DOMAIN_LOADING_ERROR", domainName)); //$NON-NLS-1$ //$NON-NLS-2$
       return doc;
     }
     String locale = LocaleHelper.getClosestLocale(LocaleHelper.getLocale().toString(), domain.getLocaleCodes());
     LogicalModel model = domain.findLogicalModel(modelId); 
     
     if (model == null) {
-      root.addElement("message").setText(Messages.getString("PMDUIComponent.USER_MODEL_LOADING_ERROR", modelId)); //$NON-NLS-1$ //$NON-NLS-2$
-      error(Messages.getString("PMDUIComponent.USER_MODEL_LOADING_ERROR", modelId)); //$NON-NLS-1$
+      root.addElement("message").setText(Messages.getInstance().getString("PMDUIComponent.USER_MODEL_LOADING_ERROR", modelId)); //$NON-NLS-1$ //$NON-NLS-2$
+      error(Messages.getInstance().getString("PMDUIComponent.USER_MODEL_LOADING_ERROR", modelId)); //$NON-NLS-1$
       return doc;
     }
     modelNode.addElement("domain_id").setText(domainName); //$NON-NLS-1$
@@ -262,19 +262,19 @@ public class PMDUIComponent extends XmlComponent {
 
     if (domainName == null) {
       // we can't do this without a model
-      root.addElement("message").setText(Messages.getString("PMDUIComponent.USER_NO_DOMAIN_SPECIFIED")); //$NON-NLS-1$ //$NON-NLS-2$
+      root.addElement("message").setText(Messages.getInstance().getString("PMDUIComponent.USER_NO_DOMAIN_SPECIFIED")); //$NON-NLS-1$ //$NON-NLS-2$
       return doc;
     }
 
     if (modelId == null) {
       // we can't do this without a view
-      root.addElement("message").setText(Messages.getString("PMDUIComponent.USER_NO_MODEL_SPECIFIED")); //$NON-NLS-1$ //$NON-NLS-2$
+      root.addElement("message").setText(Messages.getInstance().getString("PMDUIComponent.USER_NO_MODEL_SPECIFIED")); //$NON-NLS-1$ //$NON-NLS-2$
       return doc;
     }
 
     if (columnId == null) {
       // we can't do this without a view
-      root.addElement("message").setText(Messages.getString("PMDUIComponent.USER_NO_COLUMN_SPECIFIED")); //$NON-NLS-1$ //$NON-NLS-2$
+      root.addElement("message").setText(Messages.getInstance().getString("PMDUIComponent.USER_NO_COLUMN_SPECIFIED")); //$NON-NLS-1$ //$NON-NLS-2$
       return doc;
     }
 
@@ -282,13 +282,13 @@ public class PMDUIComponent extends XmlComponent {
     String locale = LocaleHelper.getClosestLocale(LocaleHelper.getLocale().toString(), domain.getLocaleCodes());
     LogicalModel model = domain.findLogicalModel(modelId); // This is the business view that was selected.
     if (model == null) {
-      root.addElement("message").setText(Messages.getString("PMDUIComponent.USER_MODEL_LOADING_ERROR", modelId)); //$NON-NLS-1$ //$NON-NLS-2$
+      root.addElement("message").setText(Messages.getInstance().getString("PMDUIComponent.USER_MODEL_LOADING_ERROR", modelId)); //$NON-NLS-1$ //$NON-NLS-2$
       return doc;
     }
 
     LogicalColumn column = model.findLogicalColumn(columnId);
     if (column == null) {
-      root.addElement("message").setText(Messages.getString("PMDUIComponent.USER_COLUMN_NOT_FOUND")); //$NON-NLS-1$ //$NON-NLS-2$
+      root.addElement("message").setText(Messages.getInstance().getString("PMDUIComponent.USER_COLUMN_NOT_FOUND")); //$NON-NLS-1$ //$NON-NLS-2$
       return doc;
     }
 
@@ -305,7 +305,7 @@ public class PMDUIComponent extends XmlComponent {
     }
     
     if (view == null) {
-      root.addElement("message").setText(Messages.getString("PMDUIComponent.USER_VIEW_NOT_FOUND")); //$NON-NLS-1$ //$NON-NLS-2$
+      root.addElement("message").setText(Messages.getInstance().getString("PMDUIComponent.USER_VIEW_NOT_FOUND")); //$NON-NLS-1$ //$NON-NLS-2$
       return doc;
     }
 

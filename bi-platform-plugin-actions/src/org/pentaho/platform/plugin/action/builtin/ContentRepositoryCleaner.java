@@ -79,11 +79,11 @@ public class ContentRepositoryCleaner extends ComponentBase {
 
     OutputStream feedbackOutputStream = getFeedbackOutputStream();
     if (feedbackOutputStream != null) { // We have a feedback stream so we'll send some messages to it.
-      feedbackOutputStream.write(Messages.getString("ContentRepositoryCleaner.INFO_0001").getBytes()); //$NON-NLS-1$
+      feedbackOutputStream.write(Messages.getInstance().getString("ContentRepositoryCleaner.INFO_0001").getBytes()); //$NON-NLS-1$
       feedbackOutputStream.write(Integer.toString(deleteCount).getBytes());
-      feedbackOutputStream.write(Messages.getString("ContentRepositoryCleaner.INFO_0002").getBytes()); //$NON-NLS-1$
+      feedbackOutputStream.write(Messages.getInstance().getString("ContentRepositoryCleaner.INFO_0002").getBytes()); //$NON-NLS-1$
       feedbackOutputStream.write(Integer.toString(Math.abs(daysBack)).getBytes());
-      feedbackOutputStream.write(Messages.getString("ContentRepositoryCleaner.INFO_0003").getBytes()); //$NON-NLS-1$
+      feedbackOutputStream.write(Messages.getInstance().getString("ContentRepositoryCleaner.INFO_0003").getBytes()); //$NON-NLS-1$
     }
     return true;
   }

@@ -96,7 +96,7 @@ public class SearchResultToAttrValueList implements Transformer, InitializingBea
    */
   protected String extract(final String src, final String inTokenName) {
     if (SearchResultToAttrValueList.logger.isDebugEnabled()) {
-      SearchResultToAttrValueList.logger.debug(Messages.getString(
+      SearchResultToAttrValueList.logger.debug(Messages.getInstance().getString(
           "SearchResultToAttrValueList.DEBUG_LOOKING_FOR_SUBSTRING", inTokenName, src)); //$NON-NLS-1$
     }
     String[] tokens = src.split(","); //$NON-NLS-1$
@@ -104,14 +104,14 @@ public class SearchResultToAttrValueList implements Transformer, InitializingBea
       String[] rdnTokens = rdnString.split("="); //$NON-NLS-1$
       if (rdnTokens[0].trim().equals(inTokenName)) {
         if (SearchResultToAttrValueList.logger.isDebugEnabled()) {
-          SearchResultToAttrValueList.logger.debug(Messages.getString(
+          SearchResultToAttrValueList.logger.debug(Messages.getInstance().getString(
               "SearchResultToAttrValueList.DEBUG_EXTRACTED_TOKEN", rdnTokens[1].trim())); //$NON-NLS-1$
         }
         return rdnTokens[1].trim();
       }
     }
     if (SearchResultToAttrValueList.logger.isDebugEnabled()) {
-      SearchResultToAttrValueList.logger.debug(Messages.getString(
+      SearchResultToAttrValueList.logger.debug(Messages.getInstance().getString(
           "SearchResultToAttrValueList.DEBUG_TOKEN_NOT_FOUND", inTokenName, src)); //$NON-NLS-1$
     }
     return null;
@@ -129,14 +129,14 @@ public class SearchResultToAttrValueList implements Transformer, InitializingBea
       SearchResult res = (SearchResult) obj;
       if (SearchResultToAttrValueList.logger.isDebugEnabled()) {
         SearchResultToAttrValueList.logger
-            .debug(Messages
+            .debug(Messages.getInstance()
                 .getString(
                     "SearchResultToAttrValueList.DEBUG_ATTRIBUTES_FROM_SEARCHRESULT", (null != res.getAttributes()) ? res.getAttributes().toString() : "null")); //$NON-NLS-1$ //$NON-NLS-2$
       }
       Attribute attr = res.getAttributes().get(attributeName);
       if (SearchResultToAttrValueList.logger.isDebugEnabled()) {
         SearchResultToAttrValueList.logger
-            .debug(Messages
+            .debug(Messages.getInstance()
                 .getString(
                     "SearchResultToAttrValueList.DEBUG_ATTRIBUTE_VALUE", attributeName, (null != attr) ? attr.toString() : "null")); //$NON-NLS-1$ //$NON-NLS-2$
       }
@@ -155,7 +155,7 @@ public class SearchResultToAttrValueList implements Transformer, InitializingBea
                 }
               } else {
                 if (SearchResultToAttrValueList.logger.isWarnEnabled()) {
-                  SearchResultToAttrValueList.logger.warn(Messages
+                  SearchResultToAttrValueList.logger.warn(Messages.getInstance()
                       .getString("SearchResultToAttrValueList.WARN_ATTRIBUTE_NOT_A_STRING")); //$NON-NLS-1$
                 }
               }
@@ -167,7 +167,7 @@ public class SearchResultToAttrValueList implements Transformer, InitializingBea
           }
         } catch (NamingException e) {
           if (SearchResultToAttrValueList.logger.isErrorEnabled()) {
-            SearchResultToAttrValueList.logger.error(Messages
+            SearchResultToAttrValueList.logger.error(Messages.getInstance()
                 .getErrorString("SearchResultToAttrValueList.ERROR_0001_NAMING_EXCEPTION"), e); //$NON-NLS-1$
           }
         }

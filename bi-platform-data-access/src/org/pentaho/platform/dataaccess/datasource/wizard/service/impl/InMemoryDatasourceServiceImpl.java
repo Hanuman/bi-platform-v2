@@ -94,13 +94,13 @@ public class InMemoryDatasourceServiceImpl implements IDatasourceService {
     try {
       metadataDomainRepository.removeModel(domainId, modelName);
     } catch (DomainStorageException dse) {
-      logger.error(Messages.getErrorString("InMemoryDatasourceServiceImpl.ERROR_0017_UNABLE_TO_STORE_DOMAIN", domainId),
+      logger.error(Messages.getInstance().getErrorString("InMemoryDatasourceServiceImpl.ERROR_0017_UNABLE_TO_STORE_DOMAIN", domainId),
           dse);
-      throw new DatasourceServiceException(Messages.getErrorString(
+      throw new DatasourceServiceException(Messages.getInstance().getErrorString(
           "InMemoryDatasourceServiceImpl.ERROR_0016_UNABLE_TO_STORE_DOMAIN", domainId), dse); //$NON-NLS-1$      
     } catch (DomainIdNullException dne) {
-      logger.error(Messages.getErrorString("DatasourceServiceDelegate.ERROR_0019_DOMAIN_IS_NULL"), dne);
-      throw new DatasourceServiceException(Messages
+      logger.error(Messages.getInstance().getErrorString("DatasourceServiceDelegate.ERROR_0019_DOMAIN_IS_NULL"), dne);
+      throw new DatasourceServiceException(Messages.getInstance()
           .getErrorString("InMemoryDatasourceServiceImpl.ERROR_0019_DOMAIN_IS_NULL"), dne); //$NON-NLS-1$      
     }
     return true;
@@ -131,7 +131,7 @@ public class InMemoryDatasourceServiceImpl implements IDatasourceService {
       sqlConnection.setReadOnly(true);
       return sqlConnection.executeQuery(BEFORE_QUERY + query + AFTER_QUERY);
     } catch (Exception e) {
-      logger.error(Messages.getErrorString(
+      logger.error(Messages.getInstance().getErrorString(
           "InMemoryDatasourceServiceImpl.ERROR_0009_QUERY_VALIDATION_FAILED", e.getLocalizedMessage()), e);//$NON-NLS-1$
       throw new QueryValidationException(e.getLocalizedMessage(), e); //$NON-NLS-1$      
     } finally {
@@ -150,9 +150,9 @@ public class InMemoryDatasourceServiceImpl implements IDatasourceService {
       returnResultSet = DatasourceInMemoryServiceHelper.getSerializeableResultSet(connectionName, query,
           Integer.parseInt(previewLimit), null);
     } catch (QueryValidationException e) {
-      logger.error(Messages.getErrorString(
+      logger.error(Messages.getInstance().getErrorString(
           "InMemoryDatasourceServiceImpl.ERROR_0009_QUERY_VALIDATION_FAILED", e.getLocalizedMessage()), e);//$NON-NLS-1$
-      throw new DatasourceServiceException(Messages.getErrorString(
+      throw new DatasourceServiceException(Messages.getInstance().getErrorString(
           "InMemoryDatasourceServiceImpl.ERROR_0009_QUERY_VALIDATION_FAILED", e.getLocalizedMessage()), e); //$NON-NLS-1$      
     }
     return returnResultSet;
@@ -164,9 +164,9 @@ public class InMemoryDatasourceServiceImpl implements IDatasourceService {
     try {
       conn = DatasourceInMemoryServiceHelper.getDataSourceConnection(connectionName);
     } catch (DatasourceServiceException dme) {
-      logger.error(Messages.getErrorString("InMemoryDatasourceServiceImpl.ERROR_0026_UNABLE_TO_TEST_CONNECTION",
+      logger.error(Messages.getInstance().getErrorString("InMemoryDatasourceServiceImpl.ERROR_0026_UNABLE_TO_TEST_CONNECTION",
           connectionName), dme);
-      throw new DatasourceServiceException(Messages.getErrorString(
+      throw new DatasourceServiceException(Messages.getInstance().getErrorString(
           "InMemoryDatasourceServiceImpl.ERROR_0026_UNABLE_TO_TEST_CONNECTION", connectionName), dme); //$NON-NLS-1$
     } finally {
       try {
@@ -174,9 +174,9 @@ public class InMemoryDatasourceServiceImpl implements IDatasourceService {
           conn.close();
         }
       } catch (SQLException e) {
-        logger.error(Messages.getErrorString("InMemoryDatasourceServiceImpl.ERROR_0026_UNABLE_TO_TEST_CONNECTION",
+        logger.error(Messages.getInstance().getErrorString("InMemoryDatasourceServiceImpl.ERROR_0026_UNABLE_TO_TEST_CONNECTION",
             connectionName), e);
-        throw new DatasourceServiceException(Messages.getErrorString(
+        throw new DatasourceServiceException(Messages.getInstance().getErrorString(
             "InMemoryDatasourceServiceImpl.ERROR_0026_UNABLE_TO_TEST_CONNECTION", connectionName), e); //$NON-NLS-1$
       }
     }
@@ -206,14 +206,14 @@ public class InMemoryDatasourceServiceImpl implements IDatasourceService {
       Domain domain = sqlModelGenerator.generate();
       return new BusinessData(domain, resultSet.getData());
     } catch (SQLModelGeneratorException smge) {
-      logger.error(Messages.getErrorString("InMemoryDatasourceServiceImpl.ERROR_0016_UNABLE_TO_GENERATE_MODEL",
+      logger.error(Messages.getInstance().getErrorString("InMemoryDatasourceServiceImpl.ERROR_0016_UNABLE_TO_GENERATE_MODEL",
           smge.getLocalizedMessage()), smge);
-      throw new DatasourceServiceException(Messages
+      throw new DatasourceServiceException(Messages.getInstance()
           .getErrorString("InMemoryDatasourceServiceImpl.ERROR_0015_UNABLE_TO_GENERATE_MODEL"), smge); //$NON-NLS-1$
     } catch (QueryValidationException e) {
-      logger.error(Messages.getErrorString(
+      logger.error(Messages.getInstance().getErrorString(
           "InMemoryDatasourceServiceImpl.ERROR_0009_QUERY_VALIDATION_FAILED", e.getLocalizedMessage()), e);//$NON-NLS-1$
-      throw new DatasourceServiceException(Messages.getErrorString(
+      throw new DatasourceServiceException(Messages.getInstance().getErrorString(
           "InMemoryDatasourceServiceImpl.ERROR_0009_QUERY_VALIDATION_FAILED", e.getLocalizedMessage()), e); //$NON-NLS-1$      
     }
   }
@@ -246,9 +246,9 @@ public class InMemoryDatasourceServiceImpl implements IDatasourceService {
         properties.load(fis);
         path = (String) properties.get(UPLOAD_FILE_PATH);
       } catch (IOException e) {
-        logger.error(Messages.getErrorString("InMemoryDatasourceServiceImpl.ERROR_0016_UNABLE_TO_GENERATE_MODEL", e
+        logger.error(Messages.getInstance().getErrorString("InMemoryDatasourceServiceImpl.ERROR_0016_UNABLE_TO_GENERATE_MODEL", e
             .getLocalizedMessage()), e);
-        throw new DatasourceServiceException(Messages.getErrorString(
+        throw new DatasourceServiceException(Messages.getInstance().getErrorString(
             "InMemoryDatasourceServiceImpl.ERROR_0015_UNABLE_TO_GENERATE_MODEL", e.getLocalizedMessage()), e); //$NON-NLS-1$
       } finally {
         fis.close();
@@ -259,9 +259,9 @@ public class InMemoryDatasourceServiceImpl implements IDatasourceService {
       return new BusinessData(domain, data);
 
     } catch (Exception e) {
-      logger.error(Messages.getErrorString("InMemoryDatasourceServiceImpl.ERROR_0016_UNABLE_TO_GENERATE_MODEL", e
+      logger.error(Messages.getInstance().getErrorString("InMemoryDatasourceServiceImpl.ERROR_0016_UNABLE_TO_GENERATE_MODEL", e
           .getLocalizedMessage()), e);
-      throw new DatasourceServiceException(Messages.getErrorString(
+      throw new DatasourceServiceException(Messages.getInstance().getErrorString(
           "InMemoryDatasourceServiceImpl.ERROR_0015_UNABLE_TO_GENERATE_MODEL", e.getLocalizedMessage()), e); //$NON-NLS-1$
     }
   }
@@ -288,18 +288,18 @@ public class InMemoryDatasourceServiceImpl implements IDatasourceService {
       getMetadataDomainRepository().storeDomain(domain, overwrite);
       return true;
     } catch (DomainStorageException dse) {
-      logger.error(Messages.getErrorString("InMemoryDatasourceServiceImpl.ERROR_0017_UNABLE_TO_STORE_DOMAIN",
+      logger.error(Messages.getInstance().getErrorString("InMemoryDatasourceServiceImpl.ERROR_0017_UNABLE_TO_STORE_DOMAIN",
           domainName), dse);
-      throw new DatasourceServiceException(Messages.getErrorString(
+      throw new DatasourceServiceException(Messages.getInstance().getErrorString(
           "InMemoryDatasourceServiceImpl.ERROR_0016_UNABLE_TO_STORE_DOMAIN", domainName), dse); //$NON-NLS-1$      
     } catch (DomainAlreadyExistsException dae) {
-      logger.error(Messages.getErrorString("InMemoryDatasourceServiceImpl.ERROR_0018_DOMAIN_ALREADY_EXIST",
+      logger.error(Messages.getInstance().getErrorString("InMemoryDatasourceServiceImpl.ERROR_0018_DOMAIN_ALREADY_EXIST",
           domainName), dae);
-      throw new DatasourceServiceException(Messages.getErrorString(
+      throw new DatasourceServiceException(Messages.getInstance().getErrorString(
           "InMemoryDatasourceServiceImpl.ERROR_0018_DOMAIN_ALREADY_EXIST", domainName), dae); //$NON-NLS-1$      
     } catch (DomainIdNullException dne) {
-      logger.error(Messages.getErrorString("InMemoryDatasourceServiceImpl.ERROR_0019_DOMAIN_IS_NULL"), dne);
-      throw new DatasourceServiceException(Messages
+      logger.error(Messages.getInstance().getErrorString("InMemoryDatasourceServiceImpl.ERROR_0019_DOMAIN_IS_NULL"), dne);
+      throw new DatasourceServiceException(Messages.getInstance()
           .getErrorString("InMemoryDatasourceServiceImpl.ERROR_0019_DOMAIN_IS_NULL"), dne); //$NON-NLS-1$      
     }
   }

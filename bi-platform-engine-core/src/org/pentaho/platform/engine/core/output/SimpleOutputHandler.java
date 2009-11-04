@@ -241,7 +241,7 @@ public class SimpleOutputHandler implements IOutputHandler {
    */
   public void setOutput(final String name, final Object value) {
     if (value == null) {
-      SimpleOutputHandler.logger.info(Messages.getString("SimpleOutputHandler.INFO_VALUE_IS_NULL")); //$NON-NLS-1$
+      SimpleOutputHandler.logger.info(Messages.getInstance().getString("SimpleOutputHandler.INFO_VALUE_IS_NULL")); //$NON-NLS-1$
       return;
     }
 

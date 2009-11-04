@@ -140,7 +140,7 @@ public class JFreeReportGenerateDefinitionComponent extends AbstractJFreeReportC
       if (dsName != null) {
         connectStr = "dataSource=" + dsName + "; Catalog=mondrian"; //$NON-NLS-1$ //$NON-NLS-2$
       } else {
-        error(Messages.getErrorString("MDXBaseComponent.ERROR_0005_INVALID_CONNECTION")); //$NON-NLS-1$
+        error(Messages.getInstance().getErrorString("MDXBaseComponent.ERROR_0005_INVALID_CONNECTION")); //$NON-NLS-1$
         return null;
       }
       Properties props = new Properties();

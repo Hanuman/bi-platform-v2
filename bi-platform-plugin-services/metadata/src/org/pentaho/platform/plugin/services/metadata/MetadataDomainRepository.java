@@ -177,15 +177,15 @@ public class MetadataDomainRepository extends FileBasedMetadataDomainRepository 
         domain.setId(solution);
         domains.put(solution, domain);
       } catch (Throwable t) {
-        logger.error(Messages.getString("MetadataPublisher.ERROR_0001_COULD_NOT_LOAD", resourceName), t); //$NON-NLS-1$
-        throw new RuntimeException(Messages.getString("MetadataPublisher.ERROR_0001_COULD_NOT_LOAD"), t); //$NON-NLS-1$
+        logger.error(Messages.getInstance().getString("MetadataPublisher.ERROR_0001_COULD_NOT_LOAD", resourceName), t); //$NON-NLS-1$
+        throw new RuntimeException(Messages.getInstance().getString("MetadataPublisher.ERROR_0001_COULD_NOT_LOAD"), t); //$NON-NLS-1$
       } finally {
         if (xmiInputStream != null) {
           try {
             xmiInputStream.close();
           } catch (IOException ex) {
-            logger.error(Messages.getString("MetadataPublisher.ERROR_0001_COULD_NOT_LOAD", resourceName), ex); //$NON-NLS-1$
-            throw new RuntimeException(Messages.getString("MetadataPublisher.ERROR_0001_COULD_NOT_LOAD"), ex); //$NON-NLS-1$
+            logger.error(Messages.getInstance().getString("MetadataPublisher.ERROR_0001_COULD_NOT_LOAD", resourceName), ex); //$NON-NLS-1$
+            throw new RuntimeException(Messages.getInstance().getString("MetadataPublisher.ERROR_0001_COULD_NOT_LOAD"), ex); //$NON-NLS-1$
           }
         }
       }
@@ -235,7 +235,7 @@ public class MetadataDomainRepository extends FileBasedMetadataDomainRepository 
       domains.put(domain.getId(), domain);
       
     } catch (Exception e) {
-      throw new DomainStorageException(Messages.getErrorString("MetadataDomainRepository.ERROR_0006_FAILED_TO_STORE_LEGACY_DOMAIN", domain.getId()), e); //$NON-NLS-1$
+      throw new DomainStorageException(Messages.getInstance().getErrorString("MetadataDomainRepository.ERROR_0006_FAILED_TO_STORE_LEGACY_DOMAIN", domain.getId()), e); //$NON-NLS-1$
     }
   }
 }

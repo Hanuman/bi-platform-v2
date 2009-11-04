@@ -86,7 +86,7 @@ public class GwtRpcPluginProxyServlet extends RemoteServiceServlet {
 
     String serviceId = getDispatchKey();
     if (null == serviceManager.getServiceConfig("gwt", serviceId)) { //$NON-NLS-1$
-      String errMsg = Messages.getErrorString("GwtRpcPluginProxyServlet.ERROR_0001_SERVICE_NOT_FOUND", serviceId); //$NON-NLS-1$
+      String errMsg = Messages.getInstance().getErrorString("GwtRpcPluginProxyServlet.ERROR_0001_SERVICE_NOT_FOUND", serviceId); //$NON-NLS-1$
       logger.error(errMsg);
       return RPC.encodeResponseForFailure(null, new ServiceException(errMsg), policy);
     }
@@ -96,7 +96,7 @@ public class GwtRpcPluginProxyServlet extends RemoteServiceServlet {
       targetBean = serviceManager.getServiceBean("gwt", serviceId); //$NON-NLS-1$
     } catch (ServiceException e) {
       logger.error(
-          Messages.getErrorString("GwtRpcPluginProxyServlet.ERROR_0002_FAILED_TO_GET_BEAN_REFERENCE", serviceId), e); //$NON-NLS-1$
+          Messages.getInstance().getErrorString("GwtRpcPluginProxyServlet.ERROR_0002_FAILED_TO_GET_BEAN_REFERENCE", serviceId), e); //$NON-NLS-1$
       return RPC.encodeResponseForFailure(null, e, policy);
     }
 
@@ -125,7 +125,7 @@ public class GwtRpcPluginProxyServlet extends RemoteServiceServlet {
       return RPC.invokeAndEncodeResponse(targetBean, method, rpcRequest.getParameters(), rpcRequest
           .getSerializationPolicy());
     } catch (IncompatibleRemoteServiceException ex) {
-      logger.error(Messages.getErrorString(
+      logger.error(Messages.getInstance().getErrorString(
           "GwtRpcPluginProxyServlet.ERROR_0003_RPC_INVOCATION_FAILED", targetBean.getClass().getName()), ex); //$NON-NLS-1$
       return RPC.encodeResponseForFailure(null, ex);
     } finally {
@@ -157,7 +157,7 @@ public class GwtRpcPluginProxyServlet extends RemoteServiceServlet {
       try {
         modulePath = new URL(moduleBaseURL).getPath();
       } catch (MalformedURLException ex) {
-        logger.error(Messages.getErrorString("GwtRpcPluginProxyServlet.ERROR_0004_MALFORMED_URL", moduleBaseURL), ex); //$NON-NLS-1$
+        logger.error(Messages.getInstance().getErrorString("GwtRpcPluginProxyServlet.ERROR_0004_MALFORMED_URL", moduleBaseURL), ex); //$NON-NLS-1$
         //cannot proceed, default serialization policy will apply
         return null;
       }
@@ -173,7 +173,7 @@ public class GwtRpcPluginProxyServlet extends RemoteServiceServlet {
     if (serviceClassloader == null) {
       //if we get here, then the service is not supplied by a plugin and thus we cannot hope to find
       //the appropriate serialization policy
-      logger.error(Messages.getErrorString("GwtRpcPluginProxyServlet.ERROR_0005_FAILED_TO_FIND_PLUGIN", appContextPath)); //$NON-NLS-1$
+      logger.error(Messages.getInstance().getErrorString("GwtRpcPluginProxyServlet.ERROR_0005_FAILED_TO_FIND_PLUGIN", appContextPath)); //$NON-NLS-1$
     }
 
     String serializationPolicyFile = SerializationPolicyLoader.getSerializationPolicyFileName(strongName);
@@ -186,11 +186,11 @@ public class GwtRpcPluginProxyServlet extends RemoteServiceServlet {
     IPluginResourceLoader resLoader = PentahoSystem.get(IPluginResourceLoader.class, PentahoSessionHolder.getSession());
     List<URL> urls = resLoader.findResources(serviceClassloader, serializationPolicyFile);
     if (urls.size() < 1) {
-      logger.error(Messages.getErrorString(
+      logger.error(Messages.getInstance().getErrorString(
           "GwtRpcPluginProxyServlet.ERROR_0006_FAILED_TO_FIND_FILE", serializationPolicyFile)); //$NON-NLS-1$
     } else if (urls.size() > 1) {
       logger
-          .warn(Messages.getString("GwtRpcPluginProxyServlet.WARN_MULTIPLE_RESOURCES_FOUND", serializationPolicyFile)); //$NON-NLS-1$
+          .warn(Messages.getInstance().getString("GwtRpcPluginProxyServlet.WARN_MULTIPLE_RESOURCES_FOUND", serializationPolicyFile)); //$NON-NLS-1$
     } else {
       try {
         rpcFileInputStream = urls.get(0).openStream();
@@ -200,10 +200,10 @@ public class GwtRpcPluginProxyServlet extends RemoteServiceServlet {
         }
 
       } catch (IOException e) {
-        logger.error(Messages.getErrorString(
+        logger.error(Messages.getInstance().getErrorString(
             "GwtRpcPluginProxyServlet.ERROR_0007_FAILED_TO_OPEN_FILE", serializationPolicyFile), e); //$NON-NLS-1$
       } catch (ParseException e) {
-        logger.error(Messages.getErrorString(
+        logger.error(Messages.getInstance().getErrorString(
             "GwtRpcPluginProxyServlet.ERROR_0008_FAILED_TO_PARSE_FILE", serializationPolicyFile), e); //$NON-NLS-1$
       } finally {
         if (rpcFileInputStream != null) {

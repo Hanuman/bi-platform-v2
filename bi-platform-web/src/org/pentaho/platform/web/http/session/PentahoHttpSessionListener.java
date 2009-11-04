@@ -51,7 +51,7 @@ public class PentahoHttpSessionListener implements HttpSessionListener {
     LocaleHelper.setLocale(Locale.getDefault());
     String sessionId = event.getSession().getId();
     if (PentahoHttpSessionListener.debug) {
-      Logger.debug(this, Messages.getString("HttpSessionListener.DEBUG_SESSION_CREATED", sessionId)); //$NON-NLS-1$
+      Logger.debug(this, Messages.getInstance().getString("HttpSessionListener.DEBUG_SESSION_CREATED", sessionId)); //$NON-NLS-1$
     }
 
     // AuditHelper.audit( instanceId, String userId, String actionName,
@@ -88,7 +88,7 @@ public class PentahoHttpSessionListener implements HttpSessionListener {
         }
       }
     } catch (Throwable e) {
-      Logger.error(this, Messages.getErrorString("HttpSessionListener.ERROR_0001_ERROR_DESTROYING_SESSION"), e); //$NON-NLS-1$
+      Logger.error(this, Messages.getInstance().getErrorString("HttpSessionListener.ERROR_0001_ERROR_DESTROYING_SESSION"), e); //$NON-NLS-1$
     }
 
   }

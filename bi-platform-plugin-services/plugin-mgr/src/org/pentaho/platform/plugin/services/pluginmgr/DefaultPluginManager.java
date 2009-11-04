@@ -87,7 +87,7 @@ public class DefaultPluginManager extends AbstractPluginManager {
         //we do not want any type of exception to leak out and cause a problem here
         //A plugin unload should not adversely affect anything downstream, it should
         //log an error and otherwise fail silently
-        String msg = Messages.getErrorString(
+        String msg = Messages.getInstance().getErrorString(
             "PluginManager.ERROR_0014_PLUGIN_FAILED_TO_PROPERLY_UNLOAD", plugin.getId()); //$NON-NLS-1$
         Logger.error(getClass().toString(), msg, t);
         PluginMessageLogger.add(msg);
@@ -112,7 +112,7 @@ public class DefaultPluginManager extends AbstractPluginManager {
       providedPlugins = pluginProvider.getPlugins(session);
       
     } catch (PlatformPluginRegistrationException e1) {
-      String msg = Messages.getErrorString("PluginManager.ERROR_0012_PLUGIN_DISCOVERY_FAILED"); //$NON-NLS-1$
+      String msg = Messages.getInstance().getErrorString("PluginManager.ERROR_0012_PLUGIN_DISCOVERY_FAILED"); //$NON-NLS-1$
       Logger.error(getClass().toString(), msg, e1);
       PluginMessageLogger.add(msg);
       anyErrors = true;
@@ -127,7 +127,7 @@ public class DefaultPluginManager extends AbstractPluginManager {
         } catch (Throwable t) {
           // this has been logged already
           anyErrors = true;
-          String msg = Messages.getErrorString("PluginManager.ERROR_0011_FAILED_TO_REGISTER_PLUGIN", plugin.getId()); //$NON-NLS-1$
+          String msg = Messages.getInstance().getErrorString("PluginManager.ERROR_0011_FAILED_TO_REGISTER_PLUGIN", plugin.getId()); //$NON-NLS-1$
           Logger.error(getClass().toString(), msg, t);
           PluginMessageLogger.add(msg);
         }
@@ -138,7 +138,7 @@ public class DefaultPluginManager extends AbstractPluginManager {
     try {
       svcManager.initServices();
     } catch (ServiceInitializationException e) {
-      String msg = Messages.getErrorString("PluginManager.ERROR_0022_SERVICE_INITIALIZATION_FAILED"); //$NON-NLS-1$
+      String msg = Messages.getInstance().getErrorString("PluginManager.ERROR_0022_SERVICE_INITIALIZATION_FAILED"); //$NON-NLS-1$
       Logger.error(getClass().toString(), msg, e);
       PluginMessageLogger.add(msg);
     }
@@ -157,7 +157,7 @@ public class DefaultPluginManager extends AbstractPluginManager {
         listener = loader.loadClass(plugin.getLifecycleListenerClassname()).newInstance();
       }
     } catch (Throwable t) {
-      throw new PlatformPluginRegistrationException(Messages.getErrorString(
+      throw new PlatformPluginRegistrationException(Messages.getInstance().getErrorString(
           "PluginManager.ERROR_0017_COULD_NOT_LOAD_PLUGIN_LIFECYCLE_LISTENER", plugin.getId(), plugin //$NON-NLS-1$
               .getLifecycleListenerClassname()), t);
     }
@@ -165,7 +165,7 @@ public class DefaultPluginManager extends AbstractPluginManager {
     if (listener != null) {
       if (!IPluginLifecycleListener.class.isAssignableFrom(listener.getClass())) {
         throw new PlatformPluginRegistrationException(
-            Messages
+            Messages.getInstance()
                 .getErrorString(
                     "PluginManager.ERROR_0016_PLUGIN_LIFECYCLE_LISTENER_WRONG_TYPE", plugin.getId(), plugin.getLifecycleListenerClassname())); //$NON-NLS-1$
       }
@@ -180,12 +180,12 @@ public class DefaultPluginManager extends AbstractPluginManager {
     //with rollback if something is broken
     
     if(StringUtils.isEmpty(plugin.getId())) {
-      throw new PlatformPluginRegistrationException(Messages.getErrorString(
+      throw new PlatformPluginRegistrationException(Messages.getInstance().getErrorString(
           "PluginManager.ERROR_0026_PLUGIN_INVALID", plugin.getSourceDescription())); //$NON-NLS-1$
     }
 
     if (registeredPlugins.containsKey(plugin.getId())) {
-      throw new PlatformPluginRegistrationException(Messages.getErrorString(
+      throw new PlatformPluginRegistrationException(Messages.getInstance().getErrorString(
           "PluginManager.ERROR_0024_PLUGIN_ALREADY_LOADED_BY_SAME_NAME", plugin.getId())); //$NON-NLS-1$
     }
 
@@ -211,13 +211,13 @@ public class DefaultPluginManager extends AbstractPluginManager {
     //a service class may be configured as a plugin bean
     registerServices(plugin, loader);
 
-    PluginMessageLogger.add(Messages.getString("PluginManager.PLUGIN_REGISTERED", plugin.getId())); //$NON-NLS-1$
+    PluginMessageLogger.add(Messages.getInstance().getString("PluginManager.PLUGIN_REGISTERED", plugin.getId())); //$NON-NLS-1$
     try {
       plugin.loaded();
     } catch (Throwable t) {
       //The plugin has already been loaded, so there is really no logical response to any type
       //of failure here except to log an error and otherwise fail silently
-      String msg = Messages.getErrorString("PluginManager.ERROR_0015_PLUGIN_LOADED_HANDLING_FAILED", plugin.getId()); //$NON-NLS-1$
+      String msg = Messages.getInstance().getErrorString("PluginManager.ERROR_0015_PLUGIN_LOADED_HANDLING_FAILED", plugin.getId()); //$NON-NLS-1$
       Logger.error(getClass().toString(), msg, t);
       PluginMessageLogger.add(msg);
     }
@@ -234,7 +234,7 @@ public class DefaultPluginManager extends AbstractPluginManager {
       //if a meta-provider is defined for this content type, then register it...
       if (!StringUtils.isEmpty(metaProviderClass)) {
         Class<?> clazz = null;
-        String defaultErrMsg = Messages
+        String defaultErrMsg = Messages.getInstance()
             .getErrorString(
                 "PluginManager.ERROR_0013_FAILED_TO_SET_CONTENT_TYPE_META_PROVIDER", metaProviderClass, info.getExtension()); //$NON-NLS-1$
 
@@ -249,7 +249,7 @@ public class DefaultPluginManager extends AbstractPluginManager {
         if (!(ISolutionFileMetaProvider.class.isAssignableFrom(clazz) || IFileInfoGenerator.class
             .isAssignableFrom(clazz))) {
           throw new PlatformPluginRegistrationException(
-              Messages
+              Messages.getInstance()
                   .getErrorString(
                       "PluginManager.ERROR_0019_WRONG_TYPE_FOR_CONTENT_TYPE_META_PROVIDER", metaProviderClass, info.getExtension())); //$NON-NLS-1$
         }
@@ -286,7 +286,7 @@ public class DefaultPluginManager extends AbstractPluginManager {
   private void registerClass(IPlatformPlugin plugin, String id, String classname, ClassLoader loader)
       throws PlatformPluginRegistrationException {
     if (objectFactory.objectDefined(id)) {
-      throw new PlatformPluginRegistrationException(Messages.getErrorString(
+      throw new PlatformPluginRegistrationException(Messages.getInstance().getErrorString(
           "PluginManager.ERROR_0018_BEAN_ALREADY_REGISTERED", id, plugin.getId())); //$NON-NLS-1$
     }
     //right now we support only prototype scope for beans
@@ -301,7 +301,7 @@ public class DefaultPluginManager extends AbstractPluginManager {
         try {
           svcManager.registerService(ws);
         } catch (ServiceException e) {
-          throw new PlatformPluginRegistrationException(Messages.getErrorString(
+          throw new PlatformPluginRegistrationException(Messages.getInstance().getErrorString(
               "PluginManager.ERROR_0025_SERVICE_REGISTRATION_FAILED", ws.getId(), plugin.getId()), e); //$NON-NLS-1$
         }
       }
@@ -319,7 +319,7 @@ public class DefaultPluginManager extends AbstractPluginManager {
     //Set the service type (one service config instance created per service type)
     //
     if (pws.getTypes() == null || pws.getTypes().length < 1) {
-      throw new PlatformPluginRegistrationException(Messages.getErrorString(
+      throw new PlatformPluginRegistrationException(Messages.getInstance().getErrorString(
           "PluginManager.ERROR_0023_SERVICE_TYPE_UNSPECIFIED", pws.getId())); //$NON-NLS-1$
     }
     for (String type : pws.getTypes()) {
@@ -347,7 +347,7 @@ public class DefaultPluginManager extends AbstractPluginManager {
       registerClass(plugin, serviceClassKey, serviceClassName, loader);
 
       if (!this.isBeanRegistered(serviceClassKey)) {
-        throw new PlatformPluginRegistrationException(Messages.getErrorString(
+        throw new PlatformPluginRegistrationException(Messages.getInstance().getErrorString(
             "PluginManager.ERROR_0020_NO_SERVICE_CLASS_REGISTERED", serviceClassKey)); //$NON-NLS-1$
       }
 
@@ -364,7 +364,7 @@ public class DefaultPluginManager extends AbstractPluginManager {
         }
         ws.setExtraClasses(classes);
       } catch (PluginBeanException e) {
-        throw new PlatformPluginRegistrationException(Messages.getErrorString(
+        throw new PlatformPluginRegistrationException(Messages.getInstance().getErrorString(
             "PluginManager.ERROR_0021_SERVICE_CLASS_LOAD_FAILED", serviceClassKey), e); //$NON-NLS-1$
       }
       services.add(ws);
@@ -401,7 +401,7 @@ public class DefaultPluginManager extends AbstractPluginManager {
       throws PlatformPluginRegistrationException {
     //register the content generators
     for (IContentGeneratorInfo cgInfo : plugin.getContentGenerators()) {
-      String errorMsg = Messages.getString(
+      String errorMsg = Messages.getInstance().getString(
           "PluginManager.USER_CONTENT_GENERATOR_NOT_REGISTERED", cgInfo.getId(), plugin.getId()); //$NON-NLS-1$
 
       //test load the content generator
@@ -434,7 +434,7 @@ public class DefaultPluginManager extends AbstractPluginManager {
           objectFactory.defineObject(cgInfo.getType(), cgInfo.getFileInfoGeneratorClassname(), Scope.LOCAL, loader);
         } catch (Exception e) {
           throw new PlatformPluginRegistrationException(
-              Messages
+              Messages.getInstance()
                   .getErrorString(
                       "PluginManager.ERROR_0013_FAILED_TO_CREATE_FILE_INFO_GENERATOR", cgInfo.getFileInfoGeneratorClassname(), cgInfo.getType()), e); //$NON-NLS-1$
         }
@@ -448,7 +448,7 @@ public class DefaultPluginManager extends AbstractPluginManager {
       }
       generatorList.add(cgInfo);
 
-      PluginMessageLogger.add(Messages.getString(
+      PluginMessageLogger.add(Messages.getInstance().getString(
           "PluginManager.USER_CONTENT_GENERATOR_REGISTERED", cgInfo.getId(), plugin.getId())); //$NON-NLS-1$
     }
   }
@@ -474,7 +474,7 @@ public class DefaultPluginManager extends AbstractPluginManager {
         throw new PluginBeanException(ex);
       }
     } else {
-      throw new PluginBeanException(Messages.getString("PluginManager.WARN_CLASS_NOT_REGISTERED")); //$NON-NLS-1$
+      throw new PluginBeanException(Messages.getInstance().getString("PluginManager.WARN_CLASS_NOT_REGISTERED")); //$NON-NLS-1$
     }
   }
 
@@ -489,7 +489,7 @@ public class DefaultPluginManager extends AbstractPluginManager {
         throw new PluginBeanException(ex);
       }
     } else {
-      throw new PluginBeanException(Messages.getString("PluginManager.WARN_CLASS_NOT_REGISTERED", beanId)); //$NON-NLS-1$
+      throw new PluginBeanException(Messages.getInstance().getString("PluginManager.WARN_CLASS_NOT_REGISTERED", beanId)); //$NON-NLS-1$
     }
   }
 

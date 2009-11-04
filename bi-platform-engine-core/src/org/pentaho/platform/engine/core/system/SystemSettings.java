@@ -64,7 +64,7 @@ public class SystemSettings extends PentahoBase implements ISystemSettings {
    */
   public static final String PENTAHOSETTINGSFILENAME = "pentaho.xml"; //$NON-NLS-1$
 
-  private static final String LOG_NAME = Messages.getString("SYSTEMSETTINGS.CODE_LOG_NAME"); //$NON-NLS-1$
+  private static final String LOG_NAME = Messages.getInstance().getString("SYSTEMSETTINGS.CODE_LOG_NAME"); //$NON-NLS-1$
 
   private static final Log logger = LogFactory.getLog(SystemSettings.class);
 
@@ -78,12 +78,12 @@ public class SystemSettings extends PentahoBase implements ISystemSettings {
     // TODO sbarkdull clean up
     //      Document doc = getSystemSettingsDocument(DEFAULT_PENTAHOSETTINGSFILENAME);
     //      if (doc == null) {
-    //        throw new IllegalArgumentException(Messages.getErrorString("SYSTEMSETTINGS.ERROR_0003_INVALID_OR_MISSING_FILE")); //$NON-NLS-1$
+    //        throw new IllegalArgumentException(Messages.getInstance().getErrorString("SYSTEMSETTINGS.ERROR_0003_INVALID_OR_MISSING_FILE")); //$NON-NLS-1$
     //      }
   }
 
   public String getSystemSetting(final String path, final String settingName, final String defaultValue) {
-    debug(Messages.getString("SYSTEMSETTINGS.DEBUG_GET_SYSTEM_SETTING_PATH", File.separator + path)); //$NON-NLS-1$
+    debug(Messages.getInstance().getString("SYSTEMSETTINGS.DEBUG_GET_SYSTEM_SETTING_PATH", File.separator + path)); //$NON-NLS-1$
     Document doc = getSystemSettingsDocument(path);
     if (doc == null) {
       return null;
@@ -157,10 +157,10 @@ public class SystemSettings extends PentahoBase implements ISystemSettings {
     File f = new File(getAbsolutePath(path));
 
     if (!f.exists()) {
-      error(Messages.getErrorString("SYSTEMSETTINGS.ERROR_0002_FILE_NOT_IN_SOLUTION", f.getAbsolutePath())); //$NON-NLS-1$
+      error(Messages.getInstance().getErrorString("SYSTEMSETTINGS.ERROR_0002_FILE_NOT_IN_SOLUTION", f.getAbsolutePath())); //$NON-NLS-1$
       return null;
     }
-    debug(Messages.getString("SYSTEMSETTINGS.DEBUG_SYSTEM_SETTINGS_GET_FILE", f.getAbsolutePath())); //$NON-NLS-1$
+    debug(Messages.getInstance().getString("SYSTEMSETTINGS.DEBUG_SYSTEM_SETTINGS_GET_FILE", f.getAbsolutePath())); //$NON-NLS-1$
 
     return f;
   }
@@ -199,9 +199,9 @@ public class SystemSettings extends PentahoBase implements ISystemSettings {
       return props;
 
     } catch (FileNotFoundException e) {
-      SystemSettings.logger.error(Messages.getErrorString("SystemSettings.ERROR_0003_FAILED_INITIALIZE", path), e); //$NON-NLS-1$
+      SystemSettings.logger.error(Messages.getInstance().getErrorString("SystemSettings.ERROR_0003_FAILED_INITIALIZE", path), e); //$NON-NLS-1$
     } catch (IOException ioe) {
-      SystemSettings.logger.error(Messages.getErrorString("SystemSettings.ERROR_0003_FAILED_INITIALIZE", path), ioe); //$NON-NLS-1$
+      SystemSettings.logger.error(Messages.getInstance().getErrorString("SystemSettings.ERROR_0003_FAILED_INITIALIZE", path), ioe); //$NON-NLS-1$
     }
     return null;
   }
