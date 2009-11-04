@@ -46,7 +46,7 @@
 <meta http-equiv="content-type" content="text/html; charset=ISO-8859-1">
 
 
-<title><%=Messages.getString("UI.PUC.LAUNCH.TITLE")%></title>
+<title><%=Messages.getInstance().getString("UI.PUC.LAUNCH.TITLE")%></title>
 
 <style type="text/css">
 <!--
@@ -401,19 +401,19 @@ function loader(){
 
   ButtonInfo newReportButton = new ButtonInfo();
   newReportButton.buttonCommand = "openWAQR()"; //$NON-NLS-1$
-  newReportButton.buttonLabel = Messages.getString( "UI.PUC.LAUNCH.NEW_REPORT" ); //$NON-NLS-1$
+  newReportButton.buttonLabel = Messages.getInstance().getString( "UI.PUC.LAUNCH.NEW_REPORT" ); //$NON-NLS-1$
   newReportButton.buttonImage = "images/btn_ql_newreport.png"; //$NON-NLS-1$
   buttonOverlays.put(buttonIds.get(0), newReportButton);
 	
   ButtonInfo newAnalysisButton = new ButtonInfo();
   newAnalysisButton.buttonCommand = "openAnalysis()"; //$NON-NLS-1$
-  newAnalysisButton.buttonLabel = Messages.getString( "UI.PUC.LAUNCH.NEW_ANALYSIS" ); //$NON-NLS-1$
+  newAnalysisButton.buttonLabel = Messages.getInstance().getString( "UI.PUC.LAUNCH.NEW_ANALYSIS" ); //$NON-NLS-1$
   newAnalysisButton.buttonImage = "images/btn_ql_newanalysis.png"; //$NON-NLS-1$
   buttonOverlays.put(buttonIds.get(1), newAnalysisButton);
 	
   ButtonInfo launchContentButton = new ButtonInfo();
   launchContentButton.buttonCommand = "openManage()"; //$NON-NLS-1$
-  launchContentButton.buttonLabel = Messages.getString( "UI.PUC.LAUNCH.MANAGE_CONTENT" ); //$NON-NLS-1$
+  launchContentButton.buttonLabel = Messages.getInstance().getString( "UI.PUC.LAUNCH.MANAGE_CONTENT" ); //$NON-NLS-1$
   launchContentButton.buttonImage = "images/btn_ql_manage.png"; //$NON-NLS-1$
   buttonOverlays.put(buttonIds.get(2), launchContentButton);
 
