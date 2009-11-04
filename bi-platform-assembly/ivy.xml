@@ -92,11 +92,13 @@
       Explicitly exluding illegal jars is purely a workaround. We need to fix the root problem, that certain project(s)
       are exporting these jars in their default dependencies.
     -->
-    <exclude org="javax.servlet" module="servlet-api" />
-    <exclude org="com.google.gwt" module="gwt-user" />
-    <exclude org="com.google.gwt" module="gwt-dev" />
+    <exclude org="javax.servlet"   module="servlet-api" />
+    <exclude org="com.google.gwt"  module="gwt-user" />
+    <exclude org="com.google.gwt"  module="gwt-dev" />
     <exclude org="commons-logging" module="commons-logging-api" />
-
+    <exclude org="javax.jcr"       module="jcr" />
+    <!-- remove ehcache artifact and keep ehcache-core artifact -->
+    <exclude org="net.sf.ehcache"  module="ehcache" />
   </dependencies>
 
 </ivy-module>
