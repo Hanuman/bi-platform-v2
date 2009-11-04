@@ -2,12 +2,9 @@ version: 1
 
 dn: uid=joe,ou=users,ou=system
 mail: joe.pentaho@pentaho.org
-uniquemember: cn=ceo,ou=roles
-uniquemember: cn=Admin,ou=roles
 objectclass: inetOrgPerson
 objectclass: organizationalPerson
 objectclass: person
-objectclass: groupOfUniqueNames
 objectclass: top
 uid: joe
 cn: joe
@@ -18,12 +15,9 @@ sn: Pentaho
 
 dn: uid=suzy,ou=users,ou=system
 mail: suzy.pentaho@pentaho.org
-uniquemember: cn=cto, ou=roles
-uniquemember: cn = is , ou = roles
 objectclass: inetOrgPerson
 objectclass: organizationalPerson
 objectclass: person
-objectclass: groupOfUniqueNames
 objectclass: top
 uid: suzy
 cn: suzy
@@ -34,12 +28,9 @@ sn: Pentaho
 
 dn: uid=tiffany,ou=users,ou=system
 mail: tiffany.pentaho@pentaho.org
-uniquemember: cn=devmgr,ou=roles
-uniquemember: cn=dev,ou=roles
 objectclass: inetOrgPerson
 objectclass: organizationalPerson
 objectclass: person
-objectclass: groupOfUniqueNames
 objectclass: top
 uid: tiffany
 cn: tiffany
@@ -50,11 +41,9 @@ sn: Pentaho
 
 dn: uid=pat,ou=users,ou=system
 mail: pat.pentaho@pentaho.org
-uniquemember: cn=dev,ou=roles
 objectclass: inetOrgPerson
 objectclass: organizationalPerson
 objectclass: person
-objectclass: groupOfUniqueNames
 objectclass: top
 uid: pat
 cn: pat
