@@ -43,8 +43,7 @@ public abstract class AbstractPentahoAclVoter implements IAclVoter, IPentahoInit
   public void init(final IPentahoSession session) {
     ISystemSettings settings = PentahoSystem.getSystemSettings();
     String roleName = settings.getSystemSetting("acl-voter/admin-role", "Admin"); //$NON-NLS-1$ //$NON-NLS-2$
-    String rolePrefix = settings.getSystemSetting("role-prefix", "ROLE_"); //$NON-NLS-1$ //$NON-NLS-2$
-    adminRole = new GrantedAuthorityImpl(rolePrefix + roleName);
+    adminRole = new GrantedAuthorityImpl(roleName);
   }
 
   public boolean isPentahoAdministrator(final IPentahoSession session) {

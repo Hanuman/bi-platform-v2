@@ -35,13 +35,9 @@
     <property name="staticField" value="org.pentaho.platform.repository.pcr.springsecurity.RepositoryFilePermission.WRITE"/>
   </bean>
   
-  <!-- An access decision voter that reads VOTE_ROLE_* configuration settings -->
-  <bean id="roleVoter" class="org.springframework.security.vote.RoleVoter">
-    <property name="rolePrefix" ref="rolePrefix" />
-  </bean>
-  
-  <bean id="rolePrefix" class="java.lang.String">
-    <constructor-arg value="ROLE_" />
+  <!-- An access decision voter that reads VOTE_ROLE_FILE_* configuration settings -->
+  <bean id="roleVoter" class="org.pentaho.platform.repository.pcr.springsecurity.PentahoSubstringRoleVoter">
+    <constructor-arg value="VOTE_ROLE_FILE_" />
   </bean>
 
   <!-- An access decision voter that reads VOTE_ACL_FILE_READ configuration settings. -->
@@ -54,7 +50,7 @@
         <ref local="RepositoryFilePermission.READ"/>
       </list>
     </constructor-arg>
-    <constructor-arg value="ROLE_Admin"/>
+    <constructor-arg value="Admin"/>
     <property name="processDomainObjectClass" value="org.pentaho.platform.api.repository.RepositoryFile"/>
   </bean>
   
@@ -68,7 +64,7 @@
         <ref local="RepositoryFilePermission.WRITE"/>
       </list>
     </constructor-arg>
-    <constructor-arg value="ROLE_Admin"/>
+    <constructor-arg value="Admin"/>
     <property name="processDomainObjectClass" value="org.pentaho.platform.api.repository.RepositoryFile"/>
   </bean>
   
@@ -82,7 +78,7 @@
         <ref local="RepositoryFilePermission.APPEND"/>
       </list>
     </constructor-arg>
-    <constructor-arg value="ROLE_Admin"/>
+    <constructor-arg value="Admin"/>
     <property name="processDomainObjectClass" value="org.pentaho.platform.api.repository.RepositoryFile"/>
   </bean>
   
@@ -96,7 +92,7 @@
         <ref local="RepositoryFilePermission.EXECUTE"/>
       </list>
     </constructor-arg>
-    <constructor-arg value="ROLE_Admin"/>
+    <constructor-arg value="Admin"/>
     <property name="processDomainObjectClass" value="org.pentaho.platform.api.repository.RepositoryFile"/>
   </bean>
 
@@ -110,7 +106,7 @@
         <ref local="RepositoryFilePermission.DELETE"/>
       </list>
     </constructor-arg>
-    <constructor-arg value="ROLE_Admin"/>
+    <constructor-arg value="Admin"/>
     <property name="processDomainObjectClass" value="org.pentaho.platform.api.repository.RepositoryFile"/>
   </bean>
 
@@ -150,13 +146,13 @@
             <constructor-arg>
             <list>
                 <bean class="org.springframework.security.GrantedAuthorityImpl">
-                    <constructor-arg value="ROLE_Admin"/>
+                    <constructor-arg value="Admin"/>
                 </bean>
                 <bean class="org.springframework.security.GrantedAuthorityImpl">
-                    <constructor-arg value="ROLE_Admin"/>
+                    <constructor-arg value="Admin"/>
                 </bean>
                 <bean class="org.springframework.security.GrantedAuthorityImpl">
-                    <constructor-arg value="ROLE_Admin"/>
+                    <constructor-arg value="Admin"/>
                 </bean>
             </list>
             </constructor-arg>
@@ -195,7 +191,7 @@
         <ref local="RepositoryFilePermission.READ"/>
       </list>
     </constructor-arg>
-    <constructor-arg value="ROLE_Admin"/>
+    <constructor-arg value="Admin"/>
   </bean>
 
   <!-- Processes AFTER_ACL_EXECUTE configuration settings -->
@@ -207,7 +203,7 @@
         <ref local="RepositoryFilePermission.EXECUTE"/>
       </list>
     </constructor-arg>
-    <constructor-arg value="ROLE_Admin"/>
+    <constructor-arg value="Admin"/>
   </bean>
 
   <!-- Processes AFTER_ACL_TRAVERSE configuration settings -->
@@ -219,7 +215,7 @@
         <ref local="RepositoryFilePermission.EXECUTE"/>
       </list>
     </constructor-arg>
-    <constructor-arg value="ROLE_Admin"/>
+    <constructor-arg value="Admin"/>
     <constructor-arg ref="pentahoContentDao" />
   </bean>
 
@@ -265,7 +261,7 @@
     
     <!-- The authority name granted to all non-admins. -->
     <bean id="regularUserAuthorityName" class="java.lang.String">
-      <constructor-arg value="ROLE_Authenticated" />
+      <constructor-arg value="Authenticated" />
     </bean>
 
     <bean id="pentahoContentRepositoryTarget" class="org.pentaho.platform.repository.pcr.PentahoContentRepository">
@@ -283,12 +279,12 @@
   <property name="afterInvocationManager"><ref bean="afterInvocationManager"/></property>
   <property name="objectDefinitionSource">
     <value>
-org.pentaho.platform.api.repository.IPentahoContentRepository.createUserHomeFolderIfNecessary=ROLE_Authenticated
-org.pentaho.platform.api.repository.IPentahoContentRepository.getFile=ROLE_Authenticated,AFTER_ACL_TRAVERSE
-org.pentaho.platform.api.repository.IPentahoContentRepository.getStreamForRead=ROLE_Authenticated,VOTE_ACL_FILE_READ
-org.pentaho.platform.api.repository.IPentahoContentRepository.getStreamForExecute=ROLE_Authenticated,VOTE_ACL_FILE_READ,VOTE_ACL_FILE_EXECUTE
-org.pentaho.platform.api.repository.IPentahoContentRepository.createFile=ROLE_Authenticated,VOTE_ACL_FILE_WRITE
-org.pentaho.platform.api.repository.IPentahoContentRepository.createFolder=ROLE_Authenticated,VOTE_ACL_FILE_APPEND
+org.pentaho.platform.api.repository.IPentahoContentRepository.createUserHomeFolderIfNecessary=VOTE_ROLE_FILE_Authenticated
+org.pentaho.platform.api.repository.IPentahoContentRepository.getFile=VOTE_ROLE_FILE_Authenticated,AFTER_ACL_TRAVERSE
+org.pentaho.platform.api.repository.IPentahoContentRepository.getStreamForRead=VOTE_ROLE_FILE_Authenticated,VOTE_ACL_FILE_READ
+org.pentaho.platform.api.repository.IPentahoContentRepository.getStreamForExecute=VOTE_ROLE_FILE_Authenticated,VOTE_ACL_FILE_READ,VOTE_ACL_FILE_EXECUTE
+org.pentaho.platform.api.repository.IPentahoContentRepository.createFile=VOTE_ROLE_FILE_Authenticated,VOTE_ACL_FILE_WRITE
+org.pentaho.platform.api.repository.IPentahoContentRepository.createFolder=VOTE_ROLE_FILE_Authenticated,VOTE_ACL_FILE_APPEND
     </value>
   </property>
 </bean>        

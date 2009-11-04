@@ -22,28 +22,28 @@
 		<property name="allAuthorities">
 			<list>
 				<bean class="org.springframework.security.GrantedAuthorityImpl">
-					<constructor-arg value="ROLE_Authenticated" />
+					<constructor-arg value="Authenticated" />
 				</bean>
 				<bean class="org.springframework.security.GrantedAuthorityImpl">
-					<constructor-arg value="ROLE_Admin" />
+					<constructor-arg value="Admin" />
 				</bean>
 				<bean class="org.springframework.security.GrantedAuthorityImpl">
-					<constructor-arg value="ROLE_ceo" />
+					<constructor-arg value="ceo" />
 				</bean>
 				<bean class="org.springframework.security.GrantedAuthorityImpl">
-					<constructor-arg value="ROLE_cto" />
+					<constructor-arg value="cto" />
 				</bean>
 				<bean class="org.springframework.security.GrantedAuthorityImpl">
-					<constructor-arg value="ROLE_is" />
+					<constructor-arg value="is" />
 				</bean>
 				<bean class="org.springframework.security.GrantedAuthorityImpl">
-					<constructor-arg value="ROLE_dev" />
+					<constructor-arg value="dev" />
 				</bean>
 				<bean class="org.springframework.security.GrantedAuthorityImpl">
-					<constructor-arg value="ROLE_devmgr" />
+					<constructor-arg value="devmgr" />
 				</bean>
 				<bean class="org.springframework.security.GrantedAuthorityImpl">
-					<constructor-arg value="ROLE_Anonymous" />
+					<constructor-arg value="Anonymous" />
 				</bean>
 			</list>
 		</property>

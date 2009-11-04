@@ -22,7 +22,7 @@
     <property name="userRoleDao">
       <ref local="userRoleDao" />
     </property>
-    <property name="rolePrefix" value="ROLE_" />
+    <property name="rolePrefix" value="" />
   </bean>
 
   <!-- IUserRoleDao implementation -->

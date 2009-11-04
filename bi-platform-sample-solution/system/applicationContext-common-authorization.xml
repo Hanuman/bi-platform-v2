@@ -7,8 +7,9 @@
 
 <beans>
 
-  <bean id="roleVoter" class="org.springframework.security.vote.RoleVoter">
-    <property name="rolePrefix" value="ROLE_" />
+  <!-- An access decision voter that reads VOTE_ROLE_URL_* configuration settings -->
+  <bean id="roleVoter" class="org.pentaho.platform.repository.pcr.springsecurity.PentahoSubstringRoleVoter">
+    <constructor-arg value="VOTE_ROLE_URL_" />
   </bean>
 
 </beans>

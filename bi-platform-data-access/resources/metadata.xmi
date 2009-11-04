@@ -181,7 +181,7 @@
         <CWMMDB:DimensionedObject xmi.idref = 'a58'/>
       </CWM:Description.modelElement>
     </CWM:Description>
-    <CWM:Description xmi.id = 'a59' name = 'security' body = '&lt;security&gt;&#10;  &lt;owner-rights&gt;&#10;  &lt;owner&gt;&lt;type&gt;role&lt;/type&gt;&lt;name&gt;ROLE_AUTHENTICATED&lt;/name&gt;&lt;/owner&gt; &lt;rights&gt;31&lt;/rights&gt;&#10;  &lt;/owner-rights&gt;&#10;&lt;/security&gt;&#10;'
+    <CWM:Description xmi.id = 'a59' name = 'security' body = '&lt;security&gt;&#10;  &lt;owner-rights&gt;&#10;  &lt;owner&gt;&lt;type&gt;role&lt;/type&gt;&lt;name&gt;Authenticated&lt;/name&gt;&lt;/owner&gt; &lt;rights&gt;31&lt;/rights&gt;&#10;  &lt;/owner-rights&gt;&#10;&lt;/security&gt;&#10;'
       type = 'Security'>
       <CWM:Description.modelElement>
         <CWMMDB:Schema xmi.idref = 'a60'/>

@@ -28,6 +28,7 @@ import org.pentaho.platform.engine.security.acls.PentahoAclEntry;
 import org.springframework.security.Authentication;
 import org.springframework.security.acl.AclEntry;
 import org.springframework.security.acl.basic.BasicAclEntry;
+import org.springframework.security.acl.basic.GrantedAuthorityEffectiveAclsResolver;
 
 /**
  * Standard basic ACL Voter. This voter simply aggregates all the applicable
@@ -115,7 +116,7 @@ public class PentahoBasicAclVoter extends AbstractPentahoAclVoter implements IAc
     List allAcls = holder.getEffectiveAccessControls();
     AclEntry[] acls = new AclEntry[allAcls.size()];
     acls = (AclEntry[]) allAcls.toArray(acls);
-    RolePrefixGrantedAuthorityEffectiveAclsResolver resolver = new RolePrefixGrantedAuthorityEffectiveAclsResolver();
+    GrantedAuthorityEffectiveAclsResolver resolver = new GrantedAuthorityEffectiveAclsResolver();
     AclEntry[] resolvedAcls = resolver.resolveEffectiveAcls(acls, auth);
     return resolvedAcls;
   }

@@ -62,9 +62,9 @@ public class PentahoContentRepositoryTests implements ApplicationContextAware {
 
   static {
     final String password = "password";
-    final GrantedAuthority[] adminAuthorities = new GrantedAuthority[] { new GrantedAuthorityImpl("ROLE_Admin"),
-        new GrantedAuthorityImpl("ROLE_Authenticated") };
-    final GrantedAuthority[] regularAuthorities = new GrantedAuthority[] { new GrantedAuthorityImpl("ROLE_Authenticated") };
+    final GrantedAuthority[] adminAuthorities = new GrantedAuthority[] { new GrantedAuthorityImpl("Admin"),
+        new GrantedAuthorityImpl("Authenticated") };
+    final GrantedAuthority[] regularAuthorities = new GrantedAuthority[] { new GrantedAuthorityImpl("Authenticated") };
 
     UserDetails joe = new User("joe", password, true, true, true, true, adminAuthorities);
     UserDetails suzy = new User("suzy", password, true, true, true, true, regularAuthorities);
@@ -297,7 +297,7 @@ public class PentahoContentRepositoryTests implements ApplicationContextAware {
   private Authentication createAnonymousAuthentication() {
     // create "anonymous" authentication
     final GrantedAuthority[] anonymousUserAuthorities = new GrantedAuthority[1];
-    anonymousUserAuthorities[0] = new GrantedAuthorityImpl("ROLE_ANONYMOUS");
+    anonymousUserAuthorities[0] = new GrantedAuthorityImpl("Anonymous");
     final String password = "ignored";
     UserDetails anonymousUserDetails = new User("anonymousUser", password, true, true, true, true,
         anonymousUserAuthorities);

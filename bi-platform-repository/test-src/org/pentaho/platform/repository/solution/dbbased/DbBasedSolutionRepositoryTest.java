@@ -244,7 +244,7 @@ public class DbBasedSolutionRepositoryTest {
   @Test
   public void testGetActionSequence() throws Exception {
     printTestHeader("testGetActionSequence"); //$NON-NLS-1$
-    login("suzy", "ROLE_Authenticated"); //$NON-NLS-1$//$NON-NLS-2$
+    login("suzy", "Authenticated"); //$NON-NLS-1$//$NON-NLS-2$
     repo.init(pentahoSession);
     IActionSequence seq = repo.getActionSequence("mysolution1", "", "HelloWorld.xaction", ILogger.TRACE, //$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$
         ISolutionRepository.ACTION_EXECUTE);
@@ -266,7 +266,7 @@ public class DbBasedSolutionRepositoryTest {
   @Test
   public void testGetSolutions() throws Exception {
     printTestHeader("testGetSolutions"); //$NON-NLS-1$
-    login("suzy", "ROLE_Authenticated"); //$NON-NLS-1$//$NON-NLS-2$
+    login("suzy", "Authenticated"); //$NON-NLS-1$//$NON-NLS-2$
     repo.init(pentahoSession);
     Document doc = repo.getSolutions(ISolutionRepository.ACTION_EXECUTE);
     prettyPrint(doc);
@@ -289,7 +289,7 @@ public class DbBasedSolutionRepositoryTest {
   @Test
   public void testGetSolutionsWithPath() throws Exception {
     printTestHeader("testGetSolutionsWithPath"); //$NON-NLS-1$
-    login("suzy", "ROLE_Authenticated"); //$NON-NLS-1$//$NON-NLS-2$
+    login("suzy", "Authenticated"); //$NON-NLS-1$//$NON-NLS-2$
     repo.init(pentahoSession);
     Document doc = repo.getSolutions("mysolution1", "", ISolutionRepository.ACTION_EXECUTE, false); //$NON-NLS-1$//$NON-NLS-2$
     prettyPrint(doc);
@@ -301,7 +301,7 @@ public class DbBasedSolutionRepositoryTest {
   @Test
   public void testGetSolutionStructure() throws Exception {
     printTestHeader("testGetSolutionStructure"); //$NON-NLS-1$
-    login("suzy", "ROLE_Authenticated"); //$NON-NLS-1$//$NON-NLS-2$
+    login("suzy", "Authenticated"); //$NON-NLS-1$//$NON-NLS-2$
     repo.init(pentahoSession);
     Document doc = repo.getSolutionStructure(ISolutionRepository.ACTION_EXECUTE);
     prettyPrint(doc);
@@ -345,7 +345,7 @@ public class DbBasedSolutionRepositoryTest {
   @Test
   public void testRemoveSolutionFile() throws Exception {
     printTestHeader("testRemoveSolutionFile"); //$NON-NLS-1$
-    login("suzy", "ROLE_Authenticated"); //$NON-NLS-1$//$NON-NLS-2$
+    login("suzy", "Authenticated"); //$NON-NLS-1$//$NON-NLS-2$
     repo.init(pentahoSession);
     // file should not exist before we copy it
     assertFalse(repo.resourceExists("mysolution2/HelloWorld3.xaction", ISolutionRepository.ACTION_EXECUTE)); //$NON-NLS-1$
@@ -361,7 +361,7 @@ public class DbBasedSolutionRepositoryTest {
   @Test
   public void testRemoveSolutionFileSystem() throws Exception {
     printTestHeader("testRemoveSolutionFileSystem"); //$NON-NLS-1$
-    login("suzy", "ROLE_Authenticated"); //$NON-NLS-1$//$NON-NLS-2$
+    login("suzy", "Authenticated"); //$NON-NLS-1$//$NON-NLS-2$
     repo.init(pentahoSession);
     boolean removed = repo.removeSolutionFile("system", "", "pentaho.xml"); //$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$
     assertFalse(removed);
@@ -370,7 +370,7 @@ public class DbBasedSolutionRepositoryTest {
   @Test
   public void testRemoveSolutionFileAccessDenied() throws Exception {
     printTestHeader("testRemoveSolutionFileAccessDenied"); //$NON-NLS-1$
-    login("joe", "ROLE_Admin"); //$NON-NLS-1$//$NON-NLS-2$
+    login("joe", "Admin"); //$NON-NLS-1$//$NON-NLS-2$
     repo.init(pentahoSession);
     // file should not exist before we copy it
     assertFalse(repo.resourceExists("mysolution1/HelloWorld3.xaction", ISolutionRepository.ACTION_EXECUTE)); //$NON-NLS-1$
@@ -379,7 +379,7 @@ public class DbBasedSolutionRepositoryTest {
             PentahoSystem.getApplicationContext().getSolutionPath(""), "mysolution1", "HelloWorld3.xaction", FileUtils.readFileToByteArray(new File( //$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$
                     "./test-res/DbBasedSolutionRepositoryTest/mysolution1/HelloWorld.xaction")), true); //$NON-NLS-1$
     assertEquals(ISolutionRepository.FILE_ADD_SUCCESSFUL, res);
-    login("suzy", "ROLE_Authenticated"); //$NON-NLS-1$//$NON-NLS-2$
+    login("suzy", "Authenticated"); //$NON-NLS-1$//$NON-NLS-2$
     repo.init(pentahoSession);
     boolean removed = repo.removeSolutionFile("mysolution1", "", "HelloWorld3.xaction"); //$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$
     assertFalse(removed);
@@ -389,7 +389,7 @@ public class DbBasedSolutionRepositoryTest {
   public void testAddSolutionFile() throws Exception {
     printTestHeader("testAddSolutionFile"); //$NON-NLS-1$
     File srcFile = new File("./test-res/DbBasedSolutionRepositoryTest/mysolution1/HelloWorld.xaction"); //$NON-NLS-1$
-    login("suzy", "ROLE_Authenticated"); //$NON-NLS-1$//$NON-NLS-2$
+    login("suzy", "Authenticated"); //$NON-NLS-1$//$NON-NLS-2$
     repo.init(pentahoSession);
     int res = repo.addSolutionFile(PentahoSystem.getApplicationContext().getSolutionPath(""), "mysolution2", //$NON-NLS-1$ //$NON-NLS-2$
         "HelloWorld3.xaction", FileUtils.readFileToByteArray(srcFile), true); //$NON-NLS-1$
@@ -400,7 +400,7 @@ public class DbBasedSolutionRepositoryTest {
   public void testAddSolutionFileExistsNoOverwrite() throws Exception {
     printTestHeader("testAddSolutionFileExistsNoOverwrite"); //$NON-NLS-1$
     File srcFile = new File("./test-res/DbBasedSolutionRepositoryTest/mysolution1/HelloWorld.xaction"); //$NON-NLS-1$
-    login("suzy", "ROLE_Authenticated"); //$NON-NLS-1$//$NON-NLS-2$
+    login("suzy", "Authenticated"); //$NON-NLS-1$//$NON-NLS-2$
     repo.init(pentahoSession);
     assertFalse(repo.resourceExists("mysolution2/HelloWorld3.xaction", ISolutionRepository.ACTION_EXECUTE)); //$NON-NLS-1$
     int res = repo.addSolutionFile(PentahoSystem.getApplicationContext().getSolutionPath(""), "mysolution2", //$NON-NLS-1$ //$NON-NLS-2$
@@ -415,7 +415,7 @@ public class DbBasedSolutionRepositoryTest {
   public void testAddSolutionFileAccessDenied() throws Exception {
     printTestHeader("testAddSolutionFileAccessDenied"); //$NON-NLS-1$
     File srcFile = new File("./test-res/DbBasedSolutionRepositoryTest/mysolution1/HelloWorld.xaction"); //$NON-NLS-1$
-    login("suzy", "ROLE_Authenticated"); //$NON-NLS-1$//$NON-NLS-2$
+    login("suzy", "Authenticated"); //$NON-NLS-1$//$NON-NLS-2$
     repo.init(pentahoSession);
     int res = repo.addSolutionFile(PentahoSystem.getApplicationContext().getSolutionPath(""), "mysolution1", //$NON-NLS-1$ //$NON-NLS-2$
         "HelloWorld3.xaction", FileUtils.readFileToByteArray(srcFile), true); //$NON-NLS-1$
@@ -425,7 +425,7 @@ public class DbBasedSolutionRepositoryTest {
   @Test
   public void testGetSolutionFileLastModified() throws Exception {
     printTestHeader("testGetSolutionFileLastModified"); //$NON-NLS-1$
-    login("suzy", "ROLE_Authenticated"); //$NON-NLS-1$//$NON-NLS-2$
+    login("suzy", "Authenticated"); //$NON-NLS-1$//$NON-NLS-2$
     repo.init(pentahoSession);
     File f = new File("./test-res/DbBasedSolutionRepositoryTest/mysolution1/HelloWorld2.xaction"); //$NON-NLS-1$
     long lastMod = repo.getSolutionFileLastModified(
@@ -445,7 +445,7 @@ public class DbBasedSolutionRepositoryTest {
   @Test
   public void testGetClassLoader() throws Exception {
     printTestHeader("testGetClassLoader"); //$NON-NLS-1$
-    login("suzy", "ROLE_Authenticated"); //$NON-NLS-1$//$NON-NLS-2$
+    login("suzy", "Authenticated"); //$NON-NLS-1$//$NON-NLS-2$
     repo.init(pentahoSession);
     byte[] expectedBytes = FileUtils.readFileToByteArray(new File(
         "./test-res/DbBasedSolutionRepositoryTest/mysolution1/HelloWorld.xaction")); //$NON-NLS-1$
@@ -462,7 +462,7 @@ public class DbBasedSolutionRepositoryTest {
   @Test
   public void testGetFullSolutionTree() throws Exception {
     printTestHeader("testGetFullSolutionTree"); //$NON-NLS-1$
-    login("suzy", "ROLE_Authenticated"); //$NON-NLS-1$//$NON-NLS-2$
+    login("suzy", "Authenticated"); //$NON-NLS-1$//$NON-NLS-2$
     repo.init(pentahoSession);
     Document doc = repo.getFullSolutionTree(ISolutionRepository.ACTION_EXECUTE, null);
     prettyPrint(doc);
@@ -489,7 +489,7 @@ public class DbBasedSolutionRepositoryTest {
   @Test
   public void testGetSolutionTree() throws Exception {
     printTestHeader("testGetSolutionTree"); //$NON-NLS-1$
-    login("suzy", "ROLE_Authenticated"); //$NON-NLS-1$ //$NON-NLS-2$
+    login("suzy", "Authenticated"); //$NON-NLS-1$ //$NON-NLS-2$
     repo.init(pentahoSession);
     Document doc = repo.getSolutionTree(ISolutionRepository.ACTION_EXECUTE);
     prettyPrint(doc);
@@ -526,7 +526,7 @@ public class DbBasedSolutionRepositoryTest {
   @Test
   public void testResourceExists() throws Exception {
     printTestHeader("testResourceExists"); //$NON-NLS-1$
-    login("suzy", "ROLE_Authenticated"); //$NON-NLS-1$ //$NON-NLS-2$
+    login("suzy", "Authenticated"); //$NON-NLS-1$ //$NON-NLS-2$
     repo.init(pentahoSession);
     boolean exists = repo.resourceExists("mysolution1/HelloWorld.xaction", ISolutionRepository.ACTION_EXECUTE); //$NON-NLS-1$
     assertTrue(exists);
@@ -543,7 +543,7 @@ public class DbBasedSolutionRepositoryTest {
   @Test
   public void testResourceSize() throws Exception {
     printTestHeader("testResourceSize"); //$NON-NLS-1$
-    login("suzy", "ROLE_Authenticated"); //$NON-NLS-1$ //$NON-NLS-2$
+    login("suzy", "Authenticated"); //$NON-NLS-1$ //$NON-NLS-2$
     repo.init(pentahoSession);
     long expectedSize = FileUtils.readFileToByteArray(new File(
         "./test-res/DbBasedSolutionRepositoryTest/mysolution1/HelloWorld.xaction")).length; //$NON-NLS-1$
@@ -573,7 +573,7 @@ public class DbBasedSolutionRepositoryTest {
   @Test
   public void testGetResourceInputStream() throws Exception {
     printTestHeader("testGetResourceInputStream"); //$NON-NLS-1$
-    login("suzy", "ROLE_Authenticated"); //$NON-NLS-1$ //$NON-NLS-2$
+    login("suzy", "Authenticated"); //$NON-NLS-1$ //$NON-NLS-2$
     repo.init(pentahoSession);
     byte[] expectedBytes = FileUtils.readFileToByteArray(new File(
         "./test-res/DbBasedSolutionRepositoryTest/mysolution1/HelloWorld.xaction")); //$NON-NLS-1$
@@ -596,7 +596,7 @@ public class DbBasedSolutionRepositoryTest {
   @Test
   public void testGetAllActionSequences() throws Exception {
     printTestHeader("testGetAllActionSequences"); //$NON-NLS-1$
-    login("suzy", "ROLE_Authenticated"); //$NON-NLS-1$ //$NON-NLS-2$
+    login("suzy", "Authenticated"); //$NON-NLS-1$ //$NON-NLS-2$
     repo.init(pentahoSession);
     String[] files = repo.getAllActionSequences(ISolutionRepository.ACTION_EXECUTE);
     Arrays.sort(files);
@@ -617,7 +617,7 @@ public class DbBasedSolutionRepositoryTest {
   @Test
   public void testGetNavigationUIDocument() throws Exception {
     printTestHeader("testGetNavigationUIDocument"); //$NON-NLS-1$
-    login("suzy", "ROLE_Authenticated"); //$NON-NLS-1$ //$NON-NLS-2$
+    login("suzy", "Authenticated"); //$NON-NLS-1$ //$NON-NLS-2$
     repo.init(pentahoSession);
     Document doc = repo.getNavigationUIDocument("", "", ISolutionRepository.ACTION_EXECUTE); //$NON-NLS-1$ //$NON-NLS-2$
     prettyPrint(doc);
@@ -648,7 +648,7 @@ public class DbBasedSolutionRepositoryTest {
   @Test
   public void testGetFileByPath() throws Exception {
     printTestHeader("testGetFileByPath"); //$NON-NLS-1$
-    login("suzy", "ROLE_Authenticated"); //$NON-NLS-1$ //$NON-NLS-2$
+    login("suzy", "Authenticated"); //$NON-NLS-1$ //$NON-NLS-2$
     repo.init(pentahoSession);
     ISolutionFile file = repo.getFileByPath("mysolution1/HelloWorld.xaction", ISolutionRepository.ACTION_EXECUTE); //$NON-NLS-1$
     assertNotNull(file);
@@ -683,7 +683,7 @@ public class DbBasedSolutionRepositoryTest {
     IActionSequenceResource resource = new ActionSequenceResource(
         "", IActionSequenceResource.SOLUTION_FILE_RESOURCE, "text/xml", //$NON-NLS-1$ //$NON-NLS-2$
         "mysolution1/HelloWorld.xaction"); //$NON-NLS-1$
-    login("suzy", "ROLE_Authenticated"); //$NON-NLS-1$ //$NON-NLS-2$
+    login("suzy", "Authenticated"); //$NON-NLS-1$ //$NON-NLS-2$
     repo.init(pentahoSession);
     ISolutionFile file = repo.getSolutionFile(resource, ISolutionRepository.ACTION_EXECUTE);
     assertNotNull(file);
@@ -703,7 +703,7 @@ public class DbBasedSolutionRepositoryTest {
   @Test
   public void testCreateFolder() throws Exception {
     printTestHeader("testCreateFolder"); //$NON-NLS-1$
-    login("suzy", "ROLE_Authenticated"); //$NON-NLS-1$ //$NON-NLS-2$
+    login("suzy", "Authenticated"); //$NON-NLS-1$ //$NON-NLS-2$
     repo.init(pentahoSession);
     File newFolder = new File("./test-res/DbBasedSolutionRepositoryTest/mysolution2/myfolder1"); //$NON-NLS-1$
     ISolutionFile solutionFolder = repo.createFolder(newFolder);
@@ -726,7 +726,7 @@ public class DbBasedSolutionRepositoryTest {
   @Test
   public void testHasAccess() throws Exception {
     printTestHeader("testHasAccess"); //$NON-NLS-1$
-    login("suzy", "ROLE_Authenticated"); //$NON-NLS-1$ //$NON-NLS-2$
+    login("suzy", "Authenticated"); //$NON-NLS-1$ //$NON-NLS-2$
     repo.init(pentahoSession);
     ISolutionFile f1 = repo.getFileByPath("mysolution1", ISolutionRepository.ACTION_EXECUTE); //$NON-NLS-1$
     ISolutionFile f2 = repo.getFileByPath("mysolution2", ISolutionRepository.ACTION_EXECUTE); //$NON-NLS-1$
@@ -741,7 +741,7 @@ public class DbBasedSolutionRepositoryTest {
   @Test
   public void testHasAccessAdminNeverDenied() throws Exception {
     printTestHeader("testHasAccessAdminNeverDenied"); //$NON-NLS-1$
-    login("joe", "ROLE_Admin"); //$NON-NLS-1$ //$NON-NLS-2$
+    login("joe", "Admin"); //$NON-NLS-1$ //$NON-NLS-2$
     repo.init(pentahoSession);
     ISolutionFile f2 = repo.getFileByPath("mysolution2", ISolutionRepository.ACTION_EXECUTE); //$NON-NLS-1$
     ISolutionFile f3 = repo.getFileByPath("", ISolutionRepository.ACTION_EXECUTE); //$NON-NLS-1$
@@ -770,7 +770,7 @@ public class DbBasedSolutionRepositoryTest {
   @Test(expected=PentahoAccessControlException.class)
   public void testSetPermissionsOnNonACLedFile() throws Exception {
     printTestHeader("testSetPermissionsOnNonACLedFile"); //$NON-NLS-1$
-    login("joe", "ROLE_Admin"); //$NON-NLS-1$//$NON-NLS-2$
+    login("joe", "Admin"); //$NON-NLS-1$//$NON-NLS-2$
     repo.init(pentahoSession);
     IPermissionRecipient recipient = new SimpleUser("tiffany"); //$NON-NLS-1$
     IPermissionMask mask = new SimplePermissionMask(ISolutionRepository.ACTION_EXECUTE);
@@ -788,7 +788,7 @@ public class DbBasedSolutionRepositoryTest {
   @Test
   public void testGetPermissionsOnNonACLedFile() throws Exception {
     printTestHeader("testGetPermissionsOnNonACLedFile"); //$NON-NLS-1$
-    login("joe", "ROLE_Admin"); //$NON-NLS-1$//$NON-NLS-2$
+    login("joe", "Admin"); //$NON-NLS-1$//$NON-NLS-2$
     repo.init(pentahoSession);
     ISolutionFile f1 = repo.getFileByPath("mysolution1/HelloWorld2.properties", ISolutionRepository.ACTION_SHARE); //$NON-NLS-1$
     assertTrue(repo.getPermissions(f1).isEmpty());
@@ -797,7 +797,7 @@ public class DbBasedSolutionRepositoryTest {
   @Test
   public void testGetEffectivePermissionsOnNonACLedFile() throws Exception {
     printTestHeader("testGetEffectivePermissionsOnNonACLedFile"); //$NON-NLS-1$
-    login("joe", "ROLE_Admin"); //$NON-NLS-1$//$NON-NLS-2$
+    login("joe", "Admin"); //$NON-NLS-1$//$NON-NLS-2$
     repo.init(pentahoSession);
     ISolutionFile f1 = repo.getFileByPath("mysolution1/HelloWorld2.properties", ISolutionRepository.ACTION_SHARE); //$NON-NLS-1$
     assertTrue(repo.getEffectivePermissions(f1).isEmpty());
@@ -806,7 +806,7 @@ public class DbBasedSolutionRepositoryTest {
   @Test
   public void testShare() throws Exception {
     printTestHeader("testShare"); //$NON-NLS-1$
-    login("suzy", "ROLE_Authenticated"); //$NON-NLS-1$ //$NON-NLS-2$
+    login("suzy", "Authenticated"); //$NON-NLS-1$ //$NON-NLS-2$
     repo.init(pentahoSession);
     ISolutionFile f1 = repo.getFileByPath("mysolution3/HelloWorld4.xaction", ISolutionRepository.ACTION_EXECUTE); //$NON-NLS-1$
     SimpleUser shareRecipient = new SimpleUser("tiffany"); //$NON-NLS-1$
@@ -823,7 +823,7 @@ public class DbBasedSolutionRepositoryTest {
   public void testPublish() throws Exception {
     printTestHeader("testPublish"); //$NON-NLS-1$
     File srcFile = new File("./test-res/DbBasedSolutionRepositoryTest/mysolution1/HelloWorld.xaction"); //$NON-NLS-1$
-    login("suzy", "ROLE_Authenticated"); //$NON-NLS-1$//$NON-NLS-2$
+    login("suzy", "Authenticated"); //$NON-NLS-1$//$NON-NLS-2$
     repo.init(pentahoSession);
     int res = repo.publish(PentahoSystem.getApplicationContext().getSolutionPath(""), "mysolution2", //$NON-NLS-1$ //$NON-NLS-2$
         "HelloWorld3.xaction", FileUtils.readFileToByteArray(srcFile), true); //$NON-NLS-1$
@@ -842,7 +842,7 @@ public class DbBasedSolutionRepositoryTest {
   public void testPublishNonACLedFile() throws Exception {
     printTestHeader("testPublishNonACLedFile"); //$NON-NLS-1$
     File srcFile = new File("./test-res/DbBasedSolutionRepositoryTest/mysolution1/HelloWorld.xaction"); //$NON-NLS-1$
-    login("suzy", "ROLE_Authenticated"); //$NON-NLS-1$//$NON-NLS-2$
+    login("suzy", "Authenticated"); //$NON-NLS-1$//$NON-NLS-2$
     repo.init(pentahoSession);
     int res = repo.publish(PentahoSystem.getApplicationContext().getSolutionPath(""), "mysolution2", //$NON-NLS-1$ //$NON-NLS-2$
         "HelloWorld3.mondrian.xml", FileUtils.readFileToByteArray(srcFile), true); //$NON-NLS-1$
@@ -856,7 +856,7 @@ public class DbBasedSolutionRepositoryTest {
   public void testPublishExistsNoOverwrite() throws Exception {
     printTestHeader("testPublishExistsNoOverwrite"); //$NON-NLS-1$
     File srcFile = new File("./test-res/DbBasedSolutionRepositoryTest/mysolution1/HelloWorld.xaction"); //$NON-NLS-1$
-    login("suzy", "ROLE_Authenticated"); //$NON-NLS-1$//$NON-NLS-2$
+    login("suzy", "Authenticated"); //$NON-NLS-1$//$NON-NLS-2$
     repo.init(pentahoSession);
     assertFalse(repo.resourceExists("mysolution2/HelloWorld3.xaction", ISolutionRepository.ACTION_EXECUTE)); //$NON-NLS-1$
     int res = repo.publish(PentahoSystem.getApplicationContext().getSolutionPath(""), "mysolution2", //$NON-NLS-1$ //$NON-NLS-2$
@@ -879,13 +879,13 @@ public class DbBasedSolutionRepositoryTest {
   public void testPublishAsAdminThenPublishSameAsAuthenticated() throws Exception {
     printTestHeader("testPublishAsAdminThenPublishSameAsAuthenticated"); //$NON-NLS-1$
     File srcFile = new File("./test-res/DbBasedSolutionRepositoryTest/mysolution1/HelloWorld.xaction"); //$NON-NLS-1$
-    login("joe", "ROLE_Admin"); //$NON-NLS-1$//$NON-NLS-2$
+    login("joe", "Admin"); //$NON-NLS-1$//$NON-NLS-2$
     repo.init(pentahoSession);
     assertFalse(repo.resourceExists("mysolution2/HelloWorld3.xaction", ISolutionRepository.ACTION_EXECUTE)); //$NON-NLS-1$
     int res = repo.publish(PentahoSystem.getApplicationContext().getSolutionPath(""), "mysolution2", //$NON-NLS-1$ //$NON-NLS-2$
         "HelloWorld3.xaction", FileUtils.readFileToByteArray(srcFile), true); //$NON-NLS-1$
     assertEquals(ISolutionRepository.FILE_ADD_SUCCESSFUL, res);
-    login("suzy", "ROLE_Authenticated"); //$NON-NLS-1$//$NON-NLS-2$
+    login("suzy", "Authenticated"); //$NON-NLS-1$//$NON-NLS-2$
     repo.init(pentahoSession);
     res = repo.publish(PentahoSystem.getApplicationContext().getSolutionPath(""), "mysolution2", //$NON-NLS-1$ //$NON-NLS-2$
         "HelloWorld3.xaction", FileUtils.readFileToByteArray(srcFile), true); //$NON-NLS-1$
@@ -896,7 +896,7 @@ public class DbBasedSolutionRepositoryTest {
   public void testPublishAccessDenied() throws Exception {
     printTestHeader("testPublishAccessDenied"); //$NON-NLS-1$
     File srcFile = new File("./test-res/DbBasedSolutionRepositoryTest/mysolution1/HelloWorld.xaction"); //$NON-NLS-1$
-    login("suzy", "ROLE_Authenticated"); //$NON-NLS-1$//$NON-NLS-2$
+    login("suzy", "Authenticated"); //$NON-NLS-1$//$NON-NLS-2$
     repo.init(pentahoSession);
     int res = repo.publish(PentahoSystem.getApplicationContext().getSolutionPath(""), "mysolution1", //$NON-NLS-1$ //$NON-NLS-2$
         "HelloWorld3.xaction", FileUtils.readFileToByteArray(srcFile), true); //$NON-NLS-1$
@@ -906,7 +906,7 @@ public class DbBasedSolutionRepositoryTest {
   @Test
   public void testAddPermission() throws Exception {
     printTestHeader("testAddPermission"); //$NON-NLS-1$
-    login("suzy", "ROLE_Authenticated"); //$NON-NLS-1$//$NON-NLS-2$
+    login("suzy", "Authenticated"); //$NON-NLS-1$//$NON-NLS-2$
     repo.init(pentahoSession);
     ISolutionFile file = repo.getFileByPath("mysolution3/HelloWorld4.xaction", ISolutionRepository.ACTION_EXECUTE); //$NON-NLS-1$
     IPermissionRecipient recipient = new SimpleUser("tiffany"); //$NON-NLS-1$
@@ -919,7 +919,7 @@ public class DbBasedSolutionRepositoryTest {
   @Test
   public void testAddPermissionAccessDenied() throws Exception {
     printTestHeader("testAddPermissionAccessDenied"); //$NON-NLS-1$
-    login("suzy", "ROLE_Authenticated"); //$NON-NLS-1$//$NON-NLS-2$
+    login("suzy", "Authenticated"); //$NON-NLS-1$//$NON-NLS-2$
     repo.init(pentahoSession);
     ISolutionFile file = repo.getFileByPath("mysolution1/HelloWorld.xaction", ISolutionRepository.ACTION_EXECUTE); //$NON-NLS-1$
     IPermissionRecipient recipient = new SimpleUser("tiffany"); //$NON-NLS-1$
@@ -932,7 +932,7 @@ public class DbBasedSolutionRepositoryTest {
   @Test
   public void testSetPermissions() throws Exception {
     printTestHeader("testSetPermissions"); //$NON-NLS-1$
-    login("suzy", "ROLE_Authenticated"); //$NON-NLS-1$//$NON-NLS-2$
+    login("suzy", "Authenticated"); //$NON-NLS-1$//$NON-NLS-2$
     repo.init(pentahoSession);
     ISolutionFile file = repo.getFileByPath("mysolution3/HelloWorld4.xaction", ISolutionRepository.ACTION_EXECUTE); //$NON-NLS-1$
     IPermissionRecipient recipientTiffany = new SimpleUser("tiffany"); //$NON-NLS-1$
@@ -953,7 +953,7 @@ public class DbBasedSolutionRepositoryTest {
   @Test(expected = PentahoAccessControlException.class)
   public void testSetPermissionsAccessDenied() throws Exception {
     printTestHeader("testSetPermissionsAccessDenied"); //$NON-NLS-1$
-    login("suzy", "ROLE_Authenticated"); //$NON-NLS-1$//$NON-NLS-2$
+    login("suzy", "Authenticated"); //$NON-NLS-1$//$NON-NLS-2$
     repo.init(pentahoSession);
     ISolutionFile file = repo.getFileByPath("mysolution1/HelloWorld.xaction", ISolutionRepository.ACTION_EXECUTE); //$NON-NLS-1$
     IPermissionRecipient recipient = new SimpleUser("tiffany"); //$NON-NLS-1$
@@ -966,7 +966,7 @@ public class DbBasedSolutionRepositoryTest {
   @Test
   public void testGetPermissions() throws Exception {
     printTestHeader("testGetPermissions"); //$NON-NLS-1$
-    login("suzy", "ROLE_Authenticated"); //$NON-NLS-1$ //$NON-NLS-2$
+    login("suzy", "Authenticated"); //$NON-NLS-1$ //$NON-NLS-2$
     repo.init(pentahoSession);
     ISolutionFile file = repo.getFileByPath("mysolution1", ISolutionRepository.ACTION_EXECUTE); //$NON-NLS-1$
     Map<IPermissionRecipient, IPermissionMask> acl = repo.getPermissions(file);
@@ -978,7 +978,7 @@ public class DbBasedSolutionRepositoryTest {
   @Test
   public void testGetEffectivePermissions() throws Exception {
     printTestHeader("testGetEffectivePermissions"); //$NON-NLS-1$
-    login("suzy", "ROLE_Authenticated"); //$NON-NLS-1$//$NON-NLS-2$
+    login("suzy", "Authenticated"); //$NON-NLS-1$//$NON-NLS-2$
     repo.init(pentahoSession);
     ISolutionFile file = repo.getFileByPath("mysolution3/HelloWorld4.xaction", ISolutionRepository.ACTION_EXECUTE); //$NON-NLS-1$
     Map<IPermissionRecipient, IPermissionMask> acl = repo.getEffectivePermissions(file);
@@ -1012,7 +1012,7 @@ public class DbBasedSolutionRepositoryTest {
   @Test
   public void testGetLocalizedFileProperty() throws Exception {
     printTestHeader("testGetLocalizedFileProperty"); //$NON-NLS-1$
-    login("suzy", "ROLE_Authenticated"); //$NON-NLS-1$//$NON-NLS-2$
+    login("suzy", "Authenticated"); //$NON-NLS-1$//$NON-NLS-2$
     repo.init(pentahoSession);
     ISolutionFile file = repo.getSolutionFile("mysolution1/HelloWorld2.xaction", ISolutionRepository.ACTION_EXECUTE); //$NON-NLS-1$
     String title = repo.getLocalizedFileProperty(file, "title", ISolutionRepository.ACTION_EXECUTE); //$NON-NLS-1$
@@ -1058,7 +1058,7 @@ public class DbBasedSolutionRepositoryTest {
 //    String ON = "on"; //$NON-NLS-1$
     String DISPLAY_PATH_NODE_NAME = "display-path"; //$NON-NLS-1$
     printTestHeader("testTemporaryTest"); //$NON-NLS-1$
-    login("joe", "ROLE_Admin"); //$NON-NLS-1$//$NON-NLS-2$
+    login("joe", "Admin"); //$NON-NLS-1$//$NON-NLS-2$
     repo.init(pentahoSession);
     ISolutionFile file = repo.getSolutionFile("mysolution1", ISolutionRepository.ACTION_EXECUTE); //$NON-NLS-1$
 
@@ -1088,8 +1088,8 @@ public class DbBasedSolutionRepositoryTest {
     if (true) {
       // Add all the possible users
       List uList = new ArrayList();
-      uList.add("ROLE_Authenticated");
-      uList.add("ROLE_Admin");
+      uList.add("Authenticated");
+      uList.add("Admin");
       if (uList != null) {
         iter = uList.iterator();
         while (iter.hasNext()) {

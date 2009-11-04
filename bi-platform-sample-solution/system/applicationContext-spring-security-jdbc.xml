@@ -33,7 +33,7 @@
 				<![CDATA[SELECT username, password, enabled FROM USERS WHERE username = ? ORDER BY username]]>
 			</value>
 		</property>
-    <property name="rolePrefix" value="ROLE_" />
+    <property name="rolePrefix" value="" />
 	</bean>
   
 	<!--  This is only for Hypersonic. Please update this section for any other database you are using -->

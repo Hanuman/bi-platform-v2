@@ -27,7 +27,7 @@
 			</value>
 		</property>
 		<property name="dataSource" ref="dataSource" />
-    <property name="rolePrefix" value="ROLE_" />
+    <property name="rolePrefix" value="" />
 	</bean>
 
 	<bean id="pentahoUserRoleListService"
