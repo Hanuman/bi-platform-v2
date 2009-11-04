@@ -8,6 +8,7 @@
 	<xsl:output method="html" encoding="UTF-8" />
 
 	<xsl:template name="doSubscriptions">
+		<xsl:variable name="messages" select="msg:getInstance()" />
 	
 		<xsl:variable name="editing">
 			<xsl:if test="/filters/input[@name='subscribe-title']/@value!=''">
@@ -45,7 +46,7 @@
 
 								<tr>
 									<td class="portlet-font" colspan="1" style="white-space:nowrap">
-										<br/><xsl:value-of select="msg:getXslString('UI.PARAM_FORM_UTIL.REPORT_NAME')" disable-output-escaping="yes"/>
+										<br/><xsl:value-of select="msg:getXslString($messages, 'UI.PARAM_FORM_UTIL.REPORT_NAME')" disable-output-escaping="yes"/>
 									</td>
 									<td class="portlet-font" colspan="2">
 										<br/>

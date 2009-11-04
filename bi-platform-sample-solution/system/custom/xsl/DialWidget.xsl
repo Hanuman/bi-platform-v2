@@ -43,6 +43,7 @@
 	</xsl:template>
 
 	<xsl:template name="doWidget">
+	<xsl:variable name="messages" select="msg:getInstance()" />
 	<center>
 		<span class="portlet-section-subheader"><xsl:value-of select="title"/></span>
 		<br/>
@@ -51,7 +52,7 @@
 			<a>
 				<xsl:attribute name="href"><xsl:value-of select="urlDrill"/></xsl:attribute>
 				<xsl:attribute name="target"><xsl:value-of select="$urlTarget"/></xsl:attribute>
-				<xsl:attribute name="title"><xsl:value-of select="msg:getXslString('UI.USER_DRILL_HINT')" disable-output-escaping="yes"/><xsl:value-of select="title"/></xsl:attribute>
+				<xsl:attribute name="title"><xsl:value-of select="msg:getXslString($messages, 'UI.USER_DRILL_HINT')" disable-output-escaping="yes"/><xsl:value-of select="title"/></xsl:attribute>
 				<img border="0">
 					<xsl:attribute name="width"><xsl:value-of select="width"/></xsl:attribute>
 					<xsl:attribute name="height"><xsl:value-of select="height"/></xsl:attribute>

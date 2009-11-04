@@ -14,7 +14,9 @@
 
 	<xsl:template match="publishers">
 	
-	<!--span class="portlet-section-header" style="border: 1px solid blue;"><xsl:value-of select="msg:getXslString('UI.USER_PUBLISHER_TITLE')" disable-output-escaping="yes"/></span-->
+	<xsl:variable name="messages" select="msg:getInstance()" />
+	
+	<!--span class="portlet-section-header" style="border: 1px solid blue;"><xsl:value-of select="msg:getXslString($messages, 'UI.USER_PUBLISHER_TITLE')" disable-output-escaping="yes"/></span-->
 	<xsl:if test="$message != ''">
 		<table width="100%" border="0">
 		<tr>
@@ -25,13 +27,13 @@
 		<table class="list_table" cellpadding="0" cellspacing="0">
 			<tr>
 				<td class="portlet-table-header">
-					<xsl:value-of select="msg:getXslString('UI.USER_PUBLISHER_NAME')" disable-output-escaping="yes"/>
+					<xsl:value-of select="msg:getXslString($messages, 'UI.USER_PUBLISHER_NAME')" disable-output-escaping="yes"/>
 				</td>
 				<td class="portlet-table-header">
-					<xsl:value-of select="msg:getXslString('UI.USER_PUBLISHER_DESCRIPTION')" disable-output-escaping="yes"/>
+					<xsl:value-of select="msg:getXslString($messages, 'UI.USER_PUBLISHER_DESCRIPTION')" disable-output-escaping="yes"/>
 				</td>
 				<td class="portlet-table-header">
-					<xsl:value-of select="msg:getXslString('UI.USER_PUBLISHER_ACTION')" disable-output-escaping="yes"/>
+					<xsl:value-of select="msg:getXslString($messages, 'UI.USER_PUBLISHER_ACTION')" disable-output-escaping="yes"/>
 				</td>
 			</tr>
 			<xsl:for-each select="publisher">
@@ -41,6 +43,9 @@
 	</xsl:template>
 
 	<xsl:template name="doPublisher">
+
+		<xsl:variable name="messages" select="msg:getInstance()" />
+
 		<tr>
 			<td class="portlet-table-text">
 				<xsl:value-of select="name"/>
@@ -51,7 +56,7 @@
 			<td class="portlet-table-text">
 				<a class="portlet-font">
 					<xsl:attribute name="href"><xsl:value-of select="$baseUrl"/>Publish?publish=now&amp;class=<xsl:value-of select="class"/></xsl:attribute>
-					<xsl:value-of select="msg:getXslString('UI.USER_PUBLISHER_PUBLISH')" disable-output-escaping="yes"/>
+					<xsl:value-of select="msg:getXslString($messages, 'UI.USER_PUBLISHER_PUBLISH')" disable-output-escaping="yes"/>
 				</a>
 			</td>
 		</tr>

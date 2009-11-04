@@ -27,12 +27,14 @@
 
 	<xsl:template match="repository">
 
+	<xsl:variable name="messages" select="msg:getInstance()" />
+
 	<xsl:call-template name="script"/>
 
 		<xsl:variable name="columns">2</xsl:variable>
 
 		<xsl:call-template name="doHeading">
-			<xsl:with-param name="title"><xsl:value-of select="msg:getXslString('UI.FILES.BROWSE')" disable-output-escaping="yes"/>&#160;<xsl:value-of select="count(file[@visible='true'][@type='FILE.FOLDER'])"/>&#160;<xsl:value-of select="msg:getXslString('UI.FILES.SOLUTIONS')" disable-output-escaping="yes"/></xsl:with-param>
+			<xsl:with-param name="title"><xsl:value-of select="msg:getXslString($messages, 'UI.FILES.BROWSE')" disable-output-escaping="yes"/>&#160;<xsl:value-of select="count(file[@visible='true'][@type='FILE.FOLDER'])"/>&#160;<xsl:value-of select="msg:getXslString($messages, 'UI.FILES.SOLUTIONS')" disable-output-escaping="yes"/></xsl:with-param>
 		</xsl:call-template> 
  
 	<table border="0" width="100%" class="content_container" cellpadding="0" cellspacing="0">
@@ -93,12 +95,14 @@
 
 	<xsl:template name="script">
 
+	<xsl:variable name="messages" select="msg:getInstance()" />
+
 	<xsl:text disable-output-escaping="yes"><![CDATA[
 		<script type="text/javascript">
 		
 		function adminPopup( href, popup, target ) {
 			if( popup ) {
-				if( !confirm(']]></xsl:text><xsl:value-of select="msg:getXslString('UI.FILES.CONFIRM')" disable-output-escaping="yes"/><xsl:text disable-output-escaping="yes"><![CDATA[') ){
+				if( !confirm(']]></xsl:text><xsl:value-of select="msg:getXslString($messages, 'UI.FILES.CONFIRM')" disable-output-escaping="yes"/><xsl:text disable-output-escaping="yes"><![CDATA[') ){
 					return;
 				}
 			}

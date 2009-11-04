@@ -11,6 +11,7 @@
 	<xsl:output method="html" encoding="UTF-8" />
 
 	<xsl:template name="doFilters">
+		<xsl:variable name="messages" select="msg:getInstance()" />
 	
 		<xsl:variable name="editing">
 			<xsl:if test="/filters/input[@name='subscribe-title']/@value!=''">
@@ -28,8 +29,8 @@
 				<script type="text/javascript" language="javascript" src="js/subscription.js"></script>
 
 				<script type="text/javascript">
-					var pentaho_notOptionalMessage = '<xsl:value-of select="msg:getXslString('UI.USER_PARAMETER_NOT_OPTIONAL')" disable-output-escaping="yes"/>';
-					var pentaho_backgroundWarning = '<xsl:value-of select="msg:getXslString('UI.USER_PARAMETER_BACKGROUND_WARNING')" disable-output-escaping="yes"/>';
+					var pentaho_notOptionalMessage = '<xsl:value-of select="msg:getXslString($messages, 'UI.USER_PARAMETER_NOT_OPTIONAL')" disable-output-escaping="yes"/>';
+					var pentaho_backgroundWarning = '<xsl:value-of select="msg:getXslString($messages, 'UI.USER_PARAMETER_BACKGROUND_WARNING')" disable-output-escaping="yes"/>';
 					var USEPOSTFORFORMS = <xsl:value-of select="$USEPOSTFORFORMS" />;
 			        <xsl:for-each select="filter">
 						<xsl:if test="@optional = 'true'">

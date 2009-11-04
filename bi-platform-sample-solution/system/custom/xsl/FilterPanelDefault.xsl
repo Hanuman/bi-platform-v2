@@ -58,7 +58,6 @@
 			    document.location.href=submitUrl;
 			    return false;
 			  }
-              
 			&lt;/script&gt;
 		</xsl:text>
 
@@ -80,9 +79,9 @@
 	</xsl:template>
 
 	<xsl:template name="doFilter">
+		<xsl:variable name="messages" select="msg:getInstance()" />
 		<xsl:param name="formName"/>
-		
-		
+
 				<tr>
 					<td class="portlet-section-subheader">		
                         <br/><xsl:value-of select="title" disable-output-escaping="yes"/>
@@ -91,17 +90,18 @@
 				<tr>
 					<td class="portlet-font">		
 						<xsl:for-each select="control">
-                            <!--  this is important - it copies the definition of the input control into the HTML output -->
-                            <xsl:apply-templates/>
-                        </xsl:for-each>
+							<!--  this is important - it copies the definition of the input control into the HTML output -->
+		                    <xsl:apply-templates/>
+		                </xsl:for-each>
 					</td>
 				</tr>
+		
 		<xsl:if test="position()=last()">
 				<tr>
 					<td>
 						<br/>
 						<input type="button" name="go" class="portlet-form-button">
-							<xsl:attribute name="value"><xsl:value-of select="msg:getString('UI.USER_UPDATE')" disable-output-escaping="yes"/></xsl:attribute>
+							<xsl:attribute name="value"><xsl:value-of select="msg:getString($messages, 'UI.USER_UPDATE')" disable-output-escaping="yes"/></xsl:attribute>
 							<xsl:attribute name="onClick">doForm<xsl:value-of select="$formName" />()</xsl:attribute>
 						</input>
 					</td>

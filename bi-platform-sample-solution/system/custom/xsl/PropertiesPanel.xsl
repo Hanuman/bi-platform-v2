@@ -10,20 +10,22 @@
 	
 	<xsl:template match="input-page">
 
+		<xsl:variable name="messages" select="msg:getInstance()" />
+
 		<xsl:variable name="untitled">
-			<xsl:value-of select="msg:getString('PropertiesPanelUIComponent.USER_UNTITLED')"/>
+			<xsl:value-of select="msg:getString($messages, 'PropertiesPanelUIComponent.USER_UNTITLED')"/>
 		</xsl:variable>
 
 		<div id="itemdiv" style="border-right:1px solid #808080;position:absolute;top:0px;left:0px;width:600px;height:520px;overflow:default;padding-left:5px;padding-right:5px">
 		<form method="post" id="propform">
 			<xsl:attribute name="action"><xsl:value-of select="$baseUrl" />PropertiesPanel?path=<xsl:value-of select="./file-path/text()"/>&amp;action=update</xsl:attribute>
 						
-			<span class="portlet-subsection-header" style="font-size:0.85em"><xsl:value-of select="msg:getString('UI.PROPS_PANEL.FILE')"/> <xsl:value-of select="./display-path/text()"/></span>
+			<span class="portlet-subsection-header" style="font-size:0.85em"><xsl:value-of select="msg:getString($messages, 'UI.PROPS_PANEL.FILE')"/> <xsl:value-of select="./display-path/text()"/></span>
 
 			<table width="100%" border="0" cellspacing="0" cellpadding="0" style="padding-top:5px;width:100%">
 				<tr>
-					<td class="portlet-table-header"><xsl:value-of select="msg:getString('UI.PROPS_PANEL.DELETE')"/></td>
-					<td class="portlet-table-header"><xsl:value-of select="msg:getString('UI.PROPS_PANEL.ROLE')"/></td>
+					<td class="portlet-table-header"><xsl:value-of select="msg:getString($messages, 'UI.PROPS_PANEL.DELETE')"/></td>
+					<td class="portlet-table-header"><xsl:value-of select="msg:getString($messages, 'UI.PROPS_PANEL.ROLE')"/></td>
 				
 					<xsl:for-each select="./permission-names/name">
 						<td class="portlet-table-header"><xsl:value-of select="./text()"/></td>
@@ -67,22 +69,22 @@
 				<tr><td colspan="10">
 	    	<xsl:if test="count(./ac-list/access-control) &gt; 0">
 				<input name="updateBtn2" id="props-update" type="button">
-					<xsl:attribute name="value"><xsl:value-of select="msg:getString('UI.USER_UPDATE')"/></xsl:attribute>
+					<xsl:attribute name="value"><xsl:value-of select="msg:getString($messages, 'UI.USER_UPDATE')"/></xsl:attribute>
 					<xsl:attribute name="onclick">document.getElementById('updateBtn').value="yes"; document.forms['propform'].submit() ;return false;</xsl:attribute>
 				</input>
 				<input name="resetBtn" type="reset">		
-					<xsl:attribute name="value"><xsl:value-of select="msg:getString('UI.USER_RESET')"/></xsl:attribute>
+					<xsl:attribute name="value"><xsl:value-of select="msg:getString($messages, 'UI.USER_RESET')"/></xsl:attribute>
 				</input>
 			</xsl:if>
 			<input name="addBtn" type="button">
-				<xsl:attribute name="value"><xsl:value-of select="msg:getString('UI.USER_ADD')"/></xsl:attribute>
+				<xsl:attribute name="value"><xsl:value-of select="msg:getString($messages, 'UI.USER_ADD')"/></xsl:attribute>
 				<xsl:attribute name="onclick">document.getElementById('adddiv').style.display='block';</xsl:attribute>
 			</input>
 
 			<br />
 			<!-- 
 			<xsl:if test="./is-directory/text()='true'" >
-				<INPUT type="checkbox" name="appy-recursively"/><span class="text"><xsl:value-of select="msg:getString('UI.PROPS_PANEL.RECURSE')"/></span>
+				<INPUT type="checkbox" name="appy-recursively"/><span class="text"><xsl:value-of select="msg:getString($messages, 'UI.PROPS_PANEL.RECURSE')"/></span>
 			</xsl:if>
 			-->
 				</td></tr>
@@ -99,16 +101,18 @@
 
 	<xsl:template name="addContent">
 	
+		<xsl:variable name="messages" select="msg:getInstance()" />
+	
 		<div id="adddiv" style="padding-left:5px;position:absolute;top:0px;left:610px;width:420px;height:500px;overflow:default;display:none">
 		
 		<form method="post" id="propaddform">
 
-			<span class="portlet-subsection-header" style="font-size:0.85em"><xsl:value-of select="msg:getString('UI.USER_PERMISSION_ADD_NEW')"/></span>
+			<span class="portlet-subsection-header" style="font-size:0.85em"><xsl:value-of select="msg:getString($messages, 'UI.USER_PERMISSION_ADD_NEW')"/></span>
 
 		<table width="100%" border="0" style="padding-top:5px">
 
 		<tr>
-			<td class="portlet-table-header" colspan="10"><xsl:value-of select="msg:getString('UI.PROPS_PANEL.ROLE')"/></td>
+			<td class="portlet-table-header" colspan="10"><xsl:value-of select="msg:getString($messages, 'UI.PROPS_PANEL.ROLE')"/></td>
 		</tr>
 		<tr>
 			<td colspan="10">
@@ -176,12 +180,12 @@
 				<xsl:variable name="permCount" select="count(//ac-list/access-control[position()=1]/permission)"/>
 
 			<input name="addBtn2" type="submit">
-				<xsl:attribute name="value"><xsl:value-of select="msg:getString('UI.USER_ADD')"/></xsl:attribute>
+				<xsl:attribute name="value"><xsl:value-of select="msg:getString($messages, 'UI.USER_ADD')"/></xsl:attribute>
 				<xsl:attribute name="onclick">if(document.getElementById('add_name').selectedIndex==-1) { return false; } document.getElementById('name_Untitled-0').value = document.getElementById('add_name').value; return true;</xsl:attribute>
 			</input>
 
 				<input name="cancelBtn" type="button">
-					<xsl:attribute name="value"><xsl:value-of select="msg:getString('UI.USER_CANCEL')"/></xsl:attribute>
+					<xsl:attribute name="value"><xsl:value-of select="msg:getString($messages, 'UI.USER_CANCEL')"/></xsl:attribute>
 					<xsl:attribute name="onclick">document.getElementById('adddiv').style.display='none';</xsl:attribute>
 					<!-- xsl:attribute name="onclick">document.getElementById('delete_<xsl:value-of select="$addpos"/>').disabled = false; document.getElementById('delete_<xsl:value-of select="$addpos"/>').value = 'on'; document.getElementById('updateBtn').value="yes"; document.forms['propform'].submit() ;return false;</xsl:attribute -->
 				</input>

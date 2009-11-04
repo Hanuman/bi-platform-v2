@@ -6,6 +6,8 @@
 
   <xsl:include href="system/custom/xsl/xslUtil.xsl" />
 
+  <xsl:variable name="messages" select="msg:getInstance()" />
+
   <xsl:output method="html" encoding="UTF-8" />
 
   <xsl:param name="href" select="''" />
@@ -28,16 +30,16 @@
     <span class="portlet-section-header">
       <xsl:choose>
         <xsl:when test="@result = 'OK'">
-          <xsl:value-of select="msg:getXslString('UI.SUBSCRIPTION_ADMIN.COMP_SUCCESS')" disable-output-escaping="yes" />
+          <xsl:value-of select="msg:getXslString($messages, 'UI.SUBSCRIPTION_ADMIN.COMP_SUCCESS')" disable-output-escaping="yes" />
         </xsl:when>
         <xsl:when test="@result = 'WARNING'">
-          <xsl:value-of select="msg:getXslString('UI.SUBSCRIPTION_ADMIN.COMP_WARN')" disable-output-escaping="yes" />
+          <xsl:value-of select="msg:getXslString($messages, 'UI.SUBSCRIPTION_ADMIN.COMP_WARN')" disable-output-escaping="yes" />
         </xsl:when>
         <xsl:when test="@result = 'ERROR'">
-          <xsl:value-of select="msg:getXslString('UI.SUBSCRIPTION_ADMIN.REQ_FAILED')" disable-output-escaping="yes" />
+          <xsl:value-of select="msg:getXslString($messages, 'UI.SUBSCRIPTION_ADMIN.REQ_FAILED')" disable-output-escaping="yes" />
         </xsl:when>
         <xsl:otherwise>
-          <xsl:value-of select="msg:getXslString('UI.SUBSCRIPTION_ADMIN.REQ_COMP')" disable-output-escaping="yes" />
+          <xsl:value-of select="msg:getXslString($messages, 'UI.SUBSCRIPTION_ADMIN.REQ_COMP')" disable-output-escaping="yes" />
         </xsl:otherwise>
       </xsl:choose>
     </span>
@@ -51,7 +53,7 @@
   
   <xsl:template name="paramErrors">
     <xsl:if test="count( paramErrors/paramMissing ) > 0" >
-      <xsl:value-of select="msg:getXslString('UI.SUBSCRIPTION_ADMIN.PARAM_MISSING')" disable-output-escaping="yes" />
+      <xsl:value-of select="msg:getXslString($messages, 'UI.SUBSCRIPTION_ADMIN.PARAM_MISSING')" disable-output-escaping="yes" />
       <xsl:for-each select="paramErrors/paramMissing">
         <xsl:text>"</xsl:text>
         <xsl:value-of select="text()" disable-output-escaping="yes" />
@@ -64,7 +66,7 @@
   <xsl:template name="exceptions">
     <xsl:if test="count( exception ) > 0" >
       <span class="portlet-section-subheader">
-        <xsl:value-of select="msg:getXslString('UI.SUBSCRIPTION_ADMIN.PARAM_MISSING')" disable-output-escaping="yes" />
+        <xsl:value-of select="msg:getXslString($messages, 'UI.SUBSCRIPTION_ADMIN.PARAM_MISSING')" disable-output-escaping="yes" />
       </span>
       <br/>
       <xsl:for-each select="exception">
@@ -80,7 +82,7 @@
   <xsl:template name="messages">
     <xsl:if test="count( message[@result='ERROR'] ) > 0" >
       <span class="portlet-section-subheader">
-        <xsl:value-of select="msg:getXslString('UI.SUBSCRIPTION_ADMIN.ERROR_COLON')" disable-output-escaping="yes" />
+        <xsl:value-of select="msg:getXslString($messages, 'UI.SUBSCRIPTION_ADMIN.ERROR_COLON')" disable-output-escaping="yes" />
       </span>
       <br/>
       <xsl:for-each select="message[@result='ERROR']">
@@ -91,7 +93,7 @@
     
     <xsl:if test="count( message[@result='WARNING'] ) > 0" >
       <span class="portlet-section-subheader">
-        <xsl:value-of select="msg:getXslString('UI.SUBSCRIPTION_ADMIN.WARNING_COLON')" disable-output-escaping="yes" />
+        <xsl:value-of select="msg:getXslString($messages, 'UI.SUBSCRIPTION_ADMIN.WARNING_COLON')" disable-output-escaping="yes" />
       </span>
       <br/>
       <xsl:for-each select="message[@result='WARNING']">
@@ -117,7 +119,7 @@
       <xsl:value-of select="$baseUrl" />
       <xsl:text>&amp;schedulerAction=listSchedules</xsl:text>
       </xsl:attribute>
-      <xsl:value-of select="msg:getXslString('UI.SUBSCRIPTION_ADMIN.RETURN_ADMIN')" disable-output-escaping="yes" />
+      <xsl:value-of select="msg:getXslString($messages, 'UI.SUBSCRIPTION_ADMIN.RETURN_ADMIN')" disable-output-escaping="yes" />
     </a>
   </xsl:template>
   
@@ -127,7 +129,7 @@
         <xsl:value-of select="$baseUrl" />
         <xsl:value-of select="text()" />
       </xsl:attribute>
-      <xsl:value-of select="msg:getXslString('UI.SUBSCRIPTION_ADMIN.RETURN')" disable-output-escaping="yes" />
+      <xsl:value-of select="msg:getXslString($messages, 'UI.SUBSCRIPTION_ADMIN.RETURN')" disable-output-escaping="yes" />
     </a> | 
   </xsl:template>
 
@@ -153,11 +155,11 @@
 
   <xsl:template match="showImport">
 		<xsl:call-template name="breadcrumbing">
-			<xsl:with-param name="crumb1" select="msg:getXslString('UI.USER_ADMIN')"/>
+			<xsl:with-param name="crumb1" select="msg:getXslString($messages, 'UI.USER_ADMIN')"/>
 			<xsl:with-param name="url1" select="'Admin'"/>
-			<xsl:with-param name="crumb2" select="msg:getXslString('UI.SUBSCRIPTION_ADMIN.TITLE')"/>
+			<xsl:with-param name="crumb2" select="msg:getXslString($messages, 'UI.SUBSCRIPTION_ADMIN.TITLE')"/>
 			<xsl:with-param name="url2" select="'SubscriptionAdmin?schedulerAction=listSchedules'"/>
-			<xsl:with-param name="crumb3" select="msg:getXslString('UI.SUBSCRIPTION_ADMIN.SCHED_IMPORT')"/>
+			<xsl:with-param name="crumb3" select="msg:getXslString($messages, 'UI.SUBSCRIPTION_ADMIN.SCHED_IMPORT')"/>
 			<xsl:with-param name="url3" select="''"/>
 		</xsl:call-template>
   
@@ -199,14 +201,14 @@
   <xsl:template name="header">
   
   		<xsl:call-template name="breadcrumbing">
-			<xsl:with-param name="crumb1" select="msg:getXslString('UI.USER_ADMIN')"/>
+			<xsl:with-param name="crumb1" select="msg:getXslString($messages, 'UI.USER_ADMIN')"/>
 			<xsl:with-param name="url1" select="'Admin'"/>
-			<xsl:with-param name="crumb2" select="msg:getXslString('UI.SUBSCRIPTION_ADMIN.TITLE')"/>
+			<xsl:with-param name="crumb2" select="msg:getXslString($messages, 'UI.SUBSCRIPTION_ADMIN.TITLE')"/>
 			<xsl:with-param name="url2" select="''"/>
 		</xsl:call-template>
 
       <span class="portlet-font">
-      <xsl:value-of select="msg:getXslString('UI.SUBSCRIPTION_ADMIN.HELP')" disable-output-escaping="yes" />
+      <xsl:value-of select="msg:getXslString($messages, 'UI.SUBSCRIPTION_ADMIN.HELP')" disable-output-escaping="yes" />
     </span>
     <p/>
   </xsl:template>
@@ -224,7 +226,7 @@
   </xsl:template>
 
   <xsl:template match="modified">
-    <xsl:value-of select="msg:getXslString('UI.SUBSCRIPTION_ADMIN.MODIFIED_COLON')" disable-output-escaping="yes" />
+    <xsl:value-of select="msg:getXslString($messages, 'UI.SUBSCRIPTION_ADMIN.MODIFIED_COLON')" disable-output-escaping="yes" />
     <xsl:value-of select="text()" disable-output-escaping="yes" />
     <br/>
   </xsl:template>
@@ -241,7 +243,7 @@
   	<table border="0" width="100%" class="content_header" cellpadding="0" cellspacing="0" style="padding-left:10px;padding-right:10px">
 		<tr>
 			<td width="100%">
-				<xsl:value-of select="msg:getXslString('UI.SUBSCRIPTION_ADMIN.SCHED_SUBS')" disable-output-escaping="yes" />
+				<xsl:value-of select="msg:getXslString($messages, 'UI.SUBSCRIPTION_ADMIN.SCHED_SUBS')" disable-output-escaping="yes" />
 			</td>
 		</tr>
 	</table>
@@ -260,29 +262,29 @@
       <table width="95%" border="0" cellpadding="0" cellspacing="0">
         <tr>
           <td class="portlet-table-header">
-            <xsl:value-of select="msg:getXslString('UI.SUBSCRIPTION_ADMIN.JOB_NAME_TITLE')" disable-output-escaping="yes" />
+            <xsl:value-of select="msg:getXslString($messages, 'UI.SUBSCRIPTION_ADMIN.JOB_NAME_TITLE')" disable-output-escaping="yes" />
           </td>
 
           <td class="portlet-table-header">
-            <xsl:value-of select="msg:getXslString('UI.SUBSCRIPTION_ADMIN.DESCRIPTION')" disable-output-escaping="yes" />
+            <xsl:value-of select="msg:getXslString($messages, 'UI.SUBSCRIPTION_ADMIN.DESCRIPTION')" disable-output-escaping="yes" />
           </td>
 
           <td class="portlet-table-header">
-            <xsl:value-of select="msg:getXslString('UI.SUBSCRIPTION_ADMIN.CRON_EXP')" disable-output-escaping="yes" />
+            <xsl:value-of select="msg:getXslString($messages, 'UI.SUBSCRIPTION_ADMIN.CRON_EXP')" disable-output-escaping="yes" />
           </td>
 
           <td class="portlet-table-header">
-            <xsl:value-of select="msg:getXslString('UI.USER_FIRE_TIME_NAME')" disable-output-escaping="yes" />
+            <xsl:value-of select="msg:getXslString($messages, 'UI.USER_FIRE_TIME_NAME')" disable-output-escaping="yes" />
           </td>
 
           <td class="portlet-table-header">
-            <xsl:value-of select="msg:getXslString('UI.SUBSCRIPTION_ADMIN.NUM_SUBS')" disable-output-escaping="yes" />
+            <xsl:value-of select="msg:getXslString($messages, 'UI.SUBSCRIPTION_ADMIN.NUM_SUBS')" disable-output-escaping="yes" />
           </td>
           <td class="portlet-table-header">
-            <xsl:value-of select="msg:getXslString('UI.USER_TRIGGER_STATE')" disable-output-escaping="yes" />
+            <xsl:value-of select="msg:getXslString($messages, 'UI.USER_TRIGGER_STATE')" disable-output-escaping="yes" />
           </td>
           <td colspan="2" class="portlet-table-header">
-            <xsl:value-of select="msg:getXslString('UI.USER_TRIGGER_ACTION')" disable-output-escaping="yes" />
+            <xsl:value-of select="msg:getXslString($messages, 'UI.USER_TRIGGER_ACTION')" disable-output-escaping="yes" />
           </td>
         </tr>
         <xsl:for-each select="job">
@@ -298,11 +300,11 @@
 
   <xsl:template match="unScheduledJobs">
     <span class="portlet-section-subheader">
-      <xsl:value-of select="msg:getXslString('UI.SUBSCRIPTION_ADMIN.SUBS_WO_JOBS')" disable-output-escaping="yes" />
+      <xsl:value-of select="msg:getXslString($messages, 'UI.SUBSCRIPTION_ADMIN.SUBS_WO_JOBS')" disable-output-escaping="yes" />
     </span>
     <span class="portlet-font">
       <br/>
-      <xsl:value-of select="msg:getXslString('UI.SUBSCRIPTION_ADMIN.SUBS_WO_JOBS_HELP')" disable-output-escaping="yes" />
+      <xsl:value-of select="msg:getXslString($messages, 'UI.SUBSCRIPTION_ADMIN.SUBS_WO_JOBS_HELP')" disable-output-escaping="yes" />
       <br/>
       <xsl:value-of select="message/text()" disable-output-escaping="yes" />
     </span>
@@ -311,35 +313,35 @@
         <xsl:value-of select="$baseUrl" />
         <xsl:text>&amp;schedulerAction=scheduleAll</xsl:text>
       </xsl:attribute>
-      <xsl:value-of select="msg:getXslString('UI.SUBSCRIPTION_ADMIN.SCHED_ALL')" disable-output-escaping="yes" />
+      <xsl:value-of select="msg:getXslString($messages, 'UI.SUBSCRIPTION_ADMIN.SCHED_ALL')" disable-output-escaping="yes" />
     </a>
     <center>
       <table width="95%" border="0" cellpadding="5px" cellspacing="0">
         <tr>
           <td class="portlet-table-header">
-            <xsl:value-of select="msg:getXslString('UI.SUBSCRIPTION_ADMIN.JOB_NAME_TITLE')" disable-output-escaping="yes" />
+            <xsl:value-of select="msg:getXslString($messages, 'UI.SUBSCRIPTION_ADMIN.JOB_NAME_TITLE')" disable-output-escaping="yes" />
           </td>
 
           <td class="portlet-table-header">
-            <xsl:value-of select="msg:getXslString('UI.SUBSCRIPTION_ADMIN.DESCRIPTION')" disable-output-escaping="yes" />
+            <xsl:value-of select="msg:getXslString($messages, 'UI.SUBSCRIPTION_ADMIN.DESCRIPTION')" disable-output-escaping="yes" />
           </td>
 
           <td class="portlet-table-header">
-            <xsl:value-of select="msg:getXslString('UI.SUBSCRIPTION_ADMIN.CRON_EXP')" disable-output-escaping="yes" />
+            <xsl:value-of select="msg:getXslString($messages, 'UI.SUBSCRIPTION_ADMIN.CRON_EXP')" disable-output-escaping="yes" />
           </td>
 
           <td class="portlet-table-header">
-            <xsl:value-of select="msg:getXslString('UI.USER_FIRE_TIME_NAME')" disable-output-escaping="yes" />
+            <xsl:value-of select="msg:getXslString($messages, 'UI.USER_FIRE_TIME_NAME')" disable-output-escaping="yes" />
           </td>
 
           <td class="portlet-table-header">
-            <xsl:value-of select="msg:getXslString('UI.SUBSCRIPTION_ADMIN.NUM_SUBS')" disable-output-escaping="yes" />
+            <xsl:value-of select="msg:getXslString($messages, 'UI.SUBSCRIPTION_ADMIN.NUM_SUBS')" disable-output-escaping="yes" />
           </td>
           <td class="portlet-table-header">
-            <xsl:value-of select="msg:getXslString('UI.USER_TRIGGER_STATE')" disable-output-escaping="yes" />
+            <xsl:value-of select="msg:getXslString($messages, 'UI.USER_TRIGGER_STATE')" disable-output-escaping="yes" />
           </td>
           <td colspan="2" class="portlet-table-header">
-            <xsl:value-of select="msg:getXslString('UI.USER_TRIGGER_ACTION')" disable-output-escaping="yes" />
+            <xsl:value-of select="msg:getXslString($messages, 'UI.USER_TRIGGER_ACTION')" disable-output-escaping="yes" />
           </td>
         </tr>
         <xsl:for-each select="job">
@@ -354,11 +356,11 @@
 
   <xsl:template match="extraScheduledJobs">
     <span class="portlet-section-subheader">
-      <xsl:value-of select="msg:getXslString('UI.SUBSCRIPTION_ADMIN.SUBS_WO_JOBS')" disable-output-escaping="yes" />
+      <xsl:value-of select="msg:getXslString($messages, 'UI.SUBSCRIPTION_ADMIN.SUBS_WO_JOBS')" disable-output-escaping="yes" />
     </span>
     <span class="portlet-font">
       <br/>
-      <xsl:value-of select="msg:getXslString('UI.SUBSCRIPTION_ADMIN.JOB_WO_SUB')" disable-output-escaping="yes" />
+      <xsl:value-of select="msg:getXslString($messages, 'UI.SUBSCRIPTION_ADMIN.JOB_WO_SUB')" disable-output-escaping="yes" />
       <br/>
       <xsl:value-of select="message/text()" disable-output-escaping="yes" />
     </span>
@@ -366,30 +368,30 @@
       <table width="95%" border="0" cellpadding="5px" cellspacing="0">
         <tr>
           <td class="portlet-table-header">
-            <xsl:value-of select="msg:getXslString('UI.SUBSCRIPTION_ADMIN.JOB_NAME_TITLE')" disable-output-escaping="yes" />
+            <xsl:value-of select="msg:getXslString($messages, 'UI.SUBSCRIPTION_ADMIN.JOB_NAME_TITLE')" disable-output-escaping="yes" />
           </td>
 
           <td class="portlet-table-header">
-            <xsl:value-of select="msg:getXslString('UI.SUBSCRIPTION_ADMIN.DESCRIPTION')" disable-output-escaping="yes" />
+            <xsl:value-of select="msg:getXslString($messages, 'UI.SUBSCRIPTION_ADMIN.DESCRIPTION')" disable-output-escaping="yes" />
           </td>
 
           <td class="portlet-table-header">
-            <xsl:value-of select="msg:getXslString('UI.SUBSCRIPTION_ADMIN.CRON_EXP')" disable-output-escaping="yes" />
+            <xsl:value-of select="msg:getXslString($messages, 'UI.SUBSCRIPTION_ADMIN.CRON_EXP')" disable-output-escaping="yes" />
           </td>
 
           <td class="portlet-table-header">
-            <xsl:value-of select="msg:getXslString('UI.USER_FIRE_TIME_NAME')" disable-output-escaping="yes" />
+            <xsl:value-of select="msg:getXslString($messages, 'UI.USER_FIRE_TIME_NAME')" disable-output-escaping="yes" />
           </td>
 
           <td class="portlet-table-header">
-            <xsl:value-of select="msg:getXslString('UI.SUBSCRIPTION_ADMIN.NUM_SUBS')" disable-output-escaping="yes" />
+            <xsl:value-of select="msg:getXslString($messages, 'UI.SUBSCRIPTION_ADMIN.NUM_SUBS')" disable-output-escaping="yes" />
           </td>
 
           <td class="portlet-table-header">
-            <xsl:value-of select="msg:getXslString('UI.USER_TRIGGER_STATE')" disable-output-escaping="yes" />
+            <xsl:value-of select="msg:getXslString($messages, 'UI.USER_TRIGGER_STATE')" disable-output-escaping="yes" />
           </td>
           <td colspan="2" class="portlet-table-header">
-            <xsl:value-of select="msg:getXslString('UI.USER_TRIGGER_ACTION')" disable-output-escaping="yes" />
+            <xsl:value-of select="msg:getXslString($messages, 'UI.USER_TRIGGER_ACTION')" disable-output-escaping="yes" />
           </td>
         </tr>
         <xsl:for-each select="job">
@@ -406,7 +408,7 @@
     <xsl:if test="count(errorMsg) &gt; 0">
       <tr>
         <td colspan="99">
-          <xsl:value-of select="msg:getXslString('UI.SUBSCRIPTION_ADMIN.ERROR_COLON')" disable-output-escaping="yes" />
+          <xsl:value-of select="msg:getXslString($messages, 'UI.SUBSCRIPTION_ADMIN.ERROR_COLON')" disable-output-escaping="yes" />
           <xsl:value-of select="errorMsg/text()" disable-output-escaping="yes" />
         </td>
       </tr>
@@ -436,22 +438,22 @@
       <td class="portlet-table-text">
         <xsl:choose>
           <xsl:when test="@triggerState = 0">
-            <xsl:value-of select="msg:getXslString('UI.USER_TRIGGER_STATE_NORMAL')" disable-output-escaping="yes" />
+            <xsl:value-of select="msg:getXslString($messages, 'UI.USER_TRIGGER_STATE_NORMAL')" disable-output-escaping="yes" />
           </xsl:when>
           <xsl:when test="@triggerState = 1">
-            <xsl:value-of select="msg:getXslString('UI.USER_TRIGGER_STATE_PAUSED')" disable-output-escaping="yes" />
+            <xsl:value-of select="msg:getXslString($messages, 'UI.USER_TRIGGER_STATE_PAUSED')" disable-output-escaping="yes" />
           </xsl:when>
           <xsl:when test="@triggerState = 2">
-            <xsl:value-of select="msg:getXslString('UI.USER_TRIGGER_STATE_COMPLETE')" disable-output-escaping="yes" />
+            <xsl:value-of select="msg:getXslString($messages, 'UI.USER_TRIGGER_STATE_COMPLETE')" disable-output-escaping="yes" />
           </xsl:when>
           <xsl:when test="@triggerState = 3">
-            <xsl:value-of select="msg:getXslString('UI.USER_TRIGGER_STATE_ERROR')" disable-output-escaping="yes" />
+            <xsl:value-of select="msg:getXslString($messages, 'UI.USER_TRIGGER_STATE_ERROR')" disable-output-escaping="yes" />
           </xsl:when>
           <xsl:when test="@triggerState = 4">
-            <xsl:value-of select="msg:getXslString('UI.USER_TRIGGER_STATE_BLOCKED')" disable-output-escaping="yes" />
+            <xsl:value-of select="msg:getXslString($messages, 'UI.USER_TRIGGER_STATE_BLOCKED')" disable-output-escaping="yes" />
           </xsl:when>
           <xsl:otherwise>
-            <xsl:value-of select="msg:getXslString('UI.USER_TRIGGER_STATE_NONE')" disable-output-escaping="yes" />
+            <xsl:value-of select="msg:getXslString($messages, 'UI.USER_TRIGGER_STATE_NONE')" disable-output-escaping="yes" />
           </xsl:otherwise>
         </xsl:choose>
       </td>
@@ -471,7 +473,7 @@
                   <xsl:text>&amp;schedulerAction=doPauseJob&amp;jobId=</xsl:text>
                   <xsl:value-of select="jobId" />
                 </xsl:attribute>
-                <xsl:value-of select="msg:getXslString('UI.USER_SCHEDULER_ACTION_SUSPEND')" disable-output-escaping="yes" />
+                <xsl:value-of select="msg:getXslString($messages, 'UI.USER_SCHEDULER_ACTION_SUSPEND')" disable-output-escaping="yes" />
               </xsl:when>
               <xsl:when test="@triggerState = 1">
                 <xsl:attribute name="href">
@@ -479,7 +481,7 @@
                   <xsl:text>&amp;schedulerAction=doResumeJob&amp;jobId=</xsl:text>
                   <xsl:value-of select="jobId" />
                 </xsl:attribute>
-                <xsl:value-of select="msg:getXslString('UI.USER_SCHEDULER_ACTION_RESUME')" disable-output-escaping="yes" />
+                <xsl:value-of select="msg:getXslString($messages, 'UI.USER_SCHEDULER_ACTION_RESUME')" disable-output-escaping="yes" />
               </xsl:when>
               <xsl:otherwise>
                 <xsl:text>-</xsl:text>
@@ -494,7 +496,7 @@
               <xsl:value-of select="jobId" />
               <xsl:text>&amp;</xsl:text>
             </xsl:attribute>
-            <xsl:value-of select="msg:getXslString('UI.SUBSCRIPTION_ADMIN.RUN_NOW')" disable-output-escaping="yes" />
+            <xsl:value-of select="msg:getXslString($messages, 'UI.SUBSCRIPTION_ADMIN.RUN_NOW')" disable-output-escaping="yes" />
           </a>
         </xsl:when>
         <xsl:otherwise>
@@ -506,7 +508,7 @@
               <xsl:text>&amp;schedRef=</xsl:text>
               <xsl:value-of select="schedRef" />
             </xsl:attribute>
-            <xsl:value-of select="msg:getXslString('UI.SUBSCRIPTION_ADMIN.SCHEDULE')" disable-output-escaping="yes" />
+            <xsl:value-of select="msg:getXslString($messages, 'UI.SUBSCRIPTION_ADMIN.SCHEDULE')" disable-output-escaping="yes" />
           </a>
         </xsl:otherwise>
       </xsl:choose>
@@ -522,7 +524,7 @@
               <xsl:text>&amp;jobId=</xsl:text>
               <xsl:value-of select="jobId" />
             </xsl:attribute>
-            <xsl:value-of select="msg:getXslString('UI.SUBSCRIPTION_ADMIN.EDIT')" disable-output-escaping="yes" />
+            <xsl:value-of select="msg:getXslString($messages, 'UI.SUBSCRIPTION_ADMIN.EDIT')" disable-output-escaping="yes" />
           </a>
         </xsl:when>
         <xsl:otherwise>
@@ -532,7 +534,7 @@
               <xsl:text>&amp;schedulerAction=doDeleteJob&amp;jobId=</xsl:text>
               <xsl:value-of select="jobId" />
             </xsl:attribute>
-            <xsl:value-of select="msg:getXslString('UI.SUBSCRIPTION_ADMIN.DELETE')" disable-output-escaping="yes" />
+            <xsl:value-of select="msg:getXslString($messages, 'UI.SUBSCRIPTION_ADMIN.DELETE')" disable-output-escaping="yes" />
           </a>
         </xsl:otherwise>
       </xsl:choose>
@@ -543,26 +545,26 @@
     <p/>
 	<table border="0" width="100%" class="content_header" cellpadding="0" cellspacing="0" style="padding-left:10px;padding-right:10px">
 		<tr>
-			<td width="100%"><xsl:value-of select="msg:getXslString('UI.SUBSCRIPTION_ADMIN.SCHED_STAT_COLON')" disable-output-escaping="yes" /></td>
+			<td width="100%"><xsl:value-of select="msg:getXslString($messages, 'UI.SUBSCRIPTION_ADMIN.SCHED_STAT_COLON')" disable-output-escaping="yes" /></td>
 		</tr>
 	</table>
 
 	<table border="0" class="content_container2" width="95%" cellpadding="0" cellspacing="0" style="padding-left:10px;padding-right:10px">
 		<tr>
 			<td class="portlet-table-font">
-				<xsl:value-of select="msg:getXslString('UI.SUBSCRIPTION_ADMIN.SCHED_STAT_COLON')" disable-output-escaping="yes" />
+				<xsl:value-of select="msg:getXslString($messages, 'UI.SUBSCRIPTION_ADMIN.SCHED_STAT_COLON')" disable-output-escaping="yes" />
            <xsl:choose>
             <xsl:when test="@state = 0">
-              <xsl:value-of select="msg:getXslString('UI.USER_TRIGGER_STATE_NORMAL')" disable-output-escaping="yes" />
+              <xsl:value-of select="msg:getXslString($messages, 'UI.USER_TRIGGER_STATE_NORMAL')" disable-output-escaping="yes" />
             </xsl:when>
             <xsl:when test="@state = 1">
-              <xsl:value-of select="msg:getXslString('UI.USER_TRIGGER_STATE_PAUSED')" disable-output-escaping="yes" />
+              <xsl:value-of select="msg:getXslString($messages, 'UI.USER_TRIGGER_STATE_PAUSED')" disable-output-escaping="yes" />
             </xsl:when>
             <xsl:when test="@state = 3">
-              <xsl:value-of select="msg:getXslString('UI.USER_TRIGGER_STATE_ERROR')" disable-output-escaping="yes" />
+              <xsl:value-of select="msg:getXslString($messages, 'UI.USER_TRIGGER_STATE_ERROR')" disable-output-escaping="yes" />
             </xsl:when>
             <xsl:otherwise>
-              <xsl:value-of select="msg:getXslString('UI.USER_TRIGGER_STATE_NONE')" disable-output-escaping="yes" />
+              <xsl:value-of select="msg:getXslString($messages, 'UI.USER_TRIGGER_STATE_NONE')" disable-output-escaping="yes" />
             </xsl:otherwise>
           </xsl:choose>
 			</td>
@@ -572,7 +574,7 @@
       <td class="content_body">
 
     <span class="portlet-section-subheader">
-      <xsl:value-of select="msg:getXslString('UI.SUBSCRIPTION_ADMIN.ACTIONS')" disable-output-escaping="yes" />
+      <xsl:value-of select="msg:getXslString($messages, 'UI.SUBSCRIPTION_ADMIN.ACTIONS')" disable-output-escaping="yes" />
     </span>
 
     <table border="0" cellpadding="5px" cellspacing="0">
@@ -586,14 +588,14 @@
                   <xsl:value-of select="$baseUrl" />
                   <xsl:text>&amp;schedulerAction=doSuspendScheduler</xsl:text>
                 </xsl:attribute>
-                <xsl:value-of select="msg:getXslString('UI.USER_SCHEDULER_ACTION_SUSPEND')" disable-output-escaping="yes" />
+                <xsl:value-of select="msg:getXslString($messages, 'UI.USER_SCHEDULER_ACTION_SUSPEND')" disable-output-escaping="yes" />
               </xsl:when>
               <xsl:otherwise>
                 <xsl:attribute name="href">
                   <xsl:value-of select="$baseUrl" />
                   <xsl:text>&amp;schedulerAction=doResumeScheduler</xsl:text>
                 </xsl:attribute>
-                <xsl:value-of select="msg:getXslString('UI.USER_SCHEDULER_ACTION_RESUME')" disable-output-escaping="yes" />
+                <xsl:value-of select="msg:getXslString($messages, 'UI.USER_SCHEDULER_ACTION_RESUME')" disable-output-escaping="yes" />
               </xsl:otherwise>
             </xsl:choose>
           </a>          
@@ -605,7 +607,7 @@
               <xsl:value-of select="$baseUrl" />
               <xsl:text>&amp;schedulerAction=addSchedule</xsl:text>
             </xsl:attribute>
-            <xsl:value-of select="msg:getXslString('UI.SUBSCRIPTION_ADMIN.ADD_SCHEDULE')" disable-output-escaping="yes" />
+            <xsl:value-of select="msg:getXslString($messages, 'UI.SUBSCRIPTION_ADMIN.ADD_SCHEDULE')" disable-output-escaping="yes" />
           </a>
         </td>
         <td class="portlet-table-font">|</td>
@@ -615,7 +617,7 @@
               <xsl:value-of select="$baseUrl" />
               <xsl:text>&amp;schedulerAction=addContent</xsl:text>
             </xsl:attribute>
-            <xsl:value-of select="msg:getXslString('UI.SUBSCRIPTION_ADMIN.SET_CONTENT')" disable-output-escaping="yes" />
+            <xsl:value-of select="msg:getXslString($messages, 'UI.SUBSCRIPTION_ADMIN.SET_CONTENT')" disable-output-escaping="yes" />
           </a>
         </td>
         <td class="portlet-table-font">|</td>
@@ -625,7 +627,7 @@
               <xsl:value-of select="$baseUrl" />
               <xsl:text>&amp;schedulerAction=showImport</xsl:text>
             </xsl:attribute>
-            <xsl:value-of select="msg:getXslString('UI.SUBSCRIPTION_ADMIN.IMPORT_SCHEDS_CONTENT')" disable-output-escaping="yes" />
+            <xsl:value-of select="msg:getXslString($messages, 'UI.SUBSCRIPTION_ADMIN.IMPORT_SCHEDS_CONTENT')" disable-output-escaping="yes" />
           </a>
         </td>
         <td class="portlet-table-font">|</td>
@@ -635,7 +637,7 @@
               <xsl:value-of select="$baseUrl" />
               <xsl:text>&amp;schedulerAction=listSchedules</xsl:text>
             </xsl:attribute>
-            <xsl:value-of select="msg:getXslString('UI.SUBSCRIPTION_ADMIN.REFRESH')" disable-output-escaping="yes" />
+            <xsl:value-of select="msg:getXslString($messages, 'UI.SUBSCRIPTION_ADMIN.REFRESH')" disable-output-escaping="yes" />
           </a>
         </td>
         <td class="portlet-table-font">|</td>
@@ -645,7 +647,7 @@
               <xsl:value-of select="$baseUrl" />
               <xsl:text>&amp;schedulerAction=listSubscriptions</xsl:text>
             </xsl:attribute>
-            <xsl:value-of select="msg:getXslString('UI.SUBSCRIPTION_ADMIN.SHOW_SUBS')" disable-output-escaping="yes" />
+            <xsl:value-of select="msg:getXslString($messages, 'UI.SUBSCRIPTION_ADMIN.SHOW_SUBS')" disable-output-escaping="yes" />
           </a>
         </td>
       </tr>
@@ -684,11 +686,11 @@
       <table width="100%" border="0" cellpadding="0" cellspacing="0" style="padding-left:10px;padding-right:10px">
         <tr>
           <td class="portlet-table-header">
-            <xsl:value-of select="msg:getXslString('UI.SUBSCRIPTION_ADMIN.ACTION_SEQUENCE')" disable-output-escaping="yes" />
+            <xsl:value-of select="msg:getXslString($messages, 'UI.SUBSCRIPTION_ADMIN.ACTION_SEQUENCE')" disable-output-escaping="yes" />
           </td>
           <xsl:if test="$actions != ''" >          
             <td colspan="2" class="portlet-table-header">
-              <xsl:value-of select="msg:getXslString('UI.SUBSCRIPTION_ADMIN.ACTION')" disable-output-escaping="yes" />
+              <xsl:value-of select="msg:getXslString($messages, 'UI.SUBSCRIPTION_ADMIN.ACTION')" disable-output-escaping="yes" />
              </td>
           </xsl:if>
         </tr>
@@ -723,7 +725,7 @@
           <xsl:text>&amp;actionRef=</xsl:text>
           <xsl:value-of select="actionRef" />
         </xsl:attribute>
-        <xsl:value-of select="msg:getXslString('UI.SUBSCRIPTION_ADMIN.EDIT')" disable-output-escaping="yes" />
+        <xsl:value-of select="msg:getXslString($messages, 'UI.SUBSCRIPTION_ADMIN.EDIT')" disable-output-escaping="yes" />
       </a> 
 	  |
       <a>
@@ -734,7 +736,7 @@
           <xsl:text>&amp;actionRef=</xsl:text>
           <xsl:value-of select="actionRef" />
         </xsl:attribute>
-        <xsl:value-of select="msg:getXslString('UI.SUBSCRIPTION_ADMIN.DELETE')" disable-output-escaping="yes" />
+        <xsl:value-of select="msg:getXslString($messages, 'UI.SUBSCRIPTION_ADMIN.DELETE')" disable-output-escaping="yes" />
       </a>
     </td>
   </xsl:template>
@@ -753,7 +755,7 @@
           <xsl:text>&amp;actionRef=</xsl:text>
           <xsl:value-of select="actionRef" />
         </xsl:attribute>
-        <xsl:value-of select="msg:getXslString('UI.SUBSCRIPTION_ADMIN.REMOVE_CONTENT')" disable-output-escaping="yes" />
+        <xsl:value-of select="msg:getXslString($messages, 'UI.SUBSCRIPTION_ADMIN.REMOVE_CONTENT')" disable-output-escaping="yes" />
       </a>
     </td>
   </xsl:template>
@@ -761,11 +763,11 @@
   <xsl:template match="addContent">
   
     		<xsl:call-template name="breadcrumbing">
-			<xsl:with-param name="crumb1" select="msg:getXslString('UI.USER_ADMIN')"/>
+			<xsl:with-param name="crumb1" select="msg:getXslString($messages, 'UI.USER_ADMIN')"/>
 			<xsl:with-param name="url1" select="'Admin'"/>
-			<xsl:with-param name="crumb2" select="msg:getXslString('UI.SUBSCRIPTION_ADMIN.TITLE')"/>
+			<xsl:with-param name="crumb2" select="msg:getXslString($messages, 'UI.SUBSCRIPTION_ADMIN.TITLE')"/>
 			<xsl:with-param name="url2" select="'SubscriptionAdmin?schedulerAction=listSchedules'"/>
-			<xsl:with-param name="crumb3" select="msg:getXslString('UI.SUBSCRIPTION_ADMIN.SET_CONTENT')"/>
+			<xsl:with-param name="crumb3" select="msg:getXslString($messages, 'UI.SUBSCRIPTION_ADMIN.SET_CONTENT')"/>
 			<xsl:with-param name="url3" select="''"/>
 		</xsl:call-template>
 
@@ -893,17 +895,17 @@
   <xsl:template match="editSchedule">
 
   		<xsl:call-template name="breadcrumbing">
-			<xsl:with-param name="crumb1" select="msg:getXslString('UI.USER_ADMIN')"/>
+			<xsl:with-param name="crumb1" select="msg:getXslString($messages, 'UI.USER_ADMIN')"/>
 			<xsl:with-param name="url1" select="'Admin'"/>
-			<xsl:with-param name="crumb2" select="msg:getXslString('UI.SUBSCRIPTION_ADMIN.TITLE')"/>
+			<xsl:with-param name="crumb2" select="msg:getXslString($messages, 'UI.SUBSCRIPTION_ADMIN.TITLE')"/>
 			<xsl:with-param name="url2" select="'SubscriptionAdmin?schedulerAction=listSchedules'"/>
-			<xsl:with-param name="crumb3" select="msg:getXslString('UI.SUBSCRIPTION_ADMIN.SCHEDULE_EDITOR')"/>
+			<xsl:with-param name="crumb3" select="msg:getXslString($messages, 'UI.SUBSCRIPTION_ADMIN.SCHEDULE_EDITOR')"/>
 			<xsl:with-param name="url3" select="''"/>
 		</xsl:call-template>
 
     <br/>
     <span class="portlet-font">
-      <xsl:value-of select="msg:getXslString('UI.SUBSCRIPTION_ADMIN.USE_THIS_PAGE')" disable-output-escaping="yes" />
+      <xsl:value-of select="msg:getXslString($messages, 'UI.SUBSCRIPTION_ADMIN.USE_THIS_PAGE')" disable-output-escaping="yes" />
     </span>
     <p/>
     <xsl:call-template name="messages" />
@@ -931,13 +933,13 @@
         <xsl:text>&amp;schedRef=</xsl:text>
         <xsl:value-of select="schedRef" />
       </xsl:attribute>
-      <xsl:value-of select="msg:getXslString('UI.SUBSCRIPTION_ADMIN.SET_CONTENT_FOR_SCHEDULE')" disable-output-escaping="yes" />
+      <xsl:value-of select="msg:getXslString($messages, 'UI.SUBSCRIPTION_ADMIN.SET_CONTENT_FOR_SCHEDULE')" disable-output-escaping="yes" />
     </a> 
        
-      <p/><xsl:value-of select="msg:getXslString('UI.SUBSCRIPTION_ADMIN.LAST_TRIGGER_COLON')" disable-output-escaping="yes" />
+      <p/><xsl:value-of select="msg:getXslString($messages, 'UI.SUBSCRIPTION_ADMIN.LAST_TRIGGER_COLON')" disable-output-escaping="yes" />
       <xsl:value-of select="prevFireTime" disable-output-escaping="yes" />
 
-      <br/><xsl:value-of select="msg:getXslString('UI.SUBSCRIPTION_ADMIN.NEXT_TRIGGER_COLON')" disable-output-escaping="yes" />
+      <br/><xsl:value-of select="msg:getXslString($messages, 'UI.SUBSCRIPTION_ADMIN.NEXT_TRIGGER_COLON')" disable-output-escaping="yes" />
       <xsl:value-of select="nextFireTime" disable-output-escaping="yes" />
 
     <p/>
@@ -948,13 +950,13 @@
     <xsl:choose>
       <xsl:when test="listContent/@count = '0'">
         <span class="portlet-section-subheader">
-          <xsl:value-of select="msg:getXslString('UI.SUBSCRIPTION_ADMIN.NO_CONTENT_ALLOWED')" disable-output-escaping="yes" />
+          <xsl:value-of select="msg:getXslString($messages, 'UI.SUBSCRIPTION_ADMIN.NO_CONTENT_ALLOWED')" disable-output-escaping="yes" />
         </span>
       </xsl:when>
       <xsl:otherwise>
         <xsl:apply-templates select="listContent" >
-          <xsl:with-param name="title" select="msg:getXslString('UI.SUBSCRIPTION_ADMIN.CONTENT_ALLOWED')" />
-          <xsl:with-param name="actions" select="msg:getXslString('UI.SUBSCRIPTION_ADMIN.SCHEDULE_CONTENT_ACTION')" />
+          <xsl:with-param name="title" select="msg:getXslString($messages, 'UI.SUBSCRIPTION_ADMIN.CONTENT_ALLOWED')" />
+          <xsl:with-param name="actions" select="msg:getXslString($messages, 'UI.SUBSCRIPTION_ADMIN.SCHEDULE_CONTENT_ACTION')" />
         </xsl:apply-templates>
       </xsl:otherwise>
     </xsl:choose>
@@ -964,17 +966,17 @@
   <xsl:template match="addSchedule">
   
 		<xsl:call-template name="breadcrumbing">
-			<xsl:with-param name="crumb1" select="msg:getXslString('UI.USER_ADMIN')"/>
+			<xsl:with-param name="crumb1" select="msg:getXslString($messages, 'UI.USER_ADMIN')"/>
 			<xsl:with-param name="url1" select="'Admin'"/>
-			<xsl:with-param name="crumb2" select="msg:getXslString('UI.SUBSCRIPTION_ADMIN.TITLE')"/>
+			<xsl:with-param name="crumb2" select="msg:getXslString($messages, 'UI.SUBSCRIPTION_ADMIN.TITLE')"/>
 			<xsl:with-param name="url2" select="'SubscriptionAdmin?schedulerAction=listSchedules'"/>
-			<xsl:with-param name="crumb3" select="msg:getXslString('UI.SUBSCRIPTION_ADMIN.ADD_NEW_SCHEDULE')"/>
+			<xsl:with-param name="crumb3" select="msg:getXslString($messages, 'UI.SUBSCRIPTION_ADMIN.ADD_NEW_SCHEDULE')"/>
 			<xsl:with-param name="url3" select="''"/>
 		</xsl:call-template>
 
     <br/>
     <span class="portlet-font">
-      <xsl:value-of select="msg:getXslString('UI.SUBSCRIPTION_ADMIN.USE_PAGE_TO_ADD_NEW_SCHEDULE')" disable-output-escaping="yes" />
+      <xsl:value-of select="msg:getXslString($messages, 'UI.SUBSCRIPTION_ADMIN.USE_PAGE_TO_ADD_NEW_SCHEDULE')" disable-output-escaping="yes" />
     </span>
     <p/>
 
@@ -994,17 +996,17 @@
   <xsl:template match="addContentForSchedule">
   
 		<xsl:call-template name="breadcrumbing">
-			<xsl:with-param name="crumb1" select="msg:getXslString('UI.USER_ADMIN')"/>
+			<xsl:with-param name="crumb1" select="msg:getXslString($messages, 'UI.USER_ADMIN')"/>
 			<xsl:with-param name="url1" select="'Admin'"/>
-			<xsl:with-param name="crumb2" select="msg:getXslString('UI.SUBSCRIPTION_ADMIN.TITLE')"/>
+			<xsl:with-param name="crumb2" select="msg:getXslString($messages, 'UI.SUBSCRIPTION_ADMIN.TITLE')"/>
 			<xsl:with-param name="url2" select="'SubscriptionAdmin?schedulerAction=listSchedules'"/>
 			
-			<xsl:with-param name="crumb3" select="msg:getXslString('UI.SUBSCRIPTION_ADMIN.SCHEDULE_EDITOR')"/>
+			<xsl:with-param name="crumb3" select="msg:getXslString($messages, 'UI.SUBSCRIPTION_ADMIN.SCHEDULE_EDITOR')"/>
 			<xsl:with-param name="url3">
 				<xsl:text>SubscriptionAdmin?schedulerAction=editSchedule&amp;schedId=</xsl:text><xsl:value-of select="schedId"/><xsl:text>&amp;jobId=</xsl:text><xsl:value-of select="schedRef"/>
 			</xsl:with-param>
 			<xsl:with-param name="crumb4">
-				<xsl:value-of select="msg:getXslString('UI.SUBSCRIPTION_ADMIN.SET_CONTENT_FOR_DASH')" disable-output-escaping="yes" />
+				<xsl:value-of select="msg:getXslString($messages, 'UI.SUBSCRIPTION_ADMIN.SET_CONTENT_FOR_DASH')" disable-output-escaping="yes" />
 				<xsl:value-of select="schedRef" disable-output-escaping="yes" />
 			</xsl:with-param>
 			<xsl:with-param name="url4" select="''"/>
@@ -1012,7 +1014,7 @@
   
     <br/>
     <span class="portlet-font">
-      <xsl:value-of select="msg:getXslString('UI.SUBSCRIPTION_ADMIN.USE_PAGE_TO_SELECT_CONTENT')" disable-output-escaping="yes" />
+      <xsl:value-of select="msg:getXslString($messages, 'UI.SUBSCRIPTION_ADMIN.USE_PAGE_TO_SELECT_CONTENT')" disable-output-escaping="yes" />
     </span>
     <p/>
 
@@ -1021,7 +1023,7 @@
     <xsl:call-template name="exceptions" />
     
     <span class="portlet-section-subheader">
-      <xsl:value-of select="msg:getXslString('UI.SUBSCRIPTION_ADMIN.CHECK_CONTENT')" disable-output-escaping="yes" />
+      <xsl:value-of select="msg:getXslString($messages, 'UI.SUBSCRIPTION_ADMIN.CHECK_CONTENT')" disable-output-escaping="yes" />
     </span>
    <form method="post">
      <xsl:attribute name="action"><xsl:value-of select="$baseUrl" /></xsl:attribute>
@@ -1033,7 +1035,7 @@
               <xsl:value-of select="''" disable-output-escaping="yes" />
             </td>
             <td class="portlet-table-header">
-              <xsl:value-of select="msg:getXslString('UI.SUBSCRIPTION_ADMIN.ACTION_SEQUENCE')" disable-output-escaping="yes" />
+              <xsl:value-of select="msg:getXslString($messages, 'UI.SUBSCRIPTION_ADMIN.ACTION_SEQUENCE')" disable-output-escaping="yes" />
             </td>
           </tr>
           
@@ -1077,28 +1079,28 @@
       <xsl:attribute name="value"><xsl:value-of select="schedId" /></xsl:attribute>  
     </input>
      
-    <tr><td><xsl:value-of select="msg:getXslString('UI.SUBSCRIPTION_ADMIN.GROUP_COLON')" disable-output-escaping="yes" /></td>
+    <tr><td><xsl:value-of select="msg:getXslString($messages, 'UI.SUBSCRIPTION_ADMIN.GROUP_COLON')" disable-output-escaping="yes" /></td>
     <td><input name="group" type="text">
       <xsl:attribute name="value"><xsl:value-of select="group" /></xsl:attribute>
     </input></td></tr>
       
-    <tr><td><xsl:value-of select="msg:getXslString('UI.SUBSCRIPTION_ADMIN.NAME_COLON')" disable-output-escaping="yes" /></td>
+    <tr><td><xsl:value-of select="msg:getXslString($messages, 'UI.SUBSCRIPTION_ADMIN.NAME_COLON')" disable-output-escaping="yes" /></td>
     <td><input name="schedRef" type="text" >
       <xsl:attribute name="value"><xsl:value-of select="schedRef" /></xsl:attribute>
     </input></td>
     </tr>
 
-    <tr><td><xsl:value-of select="msg:getXslString('UI.SUBSCRIPTION_ADMIN.TITLE_COLON')" disable-output-escaping="yes" /></td>
+    <tr><td><xsl:value-of select="msg:getXslString($messages, 'UI.SUBSCRIPTION_ADMIN.TITLE_COLON')" disable-output-escaping="yes" /></td>
     <td><input name="title" type="text" >
       <xsl:attribute name="value"><xsl:value-of select="title" /></xsl:attribute>
     </input></td></tr>
 
-    <tr><td><xsl:value-of select="msg:getXslString('UI.SUBSCRIPTION_ADMIN.DESCRIPTION_COLON')" disable-output-escaping="yes" /></td>
+    <tr><td><xsl:value-of select="msg:getXslString($messages, 'UI.SUBSCRIPTION_ADMIN.DESCRIPTION_COLON')" disable-output-escaping="yes" /></td>
     <td><input name="desc" type="text">
       <xsl:attribute name="value"><xsl:value-of select="desc" /></xsl:attribute>
     </input></td></tr>
       
-    <tr><td><xsl:value-of select="msg:getXslString('UI.SUBSCRIPTION_ADMIN.CRON_EXP_COLON')" disable-output-escaping="yes" /></td>
+    <tr><td><xsl:value-of select="msg:getXslString($messages, 'UI.SUBSCRIPTION_ADMIN.CRON_EXP_COLON')" disable-output-escaping="yes" /></td>
     <td><input name="cron" type="text">
       <xsl:attribute name="value"><xsl:value-of select="cron" /></xsl:attribute>
     </input></td></tr>
@@ -1108,18 +1110,18 @@
   <xsl:template match="editContent">
   
   		<xsl:call-template name="breadcrumbing">
-			<xsl:with-param name="crumb1" select="msg:getXslString('UI.USER_ADMIN')"/>
+			<xsl:with-param name="crumb1" select="msg:getXslString($messages, 'UI.USER_ADMIN')"/>
 			<xsl:with-param name="url1" select="'Admin'"/>
-			<xsl:with-param name="crumb2" select="msg:getXslString('UI.SUBSCRIPTION_ADMIN.TITLE')"/>
+			<xsl:with-param name="crumb2" select="msg:getXslString($messages, 'UI.SUBSCRIPTION_ADMIN.TITLE')"/>
 			<xsl:with-param name="url2" select="'SubscriptionAdmin?schedulerAction=listSchedules'"/>
 			
-			<xsl:with-param name="crumb3" select="msg:getXslString('UI.SUBSCRIPTION_ADMIN.SUB_CONTENT_EDITOR')"/>
+			<xsl:with-param name="crumb3" select="msg:getXslString($messages, 'UI.SUBSCRIPTION_ADMIN.SUB_CONTENT_EDITOR')"/>
 			<xsl:with-param name="url3" select="''"/>
 		</xsl:call-template>
   
     <br/>
     <span class="portlet-font">
-      <xsl:value-of select="msg:getXslString('UI.SUBSCRIPTION_ADMIN.USE_PAGE_TO_EDIT')" disable-output-escaping="yes" />
+      <xsl:value-of select="msg:getXslString($messages, 'UI.SUBSCRIPTION_ADMIN.USE_PAGE_TO_EDIT')" disable-output-escaping="yes" />
     </span>
     <p/>
     <xsl:call-template name="messages" />
@@ -1147,7 +1149,7 @@
         <xsl:text>&amp;actionRef=</xsl:text>
         <xsl:value-of select="actionRef" />
       </xsl:attribute>
-      <xsl:value-of select="msg:getXslString('UI.SUBSCRIPTION_ADMIN.SET_SCHED_FOR_CONTENT')" disable-output-escaping="yes" />
+      <xsl:value-of select="msg:getXslString($messages, 'UI.SUBSCRIPTION_ADMIN.SET_SCHED_FOR_CONTENT')" disable-output-escaping="yes" />
     </a>
 
     <p/>
@@ -1159,27 +1161,27 @@
     <xsl:choose>
       <xsl:when test="@count &gt; 0">  
         <span class="portlet-section-subheader">
-          <xsl:value-of select="msg:getXslString('UI.SUBSCRIPTION_ADMIN.SCHED_FOR_CONTENT')" disable-output-escaping="yes" />
+          <xsl:value-of select="msg:getXslString($messages, 'UI.SUBSCRIPTION_ADMIN.SCHED_FOR_CONTENT')" disable-output-escaping="yes" />
         </span>
         <center>
           <table width="95%" border="0" cellpadding="5px" cellspacing="0">
             <tr>
               <td class="portlet-table-header">
-                <xsl:value-of select="msg:getXslString('UI.SUBSCRIPTION_ADMIN.GROUP')" disable-output-escaping="yes" />
+                <xsl:value-of select="msg:getXslString($messages, 'UI.SUBSCRIPTION_ADMIN.GROUP')" disable-output-escaping="yes" />
               </td>
     
               <td class="portlet-table-header">
-                <xsl:value-of select="msg:getXslString('UI.SUBSCRIPTION_ADMIN.NAME')" disable-output-escaping="yes" />
+                <xsl:value-of select="msg:getXslString($messages, 'UI.SUBSCRIPTION_ADMIN.NAME')" disable-output-escaping="yes" />
               </td>
     
               <td class="portlet-table-header">
-                <xsl:value-of select="msg:getXslString('UI.SUBSCRIPTION_ADMIN.TITLE.TITLE')" disable-output-escaping="yes" />
+                <xsl:value-of select="msg:getXslString($messages, 'UI.SUBSCRIPTION_ADMIN.TITLE.TITLE')" disable-output-escaping="yes" />
               </td>
               <td class="portlet-table-header">
-                <xsl:value-of select="msg:getXslString('UI.SUBSCRIPTION_ADMIN.DESCRIPTION')" disable-output-escaping="yes" />
+                <xsl:value-of select="msg:getXslString($messages, 'UI.SUBSCRIPTION_ADMIN.DESCRIPTION')" disable-output-escaping="yes" />
               </td>
               <td class="portlet-table-header">
-                <xsl:value-of select="msg:getXslString('UI.SUBSCRIPTION_ADMIN.ACTION')" disable-output-escaping="yes" />
+                <xsl:value-of select="msg:getXslString($messages, 'UI.SUBSCRIPTION_ADMIN.ACTION')" disable-output-escaping="yes" />
               </td>
             </tr>
             <xsl:for-each select="schedule">
@@ -1192,7 +1194,7 @@
       </xsl:when>
       <xsl:otherwise>      
         <span class="portlet-section-subheader">
-          <xsl:value-of select="msg:getXslString('UI.SUBSCRIPTION_ADMIN.NO_CONTENT_SCHED')" disable-output-escaping="yes" />
+          <xsl:value-of select="msg:getXslString($messages, 'UI.SUBSCRIPTION_ADMIN.NO_CONTENT_SCHED')" disable-output-escaping="yes" />
         </span>
       </xsl:otherwise>
     </xsl:choose>
@@ -1234,7 +1236,7 @@
           <xsl:text>&amp;actionRef=</xsl:text>
           <xsl:value-of select="actionRef" />
         </xsl:attribute>
-        <xsl:value-of select="msg:getXslString('UI.SUBSCRIPTION_ADMIN.REMOVE_THIS_SCHEDULE')" disable-output-escaping="yes" />
+        <xsl:value-of select="msg:getXslString($messages, 'UI.SUBSCRIPTION_ADMIN.REMOVE_THIS_SCHEDULE')" disable-output-escaping="yes" />
       </a>
     </td>
     </tr>
@@ -1243,17 +1245,17 @@
   <xsl:template match="addScheduleForContent">
   
 		<xsl:call-template name="breadcrumbing">
-			<xsl:with-param name="crumb1" select="msg:getXslString('UI.USER_ADMIN')"/>
+			<xsl:with-param name="crumb1" select="msg:getXslString($messages, 'UI.USER_ADMIN')"/>
 			<xsl:with-param name="url1" select="'Admin'"/>
-			<xsl:with-param name="crumb2" select="msg:getXslString('UI.SUBSCRIPTION_ADMIN.TITLE')"/>
+			<xsl:with-param name="crumb2" select="msg:getXslString($messages, 'UI.SUBSCRIPTION_ADMIN.TITLE')"/>
 			<xsl:with-param name="url2" select="'SubscriptionAdmin?schedulerAction=listSchedules'"/>
 			
-			<xsl:with-param name="crumb3" select="msg:getXslString('UI.SUBSCRIPTION_ADMIN.SUB_CONTENT_EDITOR')"/>
+			<xsl:with-param name="crumb3" select="msg:getXslString($messages, 'UI.SUBSCRIPTION_ADMIN.SUB_CONTENT_EDITOR')"/>
 			<xsl:with-param name="url3">
 				<xsl:text>SubscriptionAdmin?schedulerAction=editContent&amp;contentId=</xsl:text><xsl:value-of select="contentId"/><xsl:text>&amp;actionRef=</xsl:text><xsl:value-of select="actionRef"/>
 			</xsl:with-param>
 			<xsl:with-param name="crumb4">
-				<xsl:value-of select="msg:getXslString('UI.SUBSCRIPTION_ADMIN.SET_SCHED_CONTENT_DASH')" disable-output-escaping="yes" />
+				<xsl:value-of select="msg:getXslString($messages, 'UI.SUBSCRIPTION_ADMIN.SET_SCHED_CONTENT_DASH')" disable-output-escaping="yes" />
 				<xsl:value-of select="schedRef" disable-output-escaping="yes" />
 			</xsl:with-param>
 			<xsl:with-param name="url4" select="''"/>
@@ -1261,12 +1263,12 @@
   
 	<br/>
     <span class="portlet-section-header">
-      <xsl:value-of select="msg:getXslString('UI.SUBSCRIPTION_ADMIN.SET_SCHED_CONTENT_DASH')" disable-output-escaping="yes" />
+      <xsl:value-of select="msg:getXslString($messages, 'UI.SUBSCRIPTION_ADMIN.SET_SCHED_CONTENT_DASH')" disable-output-escaping="yes" />
       <xsl:value-of select="actionRef" disable-output-escaping="yes" />
     </span>
     <br/>
     <span class="portlet-font">
-      <xsl:value-of select="msg:getXslString('UI.SUBSCRIPTION_ADMIN.USE_PAGE_SCHED_AS')" disable-output-escaping="yes" />
+      <xsl:value-of select="msg:getXslString($messages, 'UI.SUBSCRIPTION_ADMIN.USE_PAGE_SCHED_AS')" disable-output-escaping="yes" />
     </span>
     <p/>
 
@@ -1275,7 +1277,7 @@
     <xsl:call-template name="exceptions" />
     
     <span class="portlet-section-subheader">
-      <xsl:value-of select="msg:getXslString('UI.SUBSCRIPTION_ADMIN.CHECK_SCHED_FOR_AS')" disable-output-escaping="yes" />
+      <xsl:value-of select="msg:getXslString($messages, 'UI.SUBSCRIPTION_ADMIN.CHECK_SCHED_FOR_AS')" disable-output-escaping="yes" />
     </span>
    <form method="post">
      <xsl:attribute name="action"><xsl:value-of select="$baseUrl" /></xsl:attribute>
@@ -1284,18 +1286,18 @@
         <table width="95%" border="0" cellpadding="5px" cellspacing="0">
           <tr>  
             <td class="portlet-table-header">
-              <xsl:value-of select="msg:getXslString('UI.SUBSCRIPTION_ADMIN.SCHEDULE')" disable-output-escaping="yes" />
+              <xsl:value-of select="msg:getXslString($messages, 'UI.SUBSCRIPTION_ADMIN.SCHEDULE')" disable-output-escaping="yes" />
             </td>
             <td class="portlet-table-header">
-              <xsl:value-of select="msg:getXslString('UI.SUBSCRIPTION_ADMIN.GROUP')" disable-output-escaping="yes" />
-            </td>
-  
-            <td class="portlet-table-header">
-              <xsl:value-of select="msg:getXslString('UI.SUBSCRIPTION_ADMIN.NAME')" disable-output-escaping="yes" />
+              <xsl:value-of select="msg:getXslString($messages, 'UI.SUBSCRIPTION_ADMIN.GROUP')" disable-output-escaping="yes" />
             </td>
   
             <td class="portlet-table-header">
-              <xsl:value-of select="msg:getXslString('UI.SUBSCRIPTION_ADMIN.TITLE.TITLE')" disable-output-escaping="yes" />
+              <xsl:value-of select="msg:getXslString($messages, 'UI.SUBSCRIPTION_ADMIN.NAME')" disable-output-escaping="yes" />
+            </td>
+  
+            <td class="portlet-table-header">
+              <xsl:value-of select="msg:getXslString($messages, 'UI.SUBSCRIPTION_ADMIN.TITLE.TITLE')" disable-output-escaping="yes" />
             </td>
           </tr>
           
@@ -1341,7 +1343,7 @@
       <xsl:attribute name="value"><xsl:value-of select="@contentId" /></xsl:attribute>  
     </input>
       
-    <tr><td><xsl:value-of select="msg:getXslString('UI.SUBSCRIPTION_ADMIN.ACTION_SEQUENCE_COLON')" disable-output-escaping="yes" /></td>
+    <tr><td><xsl:value-of select="msg:getXslString($messages, 'UI.SUBSCRIPTION_ADMIN.ACTION_SEQUENCE_COLON')" disable-output-escaping="yes" /></td>
     <td><input name="actionRef" type="text" size="75">
       <xsl:attribute name="value"><xsl:value-of select="actionRef" /></xsl:attribute>
     </input></td></tr>
@@ -1350,18 +1352,18 @@
   <xsl:template match="listSubscriptions">
   
   		<xsl:call-template name="breadcrumbing">
-			<xsl:with-param name="crumb1" select="msg:getXslString('UI.USER_ADMIN')"/>
+			<xsl:with-param name="crumb1" select="msg:getXslString($messages, 'UI.USER_ADMIN')"/>
 			<xsl:with-param name="url1" select="'Admin'"/>
-			<xsl:with-param name="crumb2" select="msg:getXslString('UI.SUBSCRIPTION_ADMIN.TITLE')"/>
+			<xsl:with-param name="crumb2" select="msg:getXslString($messages, 'UI.SUBSCRIPTION_ADMIN.TITLE')"/>
 			<xsl:with-param name="url2" select="'SubscriptionAdmin?schedulerAction=listSchedules'"/>
 			
-			<xsl:with-param name="crumb3" select="msg:getXslString('UI.SUBSCRIPTION_ADMIN.SUBSCRIPTIONS')"/>
+			<xsl:with-param name="crumb3" select="msg:getXslString($messages, 'UI.SUBSCRIPTION_ADMIN.SUBSCRIPTIONS')"/>
 			<xsl:with-param name="url3" select="''"/>
 		</xsl:call-template>
 
     <br/>
     <span class="portlet-font">
-      <xsl:value-of select="msg:getXslString('UI.SUBSCRIPTION_ADMIN.MANAGE_USER_SUBSCRIPTIONS')" disable-output-escaping="yes" />
+      <xsl:value-of select="msg:getXslString($messages, 'UI.SUBSCRIPTION_ADMIN.MANAGE_USER_SUBSCRIPTIONS')" disable-output-escaping="yes" />
     </span>
     <p/>
     <xsl:call-template name="messages" />
@@ -1377,28 +1379,28 @@
     <xsl:choose>
       <xsl:when test="count(subscription) &gt; 0">  
         <span class="portlet-section-subheader">
-          <xsl:value-of select="msg:getXslString('UI.SUBSCRIPTION_ADMIN.SUBSCRIPTIONS')" disable-output-escaping="yes" />
+          <xsl:value-of select="msg:getXslString($messages, 'UI.SUBSCRIPTION_ADMIN.SUBSCRIPTIONS')" disable-output-escaping="yes" />
         </span>
           <table width="95%" border="0" cellpadding="5px" cellspacing="0">
             <tr>
               <td class="portlet-table-header">
-                <xsl:value-of select="msg:getXslString('UI.SUBSCRIPTION_ADMIN.USER')" disable-output-escaping="yes" />
+                <xsl:value-of select="msg:getXslString($messages, 'UI.SUBSCRIPTION_ADMIN.USER')" disable-output-escaping="yes" />
               </td>
     
               <td class="portlet-table-header">
-                <xsl:value-of select="msg:getXslString('UI.SUBSCRIPTION_ADMIN.TITLE.TITLE')" disable-output-escaping="yes" />
+                <xsl:value-of select="msg:getXslString($messages, 'UI.SUBSCRIPTION_ADMIN.TITLE.TITLE')" disable-output-escaping="yes" />
               </td>
     
               <td class="portlet-table-header">
-                <xsl:value-of select="msg:getXslString('UI.SUBSCRIPTION_ADMIN.ACTION_SEQUENCE')" disable-output-escaping="yes" />
+                <xsl:value-of select="msg:getXslString($messages, 'UI.SUBSCRIPTION_ADMIN.ACTION_SEQUENCE')" disable-output-escaping="yes" />
               </td>
               
               <td class="portlet-table-header">
-                <xsl:value-of select="msg:getXslString('UI.SUBSCRIPTION_ADMIN.SCHEDULE')" disable-output-escaping="yes" />
+                <xsl:value-of select="msg:getXslString($messages, 'UI.SUBSCRIPTION_ADMIN.SCHEDULE')" disable-output-escaping="yes" />
               </td>
               
               <td class="portlet-table-header">
-                <xsl:value-of select="msg:getXslString('UI.SUBSCRIPTION_ADMIN.ACTION')" disable-output-escaping="yes" />
+                <xsl:value-of select="msg:getXslString($messages, 'UI.SUBSCRIPTION_ADMIN.ACTION')" disable-output-escaping="yes" />
               </td>
             </tr>
             <xsl:for-each select="subscription">
@@ -1410,7 +1412,7 @@
       </xsl:when>
       <xsl:otherwise>      
         <span class="portlet-section-subheader">
-          <xsl:value-of select="msg:getXslString('UI.SUBSCRIPTION_ADMIN.NO_SUBSCRIPTIONS_DEFINED')" disable-output-escaping="yes" />
+          <xsl:value-of select="msg:getXslString($messages, 'UI.SUBSCRIPTION_ADMIN.NO_SUBSCRIPTIONS_DEFINED')" disable-output-escaping="yes" />
         </span>
       </xsl:otherwise>
     </xsl:choose>
@@ -1453,7 +1455,7 @@
           <xsl:text>&amp;title=</xsl:text>
           <xsl:value-of select="title" />
         </xsl:attribute>
-        <xsl:value-of select="msg:getXslString('UI.SUBSCRIPTION_ADMIN.DELETE')" disable-output-escaping="yes" />
+        <xsl:value-of select="msg:getXslString($messages, 'UI.SUBSCRIPTION_ADMIN.DELETE')" disable-output-escaping="yes" />
       </a>
     </td>
     </tr>

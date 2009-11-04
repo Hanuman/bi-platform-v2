@@ -14,16 +14,18 @@
 
 	<xsl:template match="user-files">
 	
-	<!--span class="portlet-section-header" style="border: 1px solid blue;"><xsl:value-of select="msg:getXslString('UI.USER_PUBLISHER_TITLE')" disable-output-escaping="yes"/></span-->
+	<xsl:variable name="messages" select="msg:getInstance()" />
+	
+	<!--span class="portlet-section-header" style="border: 1px solid blue;"><xsl:value-of select="msg:getXslString($messages, 'UI.USER_PUBLISHER_TITLE')" disable-output-escaping="yes"/></span-->
 
 		<br/>
 		<center>
 		<table class='content_table' border='0' cellpadding='0' cellspacing='0' height='100%' style="width:99%">
 			<tr>
 				<td style="text-align:left">
-					<xsl:value-of select="msg:getXslString('UI.USER_NEW_CONTENT_INTRO')" disable-output-escaping="yes"/>
+					<xsl:value-of select="msg:getXslString($messages, 'UI.USER_NEW_CONTENT_INTRO')" disable-output-escaping="yes"/>
 					<p/>
-					<xsl:value-of select="msg:getXslString('UI.USER_ACTIONS')" disable-output-escaping="yes"/><xsl:text disable-output-escaping="yes">&amp;nbsp;</xsl:text><a href="UserContent?clearAlert=true"><xsl:value-of select="msg:getXslString('UI.USER_NEW_CONTENT_CLEAR_ALERT')" disable-output-escaping="yes"/></a>
+					<xsl:value-of select="msg:getXslString($messages, 'UI.USER_ACTIONS')" disable-output-escaping="yes"/><xsl:text disable-output-escaping="yes">&amp;nbsp;</xsl:text><a href="UserContent?clearAlert=true"><xsl:value-of select="msg:getXslString($messages, 'UI.USER_NEW_CONTENT_CLEAR_ALERT')" disable-output-escaping="yes"/></a>
 				</td>
 			</tr>
 		</table>
@@ -42,23 +44,24 @@
 	</xsl:template>
 
 	<xsl:template match="scheduled">
+		<xsl:variable name="messages" select="msg:getInstance()" />
 	
 		<tr>
 			<td colspan="10">
 				<table border="0" width="100%" class="content_header" cellpadding="0" cellspacing="0">
 					<tr>
-						<td width="100%" style="text-align:left"><xsl:value-of select="msg:getXslString('UI.USER_SCHEDULED')" disable-output-escaping="yes"/></td>
+						<td width="100%" style="text-align:left"><xsl:value-of select="msg:getXslString($messages, 'UI.USER_SCHEDULED')" disable-output-escaping="yes"/></td>
 					</tr>
 
 				</table>
 			</td>
 		</tr>
 		<tr>
-			<td class="portlet-table-header" style="text-align:left"><xsl:value-of select="msg:getXslString('UI.USER_NAME')" disable-output-escaping="yes"/></td>
-			<td class="portlet-table-header" style="text-align:left"><xsl:value-of select="msg:getXslString('UI.USER_DATE')" disable-output-escaping="yes"/></td>
-			<td class="portlet-table-header" style="text-align:left"><xsl:value-of select="msg:getXslString('UI.USER_SIZE')" disable-output-escaping="yes"/></td>
-			<td class="portlet-table-header" style="text-align:left"><xsl:value-of select="msg:getXslString('UI.USER_TYPE')" disable-output-escaping="yes"/></td>
-			<td class="portlet-table-header" style="text-align:left"><xsl:value-of select="msg:getXslString('UI.USER_ACTIONS')" disable-output-escaping="yes"/></td>
+			<td class="portlet-table-header" style="text-align:left"><xsl:value-of select="msg:getXslString($messages, 'UI.USER_NAME')" disable-output-escaping="yes"/></td>
+			<td class="portlet-table-header" style="text-align:left"><xsl:value-of select="msg:getXslString($messages, 'UI.USER_DATE')" disable-output-escaping="yes"/></td>
+			<td class="portlet-table-header" style="text-align:left"><xsl:value-of select="msg:getXslString($messages, 'UI.USER_SIZE')" disable-output-escaping="yes"/></td>
+			<td class="portlet-table-header" style="text-align:left"><xsl:value-of select="msg:getXslString($messages, 'UI.USER_TYPE')" disable-output-escaping="yes"/></td>
+			<td class="portlet-table-header" style="text-align:left"><xsl:value-of select="msg:getXslString($messages, 'UI.USER_ACTIONS')" disable-output-escaping="yes"/></td>
 		</tr>
 		
 		<xsl:for-each select="file">
@@ -88,23 +91,24 @@
 	</xsl:template>
 
 	<xsl:template match="executed">
+		<xsl:variable name="messages" select="msg:getInstance()" />
 	
 		<tr>
 			<td colspan="10">
 				<table border="0" width="100%" class="content_header" cellpadding="0" cellspacing="0">
 					<tr>
-						<td width="100%" style="text-align:left"><xsl:value-of select="msg:getXslString('UI.USER_COMPLETE')" disable-output-escaping="yes"/></td>
+						<td width="100%" style="text-align:left"><xsl:value-of select="msg:getXslString($messages, 'UI.USER_COMPLETE')" disable-output-escaping="yes"/></td>
 					</tr>
 
 				</table>
 			</td>
 		</tr>
 		<tr>
-			<td class="portlet-table-header" style="text-align:left"><xsl:value-of select="msg:getXslString('UI.USER_NAME')" disable-output-escaping="yes"/></td>
-			<td class="portlet-table-header" style="text-align:left"><xsl:value-of select="msg:getXslString('UI.USER_DATE')" disable-output-escaping="yes"/></td>
-			<td class="portlet-table-header" style="text-align:left"><xsl:value-of select="msg:getXslString('UI.USER_SIZE')" disable-output-escaping="yes"/></td>
-			<td class="portlet-table-header" style="text-align:left"><xsl:value-of select="msg:getXslString('UI.USER_TYPE')" disable-output-escaping="yes"/></td>
-			<td class="portlet-table-header" style="text-align:left"><xsl:value-of select="msg:getXslString('UI.USER_ACTIONS')" disable-output-escaping="yes"/></td>
+			<td class="portlet-table-header" style="text-align:left"><xsl:value-of select="msg:getXslString($messages, 'UI.USER_NAME')" disable-output-escaping="yes"/></td>
+			<td class="portlet-table-header" style="text-align:left"><xsl:value-of select="msg:getXslString($messages, 'UI.USER_DATE')" disable-output-escaping="yes"/></td>
+			<td class="portlet-table-header" style="text-align:left"><xsl:value-of select="msg:getXslString($messages, 'UI.USER_SIZE')" disable-output-escaping="yes"/></td>
+			<td class="portlet-table-header" style="text-align:left"><xsl:value-of select="msg:getXslString($messages, 'UI.USER_TYPE')" disable-output-escaping="yes"/></td>
+			<td class="portlet-table-header" style="text-align:left"><xsl:value-of select="msg:getXslString($messages, 'UI.USER_ACTIONS')" disable-output-escaping="yes"/></td>
 		</tr>
 		
 		<xsl:for-each select="file">
@@ -148,23 +152,24 @@
 	<xsl:output method="html" encoding="UTF-8" />
 
 	<xsl:template match="listSubscriptions">
+		<xsl:variable name="messages" select="msg:getInstance()" />
 	
 		<tr>
 			<td colspan="10">
 				<table border="0" width="100%" class="content_header" cellpadding="0" cellspacing="0">
 					<tr>
-						<td width="100%" style="text-align:left"><xsl:value-of select="msg:getXslString('UI.SUBSCRIPTION_ADMIN.SUBSCRIPTIONS')" disable-output-escaping="yes"/></td>
+						<td width="100%" style="text-align:left"><xsl:value-of select="msg:getXslString($messages, 'UI.SUBSCRIPTION_ADMIN.SUBSCRIPTIONS')" disable-output-escaping="yes"/></td>
 					</tr>
 
 				</table>
 			</td>
 		</tr>
 		<tr>
-			<td class="portlet-table-header" style="text-align:left"><xsl:value-of select="msg:getXslString('UI.USER_NAME')" disable-output-escaping="yes"/></td>
-			<td class="portlet-table-header" style="text-align:left">Schedule/<xsl:value-of select="msg:getXslString('UI.USER_DATE')" disable-output-escaping="yes"/></td>
-			<td class="portlet-table-header" style="text-align:left"><xsl:value-of select="msg:getXslString('UI.USER_SIZE')" disable-output-escaping="yes"/></td>
-			<td class="portlet-table-header" style="text-align:left"><xsl:value-of select="msg:getXslString('UI.USER_TYPE')" disable-output-escaping="yes"/></td>
-			<td class="portlet-table-header" style="text-align:left"><xsl:value-of select="msg:getXslString('UI.USER_ACTIONS')" disable-output-escaping="yes"/></td>
+			<td class="portlet-table-header" style="text-align:left"><xsl:value-of select="msg:getXslString($messages, 'UI.USER_NAME')" disable-output-escaping="yes"/></td>
+			<td class="portlet-table-header" style="text-align:left">Schedule/<xsl:value-of select="msg:getXslString($messages, 'UI.USER_DATE')" disable-output-escaping="yes"/></td>
+			<td class="portlet-table-header" style="text-align:left"><xsl:value-of select="msg:getXslString($messages, 'UI.USER_SIZE')" disable-output-escaping="yes"/></td>
+			<td class="portlet-table-header" style="text-align:left"><xsl:value-of select="msg:getXslString($messages, 'UI.USER_TYPE')" disable-output-escaping="yes"/></td>
+			<td class="portlet-table-header" style="text-align:left"><xsl:value-of select="msg:getXslString($messages, 'UI.USER_ACTIONS')" disable-output-escaping="yes"/></td>
 		</tr>
 		
 		<xsl:for-each select="subscriptions/subscription">

@@ -12,6 +12,7 @@
   <xsl:param name="baseUrl" select="''" />
 
   <xsl:template match="commandResult">
+  	<xsl:variable name="messages" select="msg:getInstance()" />
   
 	<script>
 		<![CDATA[
@@ -28,16 +29,16 @@
     <span class="portlet-section-header">
       <xsl:choose>
         <xsl:when test="@result = 'OK'">
-          <xsl:value-of select="msg:getXslString('UI.SUBSCRIPTION_ADMIN.COMP_SUCCESS')" disable-output-escaping="yes" />
+          <xsl:value-of select="msg:getXslString($messages, 'UI.SUBSCRIPTION_ADMIN.COMP_SUCCESS')" disable-output-escaping="yes" />
         </xsl:when>
         <xsl:when test="@result = 'WARNING'">
-          <xsl:value-of select="msg:getXslString('UI.SUBSCRIPTION_ADMIN.COMP_WARN')" disable-output-escaping="yes" />
+          <xsl:value-of select="msg:getXslString($messages, 'UI.SUBSCRIPTION_ADMIN.COMP_WARN')" disable-output-escaping="yes" />
         </xsl:when>
         <xsl:when test="@result = 'ERROR'">
-          <xsl:value-of select="msg:getXslString('UI.SUBSCRIPTION_ADMIN.REQ_FAILED')" disable-output-escaping="yes" />
+          <xsl:value-of select="msg:getXslString($messages, 'UI.SUBSCRIPTION_ADMIN.REQ_FAILED')" disable-output-escaping="yes" />
         </xsl:when>
         <xsl:otherwise>
-          <xsl:value-of select="msg:getXslString('UI.SUBSCRIPTION_ADMIN.REQ_COMP')" disable-output-escaping="yes" />
+          <xsl:value-of select="msg:getXslString($messages, 'UI.SUBSCRIPTION_ADMIN.REQ_COMP')" disable-output-escaping="yes" />
         </xsl:otherwise>
       </xsl:choose>
     </span>
@@ -50,8 +51,9 @@
   </xsl:template>
   
   <xsl:template name="paramErrors">
+	<xsl:variable name="messages" select="msg:getInstance()" />
     <xsl:if test="count( paramErrors/paramMissing ) > 0" >
-      <xsl:value-of select="msg:getXslString('UI.SUBSCRIPTION_ADMIN.PARAM_MISSING')" disable-output-escaping="yes" />
+      <xsl:value-of select="msg:getXslString($messages, 'UI.SUBSCRIPTION_ADMIN.PARAM_MISSING')" disable-output-escaping="yes" />
       <xsl:for-each select="paramErrors/paramMissing">
         <xsl:text>"</xsl:text>
         <xsl:value-of select="text()" disable-output-escaping="yes" />
@@ -62,9 +64,10 @@
   </xsl:template>
 
   <xsl:template name="exceptions">
+	<xsl:variable name="messages" select="msg:getInstance()" />
     <xsl:if test="count( exception ) > 0" >
       <span class="portlet-section-subheader">
-        <xsl:value-of select="msg:getXslString('UI.SUBSCRIPTION_ADMIN.PARAM_MISSING')" disable-output-escaping="yes" />
+        <xsl:value-of select="msg:getXslString($messages, 'UI.SUBSCRIPTION_ADMIN.PARAM_MISSING')" disable-output-escaping="yes" />
       </span>
       <br/>
       <xsl:for-each select="exception">
@@ -78,9 +81,10 @@
   </xsl:template>
   
   <xsl:template name="messages">
+	<xsl:variable name="messages" select="msg:getInstance()" />
     <xsl:if test="count( message[@result='ERROR'] ) > 0" >
       <span class="portlet-section-subheader">
-        <xsl:value-of select="msg:getXslString('UI.SUBSCRIPTION_ADMIN.ERROR_COLON')" disable-output-escaping="yes" />
+        <xsl:value-of select="msg:getXslString($messages, 'UI.SUBSCRIPTION_ADMIN.ERROR_COLON')" disable-output-escaping="yes" />
       </span>
       <br/>
       <xsl:for-each select="message[@result='ERROR']">
@@ -91,7 +95,7 @@
     
     <xsl:if test="count( message[@result='WARNING'] ) > 0" >
       <span class="portlet-section-subheader">
-        <xsl:value-of select="msg:getXslString('UI.SUBSCRIPTION_ADMIN.WARNING_COLON')" disable-output-escaping="yes" />
+        <xsl:value-of select="msg:getXslString($messages, 'UI.SUBSCRIPTION_ADMIN.WARNING_COLON')" disable-output-escaping="yes" />
       </span>
       <br/>
       <xsl:for-each select="message[@result='WARNING']">
@@ -112,22 +116,24 @@
   </xsl:template>
 
   <xsl:template name="return">
+	<xsl:variable name="messages" select="msg:getInstance()" />
     <a>
       <xsl:attribute name="href">
       <xsl:value-of select="$baseUrl" />
       <xsl:text>&amp;schedulerAction=listSchedules</xsl:text>
       </xsl:attribute>
-      <xsl:value-of select="msg:getXslString('UI.SUBSCRIPTION_ADMIN.RETURN_ADMIN')" disable-output-escaping="yes" />
+      <xsl:value-of select="msg:getXslString($messages, 'UI.SUBSCRIPTION_ADMIN.RETURN_ADMIN')" disable-output-escaping="yes" />
     </a>
   </xsl:template>
   
   <xsl:template match="returnURL">
+	<xsl:variable name="messages" select="msg:getInstance()" />
     <a>
       <xsl:attribute name="href">
         <xsl:value-of select="$baseUrl" />
         <xsl:value-of select="text()" />
       </xsl:attribute>
-      <xsl:value-of select="msg:getXslString('UI.SUBSCRIPTION_ADMIN.RETURN')" disable-output-escaping="yes" />
+      <xsl:value-of select="msg:getXslString($messages, 'UI.SUBSCRIPTION_ADMIN.RETURN')" disable-output-escaping="yes" />
     </a> | 
   </xsl:template>
 
@@ -139,10 +145,10 @@
   </xsl:template>
 
   <xsl:template name="header">
-  
+  	<xsl:variable name="messages" select="msg:getInstance()" />
       <span class="portlet-font">
-      <xsl:value-of select="msg:getXslString('UI.SUBSCRIPTION_ADMIN.HELP')" disable-output-escaping="yes" />
-    </span>
+      	<xsl:value-of select="msg:getXslString($messages, 'UI.SUBSCRIPTION_ADMIN.HELP')" disable-output-escaping="yes" />
+      </span>
     <p/>
   </xsl:template>
   
@@ -153,7 +159,8 @@
   </xsl:template>
 
   <xsl:template match="modified">
-    <xsl:value-of select="msg:getXslString('UI.SUBSCRIPTION_ADMIN.MODIFIED_COLON')" disable-output-escaping="yes" />
+	<xsl:variable name="messages" select="msg:getInstance()" />
+    <xsl:value-of select="msg:getXslString($messages, 'UI.SUBSCRIPTION_ADMIN.MODIFIED_COLON')" disable-output-escaping="yes" />
     <xsl:value-of select="text()" disable-output-escaping="yes" />
     <br/>
   </xsl:template>
@@ -165,10 +172,10 @@
   </xsl:template>
       
   <xsl:template match="listSubscriptions">
-  
+  	<xsl:variable name="messages" select="msg:getInstance()" />
     <br/>
     <span class="portlet-font">
-      <xsl:value-of select="msg:getXslString('UI.SUBSCRIPTION_ADMIN.MANAGE_USER_SUBSCRIPTIONS')" disable-output-escaping="yes" />
+      <xsl:value-of select="msg:getXslString($messages, 'UI.SUBSCRIPTION_ADMIN.MANAGE_USER_SUBSCRIPTIONS')" disable-output-escaping="yes" />
     </span>
     <p/>
     <xsl:call-template name="messages" />
@@ -181,27 +188,28 @@
   </xsl:template>
 
   <xsl:template match="subscriptions">
+	<xsl:variable name="messages" select="msg:getInstance()" />
     <xsl:choose>
       <xsl:when test="count(subscription) &gt; 0">  
         <span class="portlet-section-subheader">
-          <xsl:value-of select="msg:getXslString('UI.SUBSCRIPTION_ADMIN.SUBSCRIPTIONS')" disable-output-escaping="yes" />
+          <xsl:value-of select="msg:getXslString($messages, 'UI.SUBSCRIPTION_ADMIN.SUBSCRIPTIONS')" disable-output-escaping="yes" />
         </span>
           <table width="95%" border="0" cellpadding="5px" cellspacing="0">
             <tr>
               <td class="portlet-table-header">
-                <xsl:value-of select="msg:getXslString('UI.SUBSCRIPTION_ADMIN.TITLE.TITLE')" disable-output-escaping="yes" />
+                <xsl:value-of select="msg:getXslString($messages, 'UI.SUBSCRIPTION_ADMIN.TITLE.TITLE')" disable-output-escaping="yes" />
               </td>
     
               <td class="portlet-table-header">
-                <xsl:value-of select="msg:getXslString('UI.SUBSCRIPTION_ADMIN.ACTION_SEQUENCE')" disable-output-escaping="yes" />
+                <xsl:value-of select="msg:getXslString($messages, 'UI.SUBSCRIPTION_ADMIN.ACTION_SEQUENCE')" disable-output-escaping="yes" />
               </td>
               
               <td class="portlet-table-header">
-                <xsl:value-of select="msg:getXslString('UI.SUBSCRIPTION_ADMIN.SCHEDULE')" disable-output-escaping="yes" />
+                <xsl:value-of select="msg:getXslString($messages, 'UI.SUBSCRIPTION_ADMIN.SCHEDULE')" disable-output-escaping="yes" />
               </td>
               
               <td class="portlet-table-header">
-                <xsl:value-of select="msg:getXslString('UI.SUBSCRIPTION_ADMIN.ACTION')" disable-output-escaping="yes" />
+                <xsl:value-of select="msg:getXslString($messages, 'UI.SUBSCRIPTION_ADMIN.ACTION')" disable-output-escaping="yes" />
               </td>
             </tr>
             <xsl:for-each select="subscription">
@@ -213,7 +221,7 @@
       </xsl:when>
       <xsl:otherwise>      
         <span class="portlet-section-subheader">
-          <xsl:value-of select="msg:getXslString('UI.SUBSCRIPTION_ADMIN.NO_SUBSCRIPTIONS_DEFINED')" disable-output-escaping="yes" />
+          <xsl:value-of select="msg:getXslString($messages, 'UI.SUBSCRIPTION_ADMIN.NO_SUBSCRIPTIONS_DEFINED')" disable-output-escaping="yes" />
         </span>
       </xsl:otherwise>
     </xsl:choose>
@@ -221,6 +229,7 @@
   </xsl:template>
 
   <xsl:template name="subscription">
+  	<xsl:variable name="messages" select="msg:getInstance()" />
     <xsl:if test="count(errorMsg) &gt; 0">
       <tr>
         <td colspan="99">
@@ -253,7 +262,7 @@
           <xsl:text>&amp;title=</xsl:text>
           <xsl:value-of select="title" />
         </xsl:attribute>
-        <xsl:value-of select="msg:getXslString('UI.SUBSCRIPTION_ADMIN.DELETE')" disable-output-escaping="yes" />
+        <xsl:value-of select="msg:getXslString($messages, 'UI.SUBSCRIPTION_ADMIN.DELETE')" disable-output-escaping="yes" />
       </a>
     </td>
     </tr>
