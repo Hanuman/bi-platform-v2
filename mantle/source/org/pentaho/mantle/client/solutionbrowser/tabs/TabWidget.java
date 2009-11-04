@@ -49,7 +49,7 @@ import com.google.gwt.user.client.ui.Widget;
 
 public class TabWidget extends HorizontalPanel implements MouseListener {
 
-  private static enum TABCOMMAND {
+  private static enum TABCOMMANDTYPE {
     BACK, RELOAD, RELOAD_ALL, CLOSE, CLOSE_ALL, CLOSE_OTHERS, NEW_WINDOW, CREATE_DEEP_LINK
   };
 
@@ -66,31 +66,31 @@ public class TabWidget extends HorizontalPanel implements MouseListener {
   
   private class TabCommand implements Command {
 
-    TABCOMMAND mode = TABCOMMAND.RELOAD;
+    TABCOMMANDTYPE mode = TABCOMMANDTYPE.RELOAD;
     PopupPanel popupMenu;
 
-    public TabCommand(TABCOMMAND inMode, PopupPanel popupMenu) {
+    public TabCommand(TABCOMMANDTYPE inMode, PopupPanel popupMenu) {
       this.mode = inMode;
       this.popupMenu = popupMenu;
     }
 
     public void execute() {
       popupMenu.hide();
-      if (mode == TABCOMMAND.RELOAD) {
+      if (mode == TABCOMMANDTYPE.RELOAD) {
         reloadTab();
-      } else if (mode == TABCOMMAND.RELOAD_ALL) {
+      } else if (mode == TABCOMMANDTYPE.RELOAD_ALL) {
         reloadAllTabs();
-      } else if (mode == TABCOMMAND.CLOSE) {
+      } else if (mode == TABCOMMANDTYPE.CLOSE) {
         closeTab();
-      } else if (mode == TABCOMMAND.CLOSE_OTHERS) {
+      } else if (mode == TABCOMMANDTYPE.CLOSE_OTHERS) {
         closeOtherTabs();
-      } else if (mode == TABCOMMAND.CLOSE_ALL) {
+      } else if (mode == TABCOMMANDTYPE.CLOSE_ALL) {
         closeAllTabs();
-      } else if (mode == TABCOMMAND.NEW_WINDOW) {
+      } else if (mode == TABCOMMANDTYPE.NEW_WINDOW) {
         openTabInNewWindow();
-      } else if (mode == TABCOMMAND.CREATE_DEEP_LINK) {
+      } else if (mode == TABCOMMANDTYPE.CREATE_DEEP_LINK) {
         createDeepLink();
-      } else if (mode == TABCOMMAND.BACK) {
+      } else if (mode == TABCOMMANDTYPE.BACK) {
         back();
       }
     }
@@ -255,16 +255,16 @@ public class TabWidget extends HorizontalPanel implements MouseListener {
         MenuBar menuBar = new MenuBar(true);
         menuBar.setAutoOpen(true);
         if (tabContent instanceof IFrameTabPanel) {
-          MenuItem backMenuItem = new MenuItem(Messages.getString("back"), new TabCommand(TABCOMMAND.BACK, popupMenu)); //$NON-NLS-1$
+          MenuItem backMenuItem = new MenuItem(Messages.getString("back"), new TabCommand(TABCOMMANDTYPE.BACK, popupMenu)); //$NON-NLS-1$
           menuBar.addItem(backMenuItem);
           backMenuItem.getElement().setId("back"); //$NON-NLS-1$
           menuBar.addSeparator();
-          MenuItem reloadTabMenuItem = new MenuItem(Messages.getString("reloadTab"), new TabCommand(TABCOMMAND.RELOAD, popupMenu)); //$NON-NLS-1$
+          MenuItem reloadTabMenuItem = new MenuItem(Messages.getString("reloadTab"), new TabCommand(TABCOMMANDTYPE.RELOAD, popupMenu)); //$NON-NLS-1$
           menuBar.addItem(reloadTabMenuItem);
           reloadTabMenuItem.getElement().setId("reloadTab"); //$NON-NLS-1$
         }
         if (tabPanel.getTabBar().getTabCount() > 1) {
-          MenuItem reloadAllTabsMenuItem = new MenuItem(Messages.getString("reloadAllTabs"), new TabCommand(TABCOMMAND.RELOAD_ALL, popupMenu)); //$NON-NLS-1$
+          MenuItem reloadAllTabsMenuItem = new MenuItem(Messages.getString("reloadAllTabs"), new TabCommand(TABCOMMANDTYPE.RELOAD_ALL, popupMenu)); //$NON-NLS-1$
           menuBar.addItem(reloadAllTabsMenuItem);
           reloadAllTabsMenuItem.getElement().setId("reloadAllTabs"); //$NON-NLS-1$
         } else {
@@ -275,20 +275,20 @@ public class TabWidget extends HorizontalPanel implements MouseListener {
         }
         menuBar.addSeparator();
         if (tabContent instanceof IFrameTabPanel) {
-          MenuItem openTabInNewWindowMenuItem = new MenuItem(Messages.getString("openTabInNewWindow"), new TabCommand(TABCOMMAND.NEW_WINDOW, popupMenu)); //$NON-NLS-1$
+          MenuItem openTabInNewWindowMenuItem = new MenuItem(Messages.getString("openTabInNewWindow"), new TabCommand(TABCOMMANDTYPE.NEW_WINDOW, popupMenu)); //$NON-NLS-1$
           menuBar.addItem(openTabInNewWindowMenuItem);
           openTabInNewWindowMenuItem.getElement().setId("openTabInNewWindow"); //$NON-NLS-1$
-          MenuItem createDeepLinkMenuItem = new MenuItem(Messages.getString("createDeepLink"), new TabCommand(TABCOMMAND.CREATE_DEEP_LINK, popupMenu)); //$NON-NLS-1$
+          MenuItem createDeepLinkMenuItem = new MenuItem(Messages.getString("createDeepLink"), new TabCommand(TABCOMMANDTYPE.CREATE_DEEP_LINK, popupMenu)); //$NON-NLS-1$
           menuBar.addItem(createDeepLinkMenuItem);
           createDeepLinkMenuItem.getElement().setId("deepLink"); //$NON-NLS-1$
           menuBar.addSeparator();
         }
-        menuBar.addItem(new MenuItem(Messages.getString("closeTab"), new TabCommand(TABCOMMAND.CLOSE, popupMenu))); //$NON-NLS-1$
+        menuBar.addItem(new MenuItem(Messages.getString("closeTab"), new TabCommand(TABCOMMANDTYPE.CLOSE, popupMenu))); //$NON-NLS-1$
         if (tabPanel.getTabBar().getTabCount() > 1) {
-          MenuItem closeOtherTabsMenuItem = new MenuItem(Messages.getString("closeOtherTabs"), new TabCommand(TABCOMMAND.CLOSE_OTHERS, popupMenu)); //$NON-NLS-1$
+          MenuItem closeOtherTabsMenuItem = new MenuItem(Messages.getString("closeOtherTabs"), new TabCommand(TABCOMMANDTYPE.CLOSE_OTHERS, popupMenu)); //$NON-NLS-1$
           menuBar.addItem(closeOtherTabsMenuItem);
           closeOtherTabsMenuItem.getElement().setId("closeOtherTabs"); //$NON-NLS-1$
-          MenuItem closeAllTabsMenuItem = new MenuItem(Messages.getString("closeAllTabs"), new TabCommand(TABCOMMAND.CLOSE_ALL, popupMenu)); //$NON-NLS-1$
+          MenuItem closeAllTabsMenuItem = new MenuItem(Messages.getString("closeAllTabs"), new TabCommand(TABCOMMANDTYPE.CLOSE_ALL, popupMenu)); //$NON-NLS-1$
           menuBar.addItem(closeAllTabsMenuItem);
           closeAllTabsMenuItem.getElement().setId("closeAllTabs"); //$NON-NLS-1$
         } else {
