@@ -165,17 +165,21 @@ public class GenericServlet extends ServletBase {
           }
           InputStream resourceStream = pluginManager.getStaticResource(pathInfo);
           if (resourceStream != null) {
-            byteStream = new ByteArrayOutputStream();
-            IOUtils.copy(resourceStream, byteStream);
-  
-            // if cache is enabled, drop file in cache
-            if (cacheOn) {
-              cache.putInRegionCache(CACHE_FILE, pathInfo, byteStream);
+            try {
+              byteStream = new ByteArrayOutputStream();
+              IOUtils.copy(resourceStream, byteStream);
+    
+              // if cache is enabled, drop file in cache
+              if (cacheOn) {
+                cache.putInRegionCache(CACHE_FILE, pathInfo, byteStream);
+              }
+    
+              // write it out
+              IOUtils.write(byteStream.toByteArray(), out);
+              return;
+            } finally {
+              IOUtils.closeQuietly(resourceStream);
             }
-  
-            // write it out
-            IOUtils.write(byteStream.toByteArray(), out);
-            return;
           }
           logger.error(Messages.getErrorString("GenericServlet.ERROR_0004_RESOURCE_NOT_FOUND", pluginId, pathInfo)); //$NON-NLS-1$
           response.sendError(404);
@@ -200,29 +204,33 @@ public class GenericServlet extends ServletBase {
       // "content generator not found");
       IParameterProvider requestParameters = new HttpRequestParameterProvider(request);
       // see if this is an upload
-      boolean isMultipart = ServletFileUpload.isMultipartContent(request);
-      if (isMultipart) {
-        requestParameters = new SimpleParameterProvider();
-        // Create a factory for disk-based file items
-        FileItemFactory factory = new DiskFileItemFactory();
-
-        // Create a new file upload handler
-        ServletFileUpload upload = new ServletFileUpload(factory);
-
-        // Parse the request
-        List<?> /* FileItem */items = upload.parseRequest(request);
-        Iterator<?> iter = items.iterator();
-        while (iter.hasNext()) {
-          FileItem item = (FileItem) iter.next();
-
-          if (item.isFormField()) {
-            ((SimpleParameterProvider) requestParameters).setParameter(item.getFieldName(), item.getString());
-          } else {
-            String name = item.getName();
-            ((SimpleParameterProvider) requestParameters).setParameter(name, item.getInputStream());
-          }
-        }
-      }
+      
+      // File uploading is a service provided by UploadFileServlet where appropriate protections
+      // are in place to prevent uploads that are too large.
+      
+//      boolean isMultipart = ServletFileUpload.isMultipartContent(request);
+//      if (isMultipart) {
+//        requestParameters = new SimpleParameterProvider();
+//        // Create a factory for disk-based file items
+//        FileItemFactory factory = new DiskFileItemFactory();
+//
+//        // Create a new file upload handler
+//        ServletFileUpload upload = new ServletFileUpload(factory);
+//
+//        // Parse the request
+//        List<?> /* FileItem */items = upload.parseRequest(request);
+//        Iterator<?> iter = items.iterator();
+//        while (iter.hasNext()) {
+//          FileItem item = (FileItem) iter.next();
+//
+//          if (item.isFormField()) {
+//            ((SimpleParameterProvider) requestParameters).setParameter(item.getFieldName(), item.getString());
+//          } else {
+//            String name = item.getName();
+//            ((SimpleParameterProvider) requestParameters).setParameter(name, item.getInputStream());
+//          }
+//        }
+//      }
 
       response.setCharacterEncoding(LocaleHelper.getSystemEncoding());
 
