@@ -3,10 +3,10 @@
 	<classpathentry kind="src" path=""/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/bi-platform-api"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/bi-platform-util"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/bi-platform-repository"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/bi-platform-scheduler"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/bi-platform-ui-foundation"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/bi-platform-util"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/bi-platform-web"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/bi-platform-engine-core"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/bi-platform-engine-security"/>
