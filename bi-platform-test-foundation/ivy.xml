@@ -23,9 +23,11 @@
     <dependency org="junit" name="junit" rev="4.4" conf="default->default" />
     <dependency org="org.springframework" name="spring" rev="2.5.6"   transitive="false"/>
     <dependency org="junit" name="junit" rev="4.4"/>
+    <dependency org="commons-logging"    name="commons-logging"    rev="1.1"     transitive="false"/>
+    <dependency org="log4j" name="log4j" rev="1.2.14" />
 
         <!--  internal dependencies -->
-    <dependency org="${ivy.artifact.group}" name="pentaho-bi-platform-api" rev="${project.revision}" changing="true" conf="default->default"/>
+    <dependency org="${ivy.artifact.group}" name="pentaho-bi-platform-api" rev="${project.revision}" changing="true"/>
     <dependency org="${ivy.artifact.group}" name="pentaho-bi-platform-util" rev="${project.revision}" changing="true" conf="default->default"/>
     <dependency org="${ivy.artifact.group}" name="pentaho-bi-platform-engine-core" rev="${project.revision}" changing="true" conf="default->default"/>
     
