@@ -3,6 +3,7 @@ package org.pentaho.platform.repository.pcr;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Serializable;
+import java.util.List;
 
 import javax.jcr.Item;
 import javax.jcr.ItemNotFoundException;
@@ -234,6 +235,17 @@ public class JcrPentahoContentDao implements IPentahoContentDao, InitializingBea
       }
     }
 
+  }
+
+  public List<RepositoryFile> getChildren(final RepositoryFile folder) {
+    Assert.notNull(folder);
+    Assert.notNull(folder.getId());
+    Assert.notNull(folder.isFolder());
+    return (List<RepositoryFile>) jcrTemplate.execute(new JcrCallback() {
+      public Object doInJcr(final Session session) throws RepositoryException, IOException {
+        return JcrRepositoryFileUtils.getChildren(session, nodeIdStrategy, folder);
+      }
+    });
   }
 
 }

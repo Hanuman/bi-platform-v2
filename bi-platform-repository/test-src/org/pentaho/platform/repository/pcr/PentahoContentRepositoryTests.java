@@ -1,14 +1,14 @@
 package org.pentaho.platform.repository.pcr;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import java.io.ByteArrayInputStream;
 import java.io.Serializable;
-import java.util.Date;
+import java.util.List;
 
 import javax.sql.DataSource;
 
@@ -169,6 +169,19 @@ public class PentahoContentRepositoryTests implements ApplicationContextAware {
     pentahoContentRepository.getFile("/pentaho/home/tiffany/test");
   }
 
+  /**
+   * A user can see another user's home folder (but not the contents).
+   */
+  @Test
+  public void testGetAnotherUsersHomeFolder() throws Exception {
+    pentahoContentRepository.startup();
+    SecurityContextHolder.getContext().setAuthentication(AUTHENTICATION_TIFFANY);
+    pentahoContentRepository.createUserHomeFolderIfNecessary();
+    SecurityContextHolder.getContext().setAuthentication(AUTHENTICATION_SUZY);
+    // no read access for suzy on folder called tiffany
+    pentahoContentRepository.getFile("/pentaho/home/tiffany");
+  }
+
   @Test
   public void testGetFileAdmin() throws Exception {
     pentahoContentRepository.startup();
@@ -198,13 +211,13 @@ public class PentahoContentRepositoryTests implements ApplicationContextAware {
     assertNotNull(tiffanyHome);
   }
 
-//  @Test
-//  public void testGetStreamForExecute() throws Exception {
-//    pentahoContentRepository.startup();
-//    SecurityContextHolder.getContext().setAuthentication(AUTHENTICATION_TIFFANY);
-//    RepositoryFile file = pentahoContentRepository.getStreamForExecute("/pentaho/home");
-//    assertNotNull(file);
-//  }
+  //  @Test
+  //  public void testGetStreamForExecute() throws Exception {
+  //    pentahoContentRepository.startup();
+  //    SecurityContextHolder.getContext().setAuthentication(AUTHENTICATION_TIFFANY);
+  //    RepositoryFile file = pentahoContentRepository.getStreamForExecute("/pentaho/home");
+  //    assertNotNull(file);
+  //  }
 
   @Test
   public void testStartupTwice() throws Exception {
@@ -219,7 +232,7 @@ public class PentahoContentRepositoryTests implements ApplicationContextAware {
     pentahoContentRepository.createUserHomeFolderIfNecessary();
     pentahoContentRepository.createUserHomeFolderIfNecessary();
   }
-  
+
   @Test
   public void testCreateFolder() throws Exception {
     pentahoContentRepository.startup();
@@ -232,7 +245,7 @@ public class PentahoContentRepositoryTests implements ApplicationContextAware {
     assertNotNull(newFolder.getId());
     assertNotNull(SimpleJcrTestUtils.getItem(testJcrTemplate, "/pentaho/home/suzy/test"));
   }
-  
+
   @Test(expected = AccessDeniedException.class)
   public void testCreateFolderAccessDenied() throws Exception {
     pentahoContentRepository.startup();
@@ -254,22 +267,63 @@ public class PentahoContentRepositoryTests implements ApplicationContextAware {
     ByteArrayInputStream dataStream = new ByteArrayInputStream(data);
     final String expectedMimeType = "text/plain";
     final String expectedName = "helloworld.xaction";
-    final String expectedAbsolutePath = "/pentaho/home/suzy/helloworld.xaction"; 
-    RepositoryFile newFile = pentahoContentRepository.createFile(parentFolder, new RepositoryFile.Builder(
-        expectedName).encoding("UTF-8").mimeType(expectedMimeType).build(), dataStream);
+    final String expectedAbsolutePath = "/pentaho/home/suzy/helloworld.xaction";
+    RepositoryFile newFile = pentahoContentRepository.createFile(parentFolder, new RepositoryFile.Builder(expectedName)
+        .encoding("UTF-8").mimeType(expectedMimeType).build(), dataStream);
     assertNotNull(newFile.getId());
     RepositoryFile foundFile = pentahoContentRepository.getFile(expectedAbsolutePath);
     assertNotNull(foundFile);
     assertEquals(expectedName, foundFile.getName());
     assertEquals(expectedAbsolutePath, foundFile.getAbsolutePath());
-//    assertTrue(foundFile.length() > 0);
-//    assertNotNull(foundFile.getData());
+    //    assertTrue(foundFile.length() > 0);
+    //    assertNotNull(foundFile.getData());
     assertEquals(expectedEncoding, foundFile.getEncoding());
     assertEquals(expectedMimeType, foundFile.getMimeType());
     assertNotNull(foundFile.getCreatedDate());
-//    String dataString = new String(foundFile.getData(), expectedEncoding);
-//    assertEquals(expectedDataString, dataString);
+    //    String dataString = new String(foundFile.getData(), expectedEncoding);
+    //    assertEquals(expectedDataString, dataString);
     assertNotNull(foundFile.getLastModifiedDate());
+  }
+
+  @Test
+  public void testGetChildren() throws Exception {
+    pentahoContentRepository.startup();
+    SecurityContextHolder.getContext().setAuthentication(AUTHENTICATION_SUZY);
+    List<RepositoryFile> children = pentahoContentRepository.getChildren(pentahoContentRepository.getFile("/pentaho"));
+    assertEquals(2, children.size());
+    RepositoryFile f1 = children.get(0);
+    assertEquals("home", f1.getName());
+    RepositoryFile f2 = children.get(1);
+    assertEquals("public", f2.getName());
+  }
+
+  /**
+   * A user should be able to see all home folders (but not the contents).
+   */
+  @Test
+  public void testListHomeFolders() throws Exception {
+    pentahoContentRepository.startup();
+    SecurityContextHolder.getContext().setAuthentication(AUTHENTICATION_SUZY);
+    pentahoContentRepository.createUserHomeFolderIfNecessary();
+    SecurityContextHolder.getContext().setAuthentication(AUTHENTICATION_TIFFANY);
+    pentahoContentRepository.createUserHomeFolderIfNecessary();
+    List<RepositoryFile> children = pentahoContentRepository.getChildren(pentahoContentRepository
+        .getFile("/pentaho/home"));
+    assertEquals(2, children.size());
+  }
+
+  @Test
+  public void testGetChildrenAccessDenied() throws Exception {
+    pentahoContentRepository.startup();
+    SecurityContextHolder.getContext().setAuthentication(AUTHENTICATION_SUZY);
+    pentahoContentRepository.createUserHomeFolderIfNecessary();
+    SecurityContextHolder.getContext().setAuthentication(AUTHENTICATION_TIFFANY);
+    RepositoryFile suzyHomeFolder = pentahoContentRepository.getFile("/pentaho/home/suzy");
+    try {
+      pentahoContentRepository.getChildren(suzyHomeFolder);
+      fail();
+    } catch (AccessDeniedException e) {
+    }
   }
 
   private void assertAceExists(final Serializable id, final Sid sid, final Permission permission) {

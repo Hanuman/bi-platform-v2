@@ -1,6 +1,7 @@
 package org.pentaho.platform.api.repository;
 
 import java.io.InputStream;
+import java.util.List;
 
 public interface IPentahoContentDao {
   
@@ -40,4 +41,12 @@ public interface IPentahoContentDao {
    * @return new file with non-null id
    */
   RepositoryFile createFolder(final RepositoryFile parentFolder, final RepositoryFile file);
+  
+  /**
+   * Returns the children of this folder.
+   * 
+   * @param folder folder whose children to fetch
+   * @return list of children (never {@code null})
+   */
+  List<RepositoryFile> getChildren(final RepositoryFile folder);
 }

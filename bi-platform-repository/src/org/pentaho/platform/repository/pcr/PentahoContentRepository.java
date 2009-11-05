@@ -2,6 +2,7 @@ package org.pentaho.platform.repository.pcr;
 
 import java.io.InputStream;
 import java.io.Serializable;
+import java.util.List;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -36,7 +37,7 @@ import org.springframework.util.Assert;
  * All <strong>public</strong> methods in this class should be protected via Spring Security with the exception of:
  * <ul>
  * <li>{@link #startup}</li>
- * <li>{@link #afterPropertiesSet}</li>
+ * <li>{@link #shutdown}</li>
  * </ul>
  * </p>
  * 
@@ -344,6 +345,16 @@ public class PentahoContentRepository implements IPentahoContentRepository {
     Assert.notNull(file);
     Assert.notNull(file.getId());
     return contentDao.getStream(file);
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  public List<RepositoryFile> getChildren(final RepositoryFile folder) {
+    Assert.notNull(folder);
+    Assert.notNull(folder.getId());
+    Assert.notNull(folder.isFolder());
+    return contentDao.getChildren(folder);
   }
   
 }

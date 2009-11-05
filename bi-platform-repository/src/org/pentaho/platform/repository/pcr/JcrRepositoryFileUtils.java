@@ -2,10 +2,14 @@ package org.pentaho.platform.repository.pcr;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.Date;
+import java.util.List;
 
 import javax.jcr.Node;
+import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
@@ -113,6 +117,24 @@ public class JcrRepositoryFileUtils {
     Assert.isTrue(!isFolder(fileNode));
 
     return getResourceNode(session, fileNode).getProperty(JcrConstants.JCR_DATA).getStream();
+  }
+  
+  public static List<RepositoryFile> getChildren(final Session session, final NodeIdStrategy nodeIdStrategy,
+      final RepositoryFile folder) throws RepositoryException, IOException {
+    Node folderNode = nodeIdStrategy.findNodeById(session, folder.getId());
+    Assert.isTrue(isFolder(folderNode));
+
+    List<RepositoryFile> children = new ArrayList<RepositoryFile>();
+    // get all immediate child nodes that are of type NT_FOLDER, NT_FILE, or NT_LINKEDFILE
+    NodeIterator nodeIterator = folderNode.getNodes();
+    while (nodeIterator.hasNext()) {
+      Node node = nodeIterator.nextNode();
+      if (isFolder(node) || isFileOrLinkedFile(node)) {
+        children.add(fromNode(session, nodeIdStrategy, node));
+      }
+    }
+    Collections.sort(children);
+    return children;
   }
 
   private static boolean isFolder(final Node node) throws RepositoryException {

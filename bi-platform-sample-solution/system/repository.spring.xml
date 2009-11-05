@@ -230,6 +230,7 @@
         org.pentaho.platform.api.repository.IPentahoContentRepository.getStreamForExecute=PROPAGATION_REQUIRED,readOnly
         org.pentaho.platform.api.repository.IPentahoContentRepository.createFile=PROPAGATION_REQUIRED
         org.pentaho.platform.api.repository.IPentahoContentRepository.createFolder=PROPAGATION_REQUIRED
+        org.pentaho.platform.api.repository.IPentahoContentRepository.getChildren=PROPAGATION_REQUIRED,readOnly
         </value>
     </property>
   </bean>
@@ -266,6 +267,7 @@
     <constructor-arg ref="regularUserAuthorityName" />
   </bean>
 
+  <!-- In create[File|Folder], the first parameter is the parentFolder. This is the object whose ACL is checked. -->
   <bean id="methodInterceptor" class="org.springframework.security.intercept.method.aopalliance.MethodSecurityInterceptor">
     <property name="validateConfigAttributes">
       <value>true</value>
@@ -287,6 +289,7 @@
         org.pentaho.platform.api.repository.IPentahoContentRepository.getStreamForExecute=VOTE_ROLE_FILE_Authenticated,VOTE_ACL_FILE_READ,VOTE_ACL_FILE_EXECUTE
         org.pentaho.platform.api.repository.IPentahoContentRepository.createFile=VOTE_ROLE_FILE_Authenticated,VOTE_ACL_FILE_WRITE
         org.pentaho.platform.api.repository.IPentahoContentRepository.createFolder=VOTE_ROLE_FILE_Authenticated,VOTE_ACL_FILE_APPEND
+        org.pentaho.platform.api.repository.IPentahoContentRepository.getChildren=VOTE_ROLE_FILE_Authenticated,VOTE_ACL_FILE_READ
       </value>
     </property>
   </bean>
