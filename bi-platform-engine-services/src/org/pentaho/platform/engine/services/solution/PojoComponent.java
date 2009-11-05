@@ -38,6 +38,7 @@ import org.dom4j.Document;
 import org.dom4j.Element;
 import org.pentaho.commons.connection.IPentahoResultSet;
 import org.pentaho.commons.connection.IPentahoStreamSource;
+import org.pentaho.platform.api.action.IAction;
 import org.pentaho.platform.api.engine.IActionParameter;
 import org.pentaho.platform.api.engine.IActionSequenceResource;
 import org.pentaho.platform.api.engine.IPentahoSession;
@@ -75,6 +76,7 @@ import org.pentaho.platform.engine.services.messages.Messages;
  * setOutputStream / getMimeType
  * 
  * @author jamesdixon
+ * @deprecated Pojo components are deprecated, use {@link IAction}
  *
  */
 public class PojoComponent extends ComponentBase {
@@ -418,6 +420,7 @@ public class PojoComponent extends ComponentBase {
         mappedOutputName = getActionDefinition().getOutput("outputstream").getPublicName(); //$NON-NLS-1$
       }
       
+      //this marks the HttpOutputHandler as contentDone=true, causing the MessageFormatter to not print an error
       IContentItem contentItem = getOutputContentItem(mappedOutputName, mimeType );
       if (! (contentItem instanceof SimpleContentItem) ) { 
         // SimpleContentItem can't handle being added to outputs because it

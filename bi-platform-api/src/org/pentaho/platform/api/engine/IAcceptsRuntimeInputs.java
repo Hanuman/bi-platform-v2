@@ -19,6 +19,11 @@ package org.pentaho.platform.api.engine;
 
 import java.util.Map;
 
+import org.pentaho.platform.api.action.IAction;
+
+/**
+ * @deprecated Pojo components are deprecated, use {@link IAction}
+ */
 public interface IAcceptsRuntimeInputs {
 
 	public void setInputs( Map<String,Object> inputs );

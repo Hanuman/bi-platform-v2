@@ -12,20 +12,29 @@
  * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
  * See the GNU Lesser General Public License for more details.
  *
- * Copyright 2008-2009 Pentaho Corporation.  All rights reserved.
+ * Copyright 2009 Pentaho Corporation.  All rights reserved.
  *
  */
-package org.pentaho.platform.api.engine;
+package org.pentaho.platform.api.action;
 
 import java.util.Map;
 
-import org.pentaho.platform.api.action.IAction;
-
 /**
- * @deprecated Pojo components are deprecated, use {@link IAction}
+ * Allows an Action to accept inputs from the action sequence that are unspecified by the Action
+ * itself.  In other words, if there is no bean property for a particular input, it will be passed
+ * to the Action through this API.
+ * 
+ * @see IAction
+ * @author aphillips
+ * @since 3.6
  */
-public interface IProducesRuntimeOutputs {
+public interface IVarArgsAction extends IAction {
+  
+  /**
+   * Inputs from an action sequence that cannot be set on an Action by Java bean convention
+   * will be passed in through this map.
+   * @param args  a map of unspecified inputs
+   */
+  public void setVarArgs(Map<String, Object> args);
 
-	public Map<String,Object> getOutputs();
-	
 }

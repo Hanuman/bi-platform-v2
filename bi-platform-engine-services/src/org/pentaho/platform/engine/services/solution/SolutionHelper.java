@@ -205,10 +205,10 @@ public class SolutionHelper {
 
       String processName = description;
       boolean persisted = false;
-      List messages = null;
+      List<String> messages = null;
 
       if (collateMessages) {
-        messages = new ArrayList();
+        messages = new ArrayList<String>();
       }
 
       if (outputStream == null) {
@@ -227,6 +227,11 @@ public class SolutionHelper {
       }
       solutionEngine.execute(solutionRef.getSolutionName(), solutionRef.getPath(), solutionRef.getActionName(),
           processName, false, true, null, persisted, parameterProviderMap, outputHandler, null, urlFactory, messages);
+      
+      for(String message : messages) {
+        System.out.println(message);
+      }
+      
 
     } finally {
       if (manageHibernate) {

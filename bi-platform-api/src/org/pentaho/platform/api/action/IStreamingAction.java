@@ -12,20 +12,36 @@
  * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
  * See the GNU Lesser General Public License for more details.
  *
- * Copyright 2008-2009 Pentaho Corporation.  All rights reserved.
+ * Copyright 2009 Pentaho Corporation.  All rights reserved.
  *
  */
-package org.pentaho.platform.api.engine;
+package org.pentaho.platform.api.action;
 
-import java.util.Map;
-
-import org.pentaho.platform.api.action.IAction;
+import java.io.OutputStream;
 
 /**
- * @deprecated Pojo components are deprecated, use {@link IAction}
+ * The interface for Actions that want to stream content to the caller.
+ * @see IAction
+ * @see ILoggingAction
+ * @see ISessionAwareAction
+ * @see ISystemAwareAction
+ * @author aphillips
+ * @since 3.6
  */
-public interface IProducesRuntimeOutputs {
+public interface IStreamingAction extends IAction {
 
-	public Map<String,Object> getOutputs();
-	
+  /**
+   * This method sets the OutputStream to write streaming content on.
+   * 
+   * @param outputStream an OutputStream to write to
+   */
+  public void setOutputStream(OutputStream outputStream);
+
+  /**
+   * Gets the mimetype of the content that this object will write to the
+   * output stream
+   * @return
+   */
+  public String getMimeType();
+
 }

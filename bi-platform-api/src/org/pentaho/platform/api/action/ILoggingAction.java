@@ -12,20 +12,26 @@
  * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
  * See the GNU Lesser General Public License for more details.
  *
- * Copyright 2008-2009 Pentaho Corporation.  All rights reserved.
+ * Copyright 2009 Pentaho Corporation.  All rights reserved.
  *
  */
-package org.pentaho.platform.api.engine;
+package org.pentaho.platform.api.action;
 
-import java.util.Map;
-
-import org.pentaho.platform.api.action.IAction;
+import org.apache.commons.logging.Log;
 
 /**
- * @deprecated Pojo components are deprecated, use {@link IAction}
+ * The interface for an Action that wants to be provided with a 
+ * logger.
+ * @see IAction
+ * @author aphillips
+ * @since 3.6
  */
-public interface IProducesRuntimeOutputs {
+public interface ILoggingAction extends IAction {
 
-	public Map<String,Object> getOutputs();
+  /**
+   * Sets an apache commons logger for the Action component to use
+   * @param log the commons logging log that the Action can write to
+   */
+  public void setLogger(Log log);
 	
 }

@@ -17,12 +17,10 @@
  */
 package org.pentaho.platform.api.engine;
 
-/*
-* This is a deprecated class. The one to use is
-* org.pentaho.platform.api.engine.IStreamingPojo
-* @author jamesdixon
-*
-*/
-@Deprecated
+import org.pentaho.platform.api.action.IAction;
+
+/**
+* @deprecated Pojo components are deprecated, use {@link IAction}
+ */
 public interface IStreamingPojoComponent extends IStreamingPojo {
 }

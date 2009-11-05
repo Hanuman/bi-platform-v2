@@ -12,23 +12,18 @@
  * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
  * See the GNU Lesser General Public License for more details.
  *
- * Copyright 2008-2009 Pentaho Corporation.  All rights reserved.
+ * Copyright 2009 Pentaho Corporation.  All rights reserved.
  *
  */
-package org.pentaho.platform.api.engine;
+package org.pentaho.platform.api.action;
 
 import java.util.Map;
 import java.util.Set;
 
-import org.pentaho.platform.api.action.IAction;
-
 /**
- * The interface for a POJO component that wants access to system settings.
- * This is an optional interface.
- * @author jamesdixon
- * @deprecated Pojo components are deprecated, use {@link IAction}
+ * The interface for Actions that want access to system settings.
  */
-public interface IConfiguredPojo {
+public interface ISystemAwareAction extends IAction {
 	
   /**
    * Returns a list of Strings that define system settings that a POJO 

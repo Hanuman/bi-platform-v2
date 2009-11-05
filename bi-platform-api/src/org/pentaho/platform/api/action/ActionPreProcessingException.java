@@ -12,20 +12,29 @@
  * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
  * See the GNU Lesser General Public License for more details.
  *
- * Copyright 2008-2009 Pentaho Corporation.  All rights reserved.
+ * Copyright 2009 Pentaho Corporation.  All rights reserved.
  *
  */
-package org.pentaho.platform.api.engine;
+package org.pentaho.platform.api.action;
 
-import java.util.Map;
+public class ActionPreProcessingException extends Exception {
 
-import org.pentaho.platform.api.action.IAction;
+  private static final long serialVersionUID = -7724761382763461571L;
 
-/**
- * @deprecated Pojo components are deprecated, use {@link IAction}
- */
-public interface IProducesRuntimeOutputs {
+  public ActionPreProcessingException() {
+    super();
+  }
 
-	public Map<String,Object> getOutputs();
-	
+  public ActionPreProcessingException(String message, Throwable cause) {
+    super(message, cause);
+  }
+
+  public ActionPreProcessingException(String message) {
+    super(message);
+  }
+
+  public ActionPreProcessingException(Throwable cause) {
+    super(cause);
+  }
+
 }

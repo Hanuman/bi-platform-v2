@@ -19,9 +19,12 @@ package org.pentaho.platform.api.engine;
 
 import java.io.OutputStream;
 
+import org.pentaho.platform.api.action.IAction;
+
 /**
  * The interface for POJO components that want to stream content to the caller.
  * @author jamesdixon
+ * @deprecated Pojo components are deprecated, use {@link IAction}
  *
  */
 public interface IStreamingPojo {

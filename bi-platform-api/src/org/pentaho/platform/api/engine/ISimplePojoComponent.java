@@ -17,6 +17,11 @@
  */
 package org.pentaho.platform.api.engine;
 
+import org.pentaho.platform.api.action.IAction;
+
+/**
+ * @deprecated Pojo components are deprecated, use {@link IAction}
+ */
 public interface ISimplePojoComponent {
 
 	public boolean execute() throws Exception;

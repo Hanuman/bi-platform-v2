@@ -17,13 +17,14 @@
  */
 package org.pentaho.platform.api.engine;
 
+import org.pentaho.platform.api.action.IAction;
 import org.pentaho.platform.api.engine.ILogger;
 
 /**
  * The interface for a POJO component that wants to be provided with a 
  * logger. This is an optional interface for POJO components
  * @author jamesdixon
- *
+ * @deprecated Pojo components are deprecated, use {@link IAction}
  */
 public interface ILoggablePojo {
 

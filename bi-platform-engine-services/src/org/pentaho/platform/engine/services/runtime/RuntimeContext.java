@@ -56,6 +56,7 @@ import org.pentaho.actionsequence.dom.actions.ActionFactory;
 import org.pentaho.commons.connection.IPeekable;
 import org.pentaho.commons.connection.IPentahoResultSet;
 import org.pentaho.commons.connection.IPentahoStreamSource;
+import org.pentaho.platform.api.action.IAction;
 import org.pentaho.platform.api.engine.ActionExecutionException;
 import org.pentaho.platform.api.engine.ActionInitializationException;
 import org.pentaho.platform.api.engine.ActionSequenceException;
@@ -103,6 +104,7 @@ import org.pentaho.platform.engine.services.actionsequence.ActionParameter;
 import org.pentaho.platform.engine.services.actionsequence.ActionParameterSource;
 import org.pentaho.platform.engine.services.actionsequence.ActionSequenceParameterMgr;
 import org.pentaho.platform.engine.services.messages.Messages;
+import org.pentaho.platform.engine.services.solution.ActionDelegate;
 import org.pentaho.platform.engine.services.solution.PojoComponent;
 import org.pentaho.platform.engine.services.solution.SolutionReposHelper;
 import org.pentaho.platform.util.logging.Logger;
@@ -799,9 +801,8 @@ public class RuntimeContext extends PentahoMessenger implements IRuntimeContext 
     }
     if (componentTmp instanceof IComponent) {
       component = (IComponent) componentTmp;
-    /* } else if(componentTmp instanceof IAction) {
-      ActionDelegate actionAdapter = new ActionDelegate((IAction)componentTmp);
-      component = actionAdapter; */
+    } else if(componentTmp instanceof IAction) {
+      component = new ActionDelegate(componentTmp);
     } else {
       // Try this out...
       PojoComponent pc = new PojoComponent();
