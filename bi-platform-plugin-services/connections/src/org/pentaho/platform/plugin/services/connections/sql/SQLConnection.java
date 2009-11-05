@@ -169,6 +169,7 @@ public class SQLConnection implements IPentahoLoggingConnection, ILimitableConne
       }
     } catch (Throwable t) {
       logger.error(Messages.getInstance().getErrorString("ConnectFactory.ERROR_0001_INVALID_CONNECTION2", driverName, location), t); //$NON-NLS-1$
+      close(); // do not allow connection to be used as it might not be enhanced
     }
   }
 
@@ -206,6 +207,7 @@ public class SQLConnection implements IPentahoLoggingConnection, ILimitableConne
       }
     } catch (Exception e) {
       logger.error(Messages.getInstance().getErrorString("ConnectFactory.ERROR_0001_INVALID_CONNECTION", jndiName), e); //$NON-NLS-1$
+      close();  // do not allow connection to be used as it might not be enhanced
       // clear datasource cache
       try {
       IDatasourceService datasourceService =  PentahoSystem.getObjectFactory().get(IDatasourceService.class ,null);
@@ -221,7 +223,7 @@ public class SQLConnection implements IPentahoLoggingConnection, ILimitableConne
    * used when a connection needs to be enhanced with an "effective user"
    * @param connection
    */
-  protected void enhanceConnection(Connection connection) {
+  protected void enhanceConnection(Connection connection) throws SQLException {
   }
 
   /**
@@ -229,17 +231,17 @@ public class SQLConnection implements IPentahoLoggingConnection, ILimitableConne
    * used when a connection needs to be enhanced with an "effective user"
    * @param connection
    */
-  protected void unEnhanceConnection(Connection connection) {
+  protected void unEnhanceConnection(Connection connection) throws SQLException {
   }
 
   /**
    * Allow wrapping/proxying of the native SQL connection by a subclass. Best
    * used when a connection needs to be be enhanced or proxied for Single Signon
-   * or possibly tenenting.
+   * or possibly tenanting.
    * @param connection
    * @return
    */
-  protected Connection captureConnection(Connection connection) {
+  protected Connection captureConnection(Connection connection) throws SQLException {
     return connection;
   }
   
@@ -249,7 +251,7 @@ public class SQLConnection implements IPentahoLoggingConnection, ILimitableConne
    * be bound to the statement.
    * @param statement
    */
-  protected void enhanceStatement(Statement statement) {
+  protected void enhanceStatement(Statement statement) throws SQLException {
   }
   
   /**
