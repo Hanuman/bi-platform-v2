@@ -52,6 +52,7 @@
         <dependency org="${ivy.artifact.group}" name="pentaho-bi-platform-web"             rev="${project.revision}" changing="true"/>
         <dependency org="${ivy.artifact.group}" name="pentaho-bi-platform-web-servlet"     rev="${project.revision}" changing="true"/>
         
+        <conflict org="commons-beanutils" rev="1.8.0" />
     </dependencies>
     
 </ivy-module>
