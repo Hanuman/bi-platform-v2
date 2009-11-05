@@ -226,8 +226,8 @@
         org.pentaho.platform.api.repository.IPentahoContentRepository.startup=PROPAGATION_REQUIRED
         org.pentaho.platform.api.repository.IPentahoContentRepository.createUserHomeFolderIfNecessary=PROPAGATION_REQUIRED
         org.pentaho.platform.api.repository.IPentahoContentRepository.getFile=PROPAGATION_REQUIRED,readOnly
-        org.pentaho.platform.api.repository.IPentahoContentRepository.getStreamForRead=PROPAGATION_REQUIRED,readOnly
-        org.pentaho.platform.api.repository.IPentahoContentRepository.getStreamForExecute=PROPAGATION_REQUIRED,readOnly
+        org.pentaho.platform.api.repository.IPentahoContentRepository.getContentForRead=PROPAGATION_REQUIRED,readOnly
+        org.pentaho.platform.api.repository.IPentahoContentRepository.getContentForExecute=PROPAGATION_REQUIRED,readOnly
         org.pentaho.platform.api.repository.IPentahoContentRepository.createFile=PROPAGATION_REQUIRED
         org.pentaho.platform.api.repository.IPentahoContentRepository.createFolder=PROPAGATION_REQUIRED
         org.pentaho.platform.api.repository.IPentahoContentRepository.getChildren=PROPAGATION_REQUIRED,readOnly
@@ -285,8 +285,8 @@
       <value>
         org.pentaho.platform.api.repository.IPentahoContentRepository.createUserHomeFolderIfNecessary=VOTE_ROLE_FILE_Authenticated
         org.pentaho.platform.api.repository.IPentahoContentRepository.getFile=VOTE_ROLE_FILE_Authenticated,AFTER_ACL_TRAVERSE
-        org.pentaho.platform.api.repository.IPentahoContentRepository.getStreamForRead=VOTE_ROLE_FILE_Authenticated,VOTE_ACL_FILE_READ
-        org.pentaho.platform.api.repository.IPentahoContentRepository.getStreamForExecute=VOTE_ROLE_FILE_Authenticated,VOTE_ACL_FILE_READ,VOTE_ACL_FILE_EXECUTE
+        org.pentaho.platform.api.repository.IPentahoContentRepository.getContentForRead=VOTE_ROLE_FILE_Authenticated,VOTE_ACL_FILE_READ
+        org.pentaho.platform.api.repository.IPentahoContentRepository.getContentForExecute=VOTE_ROLE_FILE_Authenticated,VOTE_ACL_FILE_READ,VOTE_ACL_FILE_EXECUTE
         org.pentaho.platform.api.repository.IPentahoContentRepository.createFile=VOTE_ROLE_FILE_Authenticated,VOTE_ACL_FILE_WRITE
         org.pentaho.platform.api.repository.IPentahoContentRepository.createFolder=VOTE_ROLE_FILE_Authenticated,VOTE_ACL_FILE_APPEND
         org.pentaho.platform.api.repository.IPentahoContentRepository.getChildren=VOTE_ROLE_FILE_Authenticated,VOTE_ACL_FILE_READ
@@ -314,6 +314,13 @@
 
   <bean id="pentahoContentDao" class="org.pentaho.platform.repository.pcr.JcrPentahoContentDao">
     <constructor-arg ref="jcrTemplate" />
+    <constructor-arg>
+      <map>
+        <entry key="text/plain">
+          <bean class="org.pentaho.platform.repository.pcr.transform.SimpleRepositoryFileContentTransformer" />
+        </entry>
+      </map>
+    </constructor-arg>
   </bean>
 
   <bean id="aclDataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">

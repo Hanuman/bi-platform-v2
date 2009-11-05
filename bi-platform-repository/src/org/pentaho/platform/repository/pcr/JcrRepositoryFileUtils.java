@@ -1,7 +1,6 @@
 package org.pentaho.platform.repository.pcr;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
@@ -14,8 +13,10 @@ import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
 import org.apache.jackrabbit.JcrConstants;
+import org.pentaho.platform.api.repository.IRepositoryFileContent;
 import org.pentaho.platform.api.repository.RepositoryFile;
 import org.pentaho.platform.repository.pcr.JcrPentahoContentDao.NodeIdStrategy;
+import org.pentaho.platform.repository.pcr.JcrPentahoContentDao.Transformer;
 import org.springframework.util.Assert;
 
 public class JcrRepositoryFileUtils {
@@ -25,7 +26,6 @@ public class JcrRepositoryFileUtils {
 
     Date createdDateTime = null;
     Date lastModifiedDateTime = null;
-    String encoding = null;
     String mimeType = null;
     boolean folder = false;
 
@@ -48,17 +48,14 @@ public class JcrRepositoryFileUtils {
         if (tmpCal != null) {
           lastModifiedDateTime = tmpCal.getTime();
         }
-        if (resourceNode.hasProperty(JcrConstants.JCR_ENCODING)) {
-          encoding = resourceNode.getProperty(JcrConstants.JCR_ENCODING).getString();
-        }
         mimeType = resourceNode.getProperty(JcrConstants.JCR_MIMETYPE).getString();
       }
     }
 
     RepositoryFile file = new RepositoryFile.Builder(node.getName(), nodeIdStrategy.getId(node), !node.getParent()
         .isSame(session.getRootNode()) ? nodeIdStrategy.getId(node.getParent()) : null).createdDate(createdDateTime)
-        .lastModificationDate(lastModifiedDateTime).encoding(encoding).mimeType(mimeType).folder(folder).absolutePath(
-            node.getPath()).build();
+        .lastModificationDate(lastModifiedDateTime).mimeType(mimeType).folder(folder).absolutePath(node.getPath())
+        .build();
 
     return file;
   }
@@ -77,8 +74,8 @@ public class JcrRepositoryFileUtils {
   }
 
   public static Node toFileNode(final Session session, final NodeIdStrategy nodeIdStrategy,
-      final RepositoryFile parentFolder, final RepositoryFile file, final InputStream data) throws RepositoryException,
-      IOException {
+      final RepositoryFile parentFolder, final RepositoryFile file, final IRepositoryFileContent content,
+      final Transformer transformer) throws RepositoryException, IOException {
 
     Node parentFolderNode;
     if (parentFolder != null) {
@@ -89,11 +86,11 @@ public class JcrRepositoryFileUtils {
     Node fileNode = parentFolderNode.addNode(file.getName(), JcrConstants.NT_FILE);
     nodeIdStrategy.setId(fileNode, null);
     Node resourceNode = fileNode.addNode(JcrConstants.JCR_CONTENT, JcrConstants.NT_RESOURCE);
-    resourceNode.setProperty(JcrConstants.JCR_ENCODING, file.getEncoding());
     resourceNode.setProperty(JcrConstants.JCR_MIMETYPE, file.getMimeType());
-    resourceNode.setProperty(JcrConstants.JCR_DATA, data);
     // set created and last modified to same date when creating a new file
     resourceNode.setProperty(JcrConstants.JCR_LASTMODIFIED, fileNode.getProperty(JcrConstants.JCR_CREATED).getDate());
+
+    transformer.toNode(session, nodeIdStrategy, content, resourceNode);
 
     return fileNode;
   }
@@ -111,14 +108,14 @@ public class JcrRepositoryFileUtils {
     return resourceNode;
   }
 
-  public static InputStream getStream(final Session session, final NodeIdStrategy nodeIdStrategy,
-      final RepositoryFile file) throws RepositoryException, IOException {
+  public static IRepositoryFileContent getContent(final Session session, final NodeIdStrategy nodeIdStrategy,
+      final RepositoryFile file, final Transformer transformer) throws RepositoryException, IOException {
     Node fileNode = nodeIdStrategy.findNodeById(session, file.getId());
     Assert.isTrue(!isFolder(fileNode));
 
-    return getResourceNode(session, fileNode).getProperty(JcrConstants.JCR_DATA).getStream();
+    return transformer.fromNode(session, nodeIdStrategy, getResourceNode(session, fileNode));
   }
-  
+
   public static List<RepositoryFile> getChildren(final Session session, final NodeIdStrategy nodeIdStrategy,
       final RepositoryFile folder) throws RepositoryException, IOException {
     Node folderNode = nodeIdStrategy.findNodeById(session, folder.getId());

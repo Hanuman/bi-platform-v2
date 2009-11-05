@@ -8,6 +8,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.pentaho.platform.api.repository.IPentahoContentDao;
 import org.pentaho.platform.api.repository.IPentahoContentRepository;
+import org.pentaho.platform.api.repository.IRepositoryFileContent;
 import org.pentaho.platform.api.repository.RepositoryFile;
 import org.pentaho.platform.repository.pcr.springsecurity.AclServicePreparer;
 import org.pentaho.platform.repository.pcr.springsecurity.RepositoryFilePermission;
@@ -202,11 +203,11 @@ public class PentahoContentRepository implements IPentahoContentRepository {
     }
   }
 
-  private RepositoryFile internalCreateFile(final RepositoryFile parentFolder, final RepositoryFile file, final InputStream data,
+  private RepositoryFile internalCreateFile(final RepositoryFile parentFolder, final RepositoryFile file, final IRepositoryFileContent content,
       final boolean inheritAces) {
     Assert.notNull(file);
 
-    RepositoryFile newFile = contentDao.createFile(parentFolder, file, data);
+    RepositoryFile newFile = contentDao.createFile(parentFolder, file, content);
     internalCreateAclIfNecessary(newFile, inheritAces);
 
     return newFile;
@@ -296,19 +297,19 @@ public class PentahoContentRepository implements IPentahoContentRepository {
   /**
    * {@inheritDoc}
    */
-  public synchronized RepositoryFile createFile(final RepositoryFile parentFolder, final RepositoryFile file, final InputStream data) {
+  public synchronized RepositoryFile createFile(final RepositoryFile parentFolder, final RepositoryFile file, final IRepositoryFileContent content) {
     Assert.notNull(file);
     Assert.isTrue(!file.isFolder());
     Assert.hasText(file.getName());
     if (!file.isFolder()) {
-      Assert.notNull(data);
+      Assert.notNull(content);
       Assert.hasText(file.getMimeType());
     }
     if (parentFolder != null) {
       Assert.hasText(parentFolder.getName());
     }
 
-    return internalCreateFile(parentFolder, file, data, true);
+    return internalCreateFile(parentFolder, file, content, true);
   }
   
   /**
@@ -332,19 +333,19 @@ public class PentahoContentRepository implements IPentahoContentRepository {
    * is protecting this method with different authorization rules than {@link #getStreamForRead(RepositoryFile)}.
    * </p>
    * 
-   * @see #getStreamForRead(RepositoryFile)
+   * @see #getContentForRead(RepositoryFile, Class)
    */
-  public InputStream getStreamForExecute(final RepositoryFile file) {
-    return getStreamForRead(file);
+  public <T extends IRepositoryFileContent> T getContentForExecute(RepositoryFile file, Class<T> contentClass) {
+    return getContentForRead(file, contentClass);
   }
 
   /**
    * {@inheritDoc}
    */
-  public InputStream getStreamForRead(final RepositoryFile file) {
+  public <T extends IRepositoryFileContent> T getContentForRead(RepositoryFile file, Class<T> contentClass) {
     Assert.notNull(file);
     Assert.notNull(file.getId());
-    return contentDao.getStream(file);
+    return contentDao.getContent(file, contentClass);
   }
 
   /**

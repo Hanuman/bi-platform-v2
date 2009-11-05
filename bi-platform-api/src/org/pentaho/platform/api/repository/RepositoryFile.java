@@ -8,6 +8,22 @@ import org.apache.commons.lang.builder.ToStringBuilder;
 /**
  * Immutable repository file. Use the {@link Builder} to create instances.
  * 
+ * <p>
+ * This class should use only GWT-emulated types.
+ * </p>
+ * 
+ * <p>
+ * If a user has traversal rights to the folder containing this file, then the user should be able to get this file
+ * regardless of the user's permissions on this file. (The permission should be checked when the user attempts to get 
+ * the {@link IRepositoryFileContent} associated with this file.)
+ * </p>
+ * 
+ * <p>
+ * For this reason, <strong>never</strong> create a field of this class that is of type {@link IRepositoryFileContent} 
+ * since instances of this class are not subject to access control. Instead, require the user to go back to the service 
+ * that issued this {@link RepositoryFile} instance.  
+ * </p>
+ * 
  * @author mlowery
  */
 public class RepositoryFile implements Comparable<RepositoryFile> {
@@ -28,13 +44,13 @@ public class RepositoryFile implements Comparable<RepositoryFile> {
 
   private Date lastModifiedDate;
 
-  private String encoding;
-
   private String mimeType;
 
   private boolean folder;
 
   private String absolutePath;
+  
+  private boolean hidden;
 
   // ~ Constructors ====================================================================================================
 
@@ -82,10 +98,6 @@ public class RepositoryFile implements Comparable<RepositoryFile> {
     }
   }
 
-  public String getEncoding() {
-    return encoding;
-  }
-
   public String getMimeType() {
     return mimeType;
   }
@@ -98,13 +110,9 @@ public class RepositoryFile implements Comparable<RepositoryFile> {
     return absolutePath;
   }
   
-//  /**
-//   * Length, in bytes, of the file or 0L if the file is a folder.
-//   * @return length in bytes
-//   */
-//  public long getLength() {
-//    return length;
-//  }
+  public boolean isHidden() {
+    return hidden;
+  }
 
   @Override
   public String toString() {
@@ -122,13 +130,13 @@ public class RepositoryFile implements Comparable<RepositoryFile> {
 
     private Date lastModifiedDate;
 
-    private String encoding;
-
     private String mimeType;
 
     private boolean folder;
 
     private String absolutePath;
+    
+    private boolean hidden;
     
     public Builder(final String name) {
       this.name = name;
@@ -143,7 +151,7 @@ public class RepositoryFile implements Comparable<RepositoryFile> {
     public Builder(final RepositoryFile other) {
       this(other.name, other.id, other.parentId);
       this.absolutePath(other.absolutePath).createdDate(
-          other.createdDate).encoding(other.encoding).folder(other.folder).lastModificationDate(
+          other.createdDate).folder(other.folder).lastModificationDate(
           other.lastModifiedDate).mimeType(other.mimeType);
     }
 
@@ -151,16 +159,11 @@ public class RepositoryFile implements Comparable<RepositoryFile> {
       RepositoryFile result = new RepositoryFile(name, id, parentId);
       result.createdDate = this.createdDate;
       result.lastModifiedDate = this.lastModifiedDate;
-      result.encoding = this.encoding;
       result.mimeType = this.mimeType;
       result.folder = this.folder;
       result.absolutePath = this.absolutePath;
+      result.hidden = this.hidden;
       return result;
-    }
-
-    public Builder encoding(final String encoding) {
-      this.encoding = encoding;
-      return this;
     }
 
     public Builder mimeType(final String mimeType) {
@@ -185,6 +188,11 @@ public class RepositoryFile implements Comparable<RepositoryFile> {
 
     public Builder absolutePath(final String absolutePath) {
       this.absolutePath = absolutePath;
+      return this;
+    }
+    
+    public Builder hidden(final boolean hidden) {
+      this.hidden = hidden;
       return this;
     }
     

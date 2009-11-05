@@ -52,20 +52,22 @@ public interface IPentahoContentRepository {
   RepositoryFile getFile(final String absPath);
   
   /**
-   * Gets stream for read.
+   * Gets content for read.
    * 
    * @param file to read
-   * @return stream
+   * @param contentClass class that implements {@link IRepositoryFileContent}
+   * @return content
    */
-  InputStream getStreamForRead(final RepositoryFile file);
+  <T extends IRepositoryFileContent> T getContentForRead(final RepositoryFile file, final Class<T> contentClass);
 
   /**
-   * Gets stream for execute.
+   * Gets content for execute.
    * 
    * @param file to execute
-   * @return stream
+   * @param contentClass class that implements {@link IRepositoryFileContent}
+   * @return content
    */
-  InputStream getStreamForExecute(final RepositoryFile file);
+  <T extends IRepositoryFileContent> T getContentForExecute(final RepositoryFile file, final Class<T> contentClass);
   
   /**
    * Creates a file.
@@ -73,10 +75,10 @@ public interface IPentahoContentRepository {
    * 
    * @param parentFolder parent folder (may be {@code null})
    * @param file file to create
-   * @param data stream with file data
+   * @param content file content
    * @return file that is equal to given file except with id populated
    */
-  RepositoryFile createFile(final RepositoryFile parentFolder, final RepositoryFile file, final InputStream data);
+  RepositoryFile createFile(final RepositoryFile parentFolder, final RepositoryFile file, final IRepositoryFileContent content);
   
   /**
    * Creates a folder.

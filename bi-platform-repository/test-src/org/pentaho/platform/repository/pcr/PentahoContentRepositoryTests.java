@@ -12,6 +12,7 @@ import java.util.List;
 
 import javax.sql.DataSource;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.junit.After;
@@ -268,21 +269,25 @@ public class PentahoContentRepositoryTests implements ApplicationContextAware {
     final String expectedMimeType = "text/plain";
     final String expectedName = "helloworld.xaction";
     final String expectedAbsolutePath = "/pentaho/home/suzy/helloworld.xaction";
+
+    final SimpleRepositoryFileContent content = new SimpleRepositoryFileContent(dataStream, expectedEncoding);
+
     RepositoryFile newFile = pentahoContentRepository.createFile(parentFolder, new RepositoryFile.Builder(expectedName)
-        .encoding("UTF-8").mimeType(expectedMimeType).build(), dataStream);
+        .mimeType(expectedMimeType).build(), content);
     assertNotNull(newFile.getId());
     RepositoryFile foundFile = pentahoContentRepository.getFile(expectedAbsolutePath);
     assertNotNull(foundFile);
     assertEquals(expectedName, foundFile.getName());
     assertEquals(expectedAbsolutePath, foundFile.getAbsolutePath());
-    //    assertTrue(foundFile.length() > 0);
-    //    assertNotNull(foundFile.getData());
-    assertEquals(expectedEncoding, foundFile.getEncoding());
     assertEquals(expectedMimeType, foundFile.getMimeType());
     assertNotNull(foundFile.getCreatedDate());
-    //    String dataString = new String(foundFile.getData(), expectedEncoding);
-    //    assertEquals(expectedDataString, dataString);
     assertNotNull(foundFile.getLastModifiedDate());
+
+    SimpleRepositoryFileContent contentFromRepo = pentahoContentRepository.getContentForRead(foundFile,
+        SimpleRepositoryFileContent.class);
+    assertEquals(expectedEncoding, contentFromRepo.getEncoding());
+    
+    assertEquals(expectedDataString, IOUtils.toString(contentFromRepo.getData(), expectedEncoding));
   }
 
   @Test

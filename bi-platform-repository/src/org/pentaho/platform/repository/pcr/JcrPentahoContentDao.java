@@ -1,9 +1,9 @@
 package org.pentaho.platform.repository.pcr;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.Serializable;
 import java.util.List;
+import java.util.Map;
 
 import javax.jcr.Item;
 import javax.jcr.ItemNotFoundException;
@@ -16,6 +16,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.jackrabbit.JcrConstants;
 import org.pentaho.platform.api.repository.IPentahoContentDao;
+import org.pentaho.platform.api.repository.IRepositoryFileContent;
 import org.pentaho.platform.api.repository.RepositoryFile;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.extensions.jcr.JcrCallback;
@@ -39,11 +40,14 @@ public class JcrPentahoContentDao implements IPentahoContentDao, InitializingBea
 
   private NodeIdStrategy nodeIdStrategy = new UuidNodeIdStrategy();
 
+  private Map<String, Transformer> transformers;
+
   // ~ Constructors ====================================================================================================
 
-  public JcrPentahoContentDao(final JcrTemplate jcrTemplate) {
+  public JcrPentahoContentDao(final JcrTemplate jcrTemplate, final Map<String, Transformer> transformers) {
     super();
     this.jcrTemplate = jcrTemplate;
+    this.transformers = transformers;
   }
 
   // ~ Methods =========================================================================================================
@@ -67,12 +71,11 @@ public class JcrPentahoContentDao implements IPentahoContentDao, InitializingBea
   }
 
   private RepositoryFile internalCreateFile(final RepositoryFile parentFolder, final RepositoryFile file,
-      final InputStream data) {
+      final IRepositoryFileContent content) {
     Assert.notNull(file);
     Assert.hasText(file.getName());
     Assert.isTrue(!file.isFolder());
-    Assert.notNull(data);
-    Assert.hasText(file.getEncoding());
+    Assert.notNull(content);
     Assert.hasText(file.getMimeType());
     if (parentFolder != null) {
       Assert.hasText(parentFolder.getName());
@@ -80,7 +83,8 @@ public class JcrPentahoContentDao implements IPentahoContentDao, InitializingBea
 
     return (RepositoryFile) jcrTemplate.execute(new JcrCallback() {
       public Object doInJcr(final Session session) throws RepositoryException, IOException {
-        Node fileNode = JcrRepositoryFileUtils.toFileNode(session, nodeIdStrategy, parentFolder, file, data);
+        Node fileNode = JcrRepositoryFileUtils.toFileNode(session, nodeIdStrategy, parentFolder, file, content,
+            transformers.get(file.getMimeType()));
         session.save();
         return JcrRepositoryFileUtils.fromNode(session, nodeIdStrategy, fileNode);
       }
@@ -90,10 +94,16 @@ public class JcrPentahoContentDao implements IPentahoContentDao, InitializingBea
   /**
    * {@inheritDoc}
    */
-  public RepositoryFile createFile(final RepositoryFile parentFolder, final RepositoryFile file, final InputStream data) {
+  public RepositoryFile createFile(final RepositoryFile parentFolder, final RepositoryFile file,
+      final IRepositoryFileContent content) {
     Assert.notNull(file);
     Assert.isTrue(!file.isFolder());
-    return internalCreateFile(parentFolder, file, data);
+    Assert.isTrue(transformers.containsKey(file.getMimeType()), String.format(
+        "no transformer for this MIME type [%s] exists", file.getMimeType()));
+    Assert.isTrue(transformers.get(file.getMimeType()).supports(content.getClass()), String.format(
+        "transformer for MIME type [%s] does not consume instances of type [%s]", file.getMimeType(), content
+            .getClass().getName()));
+    return internalCreateFile(parentFolder, file, content);
   }
 
   /**
@@ -150,17 +160,32 @@ public class JcrPentahoContentDao implements IPentahoContentDao, InitializingBea
   /**
    * {@inheritDoc}
    */
-  public InputStream getStream(final RepositoryFile file) {
+  public <T extends IRepositoryFileContent> T getContent(final RepositoryFile file, final Class<T> contentClass) {
     Assert.notNull(file);
     Assert.notNull(file.getId());
     Assert.isTrue(!file.isFolder());
-
-    return (InputStream) jcrTemplate.execute(new JcrCallback() {
+    Assert.isTrue(transformers.containsKey(file.getMimeType()), String.format(
+        "no transformer for this MIME type [%s] exists", file.getMimeType()));
+    Assert.isTrue(transformers.get(file.getMimeType()).supports(contentClass), String.format(
+        "transformer for MIME type [%s] does not generate instances of type [%s]", file.getMimeType(), contentClass
+            .getName()));
+    return (T) jcrTemplate.execute(new JcrCallback() {
       public Object doInJcr(final Session session) throws RepositoryException, IOException {
-        return JcrRepositoryFileUtils.getStream(session, nodeIdStrategy, file);
+        return JcrRepositoryFileUtils.getContent(session, nodeIdStrategy, file, transformers.get(file.getMimeType()));
       }
     });
 
+  }
+
+  public List<RepositoryFile> getChildren(final RepositoryFile folder) {
+    Assert.notNull(folder);
+    Assert.notNull(folder.getId());
+    Assert.notNull(folder.isFolder());
+    return (List<RepositoryFile>) jcrTemplate.execute(new JcrCallback() {
+      public Object doInJcr(final Session session) throws RepositoryException, IOException {
+        return JcrRepositoryFileUtils.getChildren(session, nodeIdStrategy, folder);
+      }
+    });
   }
 
   /**
@@ -234,18 +259,16 @@ public class JcrPentahoContentDao implements IPentahoContentDao, InitializingBea
         throw jcrTemplate.convertJcrAccessException(e);
       }
     }
-
   }
 
-  public List<RepositoryFile> getChildren(final RepositoryFile folder) {
-    Assert.notNull(folder);
-    Assert.notNull(folder.getId());
-    Assert.notNull(folder.isFolder());
-    return (List<RepositoryFile>) jcrTemplate.execute(new JcrCallback() {
-      public Object doInJcr(final Session session) throws RepositoryException, IOException {
-        return JcrRepositoryFileUtils.getChildren(session, nodeIdStrategy, folder);
-      }
-    });
+  public static interface Transformer {
+    <T extends IRepositoryFileContent> boolean supports(Class<T> clazz);
+
+    IRepositoryFileContent fromNode(final Session session, final NodeIdStrategy nodeIdStrategy, final Node node)
+        throws RepositoryException, IOException;
+
+    void toNode(final Session session, final NodeIdStrategy nodeIdStrategy, final IRepositoryFileContent content,
+        final Node resourceNode) throws RepositoryException, IOException;
   }
 
 }

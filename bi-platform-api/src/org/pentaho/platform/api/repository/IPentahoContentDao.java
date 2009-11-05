@@ -14,12 +14,14 @@ public interface IPentahoContentDao {
   RepositoryFile getFile(final String absPath);
   
   /**
-   * Returns a stream for the file.
+   * Gets content for read.
    * 
-   * @param file file to open
-   * @return stream
+   * @param file to read
+   * @param contentClass class that implements {@link IRepositoryFileContent}
+   * @return content
    */
-  InputStream getStream(final RepositoryFile file);
+  <T extends IRepositoryFileContent> T getContent(final RepositoryFile file, final Class<T> contentClass);
+
   
 //  void removeFile(final RepositoryFile file);
   
@@ -28,10 +30,10 @@ public interface IPentahoContentDao {
    * 
    * @param parentFolder parent folder (may be {@code null})
    * @param file file to create
-   * @param data stream with file data
+   * @param content file content
    * @return new file with non-null id
    */
-  RepositoryFile createFile(final RepositoryFile parentFolder, final RepositoryFile file, final InputStream data);
+  RepositoryFile createFile(final RepositoryFile parentFolder, final RepositoryFile file, final IRepositoryFileContent content);
   
   /**
    * Creates a folder.
