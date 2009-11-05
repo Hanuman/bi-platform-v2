@@ -1,4 +1,4 @@
-<?xml version="1.0"?>
+﻿<?xml version="1.0"?>
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
 	version="2.0" 
 	xmlns:html="http://www.w3.org/TR/REC-html40"
@@ -11,6 +11,7 @@
 	<xsl:output method="html" encoding="UTF-8" />
 
 	<xsl:template name="doFilters">
+		<xsl:variable name="messages" select="msg:getInstance()" />
 	
 		<xsl:variable name="editing">
 			<xsl:if test="/filters/input[@name='subscribe-title']/@value!=''">
@@ -24,12 +25,12 @@
 				<title><xsl:value-of select="title" disable-output-escaping="yes"/></title>
 				<link rel='stylesheet' type='text/css' href='/pentaho-style/active/default.css' />
 
-				<script type="text/javascript" language="javascript" src="/pentaho/js/parameters.js"></script>
-				<script type="text/javascript" language="javascript" src="/pentaho/js/subscription.js"></script>
+				<script type="text/javascript" language="javascript" src="js/parameters.js"></script>
+				<script type="text/javascript" language="javascript" src="js/subscription.js"></script>
 
 				<script type="text/javascript">
-					var pentaho_notOptionalMessage = '<xsl:value-of select="msg:getXslString('UI.USER_PARAMETER_NOT_OPTIONAL')" disable-output-escaping="yes"/>';
-					var pentaho_backgroundWarning = '<xsl:value-of select="msg:getXslString('UI.USER_PARAMETER_BACKGROUND_WARNING')" disable-output-escaping="yes"/>';
+					var pentaho_notOptionalMessage = '<xsl:value-of select="msg:getXslString($messages, 'UI.USER_PARAMETER_NOT_OPTIONAL')" disable-output-escaping="yes"/>';
+					var pentaho_backgroundWarning = '<xsl:value-of select="msg:getXslString($messages, 'UI.USER_PARAMETER_BACKGROUND_WARNING')" disable-output-escaping="yes"/>';
 					var USEPOSTFORFORMS = <xsl:value-of select="$USEPOSTFORFORMS" />;
 			        <xsl:for-each select="filter">
 						<xsl:if test="@optional = 'true'">
@@ -44,24 +45,29 @@
 						</xsl:call-template>
 						<xsl:text>';
  					</xsl:text>
-					</xsl:for-each>
+		      function initialStartup_form_<xsl:value-of select="/filters/id"/>() {
+            // Now, focus on first visible input control...
+            var form = document.forms['form_<xsl:value-of select="/filters/id" />'];
+            if (form) {
+              for (i=0; i &lt; form.elements.length; i++) {
+                var anElement = form.elements[i];
+                if (anElement &amp;&amp; anElement.type &amp;&amp; anElement.type != 'hidden' &amp;&amp; !anElement.disabled) {
+                  setTimeout(function(){anElement.focus();}, 5);
+                  break;
+                }
+              }
+            }
+          }
+          			</xsl:for-each>
+                    pentaho_optionalParams.push('form_<xsl:value-of select="id"/>.run_as_background');
 			    </script>
-			    
 	    </head>
 		<body>
-				<div style="margin:10px">
-					<span class="portlet-section-header"><xsl:value-of select="title" disable-output-escaping="yes"/></span>
-				</div>
-				<div style="margin:10px;border:1px solid #808080">
+        
+				<div style="margin:5px;">
 
-					<br/>
-					<table border="0" width="100%" >
-						<tr>
-							<td>
-								<span class="portlet-font"><xsl:value-of select="help" disable-output-escaping="yes"/></span>
-							</td>
-						</tr>
-
+					<table border="0" width="525" >
+						
 					<tr>
 			
 					<td class="portlet-font" colspan="2">
@@ -81,7 +87,7 @@
 								<xsl:if test="$USEPOSTFORFORMS='true'">
 									<xsl:attribute name="method">post</xsl:attribute>
 									<xsl:attribute name="target">_blank</xsl:attribute>
-									<xsl:attribute name="action">/pentaho/ViewAction</xsl:attribute>
+									<xsl:attribute name="action">ViewAction</xsl:attribute>
 								</xsl:if>
 
 								<xsl:attribute name="name">form_<xsl:value-of select="/filters/id" /></xsl:attribute>
@@ -102,20 +108,35 @@
 					</table>					
 					<br/>
 				</div>
+        <script>
+          initialStartup_form_<xsl:value-of select="/filters/id"/>();
+        </script>
 				</body>
 		</html>
 	</xsl:template>
 
 	<xsl:template name="doFilter">
-		<tr>
-              <!-- <xsl:element name="br" /> -->
-		<td><b><xsl:value-of select="title"/><xsl:text>&#x20;</xsl:text></b></td></tr>
-		<tr><td>
-		<xsl:for-each select="control">
-			<!--  this is important - it copies the definition of the input control into the HTML output -->
-	                <xsl:apply-templates/>
-		</xsl:for-each>
-		</td>
+		
+		<tr><td style="padding:3px;">
+        <table class="parameter_table" border="0" cellspacing="0" cellpadding="0">
+          <tr>
+            <td>
+              <fieldset class="parameter_fieldset">
+                  <legend>
+                      <xsl:value-of select="title"/>
+                  </legend>
+
+              
+              		<xsl:for-each select="control">
+              			<!--  this is important - it copies the definition of the input control into the HTML output -->
+              	                <xsl:apply-templates/>
+              		</xsl:for-each>
+
+              </fieldset>
+            </td>
+          </tr>
+        </table>
+      </td>
 		</tr>
 	</xsl:template>
 

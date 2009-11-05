@@ -4,7 +4,7 @@
 	xmlns:x="urn:schemas-microsoft-com:office:excel"
 	xmlns:ss="urn:schemas-microsoft-com:office:spreadsheet"
 	xmlns:html="http://www.w3.org/TR/REC-html40"
-	xmlns:msg="org.pentaho.platform.plugin.action.messages.Messages"
+	xmlns:msg="org.pentaho.platform.web.xsl.messages.Messages"
 	xmlns:str_util="http://www.w3.org/2001/10/str-util.xsl"
 	exclude-result-prefixes="o x ss html msg str_util">
 

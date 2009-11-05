@@ -79,15 +79,9 @@
 	</xsl:template>
 
 	<xsl:template name="doFilter">
+		<xsl:variable name="messages" select="msg:getInstance()" />
 		<xsl:param name="formName"/>
-		<xsl:if test="position()=1">
-				<tr>
-					<td>		
-                        <span class="portlet-font"><xsl:value-of select="msg:getXslString('UI.USER_FILTER_PANEL_HINT')" disable-output-escaping="yes"/></span>
-					</td>
-				</tr>
-		</xsl:if>
-		
+
 				<tr>
 					<td class="portlet-section-subheader">		
                         <br/><xsl:value-of select="title" disable-output-escaping="yes"/>
@@ -107,7 +101,7 @@
 					<td>
 						<br/>
 						<input type="button" name="go" class="portlet-form-button">
-							<xsl:attribute name="value"><xsl:value-of select="msg:getString('UI.USER_UPDATE')" disable-output-escaping="yes"/></xsl:attribute>
+							<xsl:attribute name="value"><xsl:value-of select="msg:getString($messages, 'UI.USER_UPDATE')" disable-output-escaping="yes"/></xsl:attribute>
 							<xsl:attribute name="onClick">doForm<xsl:value-of select="$formName" />()</xsl:attribute>
 						</input>
 					</td>

@@ -5,6 +5,7 @@
 
 	<xsl:template match="/subscriptions">
 
+		<xsl:variable name="messages" select="msg:getInstance()" />
 
 		<table border="0">
 
@@ -17,7 +18,7 @@
 							<table width="100%">
 								<tr>
 									<td class="portlet-font" nowrap="true">
-										<xsl:value-of select="msg:getString('UI.VIEW_SUBS.MY_VIEWS')" />
+										<xsl:value-of select="msg:getString($messages, 'UI.VIEW_SUBS.MY_VIEWS')" />
 									</td>
 									<td>
 										<select id="subscription">

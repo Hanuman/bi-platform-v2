@@ -853,11 +853,14 @@
 	<!-- ######################################################################################################## -->
 
 	<xsl:template name="build-items">
+
 		<xsl:param name="parent" />
+
+		<xsl:variable name="messages" select="msg:getInstance()" />
 
 		<!-- add an empty item, cause otherwise deselection is not possible -->
 		<option value="">
-			<xsl:value-of select="msg:getXslString('UI.USER_CHOOSE')" disable-output-escaping="yes"/>
+			<xsl:value-of select="msg:getXslString($messages, 'UI.USER_CHOOSE')" disable-output-escaping="yes"/>
 		</option>
 
 		<!-- todo: handle xforms:choice -->

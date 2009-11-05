@@ -126,5 +126,43 @@ $suffix_length + 1))=$string2)">
       </xsl:otherwise>
     </xsl:choose>
   </xsl:template>
+  
+  <xsl:template name="keep-after-last">
+    <xsl:param name="string"/>
+    <xsl:param name="delimiter"/>
+    <xsl:choose>
+      <!-- If the string is empty, we don't need to go further (@@@ really?)-->
+      <xsl:when test="$string">
+        <xsl:choose>
+          <!-- Does the string contains the said delimiter? -->
+          <xsl:when test="contains($string,$delimiter)">
+            <xsl:choose>
+              <!-- Does the part of the string after the delimiter still contains the delimiter? -->
+              <xsl:when test="contains(substring-after($string,$delimiter),$delimiter)">
+                <!-- if yes, we concatene the first part of the string with the result of the (recursive) call to this template on the second part of the string -->
+                <xsl:value-of select="substring-after($string,$delimiter)"/><xsl:call-template name="keep-after-last">
+                <xsl:with-param name="string" select="substring-after($string,$delimiter)"/>
+                <xsl:with-param name="delimiter" select="$delimiter"/>
+              </xsl:call-template>
+              </xsl:when>
+              <xsl:otherwise>
+                <!-- Otherwise, we have delimited what we want -->
+                <xsl:value-of
+            select="substring-after($string,$delimiter)" />
+              </xsl:otherwise>
+            </xsl:choose>
+          </xsl:when>
+          <xsl:otherwise>
+            <!-- The delimiter is not in the string, end of story -->
+            <xsl:value-of select="$string" />
+          </xsl:otherwise>
+        </xsl:choose>
+      </xsl:when>
+      <xsl:otherwise>
+        <!-- If the string has a null value, we just send it back as is -->
+        <xsl:value-of select="$string" />
+      </xsl:otherwise>
+    </xsl:choose>
+  </xsl:template>
 
 </xsl:stylesheet>

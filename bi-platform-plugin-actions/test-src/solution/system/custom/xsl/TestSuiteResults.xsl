@@ -7,6 +7,8 @@
 
 	<xsl:include href="system/custom/xsl/xslUtil.xsl" />
 
+	<xsl:variable name="messages" select="msg:getInstance()" />
+
 	<xsl:output method="html" encoding="UTF-8" />
 
 	<xsl:param name="baseUrl" select="''"/>
@@ -18,17 +20,17 @@
 				<xsl:attribute name="checked">true</xsl:attribute>
 			</xsl:if>
 		</input>
-		 <span class="portlet-font"><xsl:value-of select="msg:getXslString('UI.USER_TEST_SUITE_AUTO_TEST')" disable-output-escaping="yes"/></span>
+		 <span class="portlet-font"><xsl:value-of select="msg:getXslString($messages, 'UI.USER_TEST_SUITE_AUTO_TEST')" disable-output-escaping="yes"/></span>
 
 		<input type="button" onclick="document.location.href=autoUrl" class="portlet-font">
-			<xsl:attribute name="value"><xsl:value-of select="msg:getXslString('UI.USER_TEST_SUITE_START')" disable-output-escaping="yes"/></xsl:attribute>		
+			<xsl:attribute name="value"><xsl:value-of select="msg:getXslString($messages, 'UI.USER_TEST_SUITE_START')" disable-output-escaping="yes"/></xsl:attribute>		
 		</input>
 
 		<xsl:if test="properties">
 
 		<a href="#">
 			<xsl:attribute name="onclick">document.getElementById('properties').style.display='block'; return false;</xsl:attribute>
-			<xsl:value-of select="msg:getXslString('UI.USER_SUBMIT')" disable-output-escaping="yes"/>
+			<xsl:value-of select="msg:getXslString($messages, 'UI.USER_SUBMIT')" disable-output-escaping="yes"/>
 		</a>
 		</xsl:if>
 
@@ -50,13 +52,13 @@
 		<table width="100%" cellpadding="0" cellspacing="0">
 			<tr >
 				<td colspan="1" class="portlet-table-header">
-					<xsl:value-of select="msg:getXslString('UI.USER_TEST_SUITE_SUITE')" disable-output-escaping="yes"/>
+					<xsl:value-of select="msg:getXslString($messages, 'UI.USER_TEST_SUITE_SUITE')" disable-output-escaping="yes"/>
 				</td>
 				<td colspan="3" class="portlet-table-header" style="text-align:center">
-					<xsl:value-of select="msg:getXslString('UI.USER_TEST_SUITE_NUM_PASS_FAIL')" disable-output-escaping="yes"/>
+					<xsl:value-of select="msg:getXslString($messages, 'UI.USER_TEST_SUITE_NUM_PASS_FAIL')" disable-output-escaping="yes"/>
 				</td>
 				<td class="portlet-table-header" style="text-align:center">
-					<xsl:value-of select="msg:getXslString('UI.USER_TEST_SUITE_ACTIONS')" disable-output-escaping="yes"/>
+					<xsl:value-of select="msg:getXslString($messages, 'UI.USER_TEST_SUITE_ACTIONS')" disable-output-escaping="yes"/>
 				</td>
 			</tr>
 			<xsl:for-each select="suite">
@@ -84,19 +86,19 @@
 					<table width="100%" cellpadding="0" cellspacing="0">
 						<tr>
 							<td class="portlet-table-header" width="100%" style="white-space: nowrap;text-align:center">
-								<xsl:value-of select="msg:getXslString('UI.USER_TEST_SUITE_TEST_NAME')" disable-output-escaping="yes"/>
+								<xsl:value-of select="msg:getXslString($messages, 'UI.USER_TEST_SUITE_TEST_NAME')" disable-output-escaping="yes"/>
 							</td>
 							<td class="portlet-table-header" width="1" style="white-space: nowrap;text-align:center">
-								<xsl:value-of select="msg:getXslString('UI.USER_RUN')" disable-output-escaping="yes"/>
+								<xsl:value-of select="msg:getXslString($messages, 'UI.USER_RUN')" disable-output-escaping="yes"/>
 							</td>
 							<td class="portlet-table-header" width="1" style="white-space: nowrap;text-align:center">
-								<xsl:value-of select="msg:getXslString('UI.USER_TEST_SUITE_PASS')" disable-output-escaping="yes"/>
+								<xsl:value-of select="msg:getXslString($messages, 'UI.USER_TEST_SUITE_PASS')" disable-output-escaping="yes"/>
 							</td>
 							<td class="portlet-table-header" width="1" style="white-space: nowrap;text-align:center">
-								<xsl:value-of select="msg:getXslString('UI.USER_TEST_SUITE_FAIL')" disable-output-escaping="yes"/>
+								<xsl:value-of select="msg:getXslString($messages, 'UI.USER_TEST_SUITE_FAIL')" disable-output-escaping="yes"/>
 							</td>
 							<td class="portlet-table-header" width="1" style="white-space: nowrap;text-align:center">
-								<xsl:value-of select="msg:getXslString('UI.USER_TEST_SUITE_ACTIONS')" disable-output-escaping="yes"/>
+								<xsl:value-of select="msg:getXslString($messages, 'UI.USER_TEST_SUITE_ACTIONS')" disable-output-escaping="yes"/>
 							</td>
 						</tr>
 
@@ -111,14 +113,14 @@
 		<xsl:if test="properties">
 		<div id="properties" style="position:absolute;top:70px;left:5px;width:990px;height:560px;overflow:auto;border:1px solid #888888;background:white;display:none">
 		<p/>
-		<span class="portlet-subsection-header"><xsl:value-of select="msg:getXslString('UI.USER_TEST_SUITE_ENVIRONMENT')"/></span>
+		<span class="portlet-subsection-header"><xsl:value-of select="msg:getXslString($messages, 'UI.USER_TEST_SUITE_ENVIRONMENT')"/></span>
 		<table width="100%" cellpadding="0" cellspacing="0">
 			<tr>
 				<td class="portlet-table-header" style="width:230px">
-					<xsl:value-of select="msg:getXslString('UI.USER_TEST_SUITE_PROPERTY')" disable-output-escaping="yes"/>
+					<xsl:value-of select="msg:getXslString($messages, 'UI.USER_TEST_SUITE_PROPERTY')" disable-output-escaping="yes"/>
 				</td>
 				<td class="portlet-table-header">
-					<xsl:value-of select="msg:getXslString('UI.USER_TEST_SUITE_VALUE')" disable-output-escaping="yes"/>
+					<xsl:value-of select="msg:getXslString($messages, 'UI.USER_TEST_SUITE_VALUE')" disable-output-escaping="yes"/>
 				</td>
 			</tr>
 			<xsl:for-each select="properties/property">
@@ -133,19 +135,19 @@
 			</xsl:for-each>
 		</table>
 		<p/>
-		<span class="portlet-subsection-header"><xsl:value-of select="msg:getXslString('UI.USER_TEST_SUITE_SUBMISSION')" disable-output-escaping="yes"/></span>
-		<br/><span class="portlet-font"><xsl:value-of select="msg:getXslString('UI.USER_TEST_SUITE_SUBMIT_HINT')" disable-output-escaping="yes"/></span>
+		<span class="portlet-subsection-header"><xsl:value-of select="msg:getXslString($messages, 'UI.USER_TEST_SUITE_SUBMISSION')" disable-output-escaping="yes"/></span>
+		<br/><span class="portlet-font"><xsl:value-of select="msg:getXslString($messages, 'UI.USER_TEST_SUITE_SUBMIT_HINT')" disable-output-escaping="yes"/></span>
 		<p/>
 		<a href="#"><xsl:value-of select="msg:getString('UI.TEST_SUITE.SEE_SUBMISSION')"/></a>
 		<p/>
-		<span class="portlet-font"><xsl:value-of select="msg:getXslString('UI.USER_TEST_SUITE_PENTAHO_ID')" disable-output-escaping="yes"/><input id="userid"/></span>
+		<span class="portlet-font"><xsl:value-of select="msg:getXslString($messages, 'UI.USER_TEST_SUITE_PENTAHO_ID')" disable-output-escaping="yes"/><input id="userid"/></span>
 		<br/>			
 		<input type="button" class="portlet-font">
-			<xsl:attribute name="value"><xsl:value-of select="msg:getXslString('UI.USER_SUBMIT')" disable-output-escaping="yes"/></xsl:attribute>
+			<xsl:attribute name="value"><xsl:value-of select="msg:getXslString($messages, 'UI.USER_SUBMIT')" disable-output-escaping="yes"/></xsl:attribute>
 		</input>
 		<input type="button" class="portlet-font">
 			<xsl:attribute name="onclick">document.getElementById('properties').style.display='none'; return false;</xsl:attribute>
-			<xsl:attribute name="value"><xsl:value-of select="msg:getXslString('UI.USER_CANCEL')" disable-output-escaping="yes"/></xsl:attribute>
+			<xsl:attribute name="value"><xsl:value-of select="msg:getXslString($messages, 'UI.USER_CANCEL')" disable-output-escaping="yes"/></xsl:attribute>
 		</input>
 
 		</div>
@@ -173,7 +175,7 @@
 						<xsl:attribute name="style">background:#ffcccc</xsl:attribute>
 					</xsl:otherwise>
 				</xsl:choose>
-				<xsl:value-of select="@name"/> (<xsl:value-of select="@test-count"/><xsl:text> </xsl:text> <xsl:value-of select="msg:getXslString('UI.USER_TEST_SUITE_TESTS')" disable-output-escaping="yes"/>)
+				<xsl:value-of select="@name"/> (<xsl:value-of select="@test-count"/><xsl:text> </xsl:text> <xsl:value-of select="msg:getXslString($messages, 'UI.USER_TEST_SUITE_TESTS')" disable-output-escaping="yes"/>)
 				
 			</td>
 			<td class="portlet-table-text">
@@ -220,16 +222,16 @@
 				</xsl:choose>
 				<a class="portlet-font">
 					<xsl:attribute name="href">TestSuite?action=run&amp;suite=<xsl:value-of select="@class"/></xsl:attribute>
-					<xsl:value-of select="msg:getXslString('UI.USER_RUN')" disable-output-escaping="yes"/>
+					<xsl:value-of select="msg:getXslString($messages, 'UI.USER_RUN')" disable-output-escaping="yes"/>
 				</a> 
 				|
 				<!-- <a class="portlet-font">
 					<xsl:attribute name="href">TestSuite?action=stop&amp;suite=<xsl:value-of select="@class"/></xsl:attribute>
-					<xsl:value-of select="msg:getXslString('UI.USER_STOP')" disable-output-escaping="yes"/>
+					<xsl:value-of select="msg:getXslString($messages, 'UI.USER_STOP')" disable-output-escaping="yes"/>
 				</a> | -->
 		<a href="#">
 			<xsl:attribute name="onclick">if( suite != '') document.getElementById(suite).style.display='none'; suite='<xsl:value-of select="@class"/>'; document.getElementById('<xsl:value-of select="@class"/>').style.display='block'; return false;</xsl:attribute>
-			<xsl:value-of select="msg:getXslString('UI.USER_SHOW')" disable-output-escaping="yes"/>
+			<xsl:value-of select="msg:getXslString($messages, 'UI.USER_SHOW')" disable-output-escaping="yes"/>
 		</a>
 			</td>
 		</tr>
@@ -295,12 +297,12 @@
 				</xsl:choose>
 				<a class="portlet-font">
 					<xsl:attribute name="href">TestSuite?action=run&amp;suite=<xsl:value-of select="../../@class"/>&amp;test=<xsl:value-of select="@method"/></xsl:attribute>
-					<xsl:value-of select="msg:getXslString('UI.USER_RUN')" disable-output-escaping="yes"/>
+					<xsl:value-of select="msg:getXslString($messages, 'UI.USER_RUN')" disable-output-escaping="yes"/>
 				</a> 
 				<!-- |
 				<a class="portlet-font">
 					<xsl:attribute name="href">TestSuite?action=stop&amp;suite=<xsl:value-of select="../../@class"/>&amp;test=<xsl:value-of select="@method"/></xsl:attribute>
-					<xsl:value-of select="msg:getXslString('UI.USER_STOP')" disable-output-escaping="yes"/>
+					<xsl:value-of select="msg:getXslString($messages, 'UI.USER_STOP')" disable-output-escaping="yes"/>
 				</a> -->
 			</td>
 		</tr>

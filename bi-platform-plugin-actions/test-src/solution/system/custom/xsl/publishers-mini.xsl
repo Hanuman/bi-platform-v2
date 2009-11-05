@@ -14,12 +14,14 @@
 
 	<xsl:template match="publishers">
 	
+	<xsl:variable name="messages" select="msg:getInstance()" />
+	
 	<xsl:text disable-output-escaping="yes"><![CDATA[
 		<script type="text/javascript">
 		
 		function publishPopup( href, popup ) {
 			if( popup ) {
-				if( !confirm(']]></xsl:text><xsl:value-of select="msg:getXslString('UI.FILES.CONFIRM')" disable-output-escaping="yes"/><xsl:text disable-output-escaping="yes"><![CDATA[') ){
+				if( !confirm(']]></xsl:text><xsl:value-of select="msg:getXslString($messages, 'UI.FILES.CONFIRM')" disable-output-escaping="yes"/><xsl:text disable-output-escaping="yes"><![CDATA[') ){
 					return;
 				}
 			}
@@ -38,12 +40,12 @@
 	<table border="0" width="100%" class="content_header" cellpadding="0" cellspacing="0">
 
 		<tr>
-			<td width="100%"><xsl:value-of select="msg:getString('UI.PUBLISHERS-MINI.REFRESH')"/></td>
+			<td width="100%"><xsl:value-of select="msg:getString($messages, 'UI.PUBLISHERS-MINI.REFRESH')"/></td>
 			<td>
 				<div class="btn_header">
 					<a href="javascript:void">
 					<xsl:attribute name="onclick">publishPopup('<xsl:value-of select="$baseUrl"/>Publish', false);return false;</xsl:attribute>
-						<xsl:value-of select="msg:getString('UI.PUBLISHERS-MINI.MORE')"/>
+						<xsl:value-of select="msg:getString($messages, 'UI.PUBLISHERS-MINI.MORE')"/>
 					</a>
 				</div>
 			</td>
@@ -94,7 +96,11 @@
                 <xsl:when test="class='org.pentaho.platform.engine.services.metadata.MetadataPublisher'">
                     <xsl:text>/pentaho-style/images/btn_refreshmetadata.png</xsl:text>
                 </xsl:when>
+                <xsl:when test="class='org.pentaho.platform.repository.subscription.SubscriptionPublisher'">
+                    <xsl:text>/pentaho-style/images/btn_refreshmetadata.png</xsl:text>
+                </xsl:when>
 				<xsl:otherwise>
+					<xsl:text>/pentaho-style/images/btn_systemsettings.png</xsl:text>
 				</xsl:otherwise>
 			</xsl:choose>
 		</xsl:variable>

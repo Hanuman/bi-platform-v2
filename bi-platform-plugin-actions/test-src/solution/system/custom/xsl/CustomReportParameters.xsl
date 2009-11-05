@@ -13,15 +13,15 @@
 	<xsl:output method="html" encoding="UTF-8" />
 
 	<xsl:template match="filters">
-	
+		<xsl:variable name="messages" select="msg:getInstance()" />
 		<html>
 			<head>
 				<link rel='stylesheet' type='text/css' href='/pentaho-style/pentaho.css' />
 				<title><xsl:value-of select="title" disable-output-escaping="yes"/></title>
-			    <script type="text/javascript" language="javascript" src="/pentaho/js/parameters.js"></script>
+			    <script type="text/javascript" language="javascript" src="js/parameters.js"></script>
 				<script type="text/javascript">
-					var pentaho_notOptionalMessage = '<xsl:value-of select="msg:getXslString('UI.USER_PARAMETER_NOT_OPTIONAL')" disable-output-escaping="yes"/>';
-					var pentaho_backgroundWarning = '<xsl:value-of select="msg:getXslString('UI.USER_PARAMETER_BACKGROUND_WARNING')" disable-output-escaping="yes"/>';
+					var pentaho_notOptionalMessage = '<xsl:value-of select="msg:getXslString($messages, 'UI.USER_PARAMETER_NOT_OPTIONAL')" disable-output-escaping="yes"/>';
+					var pentaho_backgroundWarning = '<xsl:value-of select="msg:getXslString($messages, 'UI.USER_PARAMETER_BACKGROUND_WARNING')" disable-output-escaping="yes"/>';
 					var USEPOSTFORFORMS = <xsl:value-of select="$USEPOSTFORFORMS" />;
 			        <xsl:for-each select="filter">
 						<xsl:if test="@optional = 'true'">
@@ -53,7 +53,7 @@
 						<table>
 							<tr>
 								<td>		
-									<span class="portlet-font"><xsl:value-of select="msg:getXslString('UI.USER_CUSTOM_PARAMETER_HINT')" disable-output-escaping="yes"/></span>
+									<span class="portlet-font"><xsl:value-of select="msg:getXslString($messages, 'UI.USER_CUSTOM_PARAMETER_HINT')" disable-output-escaping="yes"/></span>
 								</td>
 							</tr>
 							<xsl:for-each select="filter">
@@ -67,7 +67,7 @@
 								<td>
 									<br/>
 									<input type="button" name="go" class="portlet-form-button">
-										<xsl:attribute name="value"><xsl:value-of select="msg:getString('UI.USER_UPDATE')"/></xsl:attribute>
+										<xsl:attribute name="value"><xsl:value-of select="msg:getString($messages, 'UI.USER_UPDATE')"/></xsl:attribute>
 										<xsl:attribute name="onClick">doRun("<xsl:value-of select="/filters/id" />", '<xsl:value-of select="/filters/action"/>', '<xsl:value-of select="/filters/target"/>', false);</xsl:attribute>
 									</input>
 								</td>
@@ -84,7 +84,7 @@
 	
 				<tr>
 					<td class="portlet-section-subheader">		
-						<br/><xsl:value-of select="msg:getXslString('UI.USER_SELECT')" disable-output-escaping="yes"/><xsl:value-of select="title"/>
+						<br/><xsl:value-of select="msg:getXslString($messages, 'UI.USER_SELECT')" disable-output-escaping="yes"/><xsl:value-of select="title"/>
 					</td>
 				</tr>
 				<tr>

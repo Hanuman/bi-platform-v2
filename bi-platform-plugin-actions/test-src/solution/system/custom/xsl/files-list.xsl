@@ -29,21 +29,23 @@
 
   <xsl:template match="repository">
 
+	<xsl:variable name="messages" select="msg:getInstance()" />
+
 	<table width="100%">
 		<tr>
 			<td style="text-align:right">
-				<xsl:value-of select="msg:getXslString('UI.FILES.VIEW')" disable-output-escaping="yes"/>&#160;
+				<xsl:value-of select="msg:getXslString($messages, 'UI.FILES.VIEW')" disable-output-escaping="yes"/>&#160;
 				<a>
 					<xsl:attribute name="href">Navigate?view=files-icons.xsl&amp;solution=<xsl:value-of select="$solution"/>&amp;path=<xsl:value-of select="$path"/></xsl:attribute>
-					<xsl:value-of select="msg:getXslString('UI.FILES.ICONS')" disable-output-escaping="yes"/>
+					<xsl:value-of select="msg:getXslString($messages, 'UI.FILES.ICONS')" disable-output-escaping="yes"/>
 				</a> | 
 				<a>
 					<xsl:attribute name="href">Navigate?view=files-list.xsl&amp;solution=<xsl:value-of select="$solution"/>&amp;path=<xsl:value-of select="$path"/></xsl:attribute>
-					<xsl:value-of select="msg:getXslString('UI.FILES.LIST')" disable-output-escaping="yes"/>
+					<xsl:value-of select="msg:getXslString($messages, 'UI.FILES.LIST')" disable-output-escaping="yes"/>
 				</a> | 
 				<a>
 					<xsl:attribute name="href">Navigate?view=default&amp;solution=<xsl:value-of select="$solution"/>&amp;path=<xsl:value-of select="$path"/></xsl:attribute>
-					<xsl:value-of select="msg:getXslString('UI.FILES.DEFAULT')" disable-output-escaping="yes"/>
+					<xsl:value-of select="msg:getXslString($messages, 'UI.FILES.DEFAULT')" disable-output-escaping="yes"/>
 				</a>
 			</td>
 		</tr>
@@ -77,7 +79,7 @@
 	</table>
 
 		<xsl:call-template name="doHeading">
-			<xsl:with-param name="title"><xsl:value-of select="msg:getXslString('UI.FILES.BROWSE')" disable-output-escaping="yes"/>&#160;<xsl:value-of select="count(file[@visible='true'][@type='FILE.FOLDER'])"/>&#160;<xsl:value-of select="msg:getXslString('UI.FILES.SOLUTIONS')" disable-output-escaping="yes"/></xsl:with-param>
+			<xsl:with-param name="title"><xsl:value-of select="msg:getXslString($messages, 'UI.FILES.BROWSE')" disable-output-escaping="yes"/>&#160;<xsl:value-of select="count(file[@visible='true'][@type='FILE.FOLDER'])"/>&#160;<xsl:value-of select="msg:getXslString($messages, 'UI.FILES.SOLUTIONS')" disable-output-escaping="yes"/></xsl:with-param>
 		</xsl:call-template> 
 
 			<div class="navigation_table" id="content_home_scroll" style="width:100%;left:0px;margin-left:0px;">
@@ -137,12 +139,14 @@
 
 	<xsl:template name="script">
 
+	<xsl:variable name="messages" select="msg:getInstance()" />
+
 	<xsl:text disable-output-escaping="yes"><![CDATA[
 		<script type="text/javascript">
 		
 		function adminPopup( href, popup, target ) {
 			if( popup ) {
-				if( !confirm(']]></xsl:text><xsl:value-of select="msg:getXslString('UI.FILES.CONFIRM')" disable-output-escaping="yes"/><xsl:text disable-output-escaping="yes"><![CDATA[') ){
+				if( !confirm(']]></xsl:text><xsl:value-of select="msg:getXslString($messages, 'UI.FILES.CONFIRM')" disable-output-escaping="yes"/><xsl:text disable-output-escaping="yes"><![CDATA[') ){
 					return;
 				}
 			}
@@ -180,6 +184,8 @@
 
 	<xsl:template match="files">
 
+		<xsl:variable name="messages" select="msg:getInstance()" />
+
 		<xsl:call-template name="setupFly"/>
 		
 		<xsl:variable name="title">
@@ -215,18 +221,18 @@
 				</td>
 									
 			<td style="text-align:right">
-				<xsl:value-of select="msg:getXslString('UI.FILES.VIEW')" disable-output-escaping="yes"/>&#160;
+				<xsl:value-of select="msg:getXslString($messages, 'UI.FILES.VIEW')" disable-output-escaping="yes"/>&#160;
 				<a>
 					<xsl:attribute name="href">Navigate?view=files-icons.xsl&amp;solution=<xsl:value-of select="$solution"/>&amp;path=<xsl:value-of select="$path"/></xsl:attribute>
-					<xsl:value-of select="msg:getXslString('UI.FILES.ICONS')" disable-output-escaping="yes"/>
+					<xsl:value-of select="msg:getXslString($messages, 'UI.FILES.ICONS')" disable-output-escaping="yes"/>
 				</a> | 
 				<a>
 					<xsl:attribute name="href">Navigate?view=files-list.xsl&amp;solution=<xsl:value-of select="$solution"/>&amp;path=<xsl:value-of select="$path"/></xsl:attribute>
-					<xsl:value-of select="msg:getXslString('UI.FILES.LIST')" disable-output-escaping="yes"/>
+					<xsl:value-of select="msg:getXslString($messages, 'UI.FILES.LIST')" disable-output-escaping="yes"/>
 				</a> | 
 				<a>
 					<xsl:attribute name="href">Navigate?view=default&amp;solution=<xsl:value-of select="$solution"/>&amp;path=<xsl:value-of select="$path"/></xsl:attribute>
-					<xsl:value-of select="msg:getXslString('UI.FILES.DEFAULT')" disable-output-escaping="yes"/>
+					<xsl:value-of select="msg:getXslString($messages, 'UI.FILES.DEFAULT')" disable-output-escaping="yes"/>
 				</a>
 			</td>
 
@@ -378,20 +384,56 @@
 
 		<xsl:variable name="styleBase">/pentaho-style/active/</xsl:variable>
 
+		<xsl:variable name="extension"><xsl:call-template name="keep-after-last">
+			<xsl:with-param name="string"><xsl:value-of select="filename" /></xsl:with-param>
+			<xsl:with-param name="delimiter">.</xsl:with-param>
+		</xsl:call-template></xsl:variable>
+
+		<!--  disabled for now... -->
+		<!-- xsl:variable name="defaulthandler"><xsl:value-of select="plugins:getContentGeneratorIdForType( $extension )"/></xsl:variable>
+		<xsl:variable name="defaulturl"><xsl:value-of select="plugins:getContentGeneratorUrlForType( $extension )"/></xsl:variable -->
+		<xsl:variable name="defaulthandler"></xsl:variable>
+		<xsl:variable name="defaulturl"></xsl:variable>
+
 		<xsl:variable name="url">
 			<xsl:choose>
     	        <xsl:when test="@type='FILE.URL'">
 					<xsl:value-of select="url" />
 		    	</xsl:when>
 			    <xsl:otherwise>
-					<xsl:value-of select="$href" />
-					<xsl:text>ViewAction?</xsl:text>
-					<xsl:text>solution=</xsl:text>
-					<xsl:value-of select="solution" />
-					<xsl:text>&amp;path=</xsl:text>
-					<xsl:value-of select="path" />
-					<xsl:text>&amp;action=</xsl:text>
-					<xsl:value-of select="filename" />
+					<xsl:choose>
+						<xsl:when test="$defaulturl!=''">
+							<xsl:value-of select="$href" />
+							<xsl:value-of select="$defaulturl" />
+							<xsl:text>?solution=</xsl:text>
+							<xsl:value-of select="solution" />
+							<xsl:text>&amp;path=</xsl:text>
+							<xsl:value-of select="path" />
+							<xsl:text>&amp;action=</xsl:text>
+							<xsl:value-of select="filename" />
+						</xsl:when>
+						<xsl:when test="$defaulthandler!=''">
+							<xsl:value-of select="$href" />
+							<xsl:text>content/</xsl:text>
+							<xsl:value-of select="$defaulthandler" />
+							<xsl:text>?solution=</xsl:text>
+							<xsl:value-of select="solution" />
+							<xsl:text>&amp;path=</xsl:text>
+							<xsl:value-of select="path" />
+							<xsl:text>&amp;action=</xsl:text>
+							<xsl:value-of select="filename" />
+						</xsl:when>
+						<xsl:otherwise>
+							<xsl:value-of select="$href" />
+							<xsl:text>ViewAction?</xsl:text>
+							<xsl:text>solution=</xsl:text>
+							<xsl:value-of select="solution" />
+							<xsl:text>&amp;path=</xsl:text>
+							<xsl:value-of select="path" />
+							<xsl:text>&amp;action=</xsl:text>
+							<xsl:value-of select="filename" />
+						</xsl:otherwise>
+					</xsl:choose>
 			    </xsl:otherwise>
 			</xsl:choose>
 		</xsl:variable>
