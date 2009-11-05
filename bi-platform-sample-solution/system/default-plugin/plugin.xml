@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<plugin title="BI Server default plugin">
+<plugin title="BI Server default plugin" xmlns:pen="http://www.pentaho.org/2008/xul">
 
     <content-generator id="ws-services" type="ws-services" title="Web services discovery page" class="org.pentaho.platform.plugin.services.webservices.content.StyledHtmlAxisServiceLister"/>
     <content-generator id="ws-run" type="ws-run" title="Web services execution" class="org.pentaho.platform.plugin.services.webservices.content.AxisServiceExecutor"/>
