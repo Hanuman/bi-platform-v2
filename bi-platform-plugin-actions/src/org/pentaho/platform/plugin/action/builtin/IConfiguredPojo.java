@@ -27,7 +27,7 @@ package org.pentaho.platform.plugin.action.builtin;
  *
  */
 @Deprecated
-public interface IConfiguredPojo extends org.pentaho.platform.api.engine.IConfiguredPojo {
+public interface IConfiguredPojo extends org.pentaho.platform.api.action.ISystemAwareAction {
 	
 
 }

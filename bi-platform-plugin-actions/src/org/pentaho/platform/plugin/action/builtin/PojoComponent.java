@@ -20,11 +20,13 @@
  */
 package org.pentaho.platform.plugin.action.builtin;
 
+import org.pentaho.platform.api.action.IAction;
+
 /**
  * This is a deprecated class. The one to use is
  * org.pentaho.platform.engine.services.solution.PojoComponent
  * @author jamesdixon
- *
+ * @deprecated Pojo components are deprecated, use {@link IAction}
  */
 @Deprecated
 public class PojoComponent extends org.pentaho.platform.engine.services.solution.PojoComponent {

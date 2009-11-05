@@ -20,13 +20,14 @@
  */
 package org.pentaho.platform.plugin.action.builtin;
 
+import org.pentaho.platform.api.action.IAction;
+
 /**
  * This is a deprecated interface. The one to use is
  * org.pentaho.platform.api.engine.IStreamingPojo
  * @author jamesdixon
- *
+ * @deprecated Pojo components are deprecated, use {@link IAction}
  */
-@Deprecated
 interface IStreamingPojo extends org.pentaho.platform.api.engine.IStreamingPojo {
 
 }
