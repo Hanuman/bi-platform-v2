@@ -56,6 +56,7 @@ import org.pentaho.platform.engine.security.SimpleRole;
 import org.pentaho.platform.engine.security.SimpleUser;
 import org.pentaho.platform.engine.services.messages.Messages;
 import org.pentaho.platform.util.StringUtil;
+import org.pentaho.platform.util.messages.LocaleHelper;
 import org.pentaho.platform.util.xml.XmlHelper;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -417,7 +418,7 @@ public class SolutionRepositoryServiceImpl implements ISolutionRepositoryService
     ICacheManager cacheManager = PentahoSystem.getCacheManager(null);
     org.w3c.dom.Document document = null;
     if (cacheManager != null && cacheManager.cacheEnabled(ISolutionRepository.REPOSITORY_SERVICE_CACHE_REGION)) {
-      document = (org.w3c.dom.Document) cacheManager.getFromRegionCache(ISolutionRepository.REPOSITORY_SERVICE_CACHE_REGION, session.getName());
+      document = (org.w3c.dom.Document) cacheManager.getFromRegionCache(ISolutionRepository.REPOSITORY_SERVICE_CACHE_REGION, session.getName() + LocaleHelper.getLocale());
     }
       
     if (document == null) {
@@ -433,7 +434,7 @@ public class SolutionRepositoryServiceImpl implements ISolutionRepositoryService
       // the implementation of the ICacheManager might not allow the creation of new
       // or custom caches like this.
       if (cacheManager != null && cacheManager.cacheEnabled(ISolutionRepository.REPOSITORY_SERVICE_CACHE_REGION)) {
-        cacheManager.putInRegionCache(ISolutionRepository.REPOSITORY_SERVICE_CACHE_REGION, session.getName(), document);
+        cacheManager.putInRegionCache(ISolutionRepository.REPOSITORY_SERVICE_CACHE_REGION, session.getName() + LocaleHelper.getLocale(), document);
       }
 
     }
