@@ -81,7 +81,7 @@
 	</xsl:template>
 
 	<xsl:template name="doFilter">
-	
+				<xsl:variable name="messages" select="msg:getInstance()" />
 				<tr>
 					<td class="portlet-section-subheader">		
 						<br/><xsl:value-of select="msg:getXslString($messages, 'UI.USER_SELECT')" disable-output-escaping="yes"/><xsl:value-of select="title"/>
