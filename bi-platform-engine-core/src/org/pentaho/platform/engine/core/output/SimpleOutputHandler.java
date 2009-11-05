@@ -203,6 +203,9 @@ public class SimpleOutputHandler implements IOutputHandler {
    */
   public IContentItem getOutputContentItem(final String outputName, final String contentName, final String solution,
       final String instanceId, final String localMimeType) {
+    if(outputName.equals(IOutputHandler.RESPONSE) && contentName.equals(IOutputHandler.CONTENT)) {
+      responseExpected = true;
+    }
     String key = outputName + "." + contentName; //$NON-NLS-1$
     if (outputs.get(key) != null) {
       return outputs.get(key);
@@ -323,8 +326,7 @@ public class SimpleOutputHandler implements IOutputHandler {
   }
 
   public boolean isResponseExpected() {
-    // TODO Auto-generated method stub
-    return false;
+    return responseExpected;
   }
 
 }
