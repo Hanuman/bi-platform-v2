@@ -389,7 +389,7 @@ public class SolutionBrowserPerspective extends HorizontalPanel {
       contentTabPanel.getCurrentFrame().setFileInfo(filesListPanel.getSelectedFileItem());
 
     } else if (filesListPanel.getSelectedFileItem().getName().endsWith(".analysisview.xaction")) { //$NON-NLS-1$
-      openFile(filesListPanel.getSelectedFileItem().getPath(), filesListPanel.getSelectedFileItem().getName(), filesListPanel.getSelectedFileItem()
+      openFile("/" + filesListPanel.getSelectedFileItem().getSolution() + filesListPanel.getSelectedFileItem().getPath(), filesListPanel.getSelectedFileItem().getName(), filesListPanel.getSelectedFileItem()
           .getLocalizedName(), COMMAND.RUN);
     } else {
       // check to see if a plugin supports editing

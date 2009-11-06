@@ -53,7 +53,7 @@ public class FileCommand implements Command {
 
     if (mode == COMMAND.RUN || mode == COMMAND.BACKGROUND || mode == COMMAND.NEWWINDOW) {
       FilesListPanel flp = sbp.getFilesListPanel();
-      sbp.openFile(flp.getSelectedFileItem().getPath(), flp.getSelectedFileItem().getName(), flp.getSelectedFileItem().getLocalizedName(), mode);
+      sbp.openFile("/" + flp.getSelectedFileItem().getSolution() + flp.getSelectedFileItem().getPath(), flp.getSelectedFileItem().getName(), flp.getSelectedFileItem().getLocalizedName(), mode);
     } else if (mode == COMMAND.PROPERTIES) {
       new FilePropertiesCommand(FilePropertiesDialog.Tabs.GENERAL).execute();
     } else if (mode == COMMAND.EDIT) {

@@ -80,7 +80,7 @@ public class FilesListPanel extends FlowPanel implements ISolutionDocumentListen
           } else if (event.getKeyCode() == KeyCodes.KEY_ENTER) {
             SolutionBrowserPerspective sbp = SolutionBrowserPerspective.getInstance();
             FilesListPanel flp = sbp.getFilesListPanel();
-            sbp.openFile(flp.getSelectedFileItem().getPath(), flp.getSelectedFileItem().getName(), flp.getSelectedFileItem().getLocalizedName(), COMMAND.RUN);
+            sbp.openFile("/" + flp.getSelectedFileItem().getSolution() + flp.getSelectedFileItem().getPath(), flp.getSelectedFileItem().getName(), flp.getSelectedFileItem().getLocalizedName(), COMMAND.RUN);
           }
         }
         super.onBrowserEvent(event);
