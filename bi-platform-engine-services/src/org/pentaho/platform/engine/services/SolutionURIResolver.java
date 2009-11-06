@@ -22,6 +22,8 @@
 
 package org.pentaho.platform.engine.services;
 
+import java.io.BufferedInputStream;
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -83,13 +85,11 @@ public class SolutionURIResolver implements URIResolver, IDocumentResourceLoader
     int idx = systemId.lastIndexOf('/');
     String dtdName = systemId.substring(idx + 1);
     String fullPath = PentahoSystem.getApplicationContext().getSolutionPath("system/dtd/" + dtdName); //$NON-NLS-1$
-
-    try {
-      FileInputStream xslIS = new FileInputStream(fullPath);
+    File theFile = new File(fullPath);
+    if (theFile.canRead()) {
+      InputStream xslIS = new BufferedInputStream(new FileInputStream(theFile));
       InputSource source = new InputSource(xslIS);
       return source;
-    } catch (FileNotFoundException e) {
-
     }
     return null;
   }

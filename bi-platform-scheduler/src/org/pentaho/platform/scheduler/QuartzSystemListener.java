@@ -145,19 +145,31 @@ public class QuartzSystemListener implements IPentahoSystemListener {
   private Properties findPropertiesInClasspath() throws IOException {
     // Do my best to find the properties file...
     File propFile = new File("quartz.properties"); //$NON-NLS-1$
-    if (!propFile.exists()) {
+    if (!propFile.canRead()) {
       InputStream in = Thread.currentThread().getContextClassLoader().getResourceAsStream("quartz.properties"); //$NON-NLS-1$
       if (in != null) {
-        Properties props = new Properties();
-        props.load(in);
-        return props;
+        try {
+          Properties props = new Properties();
+          props.load(in);
+          return props;
+        } finally {
+          in.close();
+        }
       }
       return null; // Couldn't find properties file.
     } else {
       InputStream iStream = new BufferedInputStream(new FileInputStream(propFile));
-      Properties props = new Properties();
-      props.load(iStream);
-      return props;
+      try {
+        Properties props = new Properties();
+        props.load(iStream);
+        return props;
+      } finally {
+        try {
+          iStream.close();
+        } catch (IOException ignored) {
+          // close quietly
+        }
+      }
     }
   }
 
