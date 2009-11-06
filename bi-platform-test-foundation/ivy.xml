@@ -31,5 +31,6 @@
     <dependency org="${ivy.artifact.group}" name="pentaho-bi-platform-util" rev="${project.revision}" changing="true" conf="default->default"/>
     <dependency org="${ivy.artifact.group}" name="pentaho-bi-platform-engine-core" rev="${project.revision}" changing="true" conf="default->default"/>
     
+    <exclude org="commons-beanutils" module="commons-beanutils"/>
   </dependencies>
 </ivy-module>
