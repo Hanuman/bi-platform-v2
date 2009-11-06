@@ -164,6 +164,7 @@ public class SolutionHelper {
    *       An execution listener for feedback during execution. Can be null.
    * @return
    */
+  
   public static ISolutionEngine execute(final String description, final IPentahoSession session,
       final String actionSequence, final Map parameters, OutputStream outputStream,
       final IExecutionListener execListener, final boolean collateMessages, final boolean manageHibernate) {
@@ -205,10 +206,11 @@ public class SolutionHelper {
 
       String processName = description;
       boolean persisted = false;
-      List<String> messages = null;
+      //for now, the messages list needs to be untyped since we may put exceptions as well as strings in it
+      List<?> messages = null;
 
       if (collateMessages) {
-        messages = new ArrayList<String>();
+        messages = new ArrayList();
       }
 
       if (outputStream == null) {
