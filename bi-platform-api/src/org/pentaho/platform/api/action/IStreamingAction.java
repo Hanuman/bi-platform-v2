@@ -30,6 +30,7 @@ import java.io.OutputStream;
  * counterpart of the same name in the action sequence outputs 
  * <li>AND that output is of type "content" 
  * <li>AND it has a destination defined
+ * </ol>
  * <p>
  * In the case that an output is considered "streaming", it will basically be
  * treated similar to an input in that it will be set on the Action with a 
