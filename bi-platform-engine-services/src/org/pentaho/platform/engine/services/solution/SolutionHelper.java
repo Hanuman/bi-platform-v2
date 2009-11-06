@@ -227,11 +227,6 @@ public class SolutionHelper {
       }
       solutionEngine.execute(solutionRef.getSolutionName(), solutionRef.getPath(), solutionRef.getActionName(),
           processName, false, true, null, persisted, parameterProviderMap, outputHandler, null, urlFactory, messages);
-      
-      for(String message : messages) {
-        System.out.println(message);
-      }
-      
 
     } finally {
       if (manageHibernate) {
