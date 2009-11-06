@@ -17,13 +17,7 @@
     </message> 
   </inputs>
 
-  <outputs> 
-    <myContentOutput type="content">
-      <destinations>
-        <runtime>content</runtime>
-      </destinations>
-    </myContentOutput> 
-  </outputs>
+  <outputs/>
 
   <resources/>
   

@@ -19,29 +19,40 @@ package org.pentaho.platform.api.action;
 
 import java.io.OutputStream;
 
+
 /**
  * The interface for Actions that want to stream content to the caller.
+ * A "streaming" output is a special type of action definition output that
+ * will result in an {@link OutputStream} being set on the Action.  An output
+ * is considered a special "streaming" output if:
+ * <ol>
+ * <li>if the output defined in the action definition section has a 
+ * counterpart of the same name in the action sequence outputs 
+ * <li>AND that output is of type "content" 
+ * <li>AND it has a destination defined
+ * <p>
+ * In the case that an output is considered "streaming", it will basically be
+ * treated similar to an input in that it will be set on the Action with a 
+ * setter method.  For example, if an action definition declares a streaming
+ * output called "reportContent", then the platform will attempt to call a
+ * method on the Action called "setReportContentStream(OutputStream os)".  
+ * Note that the post-fix "Stream" will be added to the name of your output.
+ * Streaming outputs will not be queried once the Action has finished executing
+ * like a normal non-streaming output would.
  * @see IAction
- * @see ILoggingAction
- * @see ISessionAwareAction
- * @see ISystemAwareAction
  * @author aphillips
  * @since 3.6
  */
 public interface IStreamingAction extends IAction {
 
   /**
-   * This method sets the OutputStream to write streaming content on.
-   * 
-   * @param outputStream an OutputStream to write to
+   * Requests the mimetype of the content that the Action will write to the
+   * provided stream name.  To use the example in the above javadoc, this
+   * streamPropertyName would be "reportContent".
+   * @param streamPropertyName the action definition output name representing
+   * the streamed output, e.g. "reportContent"
+   * @return the mimeType for the stream indicated by streamPropertyName
    */
-  public void setOutputStream(OutputStream outputStream);
-
-  /**
-   * Gets the mimetype of the content that this object will write to the
-   * output stream
-   * @return
-   */
-  public String getMimeType();
+  public String getMimeType(String streamPropertyName);
 
 }

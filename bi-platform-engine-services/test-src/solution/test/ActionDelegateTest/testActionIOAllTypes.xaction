@@ -64,11 +64,11 @@
   </inputs>
 
   <outputs> 
-    <outputstream type="content"> 
+    <myContentOutput type="content"> 
       <destinations> 
         <response>content</response> 
       </destinations> 
-    </outputstream>  
+    </myContentOutput>  
     <echoMessage type="string"/> 
   </outputs>
 
@@ -98,7 +98,7 @@
         <embeddedXmlResource type="resource"/> 
       </action-resources>
       <action-outputs> 
-        <outputstream type="content"/>  
+        <myContentOutput type="content"/>  
         <echoMessage type="string"/> 
       </action-outputs>
       <component-definition>

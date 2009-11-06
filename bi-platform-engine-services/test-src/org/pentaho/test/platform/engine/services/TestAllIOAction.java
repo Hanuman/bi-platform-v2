@@ -10,7 +10,7 @@ import org.pentaho.platform.api.action.IStreamingAction;
 @SuppressWarnings("nls")
 public class TestAllIOAction implements IStreamingAction {
 
-  private OutputStream outputStream;
+  private OutputStream myContentOutput;
   private String message;
   private InputStream embeddedXmlResource;
   private List<String> addressees;
@@ -19,12 +19,12 @@ public class TestAllIOAction implements IStreamingAction {
   private List<Map<String, String>> fruitData;
   private boolean executeWasCalled = false;
 
-  public OutputStream getOutputStream() {
-    return outputStream;
+  public OutputStream getMyContentOutput() {
+    return myContentOutput;
   }
 
-  public void setOutputStream(OutputStream outputStream) {
-    this.outputStream = outputStream;
+  public void setMyContentOutputStream(OutputStream outputStream) {
+    this.myContentOutput = outputStream;
   }
 
   public String getMessage() {
@@ -87,7 +87,7 @@ public class TestAllIOAction implements IStreamingAction {
     executeWasCalled = true;
   }
 
-  public String getMimeType() {
+  public String getMimeType(String streamPropertyName) {
     return "text/html";
   }
 

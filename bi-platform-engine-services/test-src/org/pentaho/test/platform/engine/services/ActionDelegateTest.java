@@ -1,7 +1,8 @@
 package org.pentaho.test.platform.engine.services;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertSame;
@@ -16,7 +17,6 @@ import java.util.Map;
 
 import org.apache.commons.logging.LogFactory;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.pentaho.platform.api.action.IAction;
 import org.pentaho.platform.api.action.IStreamingAction;
@@ -198,11 +198,11 @@ public class ActionDelegateTest {
     TestAllIOAction action = new TestAllIOAction();
 
     execute("testCompatibilityMode.xaction", action);
-    
+
     assertEquals("string type input \"message\" is incorrect/not set", "Test 1..2..3", action.getMessage());
 
     assertNotNull("property-map type input \"veggie-data\" is not set", action.getVeggieData());
-    
+
     assertNotNull("resource \"embedded-xml-resource\" is incorrect/not set", action.getEmbeddedXmlResource());
 
     assertEquals("output \"echo-message\" is not set or incorrect", "Test String Output", action.getEchoMessage());
@@ -225,28 +225,28 @@ public class ActionDelegateTest {
 
     assertNotNull("session was not set on action", action.getSession());
   }
-  
+
   @Test
   public void testDefinitionAwareness() {
     TestDefinitionPreProcessingAction action = new TestDefinitionPreProcessingAction();
-    
+
     execute("testActionIOAllTypes.xaction", action);
-    
+
     assertTrue("message should be in input list", action.getInputNames().contains("message"));
     assertTrue("addresses should be in input list", action.getInputNames().contains("addressees"));
     assertTrue("echoMessage should be in output list", action.getOutputNames().contains("echoMessage"));
-    assertTrue("outputstream should be in output list", action.getOutputNames().contains("outputstream"));
+    assertTrue("myContentOutput should be in output list", action.getOutputNames().contains("myContentOutput"));
   }
-  
+
   @Test
   public void testPreProcessing() {
     TestDefinitionPreProcessingAction action = new TestDefinitionPreProcessingAction();
-    
+
     assertFalse("pre-execution method was called too early", action.isDoPreExecutionWasCalled());
     assertFalse("execute method was called too early", action.isExecuteWasCalled());
-    
+
     execute("testActionIOAllTypes.xaction", action);
-    
+
     assertTrue("pre-execution method was not called", action.isDoPreExecutionWasCalled());
     assertTrue("execute method was not called", action.isExecuteWasCalled());
   }
@@ -254,17 +254,16 @@ public class ActionDelegateTest {
   @Test
   public void testStreaming() throws PlatformInitializationException, FileNotFoundException {
     TestStreamingAction action1 = new TestStreamingAction();
-    TestStreamingAction action2 = new TestStreamingAction();
 
-    assertNull(action1.getOutputStream());
+    assertNull(action1.getMyContentOutputStream());
 
-    execute("testStreaming.xaction", action1, action2);
-    assertTrue("the fact that we are executing an IStreamingAction should have caused the responseExpected flag to be set", outputHandler
-        .isResponseExpected());
+    execute("testStreaming.xaction", action1);
 
-    assertNotNull("output stream was not set on action1", action1.getOutputStream());
-    //There is nothing we can do to find out the contents of the outputstream. 
-    //We just have to accept the fact that something was written to it.
+    assertNotNull("output stream was not set on action1", action1.getMyContentOutputStream());
+
+    assertTrue(
+        "the fact that we are executing an IStreamingAction should have caused the responseExpected flag to be set",
+        outputHandler.isResponseExpected());
 
     assertEquals("string type input \"message\" is incorrect/not set", "message input text", action1.getMessage());
 
@@ -272,21 +271,17 @@ public class ActionDelegateTest {
   }
 
   @Test
-  public void testContent() throws PlatformInitializationException, FileNotFoundException {
+  public void testNonStreamingContentOutput() throws PlatformInitializationException, FileNotFoundException {
     TestStreamingAction action1 = new TestStreamingAction();
-    TestStreamingAction action2 = new TestStreamingAction();
 
-    assertNull(action1.getOutputStream());
+    assertNull(action1.getMyContentOutputStream());
 
-    execute("testStreaming.xaction", action1, action2);
+    execute("testContentNonStreamingOutput.xaction", action1);
 
-    assertNotNull("output stream was not set on action1", action1.getOutputStream());
-    //There is nothing we can do to find out the contents of the outputstream. 
-    //We just have to accept the fact that something was written to it.
-
-    assertEquals("string type input \"message\" is incorrect/not set", "message input text", action1.getMessage());
-
-    System.out.println(out.toString());
+    assertNull("output stream should not have been set on action1", action1.getMyContentOutputStream());
+    assertNotNull("we expect some content here", action1.getMyContentOutput());
+    assertEquals("this content is not written out as a normal non-streamed output", action1.getMyContentOutput()
+        .toString());
   }
 
   /*
@@ -296,14 +291,13 @@ public class ActionDelegateTest {
   @Test
   public void testUnsupportedContentOutput() throws PlatformInitializationException, FileNotFoundException {
     TestStreamingAction action1 = new TestStreamingAction();
-    TestStreamingAction action2 = new TestStreamingAction();
 
-    assertNull(action1.getOutputStream());
+    assertNull(action1.getMyContentOutputStream());
 
-    execute("testUnsupportedContentOutput.xaction", action1, action2);
+    execute("testUnsupportedContentOutput.xaction", action1);
 
     //by this point, we should see a nice stack trace in the log indicating the (expected) error
-    assertNull("output stream was set on action1", action1.getOutputStream());
+    assertNull("output stream was set on action1", action1.getMyContentOutputStream());
   }
 
   @Test
@@ -380,6 +374,7 @@ public class ActionDelegateTest {
     }
   }
 
+  @SuppressWarnings("unchecked")
   private void execute(String actionSequenceFile, IAction... actions) {
     TestPluginManager pm = (TestPluginManager) PentahoSystem.get(IPluginManager.class);
     for (IAction action : actions) {
