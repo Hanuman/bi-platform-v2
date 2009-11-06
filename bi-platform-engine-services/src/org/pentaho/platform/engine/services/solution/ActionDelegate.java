@@ -189,7 +189,6 @@ public class ActionDelegate extends ComponentBase {
                 .getClass().getSimpleName(), contentOutputName, OutputStream.class.getName()));
           }
         }
-        //TODO: Do we support more than one content type output per action sequence?
       }
     }
 
