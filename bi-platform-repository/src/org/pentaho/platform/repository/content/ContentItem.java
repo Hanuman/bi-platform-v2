@@ -22,6 +22,7 @@
 
 package org.pentaho.platform.repository.content;
 
+import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -176,7 +177,7 @@ public class ContentItem extends PentahoBase implements IContentItem, ISearchabl
     }
 
     public InputStream getInputStream() throws IOException {
-      return new FileInputStream(this.file);
+      return new BufferedInputStream(new FileInputStream(this.file));
     }
 
     public String getName() {

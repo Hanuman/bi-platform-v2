@@ -310,9 +310,13 @@ public class InMemoryDatasourceServiceImpl implements IDatasourceService {
       URI uri = url.toURI();
       File file = new File(uri);
       FileInputStream fis = new FileInputStream(file);
-      Properties properties = new Properties();
-      properties.load(fis);
-      return (String) properties.get(UPLOAD_FILE_PATH);
+      try {
+        Properties properties = new Properties();
+        properties.load(fis);
+        return (String) properties.get(UPLOAD_FILE_PATH);
+      } finally {
+        fis.close();
+      }
     } catch (Exception e) {
       throw new DatasourceServiceException(e);
     }

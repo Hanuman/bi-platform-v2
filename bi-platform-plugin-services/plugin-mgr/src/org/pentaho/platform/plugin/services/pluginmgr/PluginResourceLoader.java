@@ -18,6 +18,7 @@
 
 package org.pentaho.platform.plugin.services.pluginmgr;
 
+import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -33,6 +34,7 @@ import java.util.List;
 import java.util.ResourceBundle;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.io.filefilter.IOFileFilter;
 import org.apache.commons.io.filefilter.TrueFileFilter;
 import org.apache.commons.io.filefilter.WildcardFileFilter;
@@ -118,6 +120,8 @@ public class PluginResourceLoader implements IPluginResourceLoader {
     } catch (IOException e) {
       Logger.debug(this, "Cannot open stream to resource", e); //$NON-NLS-1$
       return null;
+    } finally {
+      IOUtils.closeQuietly(in);
     }
     return out.toByteArray();
   }
@@ -192,9 +196,9 @@ public class PluginResourceLoader implements IPluginResourceLoader {
 
       //can we find it on the filesystem?
       File f = new File(root, resourcePath);
-      if (f.exists()) {
+      if (f.canRead()) {
         try {
-          in = new FileInputStream(new File(root, resourcePath));
+          in = new BufferedInputStream(new FileInputStream(new File(root, resourcePath)));
         } catch (FileNotFoundException e) {
           Logger.debug(this, "Cannot open stream to resource", e); //$NON-NLS-1$
         }

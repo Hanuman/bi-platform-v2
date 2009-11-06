@@ -19,12 +19,16 @@
 
 package org.pentaho.platform.repository.solution.filebased;
 
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FilenameFilter;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.ArrayList;
@@ -36,6 +40,7 @@ import java.util.ResourceBundle;
 import java.util.Set;
 import java.util.StringTokenizer;
 
+import org.apache.commons.io.IOUtils;
 import org.dom4j.Document;
 import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
@@ -651,17 +656,10 @@ private void addToRepository( final IFileInfo info, final String solution, final
         iconDestintation.delete();
       }
       try {
-        // create a byte array to hold the bits and nibbles
-        byte bytes[] = new byte[16384];
-        // read the file into the byte array
-        FileInputStream stream = new FileInputStream(iconSource);
-        FileOutputStream outputStream = new FileOutputStream(iconDestintation);
+        InputStream stream = new BufferedInputStream(new FileInputStream(iconSource));
+        OutputStream outputStream = new BufferedOutputStream(new FileOutputStream(iconDestintation));
         try {
-          int numRead = 0;
-          while ((numRead = stream.read(bytes)) != -1) {
-            outputStream.write(bytes, 0, numRead);
-            outputStream.flush();
-          }
+          IOUtils.copy(stream, outputStream);
         } finally {
           outputStream.close();
           stream.close();

@@ -71,10 +71,13 @@ public class FileHelper {
 
   public static byte[] getBytesFromFile(final File file) throws IOException {
     InputStream is = new FileInputStream(file);
-    // Create the byte array to hold the data
-    byte[] bytes = IOUtils.toByteArray( is );
-    is.close();
-    return bytes;
+    try {
+      // Create the byte array to hold the data
+      byte[] bytes = IOUtils.toByteArray( is );
+      return bytes;
+    } finally {
+      IOUtils.closeQuietly(is);
+    }
   }
 
   /**

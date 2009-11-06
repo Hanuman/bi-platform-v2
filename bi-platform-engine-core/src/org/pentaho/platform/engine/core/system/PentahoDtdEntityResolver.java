@@ -21,9 +21,11 @@
  */
 package org.pentaho.platform.engine.core.system;
 
+import java.io.BufferedInputStream;
+import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
 
 import org.xml.sax.EntityResolver;
 import org.xml.sax.InputSource;
@@ -41,13 +43,11 @@ public class PentahoDtdEntityResolver implements EntityResolver {
     int idx = systemId.lastIndexOf('/');
     String dtdName = systemId.substring(idx + 1);
     String fullPath = PentahoSystem.getApplicationContext().getSolutionPath("system/dtd/" + dtdName); //$NON-NLS-1$
-
-    try {
-      FileInputStream xslIS = new FileInputStream(fullPath);
+    File theFile = new File(fullPath);
+    if (theFile.canRead()) {
+      InputStream xslIS = new BufferedInputStream(new FileInputStream(theFile));
       InputSource source = new InputSource(xslIS);
       return source;
-    } catch (FileNotFoundException e) {
-
     }
     return null;
   }

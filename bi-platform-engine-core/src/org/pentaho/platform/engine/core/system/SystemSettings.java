@@ -194,10 +194,13 @@ public class SystemSettings extends PentahoBase implements ISystemSettings {
     }
     try {
       Properties props = new Properties();
-      InputStream iStream = new BufferedInputStream(new FileInputStream(propsFile));
-      props.load(iStream);
-      return props;
-
+      InputStream fileInputStream = new BufferedInputStream(new FileInputStream(propsFile));
+      try {
+        props.load(fileInputStream);
+        return props;
+      } finally {
+        fileInputStream.close();
+      }
     } catch (FileNotFoundException e) {
       SystemSettings.logger.error(Messages.getInstance().getErrorString("SystemSettings.ERROR_0003_FAILED_INITIALIZE", path), e); //$NON-NLS-1$
     } catch (IOException ioe) {

@@ -31,6 +31,7 @@ import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.pentaho.platform.api.engine.IAclSolutionFile;
@@ -202,204 +203,209 @@ public class SolutionRepositoryServiceImpl implements ISolutionRepositoryService
       return;
     }
     
-    if (file.isDirectory()) {
-      // we always process directories
-        
-      // MDD 10/16/2008 Not always.. what about 'system'
-      if (file.getFileName().startsWith("system")) { //$NON-NLS-1$
-        // skip the system dir, we DO NOT ever want this to hit the client
-        return;
-      }
-      
-      // maintain legacy behavior
-      if (repository.getRootFolder(ISolutionRepository.ACTION_EXECUTE).getFullPath().equals(file.getFullPath())) {
-        // never output the root folder as part of the repo doc; skip root and process its children
-        ISolutionFile[] children = file.listFiles();
-        for (ISolutionFile childSolutionFile : children) {
-          processRepositoryFile(session, isAdministrator, repository, parentNode, childSolutionFile, filters);
+      if (file.isDirectory()) {
+        // we always process directories
+          
+        // MDD 10/16/2008 Not always.. what about 'system'
+        if (file.getFileName().startsWith("system")) { //$NON-NLS-1$
+          // skip the system dir, we DO NOT ever want this to hit the client
+          return;
         }
-        return;
-      }
-      
-      Element child = parentNode instanceof Document ? ((Document) parentNode).createElement("file") : parentNode.getOwnerDocument().createElement("file");  //$NON-NLS-1$//$NON-NLS-2$
-      parentNode.appendChild(child);
-      try {
-        String localizedName = repository.getLocalizedFileProperty(file, "name", ISolutionRepository.ACTION_EXECUTE); //$NON-NLS-1$
-        child.setAttribute("localized-name", localizedName == null || "".equals(localizedName) ? name : localizedName); //$NON-NLS-1$ //$NON-NLS-2$
-      } catch (Exception e) {
-        child.setAttribute("localized-name", name); //$NON-NLS-1$
-      }
-      try {
-        String visible = repository.getLocalizedFileProperty(file, "visible", ISolutionRepository.ACTION_EXECUTE); //$NON-NLS-1$
-        child.setAttribute("visible", visible == null || "".equals(visible) ? "false" : visible); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-      } catch (Exception e) {
-        e.printStackTrace();
-        child.setAttribute("visible", "false"); //$NON-NLS-1$ //$NON-NLS-2$
-      }
-      String description = repository.getLocalizedFileProperty(file, "description", ISolutionRepository.ACTION_EXECUTE); //$NON-NLS-1$
-      child.setAttribute("description", description == null || "".equals(description) ? name : description); //$NON-NLS-1$ //$NON-NLS-2$
-      child.setAttribute("name", name); //$NON-NLS-1$
-      child.setAttribute("isDirectory", "true"); //$NON-NLS-1$ //$NON-NLS-2$
-      child.setAttribute("lastModifiedDate", "" + file.getLastModified()); //$NON-NLS-1$ //$NON-NLS-2$
-
         
-      ISolutionFile[] children = file.listFiles();
-      for (ISolutionFile childSolutionFile : children) {
-        processRepositoryFile(session, isAdministrator, repository, child, childSolutionFile, filters);
-      }
-    } else {     
-      int lastPoint = name.lastIndexOf('.');
-      String extension = ""; //$NON-NLS-1$
-      if (lastPoint != -1) {
-        // ignore anything with no extension
-        extension = name.substring(lastPoint + 1).toLowerCase();
-      }
-
-      // xaction and URL support are built in
-      boolean addFile = acceptFilter(name, filters) || "xaction".equals(extension) || "url".equals(extension); //$NON-NLS-1$ //$NON-NLS-2$
-      boolean isPlugin = false;
-      // see if there is a plugin for this file type
-      IPluginManager pluginManager = PentahoSystem.get(IPluginManager.class, session);
-      if (pluginManager != null) {
-        Set<String> types = pluginManager.getContentTypes();
-        isPlugin = types != null && types.contains(extension);
-        addFile |= isPlugin;
-      }
-
-      if (addFile) {
-        Element child = parentNode instanceof Document ? ((Document) parentNode).createElement("file") : parentNode.getOwnerDocument().createElement("file"); //$NON-NLS-1$ //$NON-NLS-2$
+        // maintain legacy behavior
+        if (repository.getRootFolder(ISolutionRepository.ACTION_EXECUTE).getFullPath().equals(file.getFullPath())) {
+          // never output the root folder as part of the repo doc; skip root and process its children
+          ISolutionFile[] children = file.listFiles();
+          for (ISolutionFile childSolutionFile : children) {
+            processRepositoryFile(session, isAdministrator, repository, parentNode, childSolutionFile, filters);
+          }
+          return;
+        }
+        
+        Element child = parentNode instanceof Document ? ((Document) parentNode).createElement("file") : parentNode.getOwnerDocument().createElement("file");  //$NON-NLS-1$//$NON-NLS-2$
         parentNode.appendChild(child);
-        IFileInfo fileInfo = null;
         try {
-            // the visibility flag for action-sequences is controlled by
-            // /action-sequence/documentation/result-type
-            // and we should no longer be looking at 'visible' because it was
-            // never actually used!
-            String visible = "none".equals(repository.getLocalizedFileProperty(file, "documentation/result-type", ISolutionRepository.ACTION_EXECUTE)) ? "false" : "true"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
-            child.setAttribute("visible", (visible == null || "".equals(visible) || "true".equals(visible)) ? "true" : "false");  //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
-        } catch (Exception e) {
-          child.setAttribute("visible", "true"); //$NON-NLS-1$ //$NON-NLS-2$
-        }
-        if (name.endsWith(".xaction")) { //$NON-NLS-1$
-          // add special props?
-          // localization..
-        } else if (name.endsWith(".url")) { //$NON-NLS-1$
-
-          // add special props
-          String props = new String(file.getData());
-          StringTokenizer tokenizer = new StringTokenizer(props, "\n"); //$NON-NLS-1$
-          while (tokenizer.hasMoreTokens()) {
-            String line = tokenizer.nextToken();
-            int pos = line.indexOf('=');
-            if (pos > 0) {
-              String propname = line.substring(0, pos);
-              String value = line.substring(pos + 1);
-              if ((value != null) && (value.length() > 0) && (value.charAt(value.length() - 1) == '\r')) {
-                value = value.substring(0, value.length() - 1);
-              }
-              if ("URL".equalsIgnoreCase(propname)) { //$NON-NLS-1$
-                child.setAttribute("url", value); //$NON-NLS-1$
-              }
-            }
-          }
-        } else if (isPlugin) {
-          // must be a plugin - make it look like a URL
-          try {
-            // get the file info object for this file
-            // not all plugins are going to actually use the inputStream, so we have a special
-            // wrapper inputstream so that we can pay that price when we need to (2X speed boost)
-            PluginFileInputStream inputStream = new PluginFileInputStream(repository, file);
-            fileInfo = pluginManager.getFileInfo(extension, session, file, inputStream);
-            String handlerId = pluginManager.getContentGeneratorIdForType(extension, session);
-            String fileUrl = pluginManager.getContentGeneratorUrlForType(extension, session);
-            String solution = file.getSolutionPath();
-            String path = ""; //$NON-NLS-1$
-            if (solution.startsWith(ISolutionRepository.SEPARATOR + "")) { //$NON-NLS-1$
-              solution = solution.substring(1);
-            }
-            int pos = solution.indexOf(ISolutionRepository.SEPARATOR);
-            if (pos != -1) {
-              path = solution.substring(pos + 1);
-              solution = solution.substring(0, pos);
-            }
-            String url = null;
-            if (!"".equals(fileUrl)) { //$NON-NLS-1$
-              url = PentahoSystem.getApplicationContext().getBaseUrl() + fileUrl
-                  + "?solution=" + solution + "&path=" + path + "&action=" + name; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-            } else {
-              IContentInfo info = pluginManager.getContentInfoFromExtension(extension, session);
-              for (IPluginOperation operation : info.getOperations()) {
-                if (operation.getId().equalsIgnoreCase("RUN")) { //$NON-NLS-1$
-              	  String command = operation.getCommand();
-                  command = command.replaceAll("\\{solution\\}", solution); //$NON-NLS-1$
-                  command = command.replaceAll("\\{path\\}", path); //$NON-NLS-1$
-                  command = command.replaceAll("\\{name\\}", name); //$NON-NLS-1$
-                  url = PentahoSystem.getApplicationContext().getBaseUrl() + command;
-                  break;
-                }
-              }
-              if (url == null) {
-                url = PentahoSystem.getApplicationContext().getBaseUrl()
-                  + "content/" + handlerId + "?solution=" + solution + "&path=" + path + "&action=" + name; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
-              }
-            }
-            child.setAttribute("url", url); //$NON-NLS-1$
-            
-            String paramServiceUrl = PentahoSystem.getApplicationContext().getBaseUrl() 
-              + "content/" + handlerId + "?solution=" + solution + "&path=" + path + "&action=" + name; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
-            
-            child.setAttribute("param-service-url", paramServiceUrl); //$NON-NLS-1$
-            
-          } catch (Throwable t) {
-            t.printStackTrace();
-          }
-
-        }
-
-        // localization
-        try {
-          String localizedName = null;
-          if (name.endsWith(".url")) { //$NON-NLS-1$
-            localizedName = repository.getLocalizedFileProperty(file, "url_name", ISolutionRepository.ACTION_EXECUTE); //$NON-NLS-1$
-          } else if (fileInfo != null) {
-            localizedName = fileInfo.getTitle();
-          } else {
-            localizedName = repository.getLocalizedFileProperty(file, "title", ISolutionRepository.ACTION_EXECUTE); //$NON-NLS-1$
-          }
-          child
-              .setAttribute("localized-name", localizedName == null || "".equals(localizedName) ? name : localizedName); //$NON-NLS-1$ //$NON-NLS-2$
+          String localizedName = repository.getLocalizedFileProperty(file, "name", ISolutionRepository.ACTION_EXECUTE); //$NON-NLS-1$
+          child.setAttribute("localized-name", localizedName == null || "".equals(localizedName) ? name : localizedName); //$NON-NLS-1$ //$NON-NLS-2$
         } catch (Exception e) {
           child.setAttribute("localized-name", name); //$NON-NLS-1$
         }
         try {
-          // only folders, urls and xactions have descriptions
-          if (name.endsWith(".url")) { //$NON-NLS-1$
-            String url_description = repository.getLocalizedFileProperty(file, "url_description", ISolutionRepository.ACTION_EXECUTE); //$NON-NLS-1$
-            String description = repository.getLocalizedFileProperty(file, "description", ISolutionRepository.ACTION_EXECUTE); //$NON-NLS-1$
-            if (url_description == null && description == null) {
-              child.setAttribute("description", name); //$NON-NLS-1$
-            } else {
-              child.setAttribute("description", url_description == null || "".equals(url_description) ? description //$NON-NLS-1$ //$NON-NLS-2$
-                  : url_description);
-            }
-          } else if (name.endsWith(".xaction")) { //$NON-NLS-1$
-            String description = repository.getLocalizedFileProperty(file, "description", ISolutionRepository.ACTION_EXECUTE); //$NON-NLS-1$
-            child.setAttribute("description", description == null || "".equals(description) ? name : description); //$NON-NLS-1$ //$NON-NLS-2$
-          } else if (fileInfo != null) {
-            child.setAttribute("description", fileInfo.getDescription()); //$NON-NLS-1$
-          } else {
-            child.setAttribute("description", name); //$NON-NLS-1$
-          }
+          String visible = repository.getLocalizedFileProperty(file, "visible", ISolutionRepository.ACTION_EXECUTE); //$NON-NLS-1$
+          child.setAttribute("visible", visible == null || "".equals(visible) ? "false" : visible); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
         } catch (Exception e) {
-          child.setAttribute("description", "xxxxxxx"); //$NON-NLS-1$ //$NON-NLS-2$
+          e.printStackTrace();
+          child.setAttribute("visible", "false"); //$NON-NLS-1$ //$NON-NLS-2$
         }
-
-        // add permissions for each file/folder
+        String description = repository.getLocalizedFileProperty(file, "description", ISolutionRepository.ACTION_EXECUTE); //$NON-NLS-1$
+        child.setAttribute("description", description == null || "".equals(description) ? name : description); //$NON-NLS-1$ //$NON-NLS-2$
         child.setAttribute("name", name); //$NON-NLS-1$
-        child.setAttribute("isDirectory", "" + file.isDirectory()); //$NON-NLS-1$ //$NON-NLS-2$
+        child.setAttribute("isDirectory", "true"); //$NON-NLS-1$ //$NON-NLS-2$
         child.setAttribute("lastModifiedDate", "" + file.getLastModified()); //$NON-NLS-1$ //$NON-NLS-2$
-      }
-    } // else isfile
+  
+          
+        ISolutionFile[] children = file.listFiles();
+        for (ISolutionFile childSolutionFile : children) {
+          processRepositoryFile(session, isAdministrator, repository, child, childSolutionFile, filters);
+        }
+      } else {     
+        InputStream pluginInputStream = null;
+        try {
+          int lastPoint = name.lastIndexOf('.');
+          String extension = ""; //$NON-NLS-1$
+          if (lastPoint != -1) {
+            // ignore anything with no extension
+            extension = name.substring(lastPoint + 1).toLowerCase();
+          }
+    
+          // xaction and URL support are built in
+          boolean addFile = acceptFilter(name, filters) || "xaction".equals(extension) || "url".equals(extension); //$NON-NLS-1$ //$NON-NLS-2$
+          boolean isPlugin = false;
+          // see if there is a plugin for this file type
+          IPluginManager pluginManager = PentahoSystem.get(IPluginManager.class, session);
+          if (pluginManager != null) {
+            Set<String> types = pluginManager.getContentTypes();
+            isPlugin = types != null && types.contains(extension);
+            addFile |= isPlugin;
+          }
+    
+          if (addFile) {
+            Element child = parentNode instanceof Document ? ((Document) parentNode).createElement("file") : parentNode.getOwnerDocument().createElement("file"); //$NON-NLS-1$ //$NON-NLS-2$
+            parentNode.appendChild(child);
+            IFileInfo fileInfo = null;
+            try {
+                // the visibility flag for action-sequences is controlled by
+                // /action-sequence/documentation/result-type
+                // and we should no longer be looking at 'visible' because it was
+                // never actually used!
+                String visible = "none".equals(repository.getLocalizedFileProperty(file, "documentation/result-type", ISolutionRepository.ACTION_EXECUTE)) ? "false" : "true"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+                child.setAttribute("visible", (visible == null || "".equals(visible) || "true".equals(visible)) ? "true" : "false");  //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
+            } catch (Exception e) {
+              child.setAttribute("visible", "true"); //$NON-NLS-1$ //$NON-NLS-2$
+            }
+            if (name.endsWith(".xaction")) { //$NON-NLS-1$
+              // add special props?
+              // localization..
+            } else if (name.endsWith(".url")) { //$NON-NLS-1$
+    
+              // add special props
+              String props = new String(file.getData());
+              StringTokenizer tokenizer = new StringTokenizer(props, "\n"); //$NON-NLS-1$
+              while (tokenizer.hasMoreTokens()) {
+                String line = tokenizer.nextToken();
+                int pos = line.indexOf('=');
+                if (pos > 0) {
+                  String propname = line.substring(0, pos);
+                  String value = line.substring(pos + 1);
+                  if ((value != null) && (value.length() > 0) && (value.charAt(value.length() - 1) == '\r')) {
+                    value = value.substring(0, value.length() - 1);
+                  }
+                  if ("URL".equalsIgnoreCase(propname)) { //$NON-NLS-1$
+                    child.setAttribute("url", value); //$NON-NLS-1$
+                  }
+                }
+              }
+            } else if (isPlugin) {
+              // must be a plugin - make it look like a URL
+              try {
+                // get the file info object for this file
+                // not all plugins are going to actually use the inputStream, so we have a special
+                // wrapper inputstream so that we can pay that price when we need to (2X speed boost)
+                pluginInputStream = new PluginFileInputStream(repository, file);
+                fileInfo = pluginManager.getFileInfo(extension, session, file, pluginInputStream);
+                String handlerId = pluginManager.getContentGeneratorIdForType(extension, session);
+                String fileUrl = pluginManager.getContentGeneratorUrlForType(extension, session);
+                String solution = file.getSolutionPath();
+                String path = ""; //$NON-NLS-1$
+                if (solution.startsWith(ISolutionRepository.SEPARATOR + "")) { //$NON-NLS-1$
+                  solution = solution.substring(1);
+                }
+                int pos = solution.indexOf(ISolutionRepository.SEPARATOR);
+                if (pos != -1) {
+                  path = solution.substring(pos + 1);
+                  solution = solution.substring(0, pos);
+                }
+                String url = null;
+                if (!"".equals(fileUrl)) { //$NON-NLS-1$
+                  url = PentahoSystem.getApplicationContext().getBaseUrl() + fileUrl
+                      + "?solution=" + solution + "&path=" + path + "&action=" + name; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+                } else {
+                  IContentInfo info = pluginManager.getContentInfoFromExtension(extension, session);
+                  for (IPluginOperation operation : info.getOperations()) {
+                    if (operation.getId().equalsIgnoreCase("RUN")) { //$NON-NLS-1$
+                  	  String command = operation.getCommand();
+                      command = command.replaceAll("\\{solution\\}", solution); //$NON-NLS-1$
+                      command = command.replaceAll("\\{path\\}", path); //$NON-NLS-1$
+                      command = command.replaceAll("\\{name\\}", name); //$NON-NLS-1$
+                      url = PentahoSystem.getApplicationContext().getBaseUrl() + command;
+                      break;
+                    }
+                  }
+                  if (url == null) {
+                    url = PentahoSystem.getApplicationContext().getBaseUrl()
+                      + "content/" + handlerId + "?solution=" + solution + "&path=" + path + "&action=" + name; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+                  }
+                }
+                child.setAttribute("url", url); //$NON-NLS-1$
+                
+                String paramServiceUrl = PentahoSystem.getApplicationContext().getBaseUrl() 
+                  + "content/" + handlerId + "?solution=" + solution + "&path=" + path + "&action=" + name; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+                
+                child.setAttribute("param-service-url", paramServiceUrl); //$NON-NLS-1$
+                
+              } catch (Throwable t) {
+                t.printStackTrace();
+              }
+    
+            }
+    
+            // localization
+            try {
+              String localizedName = null;
+              if (name.endsWith(".url")) { //$NON-NLS-1$
+                localizedName = repository.getLocalizedFileProperty(file, "url_name", ISolutionRepository.ACTION_EXECUTE); //$NON-NLS-1$
+              } else if (fileInfo != null) {
+                localizedName = fileInfo.getTitle();
+              } else {
+                localizedName = repository.getLocalizedFileProperty(file, "title", ISolutionRepository.ACTION_EXECUTE); //$NON-NLS-1$
+              }
+              child
+                  .setAttribute("localized-name", localizedName == null || "".equals(localizedName) ? name : localizedName); //$NON-NLS-1$ //$NON-NLS-2$
+            } catch (Exception e) {
+              child.setAttribute("localized-name", name); //$NON-NLS-1$
+            }
+            try {
+              // only folders, urls and xactions have descriptions
+              if (name.endsWith(".url")) { //$NON-NLS-1$
+                String url_description = repository.getLocalizedFileProperty(file, "url_description", ISolutionRepository.ACTION_EXECUTE); //$NON-NLS-1$
+                String description = repository.getLocalizedFileProperty(file, "description", ISolutionRepository.ACTION_EXECUTE); //$NON-NLS-1$
+                if (url_description == null && description == null) {
+                  child.setAttribute("description", name); //$NON-NLS-1$
+                } else {
+                  child.setAttribute("description", url_description == null || "".equals(url_description) ? description //$NON-NLS-1$ //$NON-NLS-2$
+                      : url_description);
+                }
+              } else if (name.endsWith(".xaction")) { //$NON-NLS-1$
+                String description = repository.getLocalizedFileProperty(file, "description", ISolutionRepository.ACTION_EXECUTE); //$NON-NLS-1$
+                child.setAttribute("description", description == null || "".equals(description) ? name : description); //$NON-NLS-1$ //$NON-NLS-2$
+              } else if (fileInfo != null) {
+                child.setAttribute("description", fileInfo.getDescription()); //$NON-NLS-1$
+              } else {
+                child.setAttribute("description", name); //$NON-NLS-1$
+              }
+            } catch (Exception e) {
+              child.setAttribute("description", "xxxxxxx"); //$NON-NLS-1$ //$NON-NLS-2$
+            }
+    
+            // add permissions for each file/folder
+            child.setAttribute("name", name); //$NON-NLS-1$
+            child.setAttribute("isDirectory", "" + file.isDirectory()); //$NON-NLS-1$ //$NON-NLS-2$
+            child.setAttribute("lastModifiedDate", "" + file.getLastModified()); //$NON-NLS-1$ //$NON-NLS-2$
+          }
+        } finally {
+          IOUtils.closeQuietly(pluginInputStream);
+        }
+      } // else isfile
   }
 
   public org.w3c.dom.Document getSolutionRepositoryDoc(IPentahoSession session, String[] filters) throws ParserConfigurationException {
@@ -513,7 +519,7 @@ public class SolutionRepositoryServiceImpl implements ISolutionRepositoryService
       IOException, PentahoAccessControlException {
 
     if (StringUtil.doesPathContainParentPathSegment(solution) || StringUtil.doesPathContainParentPathSegment(path)) {
-      String msg = Messages.getInstance().getString("AdhocWebService.ERROR_0008_MISSING_OR_INVALID_REPORT_NAME"); //$NON-NLS-1$
+      String msg = Messages.getString("AdhocWebService.ERROR_0008_MISSING_OR_INVALID_REPORT_NAME"); //$NON-NLS-1$
       throw new SolutionRepositoryServiceException(msg);
     }
 
@@ -552,7 +558,7 @@ public class SolutionRepositoryServiceImpl implements ISolutionRepositoryService
   public String getAclXml(final String solution, final String path, final String filename, final IPentahoSession userSession) throws SolutionRepositoryServiceException,
       IOException {
     if (StringUtil.doesPathContainParentPathSegment(solution) || StringUtil.doesPathContainParentPathSegment(path)) {
-      String msg = Messages.getInstance().getString("AdhocWebService.ERROR_0008_MISSING_OR_INVALID_REPORT_NAME"); //$NON-NLS-1$
+      String msg = Messages.getString("AdhocWebService.ERROR_0008_MISSING_OR_INVALID_REPORT_NAME"); //$NON-NLS-1$
       throw new SolutionRepositoryServiceException(msg);
     }
 
