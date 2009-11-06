@@ -149,7 +149,9 @@ public class SubActionComponent extends ComponentBase {
         return false;
       }
     } finally {
-      solutionEngine.getExecutionContext().dispose(ignoreParameters);
+      if (solutionEngine != null) {
+        solutionEngine.getExecutionContext().dispose(ignoreParameters);
+      }
     }
   }
 
