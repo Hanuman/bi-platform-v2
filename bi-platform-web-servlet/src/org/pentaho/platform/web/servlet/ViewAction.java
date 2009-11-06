@@ -171,7 +171,7 @@ public class ViewAction extends ServletBase {
       boolean hasResponse = outputHandler.isResponseExpected();
       IContentItem responseContentItem = outputHandler.getOutputContentItem(IOutputHandler.RESPONSE, IOutputHandler.CONTENT, null, null, null);
 
-      boolean success = (runtime.getStatus() == IRuntimeContext.RUNTIME_STATUS_SUCCESS);
+      boolean success = (runtime != null && runtime.getStatus() == IRuntimeContext.RUNTIME_STATUS_SUCCESS);
       boolean debugMessages = doMessages(request);
       boolean printSuccess = (runtime != null) && success && (!hasResponse || debugMessages);
       boolean printError = (runtime != null) && !success && !response.isCommitted();
