@@ -300,9 +300,21 @@
     <property name="homeDir" value="/jackrabbit/repository" />
   </bean>
 
-  <bean id="jcrSessionFactory" class="org.pentaho.platform.repository.pcr.sejcr.CredentialsStrategySessionFactory">
+  <bean id="jcrSessionFactory" class="org.pentaho.platform.repository.pcr.sejcr.CredentialsStrategyJackrabbitSessionFactory">
     <constructor-arg ref="jcrRepository" />
     <constructor-arg ref="credentialsStrategy" />
+    <property name="namespaces">
+      <props>
+        <prop key="pho">http://www.pentaho.org/jcr/1.0</prop>
+      </props>
+    </property>
+    <property name="nodeDefinitions">
+      <list>
+       <value>classpath:/org/pentaho/platform/repository/pcr/jackrabbit/pentahoFile.cnd</value>
+       <value>classpath:/org/pentaho/platform/repository/pcr/jackrabbit/pentahoResource.cnd</value>
+      </list>
+  </property>
+    
   </bean>
 
   <bean id="credentialsStrategy" class="org.pentaho.platform.repository.pcr.sejcr.SpringSecurityCredentialsStrategy" />
@@ -318,6 +330,13 @@
       <map>
         <entry key="text/plain">
           <bean class="org.pentaho.platform.repository.pcr.transform.SimpleRepositoryFileContentTransformer" />
+        </entry>
+        <entry key="application/vnd.pentaho.runresult">
+          <bean class="org.pentaho.platform.repository.pcr.transform.RunResultRepositoryFileContentTransformer">
+            <constructor-arg>
+              <bean class="org.pentaho.platform.repository.pcr.transform.SimpleRepositoryFileContentTransformer" />
+            </constructor-arg>
+          </bean>
         </entry>
       </map>
     </constructor-arg>

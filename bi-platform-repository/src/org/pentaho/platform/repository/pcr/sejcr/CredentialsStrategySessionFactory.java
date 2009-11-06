@@ -27,6 +27,12 @@ import org.springframework.extensions.jcr.SessionHolderProviderManager;
 import org.springframework.extensions.jcr.support.GenericSessionHolderProvider;
 import org.springframework.util.Assert;
 
+/**
+ * Copy-and-paste of {@link JcrSessionFactory} except that this implementation delegates to a 
+ * {@link CredentialsStrategy} implementation for getting a {@link Credentials} instance.
+ * 
+ * @author mlowery
+ */
 public class CredentialsStrategySessionFactory implements InitializingBean, DisposableBean, SessionFactory {
 
   private static final Logger LOG = LoggerFactory.getLogger(JcrSessionFactory.class);
@@ -228,12 +234,8 @@ public class CredentialsStrategySessionFactory implements InitializingBean, Disp
       }
   }
 
-  private Session getBareSession() throws RepositoryException {
-      Credentials creds = credentialsStrategy.getCredentials();
-      if (LOG.isDebugEnabled()) {
-        LOG.debug("using credentials:" + creds);
-      }
-      Session session = repository.login(creds, workspaceName);
+  protected Session getBareSession() throws RepositoryException {
+      Session session = repository.login(null, workspaceName);
       return session;
   }
 

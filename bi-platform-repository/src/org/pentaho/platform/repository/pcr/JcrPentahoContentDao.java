@@ -14,7 +14,7 @@ import javax.jcr.Session;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.jackrabbit.JcrConstants;
+
 import org.pentaho.platform.api.repository.IPentahoContentDao;
 import org.pentaho.platform.api.repository.IRepositoryFileContent;
 import org.pentaho.platform.api.repository.RepositoryFile;
@@ -241,7 +241,7 @@ public class JcrPentahoContentDao implements IPentahoContentDao, InitializingBea
      */
     public void setId(final Node node, final Serializable ignored) {
       try {
-        node.addMixin(JcrConstants.MIX_REFERENCEABLE);
+        node.addMixin(PentahoJcrConstants.MIX_REFERENCEABLE);
       } catch (RepositoryException e) {
         throw jcrTemplate.convertJcrAccessException(e);
       }
@@ -261,13 +261,13 @@ public class JcrPentahoContentDao implements IPentahoContentDao, InitializingBea
     }
   }
 
-  public static interface Transformer {
-    <T extends IRepositoryFileContent> boolean supports(Class<T> clazz);
+  public static interface Transformer<T extends IRepositoryFileContent> {
+    <S extends IRepositoryFileContent> boolean supports(Class<S> clazz);
 
-    IRepositoryFileContent fromNode(final Session session, final NodeIdStrategy nodeIdStrategy, final Node node)
+    T nodeToContent(final Session session, final NodeIdStrategy nodeIdStrategy, final Node node)
         throws RepositoryException, IOException;
 
-    void toNode(final Session session, final NodeIdStrategy nodeIdStrategy, final IRepositoryFileContent content,
+    void contentToNode(final Session session, final NodeIdStrategy nodeIdStrategy, final T content,
         final Node resourceNode) throws RepositoryException, IOException;
   }
 

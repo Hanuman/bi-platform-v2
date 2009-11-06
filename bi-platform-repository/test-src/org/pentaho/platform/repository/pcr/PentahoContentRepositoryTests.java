@@ -8,7 +8,9 @@ import static org.junit.Assert.fail;
 
 import java.io.ByteArrayInputStream;
 import java.io.Serializable;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.sql.DataSource;
 
@@ -257,7 +259,7 @@ public class PentahoContentRepositoryTests implements ApplicationContextAware {
   }
 
   @Test
-  public void testCreateFile() throws Exception {
+  public void testCreateSimpleFile() throws Exception {
     pentahoContentRepository.startup();
     SecurityContextHolder.getContext().setAuthentication(AUTHENTICATION_SUZY);
     pentahoContentRepository.createUserHomeFolderIfNecessary();
@@ -286,8 +288,63 @@ public class PentahoContentRepositoryTests implements ApplicationContextAware {
     SimpleRepositoryFileContent contentFromRepo = pentahoContentRepository.getContentForRead(foundFile,
         SimpleRepositoryFileContent.class);
     assertEquals(expectedEncoding, contentFromRepo.getEncoding());
-    
+
     assertEquals(expectedDataString, IOUtils.toString(contentFromRepo.getData(), expectedEncoding));
+  }
+
+  @Test
+  public void testCreateRunResultFile() throws Exception {
+    pentahoContentRepository.startup();
+    SecurityContextHolder.getContext().setAuthentication(AUTHENTICATION_SUZY);
+    pentahoContentRepository.createUserHomeFolderIfNecessary();
+    RepositoryFile parentFolder = pentahoContentRepository.getFile("/pentaho/home/suzy");
+    final String expectedDataString = "Hello World!";
+    final String expectedEncoding = "UTF-8";
+    byte[] data = expectedDataString.getBytes(expectedEncoding);
+    ByteArrayInputStream dataStream = new ByteArrayInputStream(data);
+    final String expectedMimeType = "application/vnd.pentaho.runresult";
+    final String expectedName = "helloworld.xaction";
+    final String expectedAbsolutePath = "/pentaho/home/suzy/helloworld.xaction";
+    final Map<String, String> expectedRunArguments = new HashMap<String, String>();
+    expectedRunArguments.put("testKey", "testValue");
+
+    final RunResultRepositoryFileContent content = new RunResultRepositoryFileContent(dataStream, expectedEncoding,
+        expectedRunArguments);
+
+    RepositoryFile newFile = pentahoContentRepository.createFile(parentFolder, new RepositoryFile.Builder(expectedName)
+        .mimeType(expectedMimeType).build(), content);
+    assertNotNull(newFile.getId());
+    RepositoryFile foundFile = pentahoContentRepository.getFile(expectedAbsolutePath);
+    assertNotNull(foundFile);
+    assertEquals(expectedName, foundFile.getName());
+    assertEquals(expectedAbsolutePath, foundFile.getAbsolutePath());
+    assertEquals(expectedMimeType, foundFile.getMimeType());
+    assertNotNull(foundFile.getCreatedDate());
+    assertNotNull(foundFile.getLastModifiedDate());
+
+    RunResultRepositoryFileContent contentFromRepo = pentahoContentRepository.getContentForRead(foundFile,
+        RunResultRepositoryFileContent.class);
+    assertEquals(expectedEncoding, contentFromRepo.getEncoding());
+
+    assertEquals(expectedDataString, IOUtils.toString(contentFromRepo.getData(), expectedEncoding));
+    assertEquals(expectedRunArguments, contentFromRepo.getArguments());
+  }
+
+  @Test(expected = IllegalArgumentException.class)
+  public void testCreateFileUnrecognizedMimeType() throws Exception {
+    pentahoContentRepository.startup();
+    SecurityContextHolder.getContext().setAuthentication(AUTHENTICATION_SUZY);
+    pentahoContentRepository.createUserHomeFolderIfNecessary();
+    RepositoryFile parentFolder = pentahoContentRepository.getFile("/pentaho/home/suzy");
+    final String expectedDataString = "Hello World!";
+    final String expectedEncoding = "UTF-8";
+    byte[] data = expectedDataString.getBytes(expectedEncoding);
+    ByteArrayInputStream dataStream = new ByteArrayInputStream(data);
+    final String expectedMimeType = "text/notsupported";
+    final String expectedName = "helloworld.xaction";
+    final SimpleRepositoryFileContent content = new SimpleRepositoryFileContent(dataStream, expectedEncoding);
+    pentahoContentRepository.createFile(parentFolder, new RepositoryFile.Builder(expectedName).mimeType(
+        expectedMimeType).build(), content);
   }
 
   @Test

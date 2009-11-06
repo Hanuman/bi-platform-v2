@@ -1,0 +1,21 @@
+/*
+Pentaho resource mixin node type.  (To be applied to nt:resource nodes.)
+*/
+
+// The namespace declaration
+<ns = 'http://www.pentaho.org/jcr/1.0'>
+
+// Node type name
+[ns:pentahoResource]
+
+// This is a mixin node type
+mixin
+
+// Nodes of this node type have a child node called ns:aux
++ ns:aux
+
+// and the default primary node type of the child node is...
+= nt:unstructured
+
+// and has an on-parent-version setting of ...
+copy

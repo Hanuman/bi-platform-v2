@@ -1,0 +1,34 @@
+/*
+Pentaho file mixin node type.  (To be applied to nt:file nodes.)
+
+Some of the properties in this node definition are copied from nt:resource because access control is applied to the 
+nt:resource node and we want users to be able to get an nt:file (and its mimeType and lastModified properties) without 
+being blocked by access control.
+*/
+
+// The namespace declaration
+<ns = 'http://www.pentaho.org/jcr/1.0'>
+
+// Node type name
+[ns:pentahoFile]
+
+// This is a mixin node type
+mixin
+
+// Nodes of this node type have a property called 'ns:mimeType' of type STRING
+- ns:mimeType (string)
+
+// and it is...
+mandatory
+
+// It has an on-parent-version setting of...
+copy
+
+// Nodes of this node type have a property called 'ns:lastModified' of type DATE
+- ns:lastModified (date)
+
+// and it is...
+mandatory
+
+// It has an on-parent-version setting of...
+ignore

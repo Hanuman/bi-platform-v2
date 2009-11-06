@@ -11,8 +11,8 @@ import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
+import javax.jcr.Value;
 
-import org.apache.jackrabbit.JcrConstants;
 import org.pentaho.platform.api.repository.IRepositoryFileContent;
 import org.pentaho.platform.api.repository.RepositoryFile;
 import org.pentaho.platform.repository.pcr.JcrPentahoContentDao.NodeIdStrategy;
@@ -33,23 +33,19 @@ public class JcrRepositoryFileUtils {
       folder = true;
     }
 
-    if (node.hasProperty(JcrConstants.JCR_CREATED)) {
-      Calendar tmpCal = node.getProperty(JcrConstants.JCR_CREATED).getDate();
+    if (node.hasProperty(PentahoJcrConstants.JCR_CREATED)) {
+      Calendar tmpCal = node.getProperty(PentahoJcrConstants.JCR_CREATED).getDate();
       if (tmpCal != null) {
         createdDateTime = tmpCal.getTime();
       }
     }
 
-    if (isFileOrLinkedFile(node)) {
-      Node resourceNode = getResourceNode(session, node);
-
-      if (isResource(resourceNode)) {
-        Calendar tmpCal = resourceNode.getProperty(JcrConstants.JCR_LASTMODIFIED).getDate();
-        if (tmpCal != null) {
-          lastModifiedDateTime = tmpCal.getTime();
-        }
-        mimeType = resourceNode.getProperty(JcrConstants.JCR_MIMETYPE).getString();
+    if (isPentahoFile(session, node)) {
+      Calendar tmpCal = node.getProperty(addPentahoPrefix(session, PentahoJcrConstants.PENTAHO_LASTMODIFIED)).getDate();
+      if (tmpCal != null) {
+        lastModifiedDateTime = tmpCal.getTime();
       }
+      mimeType = node.getProperty(addPentahoPrefix(session, PentahoJcrConstants.PENTAHO_MIMETYPE)).getString();
     }
 
     RepositoryFile file = new RepositoryFile.Builder(node.getName(), nodeIdStrategy.getId(node), !node.getParent()
@@ -68,7 +64,7 @@ public class JcrRepositoryFileUtils {
     } else {
       parentFolderNode = session.getRootNode();
     }
-    Node folderNode = parentFolderNode.addNode(file.getName(), JcrConstants.NT_FOLDER);
+    Node folderNode = parentFolderNode.addNode(file.getName(), PentahoJcrConstants.NT_FOLDER);
     nodeIdStrategy.setId(folderNode, null);
     return folderNode;
   }
@@ -83,15 +79,22 @@ public class JcrRepositoryFileUtils {
     } else {
       parentFolderNode = session.getRootNode();
     }
-    Node fileNode = parentFolderNode.addNode(file.getName(), JcrConstants.NT_FILE);
-    nodeIdStrategy.setId(fileNode, null);
-    Node resourceNode = fileNode.addNode(JcrConstants.JCR_CONTENT, JcrConstants.NT_RESOURCE);
-    resourceNode.setProperty(JcrConstants.JCR_MIMETYPE, file.getMimeType());
+    Node fileNode = parentFolderNode.addNode(file.getName(), PentahoJcrConstants.NT_FILE);
+    fileNode.addMixin(addPentahoPrefix(session, PentahoJcrConstants.PENTAHO_PENTAHOFILE));
+    fileNode.setProperty(addPentahoPrefix(session, PentahoJcrConstants.PENTAHO_MIMETYPE), file.getMimeType());
     // set created and last modified to same date when creating a new file
-    resourceNode.setProperty(JcrConstants.JCR_LASTMODIFIED, fileNode.getProperty(JcrConstants.JCR_CREATED).getDate());
+    fileNode.setProperty(addPentahoPrefix(session, PentahoJcrConstants.PENTAHO_LASTMODIFIED), fileNode.getProperty(
+        PentahoJcrConstants.JCR_CREATED).getDate());
+    nodeIdStrategy.setId(fileNode, null);
+    Node resourceNode = fileNode.addNode(PentahoJcrConstants.JCR_CONTENT, PentahoJcrConstants.NT_RESOURCE);
 
-    transformer.toNode(session, nodeIdStrategy, content, resourceNode);
+    // mandatory properties on nt:resource; give them a value to satisfy Jackrabbit
+    resourceNode.setProperty(PentahoJcrConstants.JCR_MIMETYPE, file.getMimeType());
+    resourceNode.setProperty(PentahoJcrConstants.JCR_LASTMODIFIED, fileNode
+        .getProperty(PentahoJcrConstants.JCR_CREATED).getDate());
 
+    resourceNode.addMixin(addPentahoPrefix(session, PentahoJcrConstants.PENTAHO_PENTAHORESOURCE));
+    transformer.contentToNode(session, nodeIdStrategy, content, resourceNode);
     return fileNode;
   }
 
@@ -99,10 +102,10 @@ public class JcrRepositoryFileUtils {
     Assert.isTrue(isFileOrLinkedFile(node));
     Node resourceNode = null;
     if (isFile(node)) {
-      resourceNode = node.getNode(JcrConstants.JCR_CONTENT);
+      resourceNode = node.getNode(PentahoJcrConstants.JCR_CONTENT);
     } else {
       // linked file
-      String resourceNodeUuid = node.getProperty(JcrConstants.JCR_CONTENT).getString();
+      String resourceNodeUuid = node.getProperty(PentahoJcrConstants.JCR_CONTENT).getString();
       resourceNode = session.getNodeByUUID(resourceNodeUuid);
     }
     return resourceNode;
@@ -113,7 +116,7 @@ public class JcrRepositoryFileUtils {
     Node fileNode = nodeIdStrategy.findNodeById(session, file.getId());
     Assert.isTrue(!isFolder(fileNode));
 
-    return transformer.fromNode(session, nodeIdStrategy, getResourceNode(session, fileNode));
+    return transformer.nodeToContent(session, nodeIdStrategy, getResourceNode(session, fileNode));
   }
 
   public static List<RepositoryFile> getChildren(final Session session, final NodeIdStrategy nodeIdStrategy,
@@ -135,25 +138,46 @@ public class JcrRepositoryFileUtils {
   }
 
   private static boolean isFolder(final Node node) throws RepositoryException {
-    return node.getProperty(JcrConstants.JCR_PRIMARYTYPE).getString().equals(JcrConstants.NT_FOLDER);
+    return node.getProperty(PentahoJcrConstants.JCR_PRIMARYTYPE).getString().equals(PentahoJcrConstants.NT_FOLDER);
   }
 
   private static boolean isResource(final Node node) throws RepositoryException {
-    return node.getProperty(JcrConstants.JCR_PRIMARYTYPE).getString().equals(JcrConstants.NT_RESOURCE);
+    return node.getProperty(PentahoJcrConstants.JCR_PRIMARYTYPE).getString().equals(PentahoJcrConstants.NT_RESOURCE);
   }
 
   private static boolean isFileOrLinkedFile(final Node node) throws RepositoryException {
-    String nodeTypeName = node.getProperty(JcrConstants.JCR_PRIMARYTYPE).getString();
-    return JcrConstants.NT_LINKEDFILE.equals(nodeTypeName) || JcrConstants.NT_FILE.equals(nodeTypeName);
+    String nodeTypeName = node.getProperty(PentahoJcrConstants.JCR_PRIMARYTYPE).getString();
+    return PentahoJcrConstants.NT_LINKEDFILE.equals(nodeTypeName) || PentahoJcrConstants.NT_FILE.equals(nodeTypeName);
+  }
+
+  private static boolean isPentahoFile(final Session session, final Node node) throws RepositoryException {
+    Value[] mixinTypeNames = node.getProperty(PentahoJcrConstants.JCR_MIXINTYPES).getValues();
+    for (Value v : mixinTypeNames) {
+      if (addPentahoPrefix(session, PentahoJcrConstants.PENTAHO_PENTAHOFILE).equals(v.getString())) {
+        return true;
+      }
+    }
+    return false;
   }
 
   private static boolean isFile(final Node node) throws RepositoryException {
-    return node.getProperty(JcrConstants.JCR_PRIMARYTYPE).getString().equals(JcrConstants.NT_FILE);
+    return node.getProperty(PentahoJcrConstants.JCR_PRIMARYTYPE).getString().equals(PentahoJcrConstants.NT_FILE);
   }
 
   private static boolean isSupportedNodeType(final Node node) throws RepositoryException {
-    String nodeTypeName = node.getProperty(JcrConstants.JCR_PRIMARYTYPE).getString();
-    return JcrConstants.NT_FOLDER.equals(nodeTypeName) || JcrConstants.NT_LINKEDFILE.equals(nodeTypeName)
-        || JcrConstants.NT_FILE.equals(nodeTypeName) || JcrConstants.NT_RESOURCE.equals(nodeTypeName);
+    String nodeTypeName = node.getProperty(PentahoJcrConstants.JCR_PRIMARYTYPE).getString();
+    return PentahoJcrConstants.NT_FOLDER.equals(nodeTypeName) || PentahoJcrConstants.NT_LINKEDFILE.equals(nodeTypeName)
+        || PentahoJcrConstants.NT_FILE.equals(nodeTypeName) || PentahoJcrConstants.NT_RESOURCE.equals(nodeTypeName);
+  }
+
+  public static String addPentahoPrefix(final Session session, final String name) throws RepositoryException {
+    String prefix = session.getWorkspace().getNamespaceRegistry().getPrefix(PentahoJcrConstants.PENTAHO_URI);
+    return prefix + ":" + name;
+  }
+
+  public static String removePentahoPrefix(final Session session, final String nameWithPrefix)
+      throws RepositoryException {
+    String prefix = session.getWorkspace().getNamespaceRegistry().getPrefix(PentahoJcrConstants.PENTAHO_URI);
+    return nameWithPrefix.substring(prefix.length() + 1); // plus one for the colon
   }
 }
