@@ -75,8 +75,8 @@
   <resources> 
     <embeddedXmlResource> 
       <xml> 
-        <location>
-          <test-xml/>
+        <location> 
+          <test-xml/> 
         </location>  
         <mime-type>text/text</mime-type> 
       </xml> 
@@ -101,10 +101,7 @@
         <myContentOutput type="content"/>  
         <echoMessage type="string"/> 
       </action-outputs>
-      <component-definition>
-        <embeddedMessage>embedded message text</embeddedMessage>  
-        <embeddedNumber>2001</embeddedNumber>  
-      </component-definition>  
+      <component-definition/>  
       <action-name>TestAction</action-name>  
       <logging-level>DEBUG</logging-level> 
     </action-definition>
