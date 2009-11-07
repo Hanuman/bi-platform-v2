@@ -14,9 +14,6 @@
   <inputs> 
     <message type="string"> 
       <default-value>Test 1..2..3</default-value>  
-      <sources> 
-        <request>message</request> 
-      </sources> 
     </message>  
     <addressees type="string-list"> 
       <default-value type="string-list"> 
