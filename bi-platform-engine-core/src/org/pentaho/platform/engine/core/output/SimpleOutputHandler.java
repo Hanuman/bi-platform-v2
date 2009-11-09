@@ -192,6 +192,11 @@ public class SimpleOutputHandler implements IOutputHandler {
   public IContentItem getFeedbackContentItem() {
     if (allowFeedback) {
       contentGenerated = true;
+      /*
+      * if someone is requesting a feedbackContentItem, we can assume they tend to write feedback
+      * back to the client, so we set the flag here
+      */
+     responseExpected = true;
       return feedbackContent;
     }
     return null;
