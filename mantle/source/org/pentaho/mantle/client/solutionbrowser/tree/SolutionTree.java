@@ -305,9 +305,7 @@ public class SolutionTree extends Tree implements ISolutionDocumentListener, IUs
         // the file list of current dir
         final ArrayList<Element> filesInCurrDirectory = (ArrayList<Element>) directoryItem.getUserObject();
         if (filesInCurrDirectory != null) {
-          final int fileListSize = filesInCurrDirectory.size();
-          for (int i = 0; i < fileListSize; i++) {
-            final Element fileElement = filesInCurrDirectory.get(i);
+          for (Element fileElement : filesInCurrDirectory) {
             final String currentFileName = fileElement.getAttribute("name"); //$NON-NLS-1$
             if ((currentFileName != null) && (currentFileName.equalsIgnoreCase(pFileName))) {
               return true;
@@ -319,31 +317,50 @@ public class SolutionTree extends Tree implements ISolutionDocumentListener, IUs
     return false;
   }
 
-  public FileTreeItem getTreeItem(ArrayList<String> pathSegments) {
-    if (pathSegments.size() == 0) {
-      return null;
-    }
-    int segmentIndex = 0;
-    for (int x = 0; x < getItemCount(); x++) {
-      FileTreeItem item = (FileTreeItem) getItem(x);
-      if (item.getFileName().equals(pathSegments.get(segmentIndex))) {
-        // we found the correct 'root', now search children
-        segmentIndex++;
-        for (int i = 0; i < item.getChildCount() && segmentIndex < pathSegments.size(); i++) {
-          FileTreeItem childItem = (FileTreeItem) item.getChild(i);
-          if (childItem.getFileName().equals(pathSegments.get(segmentIndex))) {
-            item = childItem;
-            i = 0;
-            segmentIndex++;
-          }
-        }
-        // if segmentIndex has reached the end, we have found our match
-        if (segmentIndex == pathSegments.size()) {
-          return item;
+  public FileTreeItem getTreeItem(final ArrayList<String> pathSegments) {
+    if (pathSegments.size() > 0) {
+      // the first path segment is going to be a 'root' in the tree
+      String rootSegment = pathSegments.get(0);
+      for (int i = 0; i < getItemCount(); i++) {
+        FileTreeItem root = (FileTreeItem) getItem(i);
+        if (root.getFileName().equalsIgnoreCase(rootSegment)) {
+          ArrayList<String> tmpPathSegs = (ArrayList<String>) pathSegments.clone();
+          tmpPathSegs.remove(0);
+          return getTreeItem(root, tmpPathSegs);
         }
       }
     }
     return null;
+  }
+
+  private FileTreeItem getTreeItem(final FileTreeItem root, final ArrayList<String> pathSegments) {
+    int depth = 0;
+    FileTreeItem currentItem = root;
+    while (depth < pathSegments.size()) {
+      String pathSegment = pathSegments.get(depth);
+      for (int i = 0; i < currentItem.getChildCount(); i++) {
+        FileTreeItem childItem = (FileTreeItem) currentItem.getChild(i);
+        if (childItem.getFileName().equalsIgnoreCase(pathSegment)) {
+          currentItem = childItem;
+        }
+      }
+      depth++;
+    }
+    // let's check if the currentItem matches our segments (it might point to the last item before
+    // we eventually failed to find the complete match)
+    FileTreeItem tmpItem = currentItem;
+    depth = pathSegments.size()-1;
+    while (tmpItem != null && depth >= 0) {
+      if (tmpItem.getFileName().equalsIgnoreCase(pathSegments.get(depth))) {
+        tmpItem = (FileTreeItem) tmpItem.getParentItem();
+        depth--;
+      } else {
+        // every item must match
+        return null;
+      }
+    }
+
+    return currentItem;
   }
 
   private void selectFromList(ArrayList<FileTreeItem> parents) {
