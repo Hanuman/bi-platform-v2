@@ -35,6 +35,8 @@ import org.pentaho.platform.repository.messages.Messages;
 
 public class CoreContentRepositoryOutputHandler implements IOutputHandler {
 
+  private boolean responseExpected;
+  
   private static final byte[] lock = new byte[0];
 
   public static final String DefaultMimeType = "application/octet-stream"; //$NON-NLS-1$
@@ -140,7 +142,7 @@ public class CoreContentRepositoryOutputHandler implements IOutputHandler {
       final String url, final String solution, final String instanceId, final String inMimeType) {
     contentGenerated = true;
     
-    if (FileObjectName.equalsIgnoreCase(objectName)) {
+    if (IOutputHandler.FILE.equalsIgnoreCase(objectName)) {
       IContentOutputHandler output = null;
       // this code allows us to stay backwards compatible
       if ((contentName != null) && (contentName.indexOf(":") == -1)) { //$NON-NLS-1$
@@ -213,6 +215,9 @@ public class CoreContentRepositoryOutputHandler implements IOutputHandler {
         outputContentItem = contentItem;
       }
     }
+    if (objectName.equals(IOutputHandler.RESPONSE) && contentName.equals(IOutputHandler.CONTENT)) {
+      responseExpected = true;
+    }  
     return outputContentItem;
   }
 
@@ -233,6 +238,9 @@ public class CoreContentRepositoryOutputHandler implements IOutputHandler {
 
   public void setContentItem(final IContentItem content, final String objectName, final String contentName) {
     outputContentItem = content;
+    if (objectName.equals(IOutputHandler.RESPONSE) && contentName.equals(IOutputHandler.CONTENT)) {
+      responseExpected = true;
+    }  
   }
 
   public void setOutput(final String name, final Object value) {
@@ -241,6 +249,7 @@ public class CoreContentRepositoryOutputHandler implements IOutputHandler {
         outputContentItem = (IContentItem) value;
         contentGenerated = true;
       }
+      responseExpected = true;
     }
   }
 
@@ -261,8 +270,7 @@ public class CoreContentRepositoryOutputHandler implements IOutputHandler {
   }
 
   public boolean isResponseExpected() {
-    // TODO Auto-generated method stub
-    return false;
+    return responseExpected;
   }
 
 }
