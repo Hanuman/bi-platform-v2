@@ -94,10 +94,30 @@ public class JcrRepositoryFileUtils {
         .getProperty(PentahoJcrConstants.JCR_CREATED).getDate());
 
     resourceNode.addMixin(addPentahoPrefix(session, PentahoJcrConstants.PENTAHO_PENTAHORESOURCE));
-    transformer.contentToNode(session, nodeIdStrategy, content, resourceNode);
+    transformer.createContentNode(session, nodeIdStrategy, content, resourceNode);
     return fileNode;
   }
 
+  public static Node updateFileNode(final Session session, final NodeIdStrategy nodeIdStrategy,
+      final RepositoryFile file, final IRepositoryFileContent content,
+      final Transformer transformer) throws RepositoryException, IOException {
+
+    Calendar lastModified = Calendar.getInstance();
+    
+    Node fileNode = nodeIdStrategy.findNodeById(session, file.getId());
+    fileNode.setProperty(addPentahoPrefix(session, PentahoJcrConstants.PENTAHO_MIMETYPE), file.getMimeType());
+    fileNode.setProperty(addPentahoPrefix(session, PentahoJcrConstants.PENTAHO_LASTMODIFIED), lastModified);
+
+    Node resourceNode = fileNode.getNode(PentahoJcrConstants.JCR_CONTENT);
+
+    // mandatory properties on nt:resource; give them a value to satisfy Jackrabbit
+    resourceNode.setProperty(PentahoJcrConstants.JCR_MIMETYPE, file.getMimeType());
+    resourceNode.setProperty(PentahoJcrConstants.JCR_LASTMODIFIED, lastModified);
+
+    transformer.updateContentNode(session, nodeIdStrategy, content, resourceNode);
+    return fileNode;
+  }
+  
   public static Node getResourceNode(final Session session, final Node node) throws RepositoryException, IOException {
     Assert.isTrue(isFileOrLinkedFile(node));
     Node resourceNode = null;
@@ -116,7 +136,7 @@ public class JcrRepositoryFileUtils {
     Node fileNode = nodeIdStrategy.findNodeById(session, file.getId());
     Assert.isTrue(!isFolder(fileNode));
 
-    return transformer.nodeToContent(session, nodeIdStrategy, getResourceNode(session, fileNode));
+    return transformer.fromContentNode(session, nodeIdStrategy, getResourceNode(session, fileNode));
   }
 
   public static List<RepositoryFile> getChildren(final Session session, final NodeIdStrategy nodeIdStrategy,

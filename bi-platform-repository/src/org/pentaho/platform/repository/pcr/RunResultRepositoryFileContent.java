@@ -16,19 +16,29 @@ public class RunResultRepositoryFileContent extends SimpleRepositoryFileContent 
   // ~ Instance fields =================================================================================================
 
   private Map<String, String> arguments;
+  
+  /**
+   * The MIME type of the run result.
+   */
+  private String mimeType;
 
   // ~ Constructors ====================================================================================================
 
-  public RunResultRepositoryFileContent(final InputStream data, final String encoding,
+  public RunResultRepositoryFileContent(final InputStream data, final String encoding, final String mimeType,
       final Map<String, String> arguments) {
     super(data, encoding);
     this.arguments = arguments;
+    this.mimeType = mimeType;
   }
 
   // ~ Methods =========================================================================================================
 
   public Map<String, String> getArguments() {
     return Collections.unmodifiableMap(arguments);
+  }
+  
+  public String getMimeType() {
+    return mimeType;
   }
 
 }

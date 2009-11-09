@@ -8,6 +8,8 @@ import static org.junit.Assert.fail;
 
 import java.io.ByteArrayInputStream;
 import java.io.Serializable;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -243,7 +245,11 @@ public class PentahoContentRepositoryTests implements ApplicationContextAware {
     pentahoContentRepository.createUserHomeFolderIfNecessary();
     RepositoryFile parentFolder = pentahoContentRepository.getFile("/pentaho/home/suzy");
     RepositoryFile newFolder = new RepositoryFile.Builder("test").folder(true).build();
+    Date beginTime = Calendar.getInstance().getTime();
     newFolder = pentahoContentRepository.createFolder(parentFolder, newFolder);
+    Date endTime = Calendar.getInstance().getTime();
+    assertTrue(beginTime.before(newFolder.getCreatedDate()));
+    assertTrue(endTime.after(newFolder.getCreatedDate()));
     assertNotNull(newFolder);
     assertNotNull(newFolder.getId());
     assertNotNull(SimpleJcrTestUtils.getItem(testJcrTemplate, "/pentaho/home/suzy/test"));
@@ -273,9 +279,12 @@ public class PentahoContentRepositoryTests implements ApplicationContextAware {
     final String expectedAbsolutePath = "/pentaho/home/suzy/helloworld.xaction";
 
     final SimpleRepositoryFileContent content = new SimpleRepositoryFileContent(dataStream, expectedEncoding);
-
+    Date beginTime = Calendar.getInstance().getTime();
     RepositoryFile newFile = pentahoContentRepository.createFile(parentFolder, new RepositoryFile.Builder(expectedName)
         .mimeType(expectedMimeType).build(), content);
+    Date endTime = Calendar.getInstance().getTime();
+    assertTrue(beginTime.before(newFile.getLastModifiedDate()));
+    assertTrue(endTime.after(newFile.getLastModifiedDate()));
     assertNotNull(newFile.getId());
     RepositoryFile foundFile = pentahoContentRepository.getFile(expectedAbsolutePath);
     assertNotNull(foundFile);
@@ -297,22 +306,18 @@ public class PentahoContentRepositoryTests implements ApplicationContextAware {
     pentahoContentRepository.startup();
     SecurityContextHolder.getContext().setAuthentication(AUTHENTICATION_SUZY);
     pentahoContentRepository.createUserHomeFolderIfNecessary();
-    RepositoryFile parentFolder = pentahoContentRepository.getFile("/pentaho/home/suzy");
     final String expectedDataString = "Hello World!";
     final String expectedEncoding = "UTF-8";
-    byte[] data = expectedDataString.getBytes(expectedEncoding);
-    ByteArrayInputStream dataStream = new ByteArrayInputStream(data);
-    final String expectedMimeType = "application/vnd.pentaho.runresult";
+    final String expectedRunResultMimeType = "text/plain";
     final String expectedName = "helloworld.xaction";
-    final String expectedAbsolutePath = "/pentaho/home/suzy/helloworld.xaction";
+    final String parentFolderPath = "/pentaho/home/suzy";
+    final String expectedAbsolutePath = parentFolderPath + RepositoryFile.SEPARATOR + expectedName;
+    final String expectedMimeType = "application/vnd.pentaho.runresult";
     final Map<String, String> expectedRunArguments = new HashMap<String, String>();
     expectedRunArguments.put("testKey", "testValue");
+    RepositoryFile newFile = createRunResultFile(parentFolderPath, expectedName, expectedDataString, expectedEncoding,
+        expectedRunResultMimeType, expectedRunArguments);
 
-    final RunResultRepositoryFileContent content = new RunResultRepositoryFileContent(dataStream, expectedEncoding,
-        expectedRunArguments);
-
-    RepositoryFile newFile = pentahoContentRepository.createFile(parentFolder, new RepositoryFile.Builder(expectedName)
-        .mimeType(expectedMimeType).build(), content);
     assertNotNull(newFile.getId());
     RepositoryFile foundFile = pentahoContentRepository.getFile(expectedAbsolutePath);
     assertNotNull(foundFile);
@@ -328,6 +333,7 @@ public class PentahoContentRepositoryTests implements ApplicationContextAware {
 
     assertEquals(expectedDataString, IOUtils.toString(contentFromRepo.getData(), expectedEncoding));
     assertEquals(expectedRunArguments, contentFromRepo.getArguments());
+    assertEquals(expectedRunResultMimeType, contentFromRepo.getMimeType());
   }
 
   @Test(expected = IllegalArgumentException.class)
@@ -386,6 +392,79 @@ public class PentahoContentRepositoryTests implements ApplicationContextAware {
       fail();
     } catch (AccessDeniedException e) {
     }
+  }
+
+  @Test
+  public void testUpdateFile() throws Exception {
+    pentahoContentRepository.startup();
+    SecurityContextHolder.getContext().setAuthentication(AUTHENTICATION_SUZY);
+    pentahoContentRepository.createUserHomeFolderIfNecessary();
+
+    final String parentFolderPath = "/pentaho/home/suzy";
+    final String expectedEncoding = "UTF-8";
+    final String expectedRunResultMimeType = "text/plain";
+    final String expectedName = "helloworld.xaction";
+    final Map<String, String> expectedRunArguments = new HashMap<String, String>();
+    expectedRunArguments.put("testKey", "testValue");
+
+    RepositoryFile newFile = createRunResultFile(parentFolderPath, expectedName, "Hello World!", expectedEncoding,
+        expectedRunResultMimeType, expectedRunArguments);
+
+    final String expectedModDataString = "Ciao World!";
+    ByteArrayInputStream modDataStream = new ByteArrayInputStream(expectedModDataString.getBytes(expectedEncoding));
+    final Map<String, String> modExpectedRunArguments = new HashMap<String, String>();
+    modExpectedRunArguments.put("testKey2", "testValue2");
+
+    final RunResultRepositoryFileContent modContent = new RunResultRepositoryFileContent(modDataStream,
+        expectedEncoding, expectedRunResultMimeType, modExpectedRunArguments);
+
+    pentahoContentRepository.updateFile(newFile, modContent);
+
+    RunResultRepositoryFileContent modContentFromRepo = pentahoContentRepository
+        .getContentForRead(pentahoContentRepository.getFile("/pentaho/home/suzy/helloworld.xaction"),
+            RunResultRepositoryFileContent.class);
+
+    assertEquals(expectedModDataString, IOUtils.toString(modContentFromRepo.getData(), expectedEncoding));
+
+    assertEquals(modExpectedRunArguments, modContentFromRepo.getArguments());
+  }
+
+  @Test(expected = AccessDeniedException.class)
+  public void testUpdateFileAccessDenied() throws Exception {
+    pentahoContentRepository.startup();
+    SecurityContextHolder.getContext().setAuthentication(AUTHENTICATION_SUZY);
+    pentahoContentRepository.createUserHomeFolderIfNecessary();
+    final String parentFolderPath = "/pentaho/home/suzy";
+    final String expectedEncoding = "UTF-8";
+    final String expectedRunResultMimeType = "text/plain";
+    final String expectedName = "helloworld.xaction";
+    final Map<String, String> expectedRunArguments = new HashMap<String, String>();
+    expectedRunArguments.put("testKey", "testValue");
+    RepositoryFile newFile = createRunResultFile(parentFolderPath, expectedName, "Hello World!", expectedEncoding,
+        expectedRunResultMimeType, expectedRunArguments);
+    final String expectedModDataString = "Ciao World!";
+    ByteArrayInputStream modDataStream = new ByteArrayInputStream(expectedModDataString.getBytes(expectedEncoding));
+    final Map<String, String> modExpectedRunArguments = new HashMap<String, String>();
+    modExpectedRunArguments.put("testKey2", "testValue2");
+    final RunResultRepositoryFileContent modContent = new RunResultRepositoryFileContent(modDataStream,
+        expectedEncoding, expectedRunResultMimeType, modExpectedRunArguments);
+    SecurityContextHolder.getContext().setAuthentication(AUTHENTICATION_TIFFANY);
+    pentahoContentRepository.updateFile(newFile, modContent);
+    pentahoContentRepository.getContentForRead(pentahoContentRepository
+        .getFile("/pentaho/home/suzy/helloworld.xaction"), RunResultRepositoryFileContent.class);
+  }
+
+  private RepositoryFile createRunResultFile(final String parentFolderPath, final String expectedName,
+      final String expectedDataString, final String expectedEncoding, final String expectedRunResultMimeType,
+      Map<String, String> expectedRunArguments) throws Exception {
+    RepositoryFile parentFolder = pentahoContentRepository.getFile(parentFolderPath);
+    byte[] data = expectedDataString.getBytes(expectedEncoding);
+    ByteArrayInputStream dataStream = new ByteArrayInputStream(data);
+    final String expectedMimeType = "application/vnd.pentaho.runresult";
+    final RunResultRepositoryFileContent content = new RunResultRepositoryFileContent(dataStream, expectedEncoding,
+        expectedRunResultMimeType, expectedRunArguments);
+    return pentahoContentRepository.createFile(parentFolder, new RepositoryFile.Builder(expectedName).mimeType(
+        expectedMimeType).build(), content);
   }
 
   private void assertAceExists(final Serializable id, final Sid sid, final Permission permission) {

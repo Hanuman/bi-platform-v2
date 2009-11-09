@@ -90,6 +90,24 @@ public class JcrPentahoContentDao implements IPentahoContentDao, InitializingBea
       }
     });
   }
+  
+  private void internalUpdateFile(final RepositoryFile file,
+      final IRepositoryFileContent content) {
+    Assert.notNull(file);
+    Assert.hasText(file.getName());
+    Assert.isTrue(!file.isFolder());
+    Assert.notNull(content);
+    Assert.hasText(file.getMimeType());
+
+    jcrTemplate.execute(new JcrCallback() {
+      public Object doInJcr(final Session session) throws RepositoryException, IOException {
+        JcrRepositoryFileUtils.updateFileNode(session, nodeIdStrategy, file, content,
+            transformers.get(file.getMimeType()));
+        session.save();
+        return null;
+      }
+    });
+  }
 
   /**
    * {@inheritDoc}
@@ -188,6 +206,18 @@ public class JcrPentahoContentDao implements IPentahoContentDao, InitializingBea
     });
   }
 
+
+  public void updateFile(RepositoryFile file, IRepositoryFileContent content) {
+    Assert.notNull(file);
+    Assert.isTrue(!file.isFolder());
+    Assert.isTrue(transformers.containsKey(file.getMimeType()), String.format(
+        "no transformer for this MIME type [%s] exists", file.getMimeType()));
+    Assert.isTrue(transformers.get(file.getMimeType()).supports(content.getClass()), String.format(
+        "transformer for MIME type [%s] does not consume instances of type [%s]", file.getMimeType(), content
+            .getClass().getName()));
+    internalUpdateFile(file, content);
+  }
+  
   /**
    * Allows for configurable node id getting, setting, and finding.
    * 
@@ -264,10 +294,13 @@ public class JcrPentahoContentDao implements IPentahoContentDao, InitializingBea
   public static interface Transformer<T extends IRepositoryFileContent> {
     <S extends IRepositoryFileContent> boolean supports(Class<S> clazz);
 
-    T nodeToContent(final Session session, final NodeIdStrategy nodeIdStrategy, final Node node)
+    T fromContentNode(final Session session, final NodeIdStrategy nodeIdStrategy, final Node node)
         throws RepositoryException, IOException;
 
-    void contentToNode(final Session session, final NodeIdStrategy nodeIdStrategy, final T content,
+    void createContentNode(final Session session, final NodeIdStrategy nodeIdStrategy, final T content,
+        final Node resourceNode) throws RepositoryException, IOException;
+    
+    void updateContentNode(final Session session, final NodeIdStrategy nodeIdStrategy, final T content,
         final Node resourceNode) throws RepositoryException, IOException;
   }
 

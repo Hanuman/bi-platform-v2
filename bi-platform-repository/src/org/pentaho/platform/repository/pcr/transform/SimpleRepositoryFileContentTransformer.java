@@ -17,7 +17,7 @@ import org.springframework.util.StringUtils;
 
 public class SimpleRepositoryFileContentTransformer implements Transformer<SimpleRepositoryFileContent> {
 
-  public SimpleRepositoryFileContent nodeToContent(Session session, NodeIdStrategy nodeIdStrategy, Node resourceNode)
+  public SimpleRepositoryFileContent fromContentNode(Session session, NodeIdStrategy nodeIdStrategy, Node resourceNode)
       throws RepositoryException, IOException {
     String encoding = null;
     if (resourceNode.hasProperty(PentahoJcrConstants.JCR_ENCODING)) {
@@ -28,7 +28,7 @@ public class SimpleRepositoryFileContentTransformer implements Transformer<Simpl
 
   }
 
-  public void contentToNode(Session session, NodeIdStrategy nodeIdStrategy, SimpleRepositoryFileContent content,
+  public void createContentNode(Session session, NodeIdStrategy nodeIdStrategy, SimpleRepositoryFileContent content,
       Node resourceNode) throws RepositoryException, IOException {
     if (StringUtils.hasText(content.getEncoding())) {
       resourceNode.setProperty(PentahoJcrConstants.JCR_ENCODING, content.getEncoding());
@@ -41,6 +41,16 @@ public class SimpleRepositoryFileContentTransformer implements Transformer<Simpl
   public <S extends IRepositoryFileContent> boolean supports(final Class<S> clazz) {
     Assert.notNull(clazz);
     return clazz.isAssignableFrom(SimpleRepositoryFileContent.class);
+  }
+
+  public void updateContentNode(Session session, NodeIdStrategy nodeIdStrategy, SimpleRepositoryFileContent content,
+      Node resourceNode) throws RepositoryException, IOException {
+    if (StringUtils.hasText(content.getEncoding())) {
+      resourceNode.setProperty(PentahoJcrConstants.JCR_ENCODING, content.getEncoding());
+    }
+    if (content.getData() != null) {
+      resourceNode.setProperty(PentahoJcrConstants.JCR_DATA, content.getData());
+    }
   }
 
 }

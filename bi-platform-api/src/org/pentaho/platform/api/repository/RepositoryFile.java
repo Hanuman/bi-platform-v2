@@ -31,11 +31,11 @@ public class RepositoryFile implements Comparable<RepositoryFile> {
   // ~ Static fields/initializers ======================================================================================
 
   public static final String SEPARATOR = "/";
-  
+
   // ~ Instance fields =================================================================================================
 
   private String name;
-  
+
   private Serializable id;
 
   private Serializable parentId;
@@ -49,8 +49,10 @@ public class RepositoryFile implements Comparable<RepositoryFile> {
   private boolean folder;
 
   private String absolutePath;
-  
+
   private boolean hidden;
+
+  private boolean versioned;
 
   // ~ Constructors ====================================================================================================
 
@@ -58,7 +60,7 @@ public class RepositoryFile implements Comparable<RepositoryFile> {
     super();
     this.name = name;
   }
-  
+
   public RepositoryFile(final String name, final Serializable id, final Serializable parentId) {
     super();
     this.name = name;
@@ -71,7 +73,7 @@ public class RepositoryFile implements Comparable<RepositoryFile> {
   public String getName() {
     return name;
   }
-  
+
   public Serializable getId() {
     return id;
   }
@@ -109,9 +111,13 @@ public class RepositoryFile implements Comparable<RepositoryFile> {
   public String getAbsolutePath() {
     return absolutePath;
   }
-  
+
   public boolean isHidden() {
     return hidden;
+  }
+
+  public boolean isVersioned() {
+    return versioned;
   }
 
   @Override
@@ -121,7 +127,7 @@ public class RepositoryFile implements Comparable<RepositoryFile> {
 
   public static class Builder {
     private String name;
-    
+
     private Serializable id;
 
     private Serializable parentId;
@@ -135,27 +141,33 @@ public class RepositoryFile implements Comparable<RepositoryFile> {
     private boolean folder;
 
     private String absolutePath;
-    
+
     private boolean hidden;
-    
+
+    private boolean versioned;
+
     public Builder(final String name) {
+      assertHasText(name);
       this.name = name;
     }
-    
+
     public Builder(final String name, final Serializable id, final Serializable parentId) {
+      assertHasText(name);
+      assertNotNull(id);
       this.name = name;
       this.id = id;
       this.parentId = parentId;
     }
-    
+
     public Builder(final RepositoryFile other) {
       this(other.name, other.id, other.parentId);
-      this.absolutePath(other.absolutePath).createdDate(
-          other.createdDate).folder(other.folder).lastModificationDate(
+      this.absolutePath(other.absolutePath).createdDate(other.createdDate).folder(other.folder).lastModificationDate(
           other.lastModifiedDate).mimeType(other.mimeType);
     }
 
     public RepositoryFile build() {
+      // currently folder versioning is not supported
+      assertTrue(!(folder && versioned));
       RepositoryFile result = new RepositoryFile(name, id, parentId);
       result.createdDate = this.createdDate;
       result.lastModifiedDate = this.lastModifiedDate;
@@ -163,6 +175,7 @@ public class RepositoryFile implements Comparable<RepositoryFile> {
       result.folder = this.folder;
       result.absolutePath = this.absolutePath;
       result.hidden = this.hidden;
+      result.versioned = this.versioned;
       return result;
     }
 
@@ -190,12 +203,45 @@ public class RepositoryFile implements Comparable<RepositoryFile> {
       this.absolutePath = absolutePath;
       return this;
     }
-    
+
     public Builder hidden(final boolean hidden) {
       this.hidden = hidden;
       return this;
     }
-    
+
+    public Builder versioned(final boolean versioned) {
+      this.versioned = versioned;
+      return this;
+    }
+
+    /**
+     * Implemented here to maintain GWT-compatibility.
+     */
+    protected void assertHasText(final String in) {
+      if (in == null || in.length() == 0 || in.trim().length() == 0) {
+        throw new IllegalArgumentException(
+            "[Assertion failed] - this String argument must have text; it must not be null, empty, or blank");
+      }
+    }
+
+    /**
+     * Implemented here to maintain GWT-compatibility.
+     */
+    protected void assertTrue(final boolean expression) {
+      if (!expression) {
+        throw new IllegalArgumentException("[Assertion failed] - this expression must be true");
+      }
+    }
+
+    /**
+     * Implemented here to maintain GWT-compatibility.
+     */
+    private void assertNotNull(final Object in) {
+      if (in == null) {
+        throw new IllegalArgumentException("[Assertion failed] - this argument is required; it must not be null");
+      }
+    }
+
   }
 
   public int compareTo(final RepositoryFile other) {
@@ -234,5 +280,4 @@ public class RepositoryFile implements Comparable<RepositoryFile> {
     return true;
   }
 
-  
 }

@@ -138,8 +138,8 @@ public class PentahoContentRepository implements IPentahoContentRepository {
     if (contentDao.getFile(PATH_ROOT) != null) {
       return;
     }
-    RepositoryFile rootFolder = internalCreateFolder(null, new RepositoryFile.Builder(FOLDER_ROOT).folder(true).build(),
-        false);
+    RepositoryFile rootFolder = internalCreateFolder(null,
+        new RepositoryFile.Builder(FOLDER_ROOT).folder(true).build(), false);
     internalAddPermission(rootFolder, new GrantedAuthoritySid(regularUserAuthorityName), RepositoryFilePermission.READ);
     internalAddPermission(rootFolder, new GrantedAuthoritySid(regularUserAuthorityName),
         RepositoryFilePermission.EXECUTE);
@@ -203,16 +203,17 @@ public class PentahoContentRepository implements IPentahoContentRepository {
     }
   }
 
-  private RepositoryFile internalCreateFile(final RepositoryFile parentFolder, final RepositoryFile file, final IRepositoryFileContent content,
-      final boolean inheritAces) {
+  private RepositoryFile internalCreateFile(final RepositoryFile parentFolder, final RepositoryFile file,
+      final IRepositoryFileContent content, final boolean inheritAces) {
     Assert.notNull(file);
+    Assert.notNull(content);
 
     RepositoryFile newFile = contentDao.createFile(parentFolder, file, content);
     internalCreateAclIfNecessary(newFile, inheritAces);
 
     return newFile;
   }
-  
+
   private RepositoryFile internalCreateFolder(final RepositoryFile parentFolder, final RepositoryFile file,
       final boolean inheritAces) {
     Assert.notNull(file);
@@ -221,6 +222,13 @@ public class PentahoContentRepository implements IPentahoContentRepository {
     internalCreateAclIfNecessary(newFile, inheritAces);
 
     return newFile;
+  }
+
+  private void internalUpdateFile(final RepositoryFile file, final IRepositoryFileContent content) {
+    Assert.notNull(file);
+    Assert.notNull(content);
+
+    contentDao.updateFile(file, content);
   }
 
   private void internalSetFullControl(final RepositoryFile file, final Sid sid) {
@@ -279,14 +287,14 @@ public class PentahoContentRepository implements IPentahoContentRepository {
       return auth.getPrincipal().toString();
     }
   }
-  
+
   /**
    * {@inheritDoc}
    */
   public synchronized void shutdown() {
 
   }
-  
+
   /**
    * {@inheritDoc}
    */
@@ -297,21 +305,20 @@ public class PentahoContentRepository implements IPentahoContentRepository {
   /**
    * {@inheritDoc}
    */
-  public synchronized RepositoryFile createFile(final RepositoryFile parentFolder, final RepositoryFile file, final IRepositoryFileContent content) {
+  public synchronized RepositoryFile createFile(final RepositoryFile parentFolder, final RepositoryFile file,
+      final IRepositoryFileContent content) {
     Assert.notNull(file);
     Assert.isTrue(!file.isFolder());
     Assert.hasText(file.getName());
-    if (!file.isFolder()) {
-      Assert.notNull(content);
-      Assert.hasText(file.getMimeType());
-    }
+    Assert.notNull(content);
+    Assert.hasText(file.getMimeType());
     if (parentFolder != null) {
       Assert.hasText(parentFolder.getName());
     }
 
     return internalCreateFile(parentFolder, file, content, true);
   }
-  
+
   /**
    * {@inheritDoc}
    */
@@ -357,5 +364,20 @@ public class PentahoContentRepository implements IPentahoContentRepository {
     Assert.notNull(folder.isFolder());
     return contentDao.getChildren(folder);
   }
-  
+
+  /**
+   * {@inheritDoc}
+   */
+  public void updateFile(RepositoryFile file, IRepositoryFileContent content) {
+    Assert.notNull(file);
+    Assert.isTrue(!file.isFolder());
+    Assert.hasText(file.getName());
+    if (!file.isFolder()) {
+      Assert.notNull(content);
+      Assert.hasText(file.getMimeType());
+    }
+
+    internalUpdateFile(file, content);
+  }
+
 }

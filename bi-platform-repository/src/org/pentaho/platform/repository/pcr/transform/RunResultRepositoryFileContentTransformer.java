@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import javax.jcr.Node;
+import javax.jcr.NodeIterator;
 import javax.jcr.Property;
 import javax.jcr.PropertyIterator;
 import javax.jcr.RepositoryException;
@@ -40,31 +41,30 @@ public class RunResultRepositoryFileContentTransformer implements Transformer<Ru
 
   // ~ Methods =========================================================================================================
 
-  public RunResultRepositoryFileContent nodeToContent(final Session session, final NodeIdStrategy nodeIdStrategy,
+  public RunResultRepositoryFileContent fromContentNode(final Session session, final NodeIdStrategy nodeIdStrategy,
       final Node resourceNode) throws RepositoryException, IOException {
-    SimpleRepositoryFileContent simpleContent = simpleTransformer.nodeToContent(session, nodeIdStrategy, resourceNode);
+    SimpleRepositoryFileContent simpleContent = simpleTransformer
+        .fromContentNode(session, nodeIdStrategy, resourceNode);
 
     Map<String, String> args = new HashMap<String, String>();
-    if (resourceNode.hasNode(JcrRepositoryFileUtils.addPentahoPrefix(session, PentahoJcrConstants.PENTAHO_AUX))) {
-      Node auxNode = resourceNode.getNode(JcrRepositoryFileUtils.addPentahoPrefix(session,
-          PentahoJcrConstants.PENTAHO_AUX));
-      if (auxNode.hasNode(JcrRepositoryFileUtils.addPentahoPrefix(session, PentahoJcrConstants.PENTAHO_RUNARGUMENTS))) {
-        Node runArgsNode = auxNode.getNode(JcrRepositoryFileUtils.addPentahoPrefix(session,
-            PentahoJcrConstants.PENTAHO_RUNARGUMENTS));
-        PropertyIterator propertyIterator = runArgsNode.getProperties();
-        while (propertyIterator.hasNext()) {
-          Property property = propertyIterator.nextProperty();
-          // skip jcr:primaryType property that exists on all nodes 
-          if (!PentahoJcrConstants.JCR_PRIMARYTYPE.equals(property.getName())) {
-            String propertyName = JcrRepositoryFileUtils.removePentahoPrefix(session, property.getName());
-            String propertyValue = property.getString();
-            args.put(propertyName, propertyValue);
-          }
-        }
+    Node auxNode = resourceNode.getNode(JcrRepositoryFileUtils.addPentahoPrefix(session,
+        PentahoJcrConstants.PENTAHO_AUX));
+    String mimeType = auxNode.getProperty(
+        JcrRepositoryFileUtils.addPentahoPrefix(session, PentahoJcrConstants.PENTAHO_MIMETYPE)).getString();
+    Node runArgsNode = auxNode.getNode(JcrRepositoryFileUtils.addPentahoPrefix(session,
+        PentahoJcrConstants.PENTAHO_RUNARGUMENTS));
+    PropertyIterator propertyIterator = runArgsNode.getProperties();
+    while (propertyIterator.hasNext()) {
+      Property property = propertyIterator.nextProperty();
+      // skip jcr:primaryType property that exists on all nodes 
+      if (!PentahoJcrConstants.JCR_PRIMARYTYPE.equals(property.getName())) {
+        String propertyName = JcrRepositoryFileUtils.removePentahoPrefix(session, property.getName());
+        String propertyValue = property.getString();
+        args.put(propertyName, propertyValue);
       }
     }
 
-    return new RunResultRepositoryFileContent(simpleContent.getData(), simpleContent.getEncoding(), args);
+    return new RunResultRepositoryFileContent(simpleContent.getData(), simpleContent.getEncoding(), mimeType, args);
   }
 
   public <S extends IRepositoryFileContent> boolean supports(final Class<S> clazz) {
@@ -72,19 +72,32 @@ public class RunResultRepositoryFileContentTransformer implements Transformer<Ru
     return clazz.isAssignableFrom(RunResultRepositoryFileContent.class);
   }
 
-  public void contentToNode(final Session session, final NodeIdStrategy nodeIdStrategy,
+  public void createContentNode(final Session session, final NodeIdStrategy nodeIdStrategy,
       final RunResultRepositoryFileContent content, final Node resourceNode) throws RepositoryException, IOException {
-    simpleTransformer.contentToNode(session, nodeIdStrategy, content, resourceNode);
-
-    Node runArgsNode = null;
-    if (!content.getArguments().isEmpty()) {
-      Node auxNode = resourceNode.addNode(JcrRepositoryFileUtils.addPentahoPrefix(session,
-          PentahoJcrConstants.PENTAHO_AUX));
-      runArgsNode = auxNode.addNode(JcrRepositoryFileUtils.addPentahoPrefix(session,
-          PentahoJcrConstants.PENTAHO_RUNARGUMENTS), PentahoJcrConstants.NT_UNSTRUCTURED);
-    } else {
-      return;
+    simpleTransformer.createContentNode(session, nodeIdStrategy, content, resourceNode);
+    Node auxNode = resourceNode.addNode(JcrRepositoryFileUtils.addPentahoPrefix(session,
+        PentahoJcrConstants.PENTAHO_AUX));
+    auxNode.setProperty(JcrRepositoryFileUtils.addPentahoPrefix(session, PentahoJcrConstants.PENTAHO_MIMETYPE), content
+        .getMimeType());
+    Node runArgsNode = auxNode.addNode(JcrRepositoryFileUtils.addPentahoPrefix(session,
+        PentahoJcrConstants.PENTAHO_RUNARGUMENTS), PentahoJcrConstants.NT_UNSTRUCTURED);
+    for (Map.Entry<String, String> entry : content.getArguments().entrySet()) {
+      runArgsNode.setProperty(JcrRepositoryFileUtils.addPentahoPrefix(session, entry.getKey()), entry.getValue());
     }
+  }
+
+  public void updateContentNode(Session session, NodeIdStrategy nodeIdStrategy, RunResultRepositoryFileContent content,
+      Node resourceNode) throws RepositoryException, IOException {
+    simpleTransformer.updateContentNode(session, nodeIdStrategy, content, resourceNode);
+    Node auxNode = resourceNode.getNode(JcrRepositoryFileUtils.addPentahoPrefix(session,
+        PentahoJcrConstants.PENTAHO_AUX));
+    auxNode.setProperty(JcrRepositoryFileUtils.addPentahoPrefix(session, PentahoJcrConstants.PENTAHO_MIMETYPE), content
+        .getMimeType());
+    Node runArgsNode = auxNode.getNode(JcrRepositoryFileUtils.addPentahoPrefix(session,
+        PentahoJcrConstants.PENTAHO_RUNARGUMENTS));
+    runArgsNode.remove();
+    runArgsNode = auxNode.addNode(JcrRepositoryFileUtils.addPentahoPrefix(session,
+        PentahoJcrConstants.PENTAHO_RUNARGUMENTS), PentahoJcrConstants.NT_UNSTRUCTURED);
     for (Map.Entry<String, String> entry : content.getArguments().entrySet()) {
       runArgsNode.setProperty(JcrRepositoryFileUtils.addPentahoPrefix(session, entry.getKey()), entry.getValue());
     }

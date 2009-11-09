@@ -97,4 +97,12 @@ public interface IPentahoContentRepository {
    * @return list of children (never {@code null})
    */
   List<RepositoryFile> getChildren(final RepositoryFile folder);
+  
+  /**
+   * Updates a file and/or the content of a file.
+   * 
+   * @param file updated file
+   * @param content updated content
+   */
+  void updateFile(final RepositoryFile file, final IRepositoryFileContent content);
 }

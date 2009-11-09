@@ -231,6 +231,7 @@
         org.pentaho.platform.api.repository.IPentahoContentRepository.createFile=PROPAGATION_REQUIRED
         org.pentaho.platform.api.repository.IPentahoContentRepository.createFolder=PROPAGATION_REQUIRED
         org.pentaho.platform.api.repository.IPentahoContentRepository.getChildren=PROPAGATION_REQUIRED,readOnly
+        org.pentaho.platform.api.repository.IPentahoContentRepository.updateFile=PROPAGATION_REQUIRED
         </value>
     </property>
   </bean>
@@ -290,6 +291,7 @@
         org.pentaho.platform.api.repository.IPentahoContentRepository.createFile=VOTE_ROLE_FILE_Authenticated,VOTE_ACL_FILE_WRITE
         org.pentaho.platform.api.repository.IPentahoContentRepository.createFolder=VOTE_ROLE_FILE_Authenticated,VOTE_ACL_FILE_APPEND
         org.pentaho.platform.api.repository.IPentahoContentRepository.getChildren=VOTE_ROLE_FILE_Authenticated,VOTE_ACL_FILE_READ
+        org.pentaho.platform.api.repository.IPentahoContentRepository.updateFile=VOTE_ROLE_FILE_Authenticated,VOTE_ACL_FILE_WRITE,VOTE_ACL_FILE_APPEND
       </value>
     </property>
   </bean>
