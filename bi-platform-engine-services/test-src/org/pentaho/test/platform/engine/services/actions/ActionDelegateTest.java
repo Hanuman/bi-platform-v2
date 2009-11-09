@@ -1,4 +1,4 @@
-package org.pentaho.test.platform.engine.services;
+package org.pentaho.test.platform.engine.services.actions;
 
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
@@ -36,7 +36,7 @@ import org.pentaho.platform.engine.services.solution.SolutionEngine;
 import org.pentaho.platform.util.web.SimpleUrlFactory;
 import org.pentaho.test.platform.engine.core.MicroPlatform;
 import org.pentaho.test.platform.engine.core.PluginManagerAdapter;
-import org.pentaho.test.platform.engine.services.TestAction.CustomType;
+import org.pentaho.test.platform.engine.services.ServiceTestHelper;
 
 /**
  * This JUnit test verifies the proper functioning of IActions as surrogate components.
@@ -119,6 +119,27 @@ public class ActionDelegateTest {
     booter.start();
     PentahoSystem.get(ISolutionEngine.class).setLoggingLevel(ILogger.DEBUG);
   }
+  
+  @Test
+  public void testIndexedInputs() {
+    TestIndexedInputsAction action1 = new TestIndexedInputsAction();
+    
+    execute("testIndexedInputs.xaction", action1);
+    
+    assertTrue("messages list should have elements", action1.getAllMessages().size() > 0);
+    
+    assertEquals("action string type input \"message_1\" is incorrect/not set", "indexed message_1 text", action1.getMessage(1));
+    assertEquals("action string type input \"message_2\" is incorrect/not set", "indexed message_2 text", action1.getMessage(2));
+    
+    assertTrue("otherMessages list should have elements", action1.getOtherMessage().size() > 0);
+    
+    for(int i=0; i < 3; i++) {
+      assertEquals("action string type input \"message_"+i+"\" is incorrect/not set", "indexed message_"+i+" text", action1.getMessage(i));
+      assertEquals("action string type input \"otherMessage_"+i+"\" is incorrect/not set", "other indexed message_"+i+" text", action1.getOtherMessage().get(i));
+    }
+    
+    assertEquals("action string type input \"scalarMessage\" is incorrect/not set", "scalar message text", action1.getTextOfScalarMessage());
+  }
 
   @Test
   public void testMappedInput() {
@@ -178,7 +199,7 @@ public class ActionDelegateTest {
 
   @Test
   public void testCustomTypeIO() {
-    CustomType testCustomType = new CustomType();
+    TestAction.CustomType testCustomType = new TestAction.CustomType();
     TestAction action1 = new TestAction();
     action1.setCustom(testCustomType);
     TestAction action2 = new TestAction();

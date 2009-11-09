@@ -60,6 +60,7 @@ public class ActionDelegate extends ComponentBase {
     //
     ConvertUtilsBean convertUtil = new ConvertUtilsBean();
     convertUtil.register(true, true, 0);
+
     typeConvertingBeanUtil = new BeanUtilsBean(convertUtil);
   }
 
@@ -100,6 +101,29 @@ public class ActionDelegate extends ComponentBase {
   @Override
   protected boolean executeAction() throws Throwable {
     //
+    //Provide output stream for streaming actions.  We are going to look for an output where
+    //type = "content", which is a required output for IStreamingActions.  If this output
+    //is found, an OutputStream will be retrieved for this output and that OutputStream will
+    //be handed to the IStreamingAction.
+    //
+    Map<String, IContentItem> outputContentItems = new HashMap<String, IContentItem>();
+    StreamingOutputOps streamOutputOps = new StreamingOutputOps(outputContentItems);
+
+    IActionOutput[] contentOutputs = getActionDefinition().getOutputs(ActionSequenceDocument.CONTENT_TYPE);
+    if (contentOutputs.length > 0) {
+
+      for (IActionOutput contentOutput : contentOutputs) {
+
+        if (!isStreamingOutput(contentOutput.getPublicName())) {
+          //we will deal with this output like normal non-streaming outputs post execution
+          continue;
+        }
+
+        streamOutputOps.setOutputStream(contentOutput);
+      }
+    }
+
+    //
     //Create a map for passing undeclared inputs if an IVarArgsAction
     //
     Map<String, Object> varArgsMap = null;
@@ -109,155 +133,20 @@ public class ActionDelegate extends ComponentBase {
     }
 
     //
-    //Provide output stream for streaming actions.  We are going to look for an output where
-    //type = "content", which is a required output for IStreamingActions.  If this output
-    //is found, an OutputStream will be retrieved for this output and that OutputStream will
-    //be handed to the IStreamingAction.
-    //
-    Map<String, IContentItem> outputContentItems = new HashMap<String, IContentItem>();
-
-    IActionOutput[] contentOutputs = getActionDefinition().getOutputs(ActionSequenceDocument.CONTENT_TYPE);
-    
-    if (contentOutputs.length > 0) {
-      
-      boolean streamingCheckPerformed = false;
-
-      for (IActionOutput contentOutput : contentOutputs) {
-        
-        if(!isStreamingOutput(contentOutput.getPublicName())) {
-          //we will deal with this output like normal non-streaming outputs post execution
-          continue;
-        }
-
-        String contentOutputName = compatibilityToCamelCase(contentOutput.getName());
-        String contentOutputPropertyName = contentOutputName + "Stream"; //$NON-NLS-1$
-
-        if (beanUtil.isWriteable(actionBean, contentOutputPropertyName)) {
-
-          //fail early if we cannot handle stream outputs
-          if (!streamingCheckPerformed && !(actionBean instanceof IStreamingAction)) {
-            throw new ActionExecutionException(Messages.getInstance().getErrorString(
-                "ActionDelegate.ERROR_0002_ACTION_CANNOT_ACCEPT_STREAM", //$NON-NLS-1$
-                contentOutputName, actionBean.getClass().getSimpleName()));
-          }
-          streamingCheckPerformed = true;
-
-          String mimeType = ((IStreamingAction) actionBean).getMimeType(contentOutputName);
-          if (StringUtils.isEmpty(mimeType)) {
-            throw new ActionValidationException(Messages.getInstance().getErrorString(
-                "ActionDelegate.ERROR_0001_MIMETYPE_NOT_DECLARED")); //$NON-NLS-1$
-          }
-
-          //most output handlers will manage multiple destinations for us and hand us back a MultiContentItem
-          IContentItem contentItem = getRuntimeContext().getOutputContentItem(contentOutput.getPublicName(), mimeType);
-
-          if (contentItem == null) {
-            //this is the best I can do here to point users to a tangible problem without unwrapping code in RuntimeEngine - AP
-            throw new ActionValidationException(Messages.getInstance().getErrorString(
-                "ActionDelegate.ERROR_0003_OUTPUT_STREAM_NOT_AVAILABLE_1", //$NON-NLS-1$
-                contentOutput.getPublicName()));
-          }
-
-          //this will be a MultiOutputStream in the case where there is more than one destination for the content output
-          OutputStream contentOutputStream = contentItem.getOutputStream(getActionName());
-          if (contentOutputStream == null) {
-            throw new ActionExecutionException(Messages.getInstance().getErrorString(
-                "ActionDelegate.ERROR_0004_OUTPUT_STREAM_NOT_AVAILABLE_2", //$NON-NLS-1$
-                actionBean.getClass().getSimpleName()));
-          }
-
-          //save this for later when we set the action outputs
-          outputContentItems.put(contentOutput.getName(), contentItem);
-
-          //
-          // Now hand the Action a writeable output stream so it has something to write to during execution
-          //
-
-          try {
-            //trying our best to set the input value to the type specified by the action bean
-            beanUtil.setSimpleProperty(actionBean, contentOutputPropertyName, contentOutputStream);
-          } catch (Exception e) {
-            PropertyDescriptor desc = beanUtil.getPropertyDescriptor(actionBean, contentOutputName);
-            //we could not convert to the type the action wants. this is a failure
-            throw new ActionExecutionException(Messages.getInstance().getErrorString(
-                "ActionDelegate.ERROR_0008_FAILED_TO_SET_STREAM", contentOutputName, OutputStream.class.getName(),
-                actionBean.getClass().getSimpleName(), desc.getPropertyType().getName()), e);
-          }
-        } else {
-          if (loggingLevel <= ILogger.WARN) {
-            warn(Messages.getInstance().getString("ActionDelegate.WARN_INPUT_NOT_WRITABLE", actionBean //$NON-NLS-1$
-                .getClass().getSimpleName(), contentOutputName, OutputStream.class.getName()));
-          }
-        }
-      }
-    }
-
-    //
     //Set inputs
     //
-    for (IActionInput input : actionDefintionInputs) {
-      String inputName = input.getName();
-      inputName = compatibilityToCamelCase(inputName);
-
-      /* InputVal has a concrete type that may be determined by the type attribute 
-       * of the action sequence input.  See type mappings in documentation. */
-      Object inputVal = input.getValue();
-
-      if (beanUtil.isWriteable(actionBean, inputName)) {
-
-        try {
-          //trying our best to set the input value to the type specified by the action bean
-          typeConvertingBeanUtil.copyProperty(actionBean, inputName, inputVal);
-        } catch (Exception e) {
-          PropertyDescriptor desc = beanUtil.getPropertyDescriptor(actionBean, inputName);
-          //we could not convert to the type the action wants. this is a failure
-          throw new ActionExecutionException(Messages.getInstance().getErrorString(
-              "ActionDelegate.ERROR_0005_FAILED_TO_SET_INPUT", //$NON-NLS-1$
-              inputName, inputVal.getClass().getName(), actionBean.getClass().getSimpleName(),
-              desc.getPropertyType().getName()), e);
-        }
-      } else {
-        //the input is undeclared, put it in the varArgsMap if anyone cares
-        if (varArgsMap != null) {
-          varArgsMap.put(inputName, inputVal);
-        } else if (loggingLevel <= ILogger.WARN) {
-          //log a warning if there is no way to get this input to the Action
-          String valueType = (inputVal == null) ? null : inputVal.getClass().getName();
-          warn(Messages.getInstance().getString(
-              "ActionDelegate.WARN_INPUT_NOT_WRITABLE", actionBean.getClass().getSimpleName(), //$NON-NLS-1$
-              inputName, valueType));
-        }
-      }
+    InputOps inputOps = new InputOps(varArgsMap);
+    for (IActionInput input : getActionDefinition().getInputs()) {
+      //      inputOps.setValue(input.getName(), input.getValue());
+      inputOps.setInput(input);
     }
 
     //
     //Set resources
     //
+    ResourceOps resOps = new ResourceOps();
     for (IActionResource res : getActionDefinition().getResources()) {
-      String resName = res.getName();
-      resName = compatibilityToCamelCase(resName);
-
-      if (beanUtil.isWriteable(actionBean, resName)) {
-        InputStream inputStream = res.getInputStream();
-
-        try {
-          //There is not a question of type here, it must be InputStream, so we use the non-converting
-          //propertyUtil instance.
-          beanUtil.setSimpleProperty(actionBean, resName, inputStream);
-        } catch (Exception e) {
-          PropertyDescriptor desc = beanUtil.getPropertyDescriptor(actionBean, resName);
-          //we could not convert to the type the action wants. this is a failure
-          throw new ActionExecutionException(Messages.getInstance().getErrorString(
-              "ActionDelegate.ERROR_0006_FAILED_TO_SET_RESOURCE", //$NON-NLS-1$
-              resName, inputStream.getClass().getName(), actionBean.getClass().getSimpleName(),
-              desc.getPropertyType().getName()), e);
-        }
-      } else {
-        if (loggingLevel <= ILogger.WARN) {
-          warn(Messages.getInstance().getString("ActionDelegate.WARN_RESOURCE_NOT_WRITABLE", actionBean //$NON-NLS-1$
-              .getClass().getSimpleName(), resName, InputStream.class.getName()));
-        }
-      }
+      resOps.setResource(res);
     }
 
     //
@@ -295,6 +184,231 @@ public class ActionDelegate extends ComponentBase {
       }
     }
     return true;
+  }
+
+  abstract class BeanOpsTemplate {
+    abstract public void failedToSetValue(String name, Object value, String beanPropertyType, Throwable cause)
+        throws ActionExecutionException;
+
+    public String getPropertyNameSuffix() {
+      return ""; //$NON-NLS-1$
+    }
+
+    abstract public void propertyNotWritable(String name) throws Exception;
+
+    abstract public Object getValueToSet(String name) throws Exception;
+
+    /**
+     * Converts to a bean utils consumable expression and applies other customizations
+     * as necessary, such as suffix additions.
+     * @param name the property name to format
+     * @return the formatted property name ready for use in bean utils
+     */
+    public String format(String name) {
+      String formattedName = name;
+      int indexDelimiter = name.lastIndexOf('_');
+      if (indexDelimiter > 0) { //implies there is a name and an index like 'b_1' or 'a_b'
+        String possibleIndex = name.substring(indexDelimiter + 1);
+        try {
+          int index = Integer.parseInt(possibleIndex);
+          String propertyName = name.substring(0, indexDelimiter);
+          formattedName = propertyName + getPropertyNameSuffix() + "[" + index + "]"; //$NON-NLS-1$ //$NON-NLS-2$
+          return formattedName;
+        } catch (NumberFormatException e) {
+          //we don't have a numeric index, so just return the original expression
+        }
+      }
+      return formattedName + getPropertyNameSuffix();
+    }
+
+    public void setValue(String name) throws Exception {
+      name = compatibilityToCamelCase(name);
+      name = format(name);
+
+      /* InputVal has a concrete type that may be determined by the type attribute 
+       * of the action sequence input.  See type mappings in documentation. */
+      //    Object inputVal = input.getValue();
+      //here we check if we can set the input value on the bean.  There are three ways that bean utils will go about this
+      //1. use a simple property setter method
+      //.. in the case of an indexed property there are two methods:
+      //2. if there is an indexed setter method bean utils will that (note: a simple getter is required as well though it will not be invoked)
+      //3. if there is an array-based getter like List<String> getNames(), bean utils will insert the new value into the array reference 
+      //   it gets from the array getter.
+      if (beanUtil.isWriteable(actionBean, name) || (beanUtil.getResolver().isIndexed(name))
+          && beanUtil.isReadable(actionBean, name)) {
+
+        //we get the value at the latest point possible
+        Object val = getValueToSet(name);
+        try {
+          //trying our best to set the input value to the type specified by the action bean
+          typeConvertingBeanUtil.copyProperty(actionBean, name, val);
+        } catch (Exception e) {
+          String propertyType = ""; //$NON-NLS-1$
+          try {
+            PropertyDescriptor desc = beanUtil.getPropertyDescriptor(actionBean, name);
+            propertyType = desc.getPropertyType().getName();
+          } catch (Throwable t) {
+            //we are in a catch, we should never let an exception escape here
+          }
+          failedToSetValue(name, val, propertyType, e);
+        }
+      } else {
+        //we get the value at the latest point possible
+        propertyNotWritable(name);
+      }
+    }
+  }
+
+  class StreamingOutputOps extends BeanOpsTemplate {
+    private Map<String, IContentItem> outputContentItems;
+
+    private boolean streamingCheckPerformed = false;
+
+    private IActionOutput curActionOutput;
+
+    public StreamingOutputOps(Map<String, IContentItem> outputContentItems) {
+      this.outputContentItems = outputContentItems;
+    }
+    
+    public void setOutputStream(IActionOutput actionOutput) throws Exception {
+      curActionOutput = actionOutput;
+      super.setValue(actionOutput.getName());
+    }
+
+    @Override
+    public String getPropertyNameSuffix() {
+      return "Stream"; //$NON-NLS-1$
+    }
+    
+    @Override
+    public void failedToSetValue(String name, Object value, String destPropertyType, Throwable cause)
+        throws ActionExecutionException {
+      throw new ActionExecutionException(Messages.getInstance().getErrorString(
+          "ActionDelegate.ERROR_0008_FAILED_TO_SET_STREAM", name, OutputStream.class.getName(), //$NON-NLS-1$
+          actionBean.getClass().getSimpleName(), destPropertyType), cause);
+    }
+
+    @Override
+    public void propertyNotWritable(String name) {
+      if (loggingLevel <= ILogger.WARN) {
+        warn(Messages.getInstance().getString("ActionDelegate.WARN_INPUT_NOT_WRITABLE", actionBean //$NON-NLS-1$
+            .getClass().getSimpleName(), name, OutputStream.class.getName()));
+      }
+    }
+
+    @Override
+    public Object getValueToSet(String name) throws Exception {
+      //fail early if we cannot handle stream outputs
+      if (!streamingCheckPerformed && !(actionBean instanceof IStreamingAction)) {
+        throw new ActionExecutionException(Messages.getInstance().getErrorString(
+            "ActionDelegate.ERROR_0002_ACTION_CANNOT_ACCEPT_STREAM", //$NON-NLS-1$
+            name, actionBean.getClass().getSimpleName()));
+      }
+      streamingCheckPerformed = true;
+
+      String mimeType = ((IStreamingAction) actionBean).getMimeType(name);
+      if (StringUtils.isEmpty(mimeType)) {
+        throw new ActionValidationException(Messages.getInstance().getErrorString(
+            "ActionDelegate.ERROR_0001_MIMETYPE_NOT_DECLARED")); //$NON-NLS-1$
+      }
+
+      //most output handlers will manage multiple destinations for us and hand us back a MultiContentItem
+      IContentItem contentItem = getRuntimeContext().getOutputContentItem(curActionOutput.getPublicName(), mimeType);
+
+      if (contentItem == null) {
+        //this is the best I can do here to point users to a tangible problem without unwrapping code in RuntimeEngine - AP
+        throw new ActionValidationException(Messages.getInstance().getErrorString(
+            "ActionDelegate.ERROR_0003_OUTPUT_STREAM_NOT_AVAILABLE_1", //$NON-NLS-1$
+            curActionOutput.getPublicName()));
+      }
+
+      //this will be a MultiOutputStream in the case where there is more than one destination for the content output
+      OutputStream contentOutputStream = contentItem.getOutputStream(getActionName());
+      if (contentOutputStream == null) {
+        throw new ActionExecutionException(Messages.getInstance().getErrorString(
+            "ActionDelegate.ERROR_0004_OUTPUT_STREAM_NOT_AVAILABLE_2", //$NON-NLS-1$
+            actionBean.getClass().getSimpleName()));
+      }
+
+      //save this for later when we set the action outputs
+      outputContentItems.put(curActionOutput.getName(), contentItem);
+
+      return contentOutputStream;
+    }
+  };
+
+  class ResourceOps extends BeanOpsTemplate {
+
+    private IActionResource curResource;
+
+    public void setResource(IActionResource resource) throws Exception {
+      curResource = resource;
+      super.setValue(resource.getName());
+    }
+
+    @Override
+    public void failedToSetValue(String name, Object value, String destPropertyType, Throwable cause)
+        throws ActionExecutionException {
+      throw new ActionExecutionException(Messages.getInstance().getErrorString(
+          "ActionDelegate.ERROR_0006_FAILED_TO_SET_RESOURCE", //$NON-NLS-1$
+          name, value.getClass().getName(), actionBean.getClass().getSimpleName(), destPropertyType), cause);
+    }
+
+    @Override
+    public void propertyNotWritable(String name) {
+      if (loggingLevel <= ILogger.WARN) {
+        warn(Messages.getInstance().getString("ActionDelegate.WARN_RESOURCE_NOT_WRITABLE", actionBean //$NON-NLS-1$
+            .getClass().getSimpleName(), name, InputStream.class.getName()));
+      }
+    }
+
+    @Override
+    public Object getValueToSet(String name) throws Exception {
+      return curResource.getInputStream();
+    }
+  }
+
+  class InputOps extends BeanOpsTemplate {
+    private Map<String, Object> varArgsMap;
+
+    private IActionInput curInput;
+
+    public InputOps(Map<String, Object> varArgsMap) {
+      this.varArgsMap = varArgsMap;
+    }
+
+    public void setInput(IActionInput input) throws Exception {
+      curInput = input;
+      super.setValue(input.getName());
+    }
+
+    @Override
+    public void failedToSetValue(String name, Object value, String destPropertyType, Throwable cause)
+        throws ActionExecutionException {
+      throw new ActionExecutionException(Messages.getInstance().getErrorString(
+          "ActionDelegate.ERROR_0005_FAILED_TO_SET_INPUT", //$NON-NLS-1$
+          name, value.getClass().getName(), actionBean.getClass().getSimpleName(), destPropertyType), cause);
+    }
+
+    @Override
+    public void propertyNotWritable(String name) throws Exception {
+      //the input is undeclared, put it in the varArgsMap if anyone cares
+      Object value = getValueToSet(name);
+      if (varArgsMap != null) {
+        varArgsMap.put(name, value);
+      } else if (loggingLevel <= ILogger.WARN) {
+        //log a warning if there is no way to get this input to the Action
+        String valueType = (value == null) ? null : value.getClass().getName();
+        warn(Messages.getInstance().getString(
+            "ActionDelegate.WARN_INPUT_NOT_WRITABLE", actionBean.getClass().getSimpleName(), //$NON-NLS-1$
+            name, valueType));
+      }
+    }
+
+    @Override
+    public Object getValueToSet(String name) throws Exception {
+      return curInput.getValue();
+    }
   }
 
   /**

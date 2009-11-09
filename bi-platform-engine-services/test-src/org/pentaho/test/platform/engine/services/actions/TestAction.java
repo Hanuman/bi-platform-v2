@@ -1,8 +1,7 @@
-package org.pentaho.test.platform.engine.services;
+package org.pentaho.test.platform.engine.services.actions;
 
 import org.pentaho.platform.api.action.IAction;
 
-@SuppressWarnings("nls")
 public class TestAction implements IAction {
 
   private String message;

@@ -1,4 +1,4 @@
-package org.pentaho.test.platform.engine.services;
+package org.pentaho.test.platform.engine.services.actions;
 
 import java.io.InputStream;
 import java.io.OutputStream;
