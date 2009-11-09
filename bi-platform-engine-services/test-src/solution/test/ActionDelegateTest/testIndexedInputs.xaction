@@ -12,24 +12,24 @@
   </documentation>
 
   <inputs> 
-    <message_0 type="string"> 
-      <default-value>indexed message_0 text</default-value> 
-    </message_0>  
-    <message_1 type="string"> 
-      <default-value>indexed message_1 text</default-value> 
-    </message_1>  
-    <message_2 type="string"> 
-      <default-value>indexed message_2 text</default-value> 
-    </message_2>  
-    <otherMessage_0 type="string"> 
-      <default-value>other indexed message_0 text</default-value> 
-    </otherMessage_0>  
-    <otherMessage_1 type="string"> 
-      <default-value>other indexed message_1 text</default-value> 
-    </otherMessage_1>  
-    <otherMessage_2 type="string"> 
-      <default-value>other indexed message_2 text</default-value> 
-    </otherMessage_2>  
+    <messages_0 type="string"> 
+      <default-value>indexed messages_0 text</default-value> 
+    </messages_0>  
+    <messages_1 type="string"> 
+      <default-value>indexed messages_1 text</default-value> 
+    </messages_1>  
+    <messages_2 type="string"> 
+      <default-value>indexed messages_2 text</default-value> 
+    </messages_2>  
+    <otherMessages_0 type="string"> 
+      <default-value>other indexed messages_0 text</default-value> 
+    </otherMessages_0>  
+    <otherMessages_1 type="string"> 
+      <default-value>other indexed messages_1 text</default-value> 
+    </otherMessages_1>  
+    <otherMessages_2 type="string"> 
+      <default-value>other indexed messages_2 text</default-value> 
+    </otherMessages_2>  
     <scalarMessage type="string"> 
       <default-value>scalar message text</default-value> 
     </scalarMessage> 
@@ -44,13 +44,13 @@
       <component-name>TestAction</component-name>
       <action-type>JUnit Test Action 1</action-type>
       <action-inputs> 
-        <message_0 type="string"/>  
-        <message_1 type="string"/>  
-        <message_2 type="string"/>  
-        <otherMessage_0 type="string"/>  
-        <otherMessage_1 type="string"/>  
-        <otherMessage_2 type="string"/>  
-        <scalarMessage type="string"/> 
+        <messages_0 type="string"/>  
+        <messages_1 type="string"/>  
+        <messages_2 type="string"/>  
+        <otherMessages_0 type="string"/>  
+        <otherMessages_1 type="string"/>  
+        <otherMessages_2 type="string"/>  
+        <scalarMessage type="string"/>  
       </action-inputs>
       <action-resources/>
       <action-outputs/>

@@ -253,7 +253,6 @@ public class ActionDelegate extends ComponentBase {
           failedToSetValue(name, val, propertyType, e);
         }
       } else {
-        //we get the value at the latest point possible
         propertyNotWritable(name);
       }
     }

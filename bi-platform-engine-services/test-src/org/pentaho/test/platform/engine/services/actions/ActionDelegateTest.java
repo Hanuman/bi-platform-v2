@@ -126,16 +126,14 @@ public class ActionDelegateTest {
     
     execute("testIndexedInputs.xaction", action1);
     
+    
+    
     assertTrue("messages list should have elements", action1.getAllMessages().size() > 0);
-    
-    assertEquals("action string type input \"message_1\" is incorrect/not set", "indexed message_1 text", action1.getMessage(1));
-    assertEquals("action string type input \"message_2\" is incorrect/not set", "indexed message_2 text", action1.getMessage(2));
-    
-    assertTrue("otherMessages list should have elements", action1.getOtherMessage().size() > 0);
+    assertTrue("otherMessages list should have elements", action1.getOtherMessages().size() > 0);
     
     for(int i=0; i < 3; i++) {
-      assertEquals("action string type input \"message_"+i+"\" is incorrect/not set", "indexed message_"+i+" text", action1.getMessage(i));
-      assertEquals("action string type input \"otherMessage_"+i+"\" is incorrect/not set", "other indexed message_"+i+" text", action1.getOtherMessage().get(i));
+      assertEquals("action string type input \"messages_"+i+"\" is incorrect/not set", "indexed messages_"+i+" text", action1.getMessages(i));
+      assertEquals("action string type input \"otherMessages_"+i+"\" is incorrect/not set", "other indexed messages_"+i+" text", action1.getOtherMessages().get(i));
     }
     
     assertEquals("action string type input \"scalarMessage\" is incorrect/not set", "scalar message text", action1.getTextOfScalarMessage());

@@ -20,9 +20,9 @@ public class TestIndexedInputsAction implements IAction {
   }
 
   //
-  // The "message" property
+  // The "messages" property
   //
-  public String getMessage(int index) {
+  public String getMessages(int index) {
     return messages.get(index);
   }
   
@@ -30,7 +30,7 @@ public class TestIndexedInputsAction implements IAction {
     return messages;
   }
 
-  public void setMessage(int index, String message) {
+  public void setMessages(int index, String message) {
     messages.add(message);
   }
   
@@ -39,14 +39,14 @@ public class TestIndexedInputsAction implements IAction {
    * so it will be an conformant JavaBean property.  BeanUtils requires indexed
    * properties to also be JavaBean spec.
    */
-  public String getMessage() {
+  public String getMessages() {
     throw new UnsupportedOperationException("This should never be called");
   }
   
   //
   // The "otherMessage" property
   //
-  public List<String> getOtherMessage() {
+  public List<String> getOtherMessages() {
     return otherMessages;
   }
   public void setOtherMessage(String s) {
