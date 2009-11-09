@@ -257,7 +257,7 @@ public class SubscriptionExecute extends PentahoBase {
         try {
           rt = requestHandler.handleActionRequest(0, 0);
           
-          if (!ignoreSubscriptionOutput && !outputHandler.contentDone()) {
+          if (!ignoreSubscriptionOutput && !outputHandler.isResponseExpected()) {
             if ((rt != null) && (rt.getStatus() == IRuntimeContext.RUNTIME_STATUS_SUCCESS)) {
               StringBuffer buffer = new StringBuffer();
               PentahoSystem.get(IMessageFormatter.class, userSession).formatSuccessMessage("text/html", rt, buffer, false); //$NON-NLS-1$
@@ -287,14 +287,14 @@ public class SubscriptionExecute extends PentahoBase {
         try {
           generator.createContent();
           // we succeeded
-          if (!ignoreSubscriptionOutput && !outputHandler.contentDone()) {
+          if (!ignoreSubscriptionOutput && !outputHandler.isResponseExpected()) {
             String message = Messages.getInstance().getString("SubscriptionExecute.DEBUG_FINISHED_EXECUTION", jobName); //$NON-NLS-1$
             writeMessage( message.toString(), outputHandler, subscriptionName, solutionName, actionName, instanceId, userSession );
           }
         } catch (Exception e) {
           e.printStackTrace();
           // we need an error message...
-          if (!ignoreSubscriptionOutput && !outputHandler.contentDone()) {
+          if (!ignoreSubscriptionOutput && !outputHandler.isResponseExpected()) {
             String message = Messages.getInstance().getString("PRO_SUBSCRIPTREP.EXCEPTION_WITH_SCHEDULE", jobName); //$NON-NLS-1$
             writeMessage( message.toString(), outputHandler, subscriptionName, solutionName, actionName, instanceId, userSession );
           }

@@ -197,7 +197,7 @@ public class QuartzExecute extends PentahoBase implements Job {
           requestHandler.setSolutionName(solutionName);
           rt = requestHandler.handleActionRequest(0, 0);
           if (backgroundExecution) {
-            if (!outputHandler.contentDone()) {
+            if (!outputHandler.isResponseExpected()) {
               IContentItem outputContentItem = outputHandler.getOutputContentItem(IOutputHandler.RESPONSE, IOutputHandler.CONTENT, rt.getActionTitle(), null,
                   rt.getSolutionName(), rt.getInstanceId(), "text/html"); //$NON-NLS-1$
               outputContentItem.setMimeType("text/html"); //$NON-NLS-1$
@@ -248,7 +248,7 @@ public class QuartzExecute extends PentahoBase implements Job {
         try {
           generator.createContent();
           // we succeeded
-          if (backgroundExecution && !outputHandler.contentDone()) {
+          if (backgroundExecution && !outputHandler.isResponseExpected()) {
             IContentItem outputContentItem = outputHandler.getOutputContentItem(IOutputHandler.RESPONSE, IOutputHandler.CONTENT, actionName, null,
                 solutionName, instanceId, "text/html"); //$NON-NLS-1$
             outputContentItem.setMimeType("text/html"); //$NON-NLS-1$
