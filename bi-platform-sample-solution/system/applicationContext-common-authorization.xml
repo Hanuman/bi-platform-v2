@@ -7,9 +7,9 @@
 
 <beans>
 
-  <!-- An access decision voter that reads VOTE_ROLE_URL_* configuration settings -->
-  <bean id="roleVoter" class="org.pentaho.platform.repository.pcr.springsecurity.PentahoSubstringRoleVoter">
-    <constructor-arg value="VOTE_ROLE_URL_" />
+  <!-- An access decision voter that reads any configuration setting. See filterInvocationInterceptor.objectDefinitionSource -->
+  <bean id="roleVoter" class="org.pentaho.platform.engine.security.PentahoSubstringRoleVoter">
+    <constructor-arg value="" />
   </bean>
 
 </beans>

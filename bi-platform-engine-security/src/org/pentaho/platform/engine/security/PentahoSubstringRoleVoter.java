@@ -1,4 +1,4 @@
-package org.pentaho.platform.repository.pcr.springsecurity;
+package org.pentaho.platform.engine.security;
 
 import java.util.Iterator;
 
@@ -9,7 +9,6 @@ import org.springframework.security.ConfigAttribute;
 import org.springframework.security.ConfigAttributeDefinition;
 import org.springframework.security.GrantedAuthority;
 import org.springframework.security.vote.AccessDecisionVoter;
-import org.springframework.util.Assert;
 
 /**
  * Similar to {@link org.springframework.security.vote.RoleVoter} except that it does not use a role prefix; instead it 
@@ -42,8 +41,7 @@ public class PentahoSubstringRoleVoter implements AccessDecisionVoter {
 
   public PentahoSubstringRoleVoter(final String processConfigAttributePrefix) {
     super();
-    Assert.hasText(processConfigAttributePrefix);
-    this.processConfigAttributePrefix = processConfigAttributePrefix;
+     this.processConfigAttributePrefix = processConfigAttributePrefix;
   }
 
   //~ Methods =========================================================================================================

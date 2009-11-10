@@ -30,7 +30,7 @@
   </bean>
 
   <!-- An access decision voter that reads VOTE_ROLE_FILE_* configuration settings -->
-  <bean id="roleVoter" class="org.pentaho.platform.repository.pcr.springsecurity.PentahoSubstringRoleVoter">
+  <bean id="roleVoter" class="org.pentaho.platform.engine.security.PentahoSubstringRoleVoter">
     <constructor-arg value="VOTE_ROLE_FILE_" />
   </bean>
 
