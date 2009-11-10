@@ -40,6 +40,10 @@ public class ExecuteWAQRPreviewCommand extends AbstractCommand {
     this.url = url;
   }
 
+  public static void setupNativeHooks() {
+    new ExecuteWAQRPreviewCommand();
+  }
+  
   private static native void setupNativeHooks(ExecuteWAQRPreviewCommand cmd)
   /*-{
     $wnd.mantle_waqr_preview = function(url, xml) {

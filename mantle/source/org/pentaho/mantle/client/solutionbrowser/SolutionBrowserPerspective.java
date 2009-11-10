@@ -28,6 +28,7 @@ import org.pentaho.gwt.widgets.client.utils.string.StringUtils;
 import org.pentaho.mantle.client.IViewMenuCallback;
 import org.pentaho.mantle.client.commands.AbstractCommand;
 import org.pentaho.mantle.client.commands.CommandCallback;
+import org.pentaho.mantle.client.commands.ExecuteWAQRPreviewCommand;
 import org.pentaho.mantle.client.commands.RefreshRepositoryCommand;
 import org.pentaho.mantle.client.commands.RefreshWorkspaceCommand;
 import org.pentaho.mantle.client.commands.ShareFileCommand;
@@ -153,7 +154,7 @@ public class SolutionBrowserPerspective extends HorizontalPanel {
     instance = this;
     this.viewMenuCallback = viewMenuCallback;
 
-    SolutionBrowserPerspective.setupNativeHooks(this);
+    SolutionBrowserPerspective.setupNativeHooks();
 
     solutionTree.addTreeListener(treeListener);
     buildUI();
@@ -207,6 +208,11 @@ public class SolutionBrowserPerspective extends HorizontalPanel {
     ElementUtils.removeScrollingFromUpTo(solutionNavigatorAndContentPanel.getLeftWidget().getElement(), solutionNavigatorAndContentPanel.getElement());
   }
 
+  private static void setupNativeHooks() {
+    ExecuteWAQRPreviewCommand.setupNativeHooks();
+    setupNativeHooks(SolutionBrowserPerspective.getInstance());
+  }
+  
   private static native void setupNativeHooks(SolutionBrowserPerspective solutionNavigator)
   /*-{
     $wnd.sendMouseEvent = function(event) {
