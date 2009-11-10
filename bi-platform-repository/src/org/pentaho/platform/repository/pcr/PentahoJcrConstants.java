@@ -58,4 +58,9 @@ public interface PentahoJcrConstants {
   
   String JCR_LASTMODIFIED = "jcr:lastModified";
 
+  String MIX_VERSIONABLE = "mix:versionable";
+
+  String PENTAHO_VERSIONED = "versioned";
+  
+
 }

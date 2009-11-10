@@ -14,6 +14,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.jcr.Node;
+import javax.jcr.version.VersionHistory;
+import javax.jcr.version.VersionIterator;
 import javax.sql.DataSource;
 
 import org.apache.commons.io.IOUtils;
@@ -452,6 +455,42 @@ public class PentahoContentRepositoryTests implements ApplicationContextAware {
     pentahoContentRepository.updateFile(newFile, modContent);
     pentahoContentRepository.getContentForRead(pentahoContentRepository
         .getFile("/pentaho/home/suzy/helloworld.xaction"), RunResultRepositoryFileContent.class);
+  }
+
+  @Test(expected = IllegalArgumentException.class)
+  public void testCreateVersionedFolder() throws Exception {
+    pentahoContentRepository.startup();
+    SecurityContextHolder.getContext().setAuthentication(AUTHENTICATION_SUZY);
+    pentahoContentRepository.createUserHomeFolderIfNecessary();
+    RepositoryFile parentFolder = pentahoContentRepository.getFile("/pentaho/home/suzy");
+    RepositoryFile newFolder = new RepositoryFile.Builder("test").folder(true).versioned(true).build();
+    newFolder = pentahoContentRepository.createFolder(parentFolder, newFolder);
+  }
+
+  @Test
+  public void testCreateVersionedFile() throws Exception {
+    pentahoContentRepository.startup();
+    SecurityContextHolder.getContext().setAuthentication(AUTHENTICATION_SUZY);
+    pentahoContentRepository.createUserHomeFolderIfNecessary();
+    final String parentFolderPath = "/pentaho/home/suzy";
+    RepositoryFile parentFolder = pentahoContentRepository.getFile(parentFolderPath);
+
+    final String dataString = "Hello World!";
+    final String encoding = "UTF-8";
+    byte[] data = dataString.getBytes(encoding);
+    ByteArrayInputStream dataStream = new ByteArrayInputStream(data);
+    final String mimeType = "text/plain";
+    final String fileName = "helloworld.xaction";
+
+    final SimpleRepositoryFileContent content = new SimpleRepositoryFileContent(dataStream, encoding);
+    RepositoryFile newFile = pentahoContentRepository.createFile(parentFolder, new RepositoryFile.Builder(fileName)
+        .mimeType(mimeType).versioned(true).build(), content);
+    assertTrue(newFile.isVersioned());
+    assertEquals(2, SimpleJcrTestUtils.getVersionCount(testJcrTemplate, parentFolderPath + RepositoryFile.SEPARATOR
+        + fileName));
+    pentahoContentRepository.updateFile(newFile, content);
+    assertEquals(3, SimpleJcrTestUtils.getVersionCount(testJcrTemplate, parentFolderPath + RepositoryFile.SEPARATOR
+        + fileName));
   }
 
   private RepositoryFile createRunResultFile(final String parentFolderPath, final String expectedName,

@@ -28,6 +28,7 @@ public class JcrRepositoryFileUtils {
     Date lastModifiedDateTime = null;
     String mimeType = null;
     boolean folder = false;
+    boolean versioned = false;
 
     if (isFolder(node)) {
       folder = true;
@@ -46,12 +47,13 @@ public class JcrRepositoryFileUtils {
         lastModifiedDateTime = tmpCal.getTime();
       }
       mimeType = node.getProperty(addPentahoPrefix(session, PentahoJcrConstants.PENTAHO_MIMETYPE)).getString();
+      versioned = isVersioned(session, node);
     }
 
     RepositoryFile file = new RepositoryFile.Builder(node.getName(), nodeIdStrategy.getId(node), !node.getParent()
         .isSame(session.getRootNode()) ? nodeIdStrategy.getId(node.getParent()) : null).createdDate(createdDateTime)
-        .lastModificationDate(lastModifiedDateTime).mimeType(mimeType).folder(folder).absolutePath(node.getPath())
-        .build();
+        .lastModificationDate(lastModifiedDateTime).mimeType(mimeType).folder(folder).versioned(versioned)
+        .absolutePath(node.getPath()).build();
 
     return file;
   }
@@ -71,7 +73,7 @@ public class JcrRepositoryFileUtils {
 
   public static Node toFileNode(final Session session, final NodeIdStrategy nodeIdStrategy,
       final RepositoryFile parentFolder, final RepositoryFile file, final IRepositoryFileContent content,
-      final Transformer transformer) throws RepositoryException, IOException {
+      final Transformer<IRepositoryFileContent> transformer) throws RepositoryException, IOException {
 
     Node parentFolderNode;
     if (parentFolder != null) {
@@ -94,16 +96,21 @@ public class JcrRepositoryFileUtils {
         .getProperty(PentahoJcrConstants.JCR_CREATED).getDate());
 
     resourceNode.addMixin(addPentahoPrefix(session, PentahoJcrConstants.PENTAHO_PENTAHORESOURCE));
+    if (file.isVersioned()) {
+      fileNode.setProperty(addPentahoPrefix(session, PentahoJcrConstants.PENTAHO_VERSIONED), true);
+      resourceNode.addMixin(PentahoJcrConstants.MIX_VERSIONABLE);
+    }
+
     transformer.createContentNode(session, nodeIdStrategy, content, resourceNode);
     return fileNode;
   }
 
   public static Node updateFileNode(final Session session, final NodeIdStrategy nodeIdStrategy,
       final RepositoryFile file, final IRepositoryFileContent content,
-      final Transformer transformer) throws RepositoryException, IOException {
+      final Transformer<IRepositoryFileContent> transformer) throws RepositoryException, IOException {
 
     Calendar lastModified = Calendar.getInstance();
-    
+
     Node fileNode = nodeIdStrategy.findNodeById(session, file.getId());
     fileNode.setProperty(addPentahoPrefix(session, PentahoJcrConstants.PENTAHO_MIMETYPE), file.getMimeType());
     fileNode.setProperty(addPentahoPrefix(session, PentahoJcrConstants.PENTAHO_LASTMODIFIED), lastModified);
@@ -117,7 +124,7 @@ public class JcrRepositoryFileUtils {
     transformer.updateContentNode(session, nodeIdStrategy, content, resourceNode);
     return fileNode;
   }
-  
+
   public static Node getResourceNode(final Session session, final Node node) throws RepositoryException, IOException {
     Assert.isTrue(isFileOrLinkedFile(node));
     Node resourceNode = null;
@@ -132,7 +139,8 @@ public class JcrRepositoryFileUtils {
   }
 
   public static IRepositoryFileContent getContent(final Session session, final NodeIdStrategy nodeIdStrategy,
-      final RepositoryFile file, final Transformer transformer) throws RepositoryException, IOException {
+      final RepositoryFile file, final Transformer<IRepositoryFileContent> transformer) throws RepositoryException,
+      IOException {
     Node fileNode = nodeIdStrategy.findNodeById(session, file.getId());
     Assert.isTrue(!isFolder(fileNode));
 
@@ -180,6 +188,10 @@ public class JcrRepositoryFileUtils {
     return false;
   }
 
+  private static boolean isVersioned(final Session session, final Node node) throws RepositoryException {
+    return node.getProperty(addPentahoPrefix(session, PentahoJcrConstants.PENTAHO_VERSIONED)).getBoolean();
+  }
+
   private static boolean isFile(final Node node) throws RepositoryException {
     return node.getProperty(PentahoJcrConstants.JCR_PRIMARYTYPE).getString().equals(PentahoJcrConstants.NT_FILE);
   }
@@ -199,5 +211,27 @@ public class JcrRepositoryFileUtils {
       throws RepositoryException {
     String prefix = session.getWorkspace().getNamespaceRegistry().getPrefix(PentahoJcrConstants.PENTAHO_URI);
     return nameWithPrefix.substring(prefix.length() + 1); // plus one for the colon
+  }
+
+  public static void checkoutIfNecessary(final Session session, final NodeIdStrategy nodeIdStrategy,
+      final RepositoryFile file) throws RepositoryException, IOException {
+    if (file.isVersioned()) {
+      Node fileNode = nodeIdStrategy.findNodeById(session, file.getId());
+      Assert.isTrue(isFileOrLinkedFile(fileNode));
+      Node resourceNode = getResourceNode(session, fileNode);
+      Assert.isTrue(isResource(resourceNode));
+      resourceNode.checkout();
+    }
+  }
+
+  public static void checkinIfNecessary(final Session session, final NodeIdStrategy nodeIdStrategy,
+      final RepositoryFile file) throws RepositoryException, IOException {
+    if (file.isVersioned()) {
+      Node fileNode = nodeIdStrategy.findNodeById(session, file.getId());
+      Assert.isTrue(isFileOrLinkedFile(fileNode));
+      Node resourceNode = getResourceNode(session, fileNode);
+      Assert.isTrue(isResource(resourceNode));
+      resourceNode.checkin();
+    }
   }
 }

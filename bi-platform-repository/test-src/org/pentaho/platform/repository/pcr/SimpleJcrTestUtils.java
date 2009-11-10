@@ -5,15 +5,12 @@ import javax.jcr.Node;
 import javax.jcr.PathNotFoundException;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
+import javax.jcr.version.Version;
+import javax.jcr.version.VersionHistory;
+import javax.jcr.version.VersionIterator;
 
 import org.springframework.extensions.jcr.JcrCallback;
 import org.springframework.extensions.jcr.JcrTemplate;
-import org.springframework.security.Authentication;
-import org.springframework.security.GrantedAuthority;
-import org.springframework.security.context.SecurityContextHolder;
-import org.springframework.security.providers.UsernamePasswordAuthenticationToken;
-import org.springframework.security.userdetails.User;
-import org.springframework.security.userdetails.UserDetails;
 import org.springframework.util.Assert;
 
 public class SimpleJcrTestUtils {
@@ -59,6 +56,23 @@ public class SimpleJcrTestUtils {
         }
         Assert.isTrue(item.isNode());
         return ((Node) item).getUUID();
+      }
+    });
+  }
+
+  public static int getVersionCount(final JcrTemplate jcrTemplate, final String absPath) {
+    return (Integer) jcrTemplate.execute(new JcrCallback() {
+      public Object doInJcr(final Session session) throws RepositoryException {
+        Node fileNode = (Node) session.getItem(absPath);
+        Node resourceNode = fileNode.getNode(PentahoJcrConstants.JCR_CONTENT);
+        VersionHistory versionHistory = resourceNode.getVersionHistory();
+        VersionIterator versionIterator = versionHistory.getAllVersions();
+        int versionCount = 0;
+        while (versionIterator.hasNext()) {
+          Version version = versionIterator.nextVersion();
+          versionCount++;
+        }
+        return versionCount;
       }
     });
   }

@@ -86,7 +86,9 @@ public class JcrPentahoContentDao implements IPentahoContentDao, InitializingBea
         Node fileNode = JcrRepositoryFileUtils.toFileNode(session, nodeIdStrategy, parentFolder, file, content,
             transformers.get(file.getMimeType()));
         session.save();
-        return JcrRepositoryFileUtils.fromNode(session, nodeIdStrategy, fileNode);
+        RepositoryFile newFile = JcrRepositoryFileUtils.fromNode(session, nodeIdStrategy, fileNode);
+        JcrRepositoryFileUtils.checkinIfNecessary(session, nodeIdStrategy, newFile);
+        return newFile;
       }
     });
   }
@@ -101,9 +103,11 @@ public class JcrPentahoContentDao implements IPentahoContentDao, InitializingBea
 
     jcrTemplate.execute(new JcrCallback() {
       public Object doInJcr(final Session session) throws RepositoryException, IOException {
+        JcrRepositoryFileUtils.checkoutIfNecessary(session, nodeIdStrategy, file);
         JcrRepositoryFileUtils.updateFileNode(session, nodeIdStrategy, file, content,
             transformers.get(file.getMimeType()));
         session.save();
+        JcrRepositoryFileUtils.checkinIfNecessary(session, nodeIdStrategy, file);
         return null;
       }
     });
@@ -302,6 +306,7 @@ public class JcrPentahoContentDao implements IPentahoContentDao, InitializingBea
     
     void updateContentNode(final Session session, final NodeIdStrategy nodeIdStrategy, final T content,
         final Node resourceNode) throws RepositoryException, IOException;
+
   }
 
 }
