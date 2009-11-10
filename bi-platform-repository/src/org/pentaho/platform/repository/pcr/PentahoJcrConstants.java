@@ -4,8 +4,9 @@ package org.pentaho.platform.repository.pcr;
  * Pentaho JCR constants for node and property names.
  * 
  * <p>
- * The naming convention for the constants is {@code PENTAHO_<NAME>} where {@code <NAME>} is the node or property name 
- * as all capital letters with no underscores. This matches Jackrabbit's convention.
+ * The naming convention for the constants is {@code <NS>_<NAME>} where {@code <NS>} is a namespace prefix (sometimes a
+ * reserved prefix such as {@code jcr}) and {@code <NAME>} is the node or property name as all capital letters with no 
+ * underscores. This matches Jackrabbit's convention.
  * </p>
  * 
  * @author mlowery
@@ -62,5 +63,5 @@ public interface PentahoJcrConstants {
 
   String PENTAHO_VERSIONED = "versioned";
   
-
+  String PENTAHO_RESOURCETYPE = "resourceType";
 }

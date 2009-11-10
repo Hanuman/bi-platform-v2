@@ -40,11 +40,11 @@ public class JcrPentahoContentDao implements IPentahoContentDao, InitializingBea
 
   private NodeIdStrategy nodeIdStrategy = new UuidNodeIdStrategy();
 
-  private Map<String, Transformer> transformers;
+  private Map<String, Transformer<IRepositoryFileContent>> transformers;
 
   // ~ Constructors ====================================================================================================
 
-  public JcrPentahoContentDao(final JcrTemplate jcrTemplate, final Map<String, Transformer> transformers) {
+  public JcrPentahoContentDao(final JcrTemplate jcrTemplate, final Map<String, Transformer<IRepositoryFileContent>> transformers) {
     super();
     this.jcrTemplate = jcrTemplate;
     this.transformers = transformers;
@@ -182,6 +182,7 @@ public class JcrPentahoContentDao implements IPentahoContentDao, InitializingBea
   /**
    * {@inheritDoc}
    */
+  @SuppressWarnings("unchecked")
   public <T extends IRepositoryFileContent> T getContent(final RepositoryFile file, final Class<T> contentClass) {
     Assert.notNull(file);
     Assert.notNull(file.getId());
@@ -199,6 +200,10 @@ public class JcrPentahoContentDao implements IPentahoContentDao, InitializingBea
 
   }
 
+  /**
+   * {@inheritDoc}
+   */
+  @SuppressWarnings("unchecked")
   public List<RepositoryFile> getChildren(final RepositoryFile folder) {
     Assert.notNull(folder);
     Assert.notNull(folder.getId());
@@ -271,7 +276,7 @@ public class JcrPentahoContentDao implements IPentahoContentDao, InitializingBea
     }
 
     /**
-     * Adds mix:referenceable to node if not already there. Node will get an actual id on save.
+     * Adds mix:referenceable to node. Node will get an actual id on save.
      */
     public void setId(final Node node, final Serializable ignored) {
       try {
@@ -295,15 +300,61 @@ public class JcrPentahoContentDao implements IPentahoContentDao, InitializingBea
     }
   }
 
+  /**
+   * A pluggable method for reading and writing {@link IRepositoryFileContent} implementations.
+   * 
+   * @param <T> type which this transformer reads and writes
+   * @author mlowery
+   */
   public static interface Transformer<T extends IRepositoryFileContent> {
+    
+    /**
+     * Returns {@code true} if this transformer can read and write given class.
+     * 
+     * @param <S> {@code T} is not used here as one transformer might handle multiple {@code IRepositoryFileContent}s
+     * @param clazz class to check 
+     * @return {@code true} if this transformer can read and write given class
+     */
     <S extends IRepositoryFileContent> boolean supports(Class<S> clazz);
 
-    T fromContentNode(final Session session, final NodeIdStrategy nodeIdStrategy, final Node node)
+    /**
+     * Transforms a JCR node subtree into an {@link IRepositoryFileContent}.
+     * 
+     * @param session JCR session
+     * @param nodeIdStrategy node id strategy to use
+     * @param resourceNode root of JCR subtree containing the data that goes into the {@link IRepositoryFileContent}
+     * @return an {@link IRepositoryFileContent} instance
+     * @throws RepositoryException if anything goes wrong
+     * @throws IOException if anything goes wrong
+     */
+    T fromContentNode(final Session session, final NodeIdStrategy nodeIdStrategy, final Node resourceNode)
         throws RepositoryException, IOException;
 
+    /**
+     * Creates a JCR node subtree representing the given {@code content}.
+     * 
+     * @param session JCR session
+     * @param nodeIdStrategy node id strategy to use
+     * @param content content to create
+     * @param resourceNode root of JCR subtree containing the data that goes into the {@link IRepositoryFileContent}
+     * @return an {@link IRepositoryFileContent} instance
+     * @throws RepositoryException if anything goes wrong
+     * @throws IOException if anything goes wrong
+     */
     void createContentNode(final Session session, final NodeIdStrategy nodeIdStrategy, final T content,
         final Node resourceNode) throws RepositoryException, IOException;
-    
+
+    /**
+     * Updates a JCR node subtree representing the given {@code content}.
+     * 
+     * @param session JCR session
+     * @param nodeIdStrategy node id strategy to use
+     * @param content content to update
+     * @param resourceNode root of JCR subtree containing the data that goes into the {@link IRepositoryFileContent}
+     * @return an {@link IRepositoryFileContent} instance
+     * @throws RepositoryException if anything goes wrong
+     * @throws IOException if anything goes wrong
+     */
     void updateContentNode(final Session session, final NodeIdStrategy nodeIdStrategy, final T content,
         final Node resourceNode) throws RepositoryException, IOException;
 

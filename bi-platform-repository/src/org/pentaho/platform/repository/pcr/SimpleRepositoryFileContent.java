@@ -17,9 +17,9 @@ public class SimpleRepositoryFileContent implements IRepositoryFileContent {
   // ~ Instance fields =================================================================================================
 
   private InputStream data;
-  
+
   private String encoding;
-  
+
   // ~ Constructors ====================================================================================================
 
   public SimpleRepositoryFileContent(final InputStream data, final String encoding) {
@@ -29,16 +29,20 @@ public class SimpleRepositoryFileContent implements IRepositoryFileContent {
   }
 
   // ~ Methods =========================================================================================================
-  
+
   /**
-   * {@inheritDoc}
+   * Returns a stream for reading the data in this file.
+   * 
+   * @return stream (may be {@code null})
    */
   public InputStream getData() {
     return data;
   }
 
   /**
-   * {@inheritDoc}
+   * Returns the character encoding of the bytes in the data stream. May be {@code null} for non-character data.
+   * 
+   * @return character encoding
    */
   public String getEncoding() {
     return encoding;
