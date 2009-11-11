@@ -53,9 +53,4 @@ This module serves as the Debuging environment and default implementation for in
    <stylesheet src="datasourceEditorDialog.css"/>
    <public path="wizard/public"/>
     <entry-point class="org.pentaho.platform.dataaccess.datasource.wizard.GwtDatasourceEditorEntryPoint"/>
-   
-  <servlet path="/databaseConnectionService" class="org.pentaho.ui.database.gwt.GwtDatabaseConnectionServlet" />
-  <servlet path="/ConnectionService" class="org.pentaho.platform.dataaccess.datasource.wizard.service.gwt.ConnectionDebugGwtServlet" />
-  <servlet path="/DatasourceService" class="org.pentaho.platform.dataaccess.datasource.wizard.service.gwt.DatasourceDebugGwtServlet" />
-  <servlet path="/UploadService" class="org.pentaho.platform.dataaccess.datasource.wizard.service.impl.UploadFileDebugServlet" />
  </module>
