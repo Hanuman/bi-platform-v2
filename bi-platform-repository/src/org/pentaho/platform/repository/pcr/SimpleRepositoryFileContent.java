@@ -19,13 +19,16 @@ public class SimpleRepositoryFileContent implements IRepositoryFileContent {
   private InputStream data;
 
   private String encoding;
+  
+  private String mimeType;
 
   // ~ Constructors ====================================================================================================
 
-  public SimpleRepositoryFileContent(final InputStream data, final String encoding) {
+  public SimpleRepositoryFileContent(final InputStream data, final String encoding, final String mimeType) {
     super();
     this.data = data;
     this.encoding = encoding;
+    this.mimeType = mimeType;
   }
 
   // ~ Methods =========================================================================================================
@@ -46,6 +49,15 @@ public class SimpleRepositoryFileContent implements IRepositoryFileContent {
    */
   public String getEncoding() {
     return encoding;
+  }
+  
+  /**
+   * Returns the MIME type of the data in this file.
+   * 
+   * @return MIME type
+   */
+  public String getMimeType() {
+    return mimeType;
   }
 
 }

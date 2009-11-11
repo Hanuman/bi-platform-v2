@@ -2,12 +2,11 @@
 Pentaho file mixin node type.  (To be applied to nt:file nodes.)
 
 Some of the properties in this node definition are copied from nt:resource because access control is applied to the 
-nt:resource node and we want users to be able to get an nt:file without being blocked by access control.
+nt:resource node and we want users to be able to get an nt:file and "preview" some of the nt:resource node properties
+without being blocked by access control.
 
 Properties from nt:resource include:
-- mimeType
-- lastModified
-- versionable
+-- lastModified
 
 These should be kept in sync with the actual property values on the nt:resource. 
 */
@@ -21,8 +20,8 @@ These should be kept in sync with the actual property values on the nt:resource.
 // This is a mixin node type
 mixin
 
-// Nodes of this node type have a property called 'ns:mimeType' of type STRING
-- ns:mimeType (string)
+// Nodes of this node type have a property called 'ns:previewLastModified' of type DATE
+- ns:previewLastModified (date)
 
 // and it is...
 mandatory
@@ -30,16 +29,7 @@ mandatory
 // It has an on-parent-version setting of...
 copy
 
-// Nodes of this node type have a property called 'ns:lastModified' of type DATE
-- ns:lastModified (date)
-
-// and it is...
-mandatory
-
-// It has an on-parent-version setting of...
-ignore
-
-// Nodes of this node type have a property called 'ns:versionable' of type BOOLEAN
+// Nodes of this node type have a property called 'ns:versioned' of type BOOLEAN
 - ns:versioned (boolean)
 
 // The default value for this are...
@@ -50,3 +40,12 @@ mandatory autocreated
 
 // It has an on-parent-version setting of...
 ignore
+
+// Nodes of this node type have a property called 'ns:resourceType' of type STRING
+- ns:resourceType (string)
+
+// and it is...
+mandatory
+
+// It has an on-parent-version setting of...
+copy

@@ -128,7 +128,7 @@ public class PentahoContentRepository implements IPentahoContentRepository {
    * Throws an {@code IllegalStateException} if not started up.  Should be called from all public methods (except 
    * {@link #startup()}).
    */
-  private void internalCheckStartedUp() {
+  private void assertStartedUp() {
     Assert.state(startedUp, "startup must be called first");
   }
 
@@ -169,9 +169,10 @@ public class PentahoContentRepository implements IPentahoContentRepository {
    * {@inheritDoc}
    */
   public synchronized RepositoryFile getFile(final String absPath) {
+    assertStartedUp();
     Assert.hasText(absPath);
 
-    internalCheckStartedUp();
+    assertStartedUp();
     return contentDao.getFile(absPath);
   }
 
@@ -190,7 +191,7 @@ public class PentahoContentRepository implements IPentahoContentRepository {
    * {@inheritDoc}
    */
   public synchronized RepositoryFile createUserHomeFolderIfNecessary() {
-    internalCheckStartedUp();
+    assertStartedUp();
     RepositoryFile homeFolder = contentDao.getFile(PATH_ROOT + RepositoryFile.SEPARATOR + FOLDER_HOME);
     RepositoryFile userHomeFolder = contentDao.getFile(homeFolder.getAbsolutePath() + RepositoryFile.SEPARATOR
         + internalGetUsername());
@@ -291,7 +292,7 @@ public class PentahoContentRepository implements IPentahoContentRepository {
    * {@inheritDoc}
    */
   public synchronized void shutdown() {
-
+    assertStartedUp();
   }
 
   /**
@@ -306,11 +307,12 @@ public class PentahoContentRepository implements IPentahoContentRepository {
    */
   public synchronized RepositoryFile createFile(final RepositoryFile parentFolder, final RepositoryFile file,
       final IRepositoryFileContent content) {
+    assertStartedUp();
     Assert.notNull(file);
     Assert.isTrue(!file.isFolder());
     Assert.hasText(file.getName());
     Assert.notNull(content);
-    Assert.hasText(file.getMimeType());
+    Assert.hasText(file.getResourceType());
     if (parentFolder != null) {
       Assert.hasText(parentFolder.getName());
     }
@@ -322,6 +324,7 @@ public class PentahoContentRepository implements IPentahoContentRepository {
    * {@inheritDoc}
    */
   public synchronized RepositoryFile createFolder(final RepositoryFile parentFolder, final RepositoryFile file) {
+    assertStartedUp();
     Assert.notNull(file);
     Assert.isTrue(file.isFolder());
     Assert.hasText(file.getName());
@@ -342,6 +345,7 @@ public class PentahoContentRepository implements IPentahoContentRepository {
    * @see #getContentForRead(RepositoryFile, Class)
    */
   public <T extends IRepositoryFileContent> T getContentForExecute(RepositoryFile file, Class<T> contentClass) {
+    assertStartedUp();
     return getContentForRead(file, contentClass);
   }
 
@@ -349,6 +353,7 @@ public class PentahoContentRepository implements IPentahoContentRepository {
    * {@inheritDoc}
    */
   public <T extends IRepositoryFileContent> T getContentForRead(RepositoryFile file, Class<T> contentClass) {
+    assertStartedUp();
     Assert.notNull(file);
     Assert.notNull(file.getId());
     return contentDao.getContent(file, contentClass);
@@ -358,6 +363,7 @@ public class PentahoContentRepository implements IPentahoContentRepository {
    * {@inheritDoc}
    */
   public List<RepositoryFile> getChildren(final RepositoryFile folder) {
+    assertStartedUp();
     Assert.notNull(folder);
     Assert.notNull(folder.getId());
     Assert.notNull(folder.isFolder());
@@ -368,12 +374,13 @@ public class PentahoContentRepository implements IPentahoContentRepository {
    * {@inheritDoc}
    */
   public void updateFile(RepositoryFile file, IRepositoryFileContent content) {
+    assertStartedUp();
     Assert.notNull(file);
     Assert.isTrue(!file.isFolder());
     Assert.hasText(file.getName());
     if (!file.isFolder()) {
       Assert.notNull(content);
-      Assert.hasText(file.getMimeType());
+      Assert.hasText(file.getResourceType());
     }
 
     internalUpdateFile(file, content);

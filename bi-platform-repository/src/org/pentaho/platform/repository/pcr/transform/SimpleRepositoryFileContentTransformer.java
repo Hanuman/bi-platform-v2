@@ -24,7 +24,8 @@ public class SimpleRepositoryFileContentTransformer implements Transformer<Simpl
       encoding = resourceNode.getProperty(PentahoJcrConstants.JCR_ENCODING).getString();
     }
     InputStream data = resourceNode.getProperty(PentahoJcrConstants.JCR_DATA).getStream();
-    return new SimpleRepositoryFileContent(data, encoding);
+    String mimeType = resourceNode.getProperty(PentahoJcrConstants.JCR_MIMETYPE).getString();
+    return new SimpleRepositoryFileContent(data, encoding, mimeType);
 
   }
 
@@ -33,9 +34,8 @@ public class SimpleRepositoryFileContentTransformer implements Transformer<Simpl
     if (StringUtils.hasText(content.getEncoding())) {
       resourceNode.setProperty(PentahoJcrConstants.JCR_ENCODING, content.getEncoding());
     }
-    if (content.getData() != null) {
-      resourceNode.setProperty(PentahoJcrConstants.JCR_DATA, content.getData());
-    }
+    resourceNode.setProperty(PentahoJcrConstants.JCR_DATA, content.getData());
+    resourceNode.setProperty(PentahoJcrConstants.JCR_MIMETYPE, content.getMimeType());
   }
 
   public <S extends IRepositoryFileContent> boolean supports(final Class<S> clazz) {
@@ -48,9 +48,8 @@ public class SimpleRepositoryFileContentTransformer implements Transformer<Simpl
     if (StringUtils.hasText(content.getEncoding())) {
       resourceNode.setProperty(PentahoJcrConstants.JCR_ENCODING, content.getEncoding());
     }
-    if (content.getData() != null) {
-      resourceNode.setProperty(PentahoJcrConstants.JCR_DATA, content.getData());
-    }
+    resourceNode.setProperty(PentahoJcrConstants.JCR_DATA, content.getData());
+    resourceNode.setProperty(PentahoJcrConstants.JCR_MIMETYPE, content.getMimeType());
   }
 
 }

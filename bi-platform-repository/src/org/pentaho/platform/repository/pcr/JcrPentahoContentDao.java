@@ -63,9 +63,9 @@ public class JcrPentahoContentDao implements IPentahoContentDao, InitializingBea
 
     return (RepositoryFile) jcrTemplate.execute(new JcrCallback() {
       public Object doInJcr(final Session session) throws RepositoryException, IOException {
-        Node folderNode = JcrRepositoryFileUtils.toFolderNode(session, nodeIdStrategy, parentFolder, file);
+        Node folderNode = JcrRepositoryFileUtils.createFolderNode(session, nodeIdStrategy, parentFolder, file);
         session.save();
-        return JcrRepositoryFileUtils.fromNode(session, nodeIdStrategy, folderNode);
+        return JcrRepositoryFileUtils.fromFileNode(session, nodeIdStrategy, folderNode);
       }
     });
   }
@@ -76,17 +76,17 @@ public class JcrPentahoContentDao implements IPentahoContentDao, InitializingBea
     Assert.hasText(file.getName());
     Assert.isTrue(!file.isFolder());
     Assert.notNull(content);
-    Assert.hasText(file.getMimeType());
+    Assert.hasText(file.getResourceType());
     if (parentFolder != null) {
       Assert.hasText(parentFolder.getName());
     }
 
     return (RepositoryFile) jcrTemplate.execute(new JcrCallback() {
       public Object doInJcr(final Session session) throws RepositoryException, IOException {
-        Node fileNode = JcrRepositoryFileUtils.toFileNode(session, nodeIdStrategy, parentFolder, file, content,
-            transformers.get(file.getMimeType()));
+        Node fileNode = JcrRepositoryFileUtils.createFileNode(session, nodeIdStrategy, parentFolder, file, content,
+            transformers.get(file.getResourceType()));
         session.save();
-        RepositoryFile newFile = JcrRepositoryFileUtils.fromNode(session, nodeIdStrategy, fileNode);
+        RepositoryFile newFile = JcrRepositoryFileUtils.fromFileNode(session, nodeIdStrategy, fileNode);
         JcrRepositoryFileUtils.checkinIfNecessary(session, nodeIdStrategy, newFile);
         return newFile;
       }
@@ -99,13 +99,13 @@ public class JcrPentahoContentDao implements IPentahoContentDao, InitializingBea
     Assert.hasText(file.getName());
     Assert.isTrue(!file.isFolder());
     Assert.notNull(content);
-    Assert.hasText(file.getMimeType());
+    Assert.hasText(file.getResourceType());
 
     jcrTemplate.execute(new JcrCallback() {
       public Object doInJcr(final Session session) throws RepositoryException, IOException {
         JcrRepositoryFileUtils.checkoutIfNecessary(session, nodeIdStrategy, file);
         JcrRepositoryFileUtils.updateFileNode(session, nodeIdStrategy, file, content,
-            transformers.get(file.getMimeType()));
+            transformers.get(file.getResourceType()));
         session.save();
         JcrRepositoryFileUtils.checkinIfNecessary(session, nodeIdStrategy, file);
         return null;
@@ -120,10 +120,10 @@ public class JcrPentahoContentDao implements IPentahoContentDao, InitializingBea
       final IRepositoryFileContent content) {
     Assert.notNull(file);
     Assert.isTrue(!file.isFolder());
-    Assert.isTrue(transformers.containsKey(file.getMimeType()), String.format(
-        "no transformer for this MIME type [%s] exists", file.getMimeType()));
-    Assert.isTrue(transformers.get(file.getMimeType()).supports(content.getClass()), String.format(
-        "transformer for MIME type [%s] does not consume instances of type [%s]", file.getMimeType(), content
+    Assert.isTrue(transformers.containsKey(file.getResourceType()), String.format(
+        "no transformer for this resource type [%s] exists", file.getResourceType()));
+    Assert.isTrue(transformers.get(file.getResourceType()).supports(content.getClass()), String.format(
+        "transformer for resource type [%s] does not consume instances of type [%s]", file.getResourceType(), content
             .getClass().getName()));
     return internalCreateFile(parentFolder, file, content);
   }
@@ -173,7 +173,7 @@ public class JcrPentahoContentDao implements IPentahoContentDao, InitializingBea
         } catch (PathNotFoundException e) {
           fileNode = null;
         }
-        return fileNode != null ? JcrRepositoryFileUtils.fromNode(session, nodeIdStrategy, (Node) fileNode) : null;
+        return fileNode != null ? JcrRepositoryFileUtils.fromFileNode(session, nodeIdStrategy, (Node) fileNode) : null;
       }
     });
 
@@ -187,14 +187,14 @@ public class JcrPentahoContentDao implements IPentahoContentDao, InitializingBea
     Assert.notNull(file);
     Assert.notNull(file.getId());
     Assert.isTrue(!file.isFolder());
-    Assert.isTrue(transformers.containsKey(file.getMimeType()), String.format(
-        "no transformer for this MIME type [%s] exists", file.getMimeType()));
-    Assert.isTrue(transformers.get(file.getMimeType()).supports(contentClass), String.format(
-        "transformer for MIME type [%s] does not generate instances of type [%s]", file.getMimeType(), contentClass
+    Assert.isTrue(transformers.containsKey(file.getResourceType()), String.format(
+        "no transformer for this resource type [%s] exists", file.getResourceType()));
+    Assert.isTrue(transformers.get(file.getResourceType()).supports(contentClass), String.format(
+        "transformer for resource type [%s] does not generate instances of type [%s]", file.getResourceType(), contentClass
             .getName()));
     return (T) jcrTemplate.execute(new JcrCallback() {
       public Object doInJcr(final Session session) throws RepositoryException, IOException {
-        return JcrRepositoryFileUtils.getContent(session, nodeIdStrategy, file, transformers.get(file.getMimeType()));
+        return JcrRepositoryFileUtils.getContent(session, nodeIdStrategy, file, transformers.get(file.getResourceType()));
       }
     });
 
@@ -219,10 +219,10 @@ public class JcrPentahoContentDao implements IPentahoContentDao, InitializingBea
   public void updateFile(RepositoryFile file, IRepositoryFileContent content) {
     Assert.notNull(file);
     Assert.isTrue(!file.isFolder());
-    Assert.isTrue(transformers.containsKey(file.getMimeType()), String.format(
-        "no transformer for this MIME type [%s] exists", file.getMimeType()));
-    Assert.isTrue(transformers.get(file.getMimeType()).supports(content.getClass()), String.format(
-        "transformer for MIME type [%s] does not consume instances of type [%s]", file.getMimeType(), content
+    Assert.isTrue(transformers.containsKey(file.getResourceType()), String.format(
+        "no transformer for this resource type [%s] exists", file.getResourceType()));
+    Assert.isTrue(transformers.get(file.getResourceType()).supports(content.getClass()), String.format(
+        "transformer for resource type [%s] does not consume instances of type [%s]", file.getResourceType(), content
             .getClass().getName()));
     internalUpdateFile(file, content);
   }

@@ -20,13 +20,13 @@ import org.pentaho.platform.repository.pcr.JcrPentahoContentDao.Transformer;
 import org.springframework.util.Assert;
 
 public class JcrRepositoryFileUtils {
-  public static RepositoryFile fromNode(final Session session, final NodeIdStrategy nodeIdStrategy, final Node node)
+  public static RepositoryFile fromFileNode(final Session session, final NodeIdStrategy nodeIdStrategy, final Node node)
       throws RepositoryException, IOException {
     Assert.isTrue(isSupportedNodeType(node));
 
-    Date createdDateTime = null;
-    Date lastModifiedDateTime = null;
-    String mimeType = null;
+    Date created = null;
+    Date lastModified = null;
+    String resourceType = null;
     boolean folder = false;
     boolean versioned = false;
 
@@ -37,28 +37,28 @@ public class JcrRepositoryFileUtils {
     if (node.hasProperty(PentahoJcrConstants.JCR_CREATED)) {
       Calendar tmpCal = node.getProperty(PentahoJcrConstants.JCR_CREATED).getDate();
       if (tmpCal != null) {
-        createdDateTime = tmpCal.getTime();
+        created = tmpCal.getTime();
       }
     }
 
     if (isPentahoFile(session, node)) {
-      Calendar tmpCal = node.getProperty(addPentahoPrefix(session, PentahoJcrConstants.PENTAHO_LASTMODIFIED)).getDate();
+      Calendar tmpCal = node.getProperty(addPentahoPrefix(session, PentahoJcrConstants.PENTAHO_PREVIEWLASTMODIFIED)).getDate();
       if (tmpCal != null) {
-        lastModifiedDateTime = tmpCal.getTime();
+        lastModified = tmpCal.getTime();
       }
-      mimeType = node.getProperty(addPentahoPrefix(session, PentahoJcrConstants.PENTAHO_MIMETYPE)).getString();
+      resourceType = node.getProperty(addPentahoPrefix(session, PentahoJcrConstants.PENTAHO_RESOURCETYPE)).getString();
       versioned = isVersioned(session, node);
     }
 
     RepositoryFile file = new RepositoryFile.Builder(node.getName(), nodeIdStrategy.getId(node), !node.getParent()
-        .isSame(session.getRootNode()) ? nodeIdStrategy.getId(node.getParent()) : null).createdDate(createdDateTime)
-        .lastModificationDate(lastModifiedDateTime).mimeType(mimeType).folder(folder).versioned(versioned)
+        .isSame(session.getRootNode()) ? nodeIdStrategy.getId(node.getParent()) : null).createdDate(created)
+        .lastModificationDate(lastModified).resourceType(resourceType).folder(folder).versioned(versioned)
         .absolutePath(node.getPath()).build();
 
     return file;
   }
 
-  public static Node toFolderNode(final Session session, final NodeIdStrategy nodeIdStrategy,
+  public static Node createFolderNode(final Session session, final NodeIdStrategy nodeIdStrategy,
       final RepositoryFile parentFolder, final RepositoryFile file) throws RepositoryException, IOException {
     Node parentFolderNode;
     if (parentFolder != null) {
@@ -71,7 +71,7 @@ public class JcrRepositoryFileUtils {
     return folderNode;
   }
 
-  public static Node toFileNode(final Session session, final NodeIdStrategy nodeIdStrategy,
+  public static Node createFileNode(final Session session, final NodeIdStrategy nodeIdStrategy,
       final RepositoryFile parentFolder, final RepositoryFile file, final IRepositoryFileContent content,
       final Transformer<IRepositoryFileContent> transformer) throws RepositoryException, IOException {
 
@@ -83,15 +83,15 @@ public class JcrRepositoryFileUtils {
     }
     Node fileNode = parentFolderNode.addNode(file.getName(), PentahoJcrConstants.NT_FILE);
     fileNode.addMixin(addPentahoPrefix(session, PentahoJcrConstants.PENTAHO_PENTAHOFILE));
-    fileNode.setProperty(addPentahoPrefix(session, PentahoJcrConstants.PENTAHO_MIMETYPE), file.getMimeType());
+    fileNode.setProperty(addPentahoPrefix(session, PentahoJcrConstants.PENTAHO_RESOURCETYPE), file.getResourceType());
     // set created and last modified to same date when creating a new file
-    fileNode.setProperty(addPentahoPrefix(session, PentahoJcrConstants.PENTAHO_LASTMODIFIED), fileNode.getProperty(
-        PentahoJcrConstants.JCR_CREATED).getDate());
+    fileNode.setProperty(addPentahoPrefix(session, PentahoJcrConstants.PENTAHO_PREVIEWLASTMODIFIED), fileNode
+        .getProperty(PentahoJcrConstants.JCR_CREATED).getDate());
     nodeIdStrategy.setId(fileNode, null);
     Node resourceNode = fileNode.addNode(PentahoJcrConstants.JCR_CONTENT, PentahoJcrConstants.NT_RESOURCE);
 
     // mandatory properties on nt:resource; give them a value to satisfy Jackrabbit
-    resourceNode.setProperty(PentahoJcrConstants.JCR_MIMETYPE, file.getMimeType());
+
     resourceNode.setProperty(PentahoJcrConstants.JCR_LASTMODIFIED, fileNode
         .getProperty(PentahoJcrConstants.JCR_CREATED).getDate());
 
@@ -112,13 +112,12 @@ public class JcrRepositoryFileUtils {
     Calendar lastModified = Calendar.getInstance();
 
     Node fileNode = nodeIdStrategy.findNodeById(session, file.getId());
-    fileNode.setProperty(addPentahoPrefix(session, PentahoJcrConstants.PENTAHO_MIMETYPE), file.getMimeType());
-    fileNode.setProperty(addPentahoPrefix(session, PentahoJcrConstants.PENTAHO_LASTMODIFIED), lastModified);
+    fileNode.setProperty(addPentahoPrefix(session, PentahoJcrConstants.PENTAHO_RESOURCETYPE), file.getResourceType());
+    fileNode.setProperty(addPentahoPrefix(session, PentahoJcrConstants.PENTAHO_PREVIEWLASTMODIFIED), lastModified);
 
     Node resourceNode = fileNode.getNode(PentahoJcrConstants.JCR_CONTENT);
 
     // mandatory properties on nt:resource; give them a value to satisfy Jackrabbit
-    resourceNode.setProperty(PentahoJcrConstants.JCR_MIMETYPE, file.getMimeType());
     resourceNode.setProperty(PentahoJcrConstants.JCR_LASTMODIFIED, lastModified);
 
     transformer.updateContentNode(session, nodeIdStrategy, content, resourceNode);
@@ -158,7 +157,7 @@ public class JcrRepositoryFileUtils {
     while (nodeIterator.hasNext()) {
       Node node = nodeIterator.nextNode();
       if (isFolder(node) || isFileOrLinkedFile(node)) {
-        children.add(fromNode(session, nodeIdStrategy, node));
+        children.add(fromFileNode(session, nodeIdStrategy, node));
       }
     }
     Collections.sort(children);

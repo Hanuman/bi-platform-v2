@@ -278,13 +278,15 @@ public class PentahoContentRepositoryTests implements ApplicationContextAware {
     byte[] data = expectedDataString.getBytes(expectedEncoding);
     ByteArrayInputStream dataStream = new ByteArrayInputStream(data);
     final String expectedMimeType = "text/plain";
+    final String expectedResourceType = "txt";
     final String expectedName = "helloworld.xaction";
     final String expectedAbsolutePath = "/pentaho/home/suzy/helloworld.xaction";
 
-    final SimpleRepositoryFileContent content = new SimpleRepositoryFileContent(dataStream, expectedEncoding);
+    final SimpleRepositoryFileContent content = new SimpleRepositoryFileContent(dataStream, expectedEncoding,
+        expectedMimeType);
     Date beginTime = Calendar.getInstance().getTime();
     RepositoryFile newFile = pentahoContentRepository.createFile(parentFolder, new RepositoryFile.Builder(expectedName)
-        .mimeType(expectedMimeType).build(), content);
+        .resourceType(expectedResourceType).build(), content);
     Date endTime = Calendar.getInstance().getTime();
     assertTrue(beginTime.before(newFile.getLastModifiedDate()));
     assertTrue(endTime.after(newFile.getLastModifiedDate()));
@@ -293,14 +295,13 @@ public class PentahoContentRepositoryTests implements ApplicationContextAware {
     assertNotNull(foundFile);
     assertEquals(expectedName, foundFile.getName());
     assertEquals(expectedAbsolutePath, foundFile.getAbsolutePath());
-    assertEquals(expectedMimeType, foundFile.getMimeType());
     assertNotNull(foundFile.getCreatedDate());
     assertNotNull(foundFile.getLastModifiedDate());
 
     SimpleRepositoryFileContent contentFromRepo = pentahoContentRepository.getContentForRead(foundFile,
         SimpleRepositoryFileContent.class);
     assertEquals(expectedEncoding, contentFromRepo.getEncoding());
-
+    assertEquals(expectedMimeType, contentFromRepo.getMimeType());
     assertEquals(expectedDataString, IOUtils.toString(contentFromRepo.getData(), expectedEncoding));
   }
 
@@ -326,7 +327,6 @@ public class PentahoContentRepositoryTests implements ApplicationContextAware {
     assertNotNull(foundFile);
     assertEquals(expectedName, foundFile.getName());
     assertEquals(expectedAbsolutePath, foundFile.getAbsolutePath());
-    assertEquals(expectedMimeType, foundFile.getMimeType());
     assertNotNull(foundFile.getCreatedDate());
     assertNotNull(foundFile.getLastModifiedDate());
 
@@ -349,11 +349,13 @@ public class PentahoContentRepositoryTests implements ApplicationContextAware {
     final String expectedEncoding = "UTF-8";
     byte[] data = expectedDataString.getBytes(expectedEncoding);
     ByteArrayInputStream dataStream = new ByteArrayInputStream(data);
-    final String expectedMimeType = "text/notsupported";
+    final String expectedResourceType = "notsupported";
+    final String expectedMimeType = "text/plain";
     final String expectedName = "helloworld.xaction";
-    final SimpleRepositoryFileContent content = new SimpleRepositoryFileContent(dataStream, expectedEncoding);
-    pentahoContentRepository.createFile(parentFolder, new RepositoryFile.Builder(expectedName).mimeType(
-        expectedMimeType).build(), content);
+    final SimpleRepositoryFileContent content = new SimpleRepositoryFileContent(dataStream, expectedEncoding,
+        expectedMimeType);
+    pentahoContentRepository.createFile(parentFolder, new RepositoryFile.Builder(expectedName).resourceType(
+        expectedResourceType).build(), content);
   }
 
   @Test
@@ -479,12 +481,13 @@ public class PentahoContentRepositoryTests implements ApplicationContextAware {
     final String encoding = "UTF-8";
     byte[] data = dataString.getBytes(encoding);
     ByteArrayInputStream dataStream = new ByteArrayInputStream(data);
+    final String resourceType = "txt";
     final String mimeType = "text/plain";
     final String fileName = "helloworld.xaction";
 
-    final SimpleRepositoryFileContent content = new SimpleRepositoryFileContent(dataStream, encoding);
+    final SimpleRepositoryFileContent content = new SimpleRepositoryFileContent(dataStream, encoding, mimeType);
     RepositoryFile newFile = pentahoContentRepository.createFile(parentFolder, new RepositoryFile.Builder(fileName)
-        .mimeType(mimeType).versioned(true).build(), content);
+        .resourceType(resourceType).versioned(true).build(), content);
     assertTrue(newFile.isVersioned());
     assertEquals(2, SimpleJcrTestUtils.getVersionCount(testJcrTemplate, parentFolderPath + RepositoryFile.SEPARATOR
         + fileName));
@@ -499,11 +502,11 @@ public class PentahoContentRepositoryTests implements ApplicationContextAware {
     RepositoryFile parentFolder = pentahoContentRepository.getFile(parentFolderPath);
     byte[] data = expectedDataString.getBytes(expectedEncoding);
     ByteArrayInputStream dataStream = new ByteArrayInputStream(data);
-    final String expectedMimeType = "application/vnd.pentaho.runresult";
+    final String expectedResourceType = "runresult";
     final RunResultRepositoryFileContent content = new RunResultRepositoryFileContent(dataStream, expectedEncoding,
         expectedRunResultMimeType, expectedRunArguments);
-    return pentahoContentRepository.createFile(parentFolder, new RepositoryFile.Builder(expectedName).mimeType(
-        expectedMimeType).build(), content);
+    return pentahoContentRepository.createFile(parentFolder, new RepositoryFile.Builder(expectedName).resourceType(
+        expectedResourceType).build(), content);
   }
 
   private void assertAceExists(final Serializable id, final Sid sid, final Permission permission) {

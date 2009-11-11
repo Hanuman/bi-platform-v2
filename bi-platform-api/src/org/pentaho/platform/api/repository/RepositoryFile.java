@@ -40,14 +40,26 @@ public class RepositoryFile implements Comparable<RepositoryFile> {
 
   private Serializable parentId;
 
+  /**
+   * Read-only.
+   */
   private Date createdDate;
 
+  /**
+   * Read-only.
+   */
   private Date lastModifiedDate;
 
-  private String mimeType;
+  /**
+   * Read-only. (Determined by {@code IRepositoryFileContent} associated with this file.)
+   */
+  private String resourceType;
 
   private boolean folder;
 
+  /**
+   * Read-only.
+   */
   private String absolutePath;
 
   private boolean hidden;
@@ -100,8 +112,8 @@ public class RepositoryFile implements Comparable<RepositoryFile> {
     }
   }
 
-  public String getMimeType() {
-    return mimeType;
+  public String getResourceType() {
+    return resourceType;
   }
 
   public boolean isFolder() {
@@ -136,7 +148,7 @@ public class RepositoryFile implements Comparable<RepositoryFile> {
 
     private Date lastModifiedDate;
 
-    private String mimeType;
+    private String resourceType;
 
     private boolean folder;
 
@@ -162,7 +174,7 @@ public class RepositoryFile implements Comparable<RepositoryFile> {
     public Builder(final RepositoryFile other) {
       this(other.name, other.id, other.parentId);
       this.absolutePath(other.absolutePath).createdDate(other.createdDate).folder(other.folder).lastModificationDate(
-          other.lastModifiedDate).mimeType(other.mimeType);
+          other.lastModifiedDate).resourceType(other.resourceType);
     }
 
     public RepositoryFile build() {
@@ -171,7 +183,7 @@ public class RepositoryFile implements Comparable<RepositoryFile> {
       RepositoryFile result = new RepositoryFile(name, id, parentId);
       result.createdDate = this.createdDate;
       result.lastModifiedDate = this.lastModifiedDate;
-      result.mimeType = this.mimeType;
+      result.resourceType = this.resourceType;
       result.folder = this.folder;
       result.absolutePath = this.absolutePath;
       result.hidden = this.hidden;
@@ -179,8 +191,8 @@ public class RepositoryFile implements Comparable<RepositoryFile> {
       return result;
     }
 
-    public Builder mimeType(final String mimeType) {
-      this.mimeType = mimeType;
+    public Builder resourceType(final String resourceType) {
+      this.resourceType = resourceType;
       return this;
     }
 

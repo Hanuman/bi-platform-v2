@@ -330,10 +330,10 @@
     <constructor-arg ref="jcrTemplate" />
     <constructor-arg>
       <map>
-        <entry key="text/plain">
+        <entry key="txt">
           <bean class="org.pentaho.platform.repository.pcr.transform.SimpleRepositoryFileContentTransformer" />
         </entry>
-        <entry key="application/vnd.pentaho.runresult">
+        <entry key="runresult">
           <bean class="org.pentaho.platform.repository.pcr.transform.RunResultRepositoryFileContentTransformer">
             <constructor-arg>
               <bean class="org.pentaho.platform.repository.pcr.transform.SimpleRepositoryFileContentTransformer" />

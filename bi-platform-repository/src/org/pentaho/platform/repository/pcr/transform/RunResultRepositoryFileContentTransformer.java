@@ -48,8 +48,6 @@ public class RunResultRepositoryFileContentTransformer implements Transformer<Ru
     Map<String, String> args = new HashMap<String, String>();
     Node auxNode = resourceNode.getNode(JcrRepositoryFileUtils.addPentahoPrefix(session,
         PentahoJcrConstants.PENTAHO_AUX));
-    String mimeType = auxNode.getProperty(
-        JcrRepositoryFileUtils.addPentahoPrefix(session, PentahoJcrConstants.PENTAHO_MIMETYPE)).getString();
     Node runArgsNode = auxNode.getNode(JcrRepositoryFileUtils.addPentahoPrefix(session,
         PentahoJcrConstants.PENTAHO_RUNARGUMENTS));
     PropertyIterator propertyIterator = runArgsNode.getProperties();
@@ -63,7 +61,8 @@ public class RunResultRepositoryFileContentTransformer implements Transformer<Ru
       }
     }
 
-    return new RunResultRepositoryFileContent(simpleContent.getData(), simpleContent.getEncoding(), mimeType, args);
+    return new RunResultRepositoryFileContent(simpleContent.getData(), simpleContent.getEncoding(), simpleContent
+        .getMimeType(), args);
   }
 
   public <S extends IRepositoryFileContent> boolean supports(final Class<S> clazz) {
@@ -76,8 +75,6 @@ public class RunResultRepositoryFileContentTransformer implements Transformer<Ru
     simpleTransformer.createContentNode(session, nodeIdStrategy, content, resourceNode);
     Node auxNode = resourceNode.addNode(JcrRepositoryFileUtils.addPentahoPrefix(session,
         PentahoJcrConstants.PENTAHO_AUX));
-    auxNode.setProperty(JcrRepositoryFileUtils.addPentahoPrefix(session, PentahoJcrConstants.PENTAHO_MIMETYPE), content
-        .getMimeType());
     Node runArgsNode = auxNode.addNode(JcrRepositoryFileUtils.addPentahoPrefix(session,
         PentahoJcrConstants.PENTAHO_RUNARGUMENTS), PentahoJcrConstants.NT_UNSTRUCTURED);
     for (Map.Entry<String, String> entry : content.getArguments().entrySet()) {
@@ -90,8 +87,6 @@ public class RunResultRepositoryFileContentTransformer implements Transformer<Ru
     simpleTransformer.updateContentNode(session, nodeIdStrategy, content, resourceNode);
     Node auxNode = resourceNode.getNode(JcrRepositoryFileUtils.addPentahoPrefix(session,
         PentahoJcrConstants.PENTAHO_AUX));
-    auxNode.setProperty(JcrRepositoryFileUtils.addPentahoPrefix(session, PentahoJcrConstants.PENTAHO_MIMETYPE), content
-        .getMimeType());
     Node runArgsNode = auxNode.getNode(JcrRepositoryFileUtils.addPentahoPrefix(session,
         PentahoJcrConstants.PENTAHO_RUNARGUMENTS));
     runArgsNode.remove();

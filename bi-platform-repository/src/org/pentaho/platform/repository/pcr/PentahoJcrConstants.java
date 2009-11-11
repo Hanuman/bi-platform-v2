@@ -23,10 +23,6 @@ public interface PentahoJcrConstants {
 
   String JCR_CREATED = "jcr:created";
 
-  //String JCR_LASTMODIFIED = "jcr:lastModified";
-
-  //String JCR_MIMETYPE = "jcr:mimeType";
-
   String NT_FOLDER = "nt:folder";
 
   String NT_FILE = "nt:file";
@@ -51,9 +47,9 @@ public interface PentahoJcrConstants {
   
   String PENTAHO_PENTAHORESOURCE = "pentahoResource";
   
-  String PENTAHO_MIMETYPE = "mimeType";
+  //String PENTAHO_MIMETYPE = "mimeType";
   
-  String PENTAHO_LASTMODIFIED = "lastModified";
+  String PENTAHO_PREVIEWLASTMODIFIED = "previewLastModified";
   
   String JCR_MIMETYPE = "jcr:mimeType";
   
