@@ -1,0 +1,54 @@
+<?xml version="1.0"?>
+<!DOCTYPE web-app PUBLIC
+   "-//Sun Microsystems, Inc.//DTD Web Application 2.3//EN"
+   "http://java.sun.com/dtd/web-app_2_3.dtd">
+<web-app>
+        <servlet>
+                <servlet-name>databaseConnectionService</servlet-name>
+                <servlet-class>org.pentaho.ui.database.gwt.GwtDatabaseConnectionServlet</servlet-class>
+        </servlet>
+        <servlet-mapping>
+                <servlet-name>databaseConnectionService</servlet-name>
+                <url-pattern>/DatasourceEditor/databaseConnectionService</url-pattern>
+        </servlet-mapping>
+        <servlet-mapping>
+                <servlet-name>databaseConnectionService</servlet-name>
+                <url-pattern>/org.pentaho.platform.dataaccess.datasource.DatasourceSelectionDialog/databaseConnectionService</url-pattern>
+        </servlet-mapping>        
+        <servlet>
+                <servlet-name>ConnectionService</servlet-name>
+                <servlet-class>org.pentaho.platform.dataaccess.datasource.wizard.service.gwt.ConnectionDebugGwtServlet</servlet-class>
+        </servlet>
+        <servlet-mapping>
+                <servlet-name>ConnectionService</servlet-name>
+                <url-pattern>/DatasourceEditor/ConnectionService</url-pattern>
+        </servlet-mapping>
+        <servlet-mapping>
+                <servlet-name>ConnectionService</servlet-name>
+                <url-pattern>/org.pentaho.platform.dataaccess.datasource.DatasourceSelectionDialog/ConnectionService</url-pattern>
+        </servlet-mapping>
+        <servlet>
+                <servlet-name>DatasourceService</servlet-name>
+                <servlet-class>org.pentaho.platform.dataaccess.datasource.wizard.service.gwt.DatasourceDebugGwtServlet</servlet-class>
+        </servlet>
+        <servlet-mapping>
+                <servlet-name>DatasourceService</servlet-name>
+                <url-pattern>/DatasourceEditor/DatasourceService</url-pattern>
+        </servlet-mapping>
+        <servlet-mapping>
+                <servlet-name>DatasourceService</servlet-name>
+                <url-pattern>/org.pentaho.platform.dataaccess.datasource.DatasourceSelectionDialog/DatasourceService</url-pattern>
+        </servlet-mapping>        
+        <servlet>
+                <servlet-name>UploadService</servlet-name>
+                <servlet-class>org.pentaho.platform.dataaccess.datasource.wizard.service.impl.UploadFileDebugServlet</servlet-class>
+        </servlet>
+        <servlet-mapping>
+                <servlet-name>UploadService</servlet-name>
+                <url-pattern>/DatasourceEditor/UploadService</url-pattern>
+        </servlet-mapping>     
+        <servlet-mapping>
+                <servlet-name>UploadService</servlet-name>
+                <url-pattern>/org.pentaho.platform.dataaccess.datasource.DatasourceSelectionDialog/UploadService</url-pattern>
+        </servlet-mapping>           
+</web-app>
