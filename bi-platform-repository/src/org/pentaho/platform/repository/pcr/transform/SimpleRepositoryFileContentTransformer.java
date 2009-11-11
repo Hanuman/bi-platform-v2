@@ -7,12 +7,10 @@ import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
-import org.pentaho.platform.api.repository.IRepositoryFileContent;
 import org.pentaho.platform.repository.pcr.PentahoJcrConstants;
 import org.pentaho.platform.repository.pcr.SimpleRepositoryFileContent;
 import org.pentaho.platform.repository.pcr.JcrPentahoContentDao.NodeIdStrategy;
 import org.pentaho.platform.repository.pcr.JcrPentahoContentDao.Transformer;
-import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
 
 public class SimpleRepositoryFileContentTransformer implements Transformer<SimpleRepositoryFileContent> {
@@ -38,9 +36,8 @@ public class SimpleRepositoryFileContentTransformer implements Transformer<Simpl
     resourceNode.setProperty(PentahoJcrConstants.JCR_MIMETYPE, content.getMimeType());
   }
 
-  public <S extends IRepositoryFileContent> boolean supports(final Class<S> clazz) {
-    Assert.notNull(clazz);
-    return clazz.isAssignableFrom(SimpleRepositoryFileContent.class);
+  public boolean supports(final String contentType) {
+    return SimpleRepositoryFileContent.CONTENT_TYPE.equals(contentType);
   }
 
   public void updateContentNode(Session session, NodeIdStrategy nodeIdStrategy, SimpleRepositoryFileContent content,

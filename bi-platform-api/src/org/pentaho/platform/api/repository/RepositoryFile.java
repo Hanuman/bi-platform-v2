@@ -53,7 +53,7 @@ public class RepositoryFile implements Comparable<RepositoryFile> {
   /**
    * Read-only. (Determined by {@code IRepositoryFileContent} associated with this file.)
    */
-  private String resourceType;
+  private String contentType;
 
   private boolean folder;
 
@@ -112,8 +112,8 @@ public class RepositoryFile implements Comparable<RepositoryFile> {
     }
   }
 
-  public String getResourceType() {
-    return resourceType;
+  public String getContentType() {
+    return contentType;
   }
 
   public boolean isFolder() {
@@ -148,7 +148,7 @@ public class RepositoryFile implements Comparable<RepositoryFile> {
 
     private Date lastModifiedDate;
 
-    private String resourceType;
+    private String contentType;
 
     private boolean folder;
 
@@ -174,7 +174,7 @@ public class RepositoryFile implements Comparable<RepositoryFile> {
     public Builder(final RepositoryFile other) {
       this(other.name, other.id, other.parentId);
       this.absolutePath(other.absolutePath).createdDate(other.createdDate).folder(other.folder).lastModificationDate(
-          other.lastModifiedDate).resourceType(other.resourceType);
+          other.lastModifiedDate).contentType(other.contentType);
     }
 
     public RepositoryFile build() {
@@ -183,7 +183,7 @@ public class RepositoryFile implements Comparable<RepositoryFile> {
       RepositoryFile result = new RepositoryFile(name, id, parentId);
       result.createdDate = this.createdDate;
       result.lastModifiedDate = this.lastModifiedDate;
-      result.resourceType = this.resourceType;
+      result.contentType = this.contentType;
       result.folder = this.folder;
       result.absolutePath = this.absolutePath;
       result.hidden = this.hidden;
@@ -191,8 +191,8 @@ public class RepositoryFile implements Comparable<RepositoryFile> {
       return result;
     }
 
-    public Builder resourceType(final String resourceType) {
-      this.resourceType = resourceType;
+    public Builder contentType(final String contentType) {
+      this.contentType = contentType;
       return this;
     }
 

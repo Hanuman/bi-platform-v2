@@ -14,6 +14,8 @@ public class SimpleRepositoryFileContent implements IRepositoryFileContent {
 
   // ~ Static fields/initializers ======================================================================================
 
+  public static final String CONTENT_TYPE = "simple";
+  
   // ~ Instance fields =================================================================================================
 
   private InputStream data;
@@ -58,6 +60,13 @@ public class SimpleRepositoryFileContent implements IRepositoryFileContent {
    */
   public String getMimeType() {
     return mimeType;
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  public String getContentType() {
+    return CONTENT_TYPE;
   }
 
 }

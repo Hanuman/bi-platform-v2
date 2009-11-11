@@ -40,11 +40,12 @@ public class JcrPentahoContentDao implements IPentahoContentDao, InitializingBea
 
   private NodeIdStrategy nodeIdStrategy = new UuidNodeIdStrategy();
 
-  private Map<String, Transformer<IRepositoryFileContent>> transformers;
+  private List<Transformer<IRepositoryFileContent>> transformers;
 
   // ~ Constructors ====================================================================================================
 
-  public JcrPentahoContentDao(final JcrTemplate jcrTemplate, final Map<String, Transformer<IRepositoryFileContent>> transformers) {
+  public JcrPentahoContentDao(final JcrTemplate jcrTemplate,
+      final List<Transformer<IRepositoryFileContent>> transformers) {
     super();
     this.jcrTemplate = jcrTemplate;
     this.transformers = transformers;
@@ -76,7 +77,7 @@ public class JcrPentahoContentDao implements IPentahoContentDao, InitializingBea
     Assert.hasText(file.getName());
     Assert.isTrue(!file.isFolder());
     Assert.notNull(content);
-    Assert.hasText(file.getResourceType());
+    Assert.hasText(file.getContentType());
     if (parentFolder != null) {
       Assert.hasText(parentFolder.getName());
     }
@@ -84,7 +85,7 @@ public class JcrPentahoContentDao implements IPentahoContentDao, InitializingBea
     return (RepositoryFile) jcrTemplate.execute(new JcrCallback() {
       public Object doInJcr(final Session session) throws RepositoryException, IOException {
         Node fileNode = JcrRepositoryFileUtils.createFileNode(session, nodeIdStrategy, parentFolder, file, content,
-            transformers.get(file.getResourceType()));
+            findTransformer(file.getContentType()));
         session.save();
         RepositoryFile newFile = JcrRepositoryFileUtils.fromFileNode(session, nodeIdStrategy, fileNode);
         JcrRepositoryFileUtils.checkinIfNecessary(session, nodeIdStrategy, newFile);
@@ -92,25 +93,33 @@ public class JcrPentahoContentDao implements IPentahoContentDao, InitializingBea
       }
     });
   }
-  
-  private void internalUpdateFile(final RepositoryFile file,
-      final IRepositoryFileContent content) {
+
+  private void internalUpdateFile(final RepositoryFile file, final IRepositoryFileContent content) {
     Assert.notNull(file);
     Assert.hasText(file.getName());
     Assert.isTrue(!file.isFolder());
     Assert.notNull(content);
-    Assert.hasText(file.getResourceType());
+    Assert.hasText(file.getContentType());
 
     jcrTemplate.execute(new JcrCallback() {
       public Object doInJcr(final Session session) throws RepositoryException, IOException {
         JcrRepositoryFileUtils.checkoutIfNecessary(session, nodeIdStrategy, file);
-        JcrRepositoryFileUtils.updateFileNode(session, nodeIdStrategy, file, content,
-            transformers.get(file.getResourceType()));
+        JcrRepositoryFileUtils.updateFileNode(session, nodeIdStrategy, file, content, findTransformer(file
+            .getContentType()));
         session.save();
         JcrRepositoryFileUtils.checkinIfNecessary(session, nodeIdStrategy, file);
         return null;
       }
     });
+  }
+
+  private Transformer<IRepositoryFileContent> findTransformer(final String contentType) {
+    for (Transformer<IRepositoryFileContent> transformer : transformers) {
+      if (transformer.supports(contentType)) {
+        return transformer;
+      }
+    }
+    throw new IllegalArgumentException(String.format("no transformer for this resource type [%s] exists", contentType));
   }
 
   /**
@@ -120,11 +129,6 @@ public class JcrPentahoContentDao implements IPentahoContentDao, InitializingBea
       final IRepositoryFileContent content) {
     Assert.notNull(file);
     Assert.isTrue(!file.isFolder());
-    Assert.isTrue(transformers.containsKey(file.getResourceType()), String.format(
-        "no transformer for this resource type [%s] exists", file.getResourceType()));
-    Assert.isTrue(transformers.get(file.getResourceType()).supports(content.getClass()), String.format(
-        "transformer for resource type [%s] does not consume instances of type [%s]", file.getResourceType(), content
-            .getClass().getName()));
     return internalCreateFile(parentFolder, file, content);
   }
 
@@ -187,14 +191,9 @@ public class JcrPentahoContentDao implements IPentahoContentDao, InitializingBea
     Assert.notNull(file);
     Assert.notNull(file.getId());
     Assert.isTrue(!file.isFolder());
-    Assert.isTrue(transformers.containsKey(file.getResourceType()), String.format(
-        "no transformer for this resource type [%s] exists", file.getResourceType()));
-    Assert.isTrue(transformers.get(file.getResourceType()).supports(contentClass), String.format(
-        "transformer for resource type [%s] does not generate instances of type [%s]", file.getResourceType(), contentClass
-            .getName()));
     return (T) jcrTemplate.execute(new JcrCallback() {
       public Object doInJcr(final Session session) throws RepositoryException, IOException {
-        return JcrRepositoryFileUtils.getContent(session, nodeIdStrategy, file, transformers.get(file.getResourceType()));
+        return JcrRepositoryFileUtils.getContent(session, nodeIdStrategy, file, findTransformer(file.getContentType()));
       }
     });
 
@@ -215,18 +214,12 @@ public class JcrPentahoContentDao implements IPentahoContentDao, InitializingBea
     });
   }
 
-
   public void updateFile(RepositoryFile file, IRepositoryFileContent content) {
     Assert.notNull(file);
     Assert.isTrue(!file.isFolder());
-    Assert.isTrue(transformers.containsKey(file.getResourceType()), String.format(
-        "no transformer for this resource type [%s] exists", file.getResourceType()));
-    Assert.isTrue(transformers.get(file.getResourceType()).supports(content.getClass()), String.format(
-        "transformer for resource type [%s] does not consume instances of type [%s]", file.getResourceType(), content
-            .getClass().getName()));
     internalUpdateFile(file, content);
   }
-  
+
   /**
    * Allows for configurable node id getting, setting, and finding.
    * 
@@ -307,15 +300,14 @@ public class JcrPentahoContentDao implements IPentahoContentDao, InitializingBea
    * @author mlowery
    */
   public static interface Transformer<T extends IRepositoryFileContent> {
-    
+
     /**
-     * Returns {@code true} if this transformer can read and write given class.
+     * Returns {@code true} if this transformer can read and write content of the given type.
      * 
-     * @param <S> {@code T} is not used here as one transformer might handle multiple {@code IRepositoryFileContent}s
-     * @param clazz class to check 
-     * @return {@code true} if this transformer can read and write given class
+     * @param contentType content type to check 
+     * @return {@code true} if this transformer can read and write content of the given type
      */
-    <S extends IRepositoryFileContent> boolean supports(Class<S> clazz);
+    boolean supports(final String contentType);
 
     /**
      * Transforms a JCR node subtree into an {@link IRepositoryFileContent}.

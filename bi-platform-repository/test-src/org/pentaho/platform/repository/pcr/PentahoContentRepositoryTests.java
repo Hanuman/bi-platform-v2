@@ -278,7 +278,7 @@ public class PentahoContentRepositoryTests implements ApplicationContextAware {
     byte[] data = expectedDataString.getBytes(expectedEncoding);
     ByteArrayInputStream dataStream = new ByteArrayInputStream(data);
     final String expectedMimeType = "text/plain";
-    final String expectedResourceType = "txt";
+    final String expectedContentType = "simple";
     final String expectedName = "helloworld.xaction";
     final String expectedAbsolutePath = "/pentaho/home/suzy/helloworld.xaction";
 
@@ -286,7 +286,7 @@ public class PentahoContentRepositoryTests implements ApplicationContextAware {
         expectedMimeType);
     Date beginTime = Calendar.getInstance().getTime();
     RepositoryFile newFile = pentahoContentRepository.createFile(parentFolder, new RepositoryFile.Builder(expectedName)
-        .resourceType(expectedResourceType).build(), content);
+        .contentType(expectedContentType).build(), content);
     Date endTime = Calendar.getInstance().getTime();
     assertTrue(beginTime.before(newFile.getLastModifiedDate()));
     assertTrue(endTime.after(newFile.getLastModifiedDate()));
@@ -349,13 +349,13 @@ public class PentahoContentRepositoryTests implements ApplicationContextAware {
     final String expectedEncoding = "UTF-8";
     byte[] data = expectedDataString.getBytes(expectedEncoding);
     ByteArrayInputStream dataStream = new ByteArrayInputStream(data);
-    final String expectedResourceType = "notsupported";
+    final String expectedContentType = "notsupported";
     final String expectedMimeType = "text/plain";
     final String expectedName = "helloworld.xaction";
     final SimpleRepositoryFileContent content = new SimpleRepositoryFileContent(dataStream, expectedEncoding,
         expectedMimeType);
-    pentahoContentRepository.createFile(parentFolder, new RepositoryFile.Builder(expectedName).resourceType(
-        expectedResourceType).build(), content);
+    pentahoContentRepository.createFile(parentFolder, new RepositoryFile.Builder(expectedName).contentType(
+        expectedContentType).build(), content);
   }
 
   @Test
@@ -481,13 +481,13 @@ public class PentahoContentRepositoryTests implements ApplicationContextAware {
     final String encoding = "UTF-8";
     byte[] data = dataString.getBytes(encoding);
     ByteArrayInputStream dataStream = new ByteArrayInputStream(data);
-    final String resourceType = "txt";
+    final String contentType = "simple";
     final String mimeType = "text/plain";
     final String fileName = "helloworld.xaction";
 
     final SimpleRepositoryFileContent content = new SimpleRepositoryFileContent(dataStream, encoding, mimeType);
     RepositoryFile newFile = pentahoContentRepository.createFile(parentFolder, new RepositoryFile.Builder(fileName)
-        .resourceType(resourceType).versioned(true).build(), content);
+        .contentType(contentType).versioned(true).build(), content);
     assertTrue(newFile.isVersioned());
     assertEquals(2, SimpleJcrTestUtils.getVersionCount(testJcrTemplate, parentFolderPath + RepositoryFile.SEPARATOR
         + fileName));
@@ -502,11 +502,11 @@ public class PentahoContentRepositoryTests implements ApplicationContextAware {
     RepositoryFile parentFolder = pentahoContentRepository.getFile(parentFolderPath);
     byte[] data = expectedDataString.getBytes(expectedEncoding);
     ByteArrayInputStream dataStream = new ByteArrayInputStream(data);
-    final String expectedResourceType = "runresult";
+    final String expectedContentType = "runresult";
     final RunResultRepositoryFileContent content = new RunResultRepositoryFileContent(dataStream, expectedEncoding,
         expectedRunResultMimeType, expectedRunArguments);
-    return pentahoContentRepository.createFile(parentFolder, new RepositoryFile.Builder(expectedName).resourceType(
-        expectedResourceType).build(), content);
+    return pentahoContentRepository.createFile(parentFolder, new RepositoryFile.Builder(expectedName).contentType(
+        expectedContentType).build(), content);
   }
 
   private void assertAceExists(final Serializable id, final Sid sid, final Permission permission) {

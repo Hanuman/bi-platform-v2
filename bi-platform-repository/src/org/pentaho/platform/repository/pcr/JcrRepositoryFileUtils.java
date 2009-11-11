@@ -26,7 +26,7 @@ public class JcrRepositoryFileUtils {
 
     Date created = null;
     Date lastModified = null;
-    String resourceType = null;
+    String contentType = null;
     boolean folder = false;
     boolean versioned = false;
 
@@ -46,13 +46,13 @@ public class JcrRepositoryFileUtils {
       if (tmpCal != null) {
         lastModified = tmpCal.getTime();
       }
-      resourceType = node.getProperty(addPentahoPrefix(session, PentahoJcrConstants.PENTAHO_RESOURCETYPE)).getString();
+      contentType = node.getProperty(addPentahoPrefix(session, PentahoJcrConstants.PENTAHO_RESOURCETYPE)).getString();
       versioned = isVersioned(session, node);
     }
 
     RepositoryFile file = new RepositoryFile.Builder(node.getName(), nodeIdStrategy.getId(node), !node.getParent()
         .isSame(session.getRootNode()) ? nodeIdStrategy.getId(node.getParent()) : null).createdDate(created)
-        .lastModificationDate(lastModified).resourceType(resourceType).folder(folder).versioned(versioned)
+        .lastModificationDate(lastModified).contentType(contentType).folder(folder).versioned(versioned)
         .absolutePath(node.getPath()).build();
 
     return file;
@@ -83,7 +83,7 @@ public class JcrRepositoryFileUtils {
     }
     Node fileNode = parentFolderNode.addNode(file.getName(), PentahoJcrConstants.NT_FILE);
     fileNode.addMixin(addPentahoPrefix(session, PentahoJcrConstants.PENTAHO_PENTAHOFILE));
-    fileNode.setProperty(addPentahoPrefix(session, PentahoJcrConstants.PENTAHO_RESOURCETYPE), file.getResourceType());
+    fileNode.setProperty(addPentahoPrefix(session, PentahoJcrConstants.PENTAHO_RESOURCETYPE), file.getContentType());
     // set created and last modified to same date when creating a new file
     fileNode.setProperty(addPentahoPrefix(session, PentahoJcrConstants.PENTAHO_PREVIEWLASTMODIFIED), fileNode
         .getProperty(PentahoJcrConstants.JCR_CREATED).getDate());
@@ -112,7 +112,7 @@ public class JcrRepositoryFileUtils {
     Calendar lastModified = Calendar.getInstance();
 
     Node fileNode = nodeIdStrategy.findNodeById(session, file.getId());
-    fileNode.setProperty(addPentahoPrefix(session, PentahoJcrConstants.PENTAHO_RESOURCETYPE), file.getResourceType());
+    fileNode.setProperty(addPentahoPrefix(session, PentahoJcrConstants.PENTAHO_RESOURCETYPE), file.getContentType());
     fileNode.setProperty(addPentahoPrefix(session, PentahoJcrConstants.PENTAHO_PREVIEWLASTMODIFIED), lastModified);
 
     Node resourceNode = fileNode.getNode(PentahoJcrConstants.JCR_CONTENT);

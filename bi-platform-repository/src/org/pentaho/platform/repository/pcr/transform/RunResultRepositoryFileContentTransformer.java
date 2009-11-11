@@ -12,14 +12,12 @@ import javax.jcr.Session;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.pentaho.platform.api.repository.IRepositoryFileContent;
 import org.pentaho.platform.repository.pcr.JcrRepositoryFileUtils;
 import org.pentaho.platform.repository.pcr.PentahoJcrConstants;
 import org.pentaho.platform.repository.pcr.RunResultRepositoryFileContent;
 import org.pentaho.platform.repository.pcr.SimpleRepositoryFileContent;
 import org.pentaho.platform.repository.pcr.JcrPentahoContentDao.NodeIdStrategy;
 import org.pentaho.platform.repository.pcr.JcrPentahoContentDao.Transformer;
-import org.springframework.util.Assert;
 
 public class RunResultRepositoryFileContentTransformer implements Transformer<RunResultRepositoryFileContent> {
 
@@ -40,6 +38,9 @@ public class RunResultRepositoryFileContentTransformer implements Transformer<Ru
 
   // ~ Methods =========================================================================================================
 
+  /**
+   * {@inheritDoc}
+   */
   public RunResultRepositoryFileContent fromContentNode(final Session session, final NodeIdStrategy nodeIdStrategy,
       final Node resourceNode) throws RepositoryException, IOException {
     SimpleRepositoryFileContent simpleContent = simpleTransformer
@@ -65,11 +66,16 @@ public class RunResultRepositoryFileContentTransformer implements Transformer<Ru
         .getMimeType(), args);
   }
 
-  public <S extends IRepositoryFileContent> boolean supports(final Class<S> clazz) {
-    Assert.notNull(clazz);
-    return clazz.isAssignableFrom(RunResultRepositoryFileContent.class);
+  /**
+   * {@inheritDoc}
+   */
+  public boolean supports(final String contentType) {
+    return RunResultRepositoryFileContent.CONTENT_TYPE.equals(contentType);
   }
 
+  /**
+   * {@inheritDoc}
+   */
   public void createContentNode(final Session session, final NodeIdStrategy nodeIdStrategy,
       final RunResultRepositoryFileContent content, final Node resourceNode) throws RepositoryException, IOException {
     simpleTransformer.createContentNode(session, nodeIdStrategy, content, resourceNode);
@@ -82,6 +88,9 @@ public class RunResultRepositoryFileContentTransformer implements Transformer<Ru
     }
   }
 
+  /**
+   * {@inheritDoc}
+   */
   public void updateContentNode(Session session, NodeIdStrategy nodeIdStrategy, RunResultRepositoryFileContent content,
       Node resourceNode) throws RepositoryException, IOException {
     simpleTransformer.updateContentNode(session, nodeIdStrategy, content, resourceNode);

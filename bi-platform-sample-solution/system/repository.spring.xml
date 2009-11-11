@@ -312,11 +312,11 @@
     </property>
     <property name="nodeDefinitions">
       <list>
-       <value>classpath:/org/pentaho/platform/repository/pcr/jackrabbit/pentahoFile.cnd</value>
-       <value>classpath:/org/pentaho/platform/repository/pcr/jackrabbit/pentahoResource.cnd</value>
+        <value>classpath:/org/pentaho/platform/repository/pcr/jackrabbit/pentahoFile.cnd</value>
+        <value>classpath:/org/pentaho/platform/repository/pcr/jackrabbit/pentahoResource.cnd</value>
       </list>
-  </property>
-    
+    </property>
+
   </bean>
 
   <bean id="credentialsStrategy" class="org.pentaho.platform.repository.pcr.sejcr.SpringSecurityCredentialsStrategy" />
@@ -329,18 +329,14 @@
   <bean id="pentahoContentDao" class="org.pentaho.platform.repository.pcr.JcrPentahoContentDao">
     <constructor-arg ref="jcrTemplate" />
     <constructor-arg>
-      <map>
-        <entry key="txt">
-          <bean class="org.pentaho.platform.repository.pcr.transform.SimpleRepositoryFileContentTransformer" />
-        </entry>
-        <entry key="runresult">
-          <bean class="org.pentaho.platform.repository.pcr.transform.RunResultRepositoryFileContentTransformer">
-            <constructor-arg>
-              <bean class="org.pentaho.platform.repository.pcr.transform.SimpleRepositoryFileContentTransformer" />
-            </constructor-arg>
-          </bean>
-        </entry>
-      </map>
+      <list>
+        <bean class="org.pentaho.platform.repository.pcr.transform.SimpleRepositoryFileContentTransformer" />
+        <bean id="runResultRepositoryFileContentTransformer" class="org.pentaho.platform.repository.pcr.transform.RunResultRepositoryFileContentTransformer">
+          <constructor-arg>
+            <bean class="org.pentaho.platform.repository.pcr.transform.SimpleRepositoryFileContentTransformer" />
+          </constructor-arg>
+        </bean>
+      </list>
     </constructor-arg>
   </bean>
 
