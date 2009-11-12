@@ -59,7 +59,7 @@
       <exclude org="javax.activation" module="activation" />
     </dependency>
     
-    <dependency org="com.google.gwt" name="gwt-servlet" rev="1.6.4"/>
+    <dependency org="com.google.gwt" name="gwt-servlet" rev="1.7.1"/>
     
     <dependency org="pentaho.kettle" name="kettle-engine" rev="${dependency.kettle.revision}" />
     <dependency org="pentaho.kettle" name="kettle-core"   rev="${dependency.kettle.revision}" />
