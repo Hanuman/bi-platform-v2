@@ -36,7 +36,6 @@ import org.pentaho.platform.api.engine.IComponent;
  * @see IStreamingAction
  * @see ILoggingAction
  * @see ISessionAwareAction
- * @see ISystemAwareAction
  * @author aphillips
  * @since 3.6
  *
