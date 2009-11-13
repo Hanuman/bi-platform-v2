@@ -185,9 +185,9 @@
         <fileset dir="${package-res-archive.dir}/tomcat" />
       </copy>
 
-      <!-- Copy required jars to common/lib -->
-      <mkdir dir="${stage.dir.server}/tomcat/common/lib" />
-      <copy todir="${stage.dir.server}/tomcat/common/lib">
+      <!-- Copy required jars to lib -->
+      <mkdir dir="${stage.dir.server}/tomcat/lib" />
+      <copy todir="${stage.dir.server}/tomcat/lib">
         <fileset dir="${lib.dir}">
           <include name="hsqldb-*.jar" />
           <include name="mysql-connector-*.jar" />
