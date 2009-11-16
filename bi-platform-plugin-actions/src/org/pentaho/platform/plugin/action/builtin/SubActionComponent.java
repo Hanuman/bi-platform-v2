@@ -127,7 +127,7 @@ public class SubActionComponent extends ComponentBase {
     ByteArrayOutputStream outputStream = new ByteArrayOutputStream(); // getDefaultOutputStream();
     ISolutionEngine solutionEngine = null;
     try {
-      solutionEngine = SolutionHelper.execute(getProcessId(), session, actionPath, parameters, outputStream, false);
+      solutionEngine = SolutionHelper.execute(getProcessId(), session, actionPath, parameters, outputStream, null, true, false);      
       if (outputStream.size() > 0) {
         getDefaultOutputStream(null).write(outputStream.toByteArray());
       }

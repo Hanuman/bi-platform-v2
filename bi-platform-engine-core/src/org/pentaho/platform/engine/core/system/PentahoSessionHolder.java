@@ -70,13 +70,30 @@ public class PentahoSessionHolder {
    */
   public static void removeSession() {
     IPentahoSession sess = perThreadSession.get();
+    
     if (sess != null) {
-      //If the session is a custom/stand-alone session, we need to remove references
+      if(logger.isDebugEnabled()) {
+        logger.debug(Messages.getInstance().getString("PentahoSessionHolder.DEBUG_REMOVING_SESSION",//$NON-NLS-1$
+            Thread.currentThread().getName(), String.valueOf(Thread.currentThread().getId())));
+      }
+      if(logger.isTraceEnabled()) {
+          StackTraceElement[] elements = Thread.currentThread().getStackTrace();
+          logger.trace(Messages.getInstance().getString("PentahoSessionHolder.DEBUG_THREAD_STACK_TRACE"));//$NON-NLS-1$
+          for(int i=0; i<elements.length; i++) {
+            logger.trace(elements[i]);
+          }
+        }
+      
+            //If the session is a custom/stand-alone session, we need to remove references
       //to it from other objects which may be holding on to it.  We do this to prevent
       //memory leaks.  In the future, this should not be necessary since objects
       //should not need to have setSesssion methods, but instead use PentahoSessionHolder.getSession()
       if (sess instanceof StandaloneSession) {
-        ((StandaloneSession) sess).destroy();
+        if(logger.isDebugEnabled()) {        
+          logger.debug(Messages.getInstance().getString("PentahoSessionHolder.DEBUG_DESTROY_STANDALONE_SESSION",//$NON-NLS-1$
+              String.valueOf(sess.getId()), sess.getName(), String.valueOf(Thread.currentThread().getId())));          
+        }
+         ((StandaloneSession) sess).destroy();
       }
 
       perThreadSession.remove();
