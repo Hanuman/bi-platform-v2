@@ -117,7 +117,7 @@ public class SecurityHelper {
       // an un-authenticated user. For now, we'll default to returning
       // an authentication that has the user as anonymous.
       Authentication auth = new UsernamePasswordAuthenticationToken(SecurityHelper.DefaultAnonymousUser, null,
-          new GrantedAuthorityImpl[] { new GrantedAuthorityImpl(SecurityHelper.DefaultAnonymousRole + SecurityHelper.DefaultAnonymousRole) });
+          new GrantedAuthorityImpl[] { new GrantedAuthorityImpl(SecurityHelper.DefaultAnonymousRole) });
       return auth;
     } else {
       if (SecurityHelper.logger.isDebugEnabled()) {
