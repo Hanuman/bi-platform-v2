@@ -26,6 +26,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.pentaho.platform.api.engine.IContentGenerator;
@@ -163,6 +164,7 @@ public class SubscriptionExecute extends PentahoBase {
         paramMap.put("useContentRepository", Boolean.TRUE); //$NON-NLS-1$
         paramMap.put("content-handler-pattern", PentahoSystem.getApplicationContext().getBaseUrl() + "GetContent?id={0}"); //$NON-NLS-1$ //$NON-NLS-2$
 
+        paramMap.put("SUB_DESTINATION", sub.getDestination());
         
         execute(jobName, paramMap, userSession);
       } // end while loop
@@ -194,6 +196,8 @@ public class SubscriptionExecute extends PentahoBase {
       String actionPath = (String) parametersMap.get("path"); //$NON-NLS-1$
       String actionName = (String) parametersMap.get("action"); //$NON-NLS-1$
       
+      String subscriptionDestination = (String) parametersMap.get("SUB_DESTINATION");
+
       String instanceId = null;
       String processId = this.getClass().getName();
 
@@ -256,8 +260,9 @@ public class SubscriptionExecute extends PentahoBase {
         IRuntimeContext rt = null;
         try {
           rt = requestHandler.handleActionRequest(0, 0);
-          
-          if (!ignoreSubscriptionOutput && !outputHandler.contentDone()) {
+          if (!StringUtils.isEmpty(subscriptionDestination)) {
+            emailContent(outputHandler, subscriptionName, solutionName, actionName, instanceId, subscriptionDestination);
+          } else if (!ignoreSubscriptionOutput && !outputHandler.isResponseExpected()) {
             if ((rt != null) && (rt.getStatus() == IRuntimeContext.RUNTIME_STATUS_SUCCESS)) {
               StringBuffer buffer = new StringBuffer();
               PentahoSystem.get(IMessageFormatter.class, userSession).formatSuccessMessage("text/html", rt, buffer, false); //$NON-NLS-1$
@@ -287,14 +292,16 @@ public class SubscriptionExecute extends PentahoBase {
         try {
           generator.createContent();
           // we succeeded
-          if (!ignoreSubscriptionOutput && !outputHandler.contentDone()) {
+          if (!StringUtils.isEmpty(subscriptionDestination)) {
+            emailContent(outputHandler, subscriptionName, solutionName, actionName, instanceId, subscriptionDestination);
+          } else if (!ignoreSubscriptionOutput && !outputHandler.isResponseExpected()) {
             String message = Messages.getString("SubscriptionExecute.DEBUG_FINISHED_EXECUTION", jobName); //$NON-NLS-1$
             writeMessage( message.toString(), outputHandler, subscriptionName, solutionName, actionName, instanceId, userSession );
           }
         } catch (Exception e) {
           e.printStackTrace();
           // we need an error message...
-          if (!ignoreSubscriptionOutput && !outputHandler.contentDone()) {
+          if (!ignoreSubscriptionOutput && !outputHandler.isResponseExpected()) {
             String message = Messages.getString("PRO_SUBSCRIPTREP.EXCEPTION_WITH_SCHEDULE", jobName); //$NON-NLS-1$
             writeMessage( message.toString(), outputHandler, subscriptionName, solutionName, actionName, instanceId, userSession );
           }
@@ -322,4 +329,27 @@ public class SubscriptionExecute extends PentahoBase {
     }
   }
   
+  protected void emailContent(IOutputHandler outputHandler, String subscriptionName, String solutionName, String fileName, String instanceId, String destination) {
+    IContentItem outputContentItem = outputHandler.getOutputContentItem(IOutputHandler.RESPONSE, IOutputHandler.CONTENT, subscriptionName, null, solutionName,
+        instanceId, null); //$NON-NLS-1$
+
+    fileName = subscriptionName;
+    String fileDate = DateFormat.getDateInstance(DateFormat.SHORT).format(outputContentItem.getFileDateTime());
+
+    if ("application/pdf".equals(outputContentItem.getMimeType())) {
+      fileName += ".pdf";
+    } else if ("text/html".equals(outputContentItem.getMimeType())) {
+      fileName += ".html";
+    } else if ("text/csv".equals(outputContentItem.getMimeType())) {
+      fileName += ".csv";
+    } else if ("application/vnd.ms-excel".equals(outputContentItem.getMimeType())) {
+      fileName += ".xls";
+    }
+
+    SubscriptionEmailContent emailer = new SubscriptionEmailContent(outputContentItem.getDataSource(), fileName, subscriptionName, destination);
+
+    if (!emailer.send()) {
+      SubscriptionExecute.logger.error("Problem sending subscription email.");
+    }
+  }
 }

@@ -3,11 +3,14 @@
 	version="2.0" 
 	xmlns:html="http://www.w3.org/TR/REC-html40"
     xmlns:msg="org.pentaho.platform.web.xsl.messages.Messages"
+    xmlns:psys="org.pentaho.platform.engine.core.system.PentahoSystem"
 	exclude-result-prefixes="html msg">
         
 	<xsl:output method="html" encoding="UTF-8" />
 
 	<xsl:template name="doSubscriptions">
+
+		<xsl:variable name="showEmail" select="psys:getSystemSetting('smtp-email/email_config.xml', 'mail.userid', '')" />
 	
 		<xsl:variable name="editing">
 			<xsl:if test="/filters/input[@name='subscribe-title']/@value!=''">
@@ -68,6 +71,23 @@
 										</input>
 									</td>
 								</tr>
+								
+                               <xsl:if test="string($showEmail)">
+                                 <tr>
+                                     <td class="portlet-font" colspan="1" style="white-space:nowrap">
+                                     	<br/>Email To:
+                                     </td>
+                                     <td class="portlet-font" colspan="2">
+                                        <br/>
+										<input name="destination" class="portlet-form-field" size="50" title="Enter Email Address [optional]">
+											<xsl:attribute name="value"><xsl:value-of select="/filters/input[@name='destination']/@value"/></xsl:attribute>
+											<xsl:attribute name="onkeyup">rptnmlimit(this,50)</xsl:attribute>
+                                         </input>
+                                     </td>
+                                 </tr>
+                               </xsl:if>
+								
+								
 								<!-- now do any schedules -->
 								<xsl:if test="count(/filters/schedules/schedule) > 0">
 								<tr><td><xsl:text>&#xA0;</xsl:text></td></tr>
