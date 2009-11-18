@@ -26,8 +26,10 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.derby.iapi.util.StringUtil;
 import org.pentaho.platform.api.engine.IContentGenerator;
 import org.pentaho.platform.api.engine.IMessageFormatter;
 import org.pentaho.platform.api.engine.IOutputHandler;
@@ -89,7 +91,7 @@ public class SubscriptionExecute extends PentahoBase {
     }
   }
 
-  public void execute(final String scheduleReference, boolean isFinalFiring ) {
+  public void execute(final String scheduleReference, boolean isFinalFiring) {
 
     PentahoSystem.systemEntryPoint();
     try {
@@ -114,7 +116,7 @@ public class SubscriptionExecute extends PentahoBase {
         if (PentahoSystem.trace) {
           trace("" + sub); //$NON-NLS-1$
         }
-        Map<String,Object> paramMap = new HashMap<String,Object>();
+        Map<String, Object> paramMap = new HashMap<String, Object>();
         paramMap.putAll(sub.getParameters());
 
         ISubscribeContent subContent = sub.getContent();
@@ -123,11 +125,11 @@ public class SubscriptionExecute extends PentahoBase {
         String jobName = sub.getUser() + " : " + sub.getTitle(); //$NON-NLS-1$
         IPentahoSession userSession = getEffectiveUserSession(sub.getUser());
 
-        // set the session so that anything who needs to access it will have 
-        // a single safe place to get one.  in particular, some content generators
+        // set the session so that anything who needs to access it will have
+        // a single safe place to get one. in particular, some content generators
         // will need a session.
         PentahoSessionHolder.setSession(userSession);
-        
+
         paramMap.put("solution", contentInfo.getSolutionName()); //$NON-NLS-1$
         paramMap.put("path", contentInfo.getPath()); //$NON-NLS-1$
         paramMap.put("action", contentInfo.getActionName()); //$NON-NLS-1$
@@ -135,24 +137,24 @@ public class SubscriptionExecute extends PentahoBase {
         paramMap.put("SUB_SCHEDULED_EXECUTE", "true"); //$NON-NLS-1$ //$NON-NLS-2$
         paramMap.put("SUB_EXECUTE_TIME", sched.getLastTrigger()); //$NON-NLS-1$
         paramMap.put("SUB_PREV_EXECUTE_TIME", lastExeTm); //$NON-NLS-1$
-        if ( sched.isCronSchedule() ) {
+        if (sched.isCronSchedule()) {
           paramMap.put("SUB_SCHEDULE", sched.getCronString()); //$NON-NLS-1$
-        } else if ( sched.isRepeatSchedule() ){
-          if ( null != sched.getRepeatCount() ) {
+        } else if (sched.isRepeatSchedule()) {
+          if (null != sched.getRepeatCount()) {
             paramMap.put("SUB_SCHEDULE_REPEAT_COUNT", sched.getRepeatCount()); //$NON-NLS-1$
           }
           paramMap.put("SUB_SCHEDULE_REPEAT_TIME", sched.getRepeatInterval()); //$NON-NLS-1$
         } else {
-          throw new IllegalStateException( Messages.getInstance().getErrorString( "SubscriptionExecute.ERROR_0005_INVALID_CRON_OR_REPEAT", sched.getId() ) ); //$NON-NLS-1$
+          throw new IllegalStateException(Messages.getInstance().getErrorString("SubscriptionExecute.ERROR_0005_INVALID_CRON_OR_REPEAT", sched.getId())); //$NON-NLS-1$
         }
         DateFormat fmt = SubscriptionHelper.getDateTimeFormatter();
         Date d = sched.getStartDate();
-        if ( null != d ) {
-          paramMap.put("SUB_START_DATE", fmt.format( d ) ); //$NON-NLS-1$
+        if (null != d) {
+          paramMap.put("SUB_START_DATE", fmt.format(d)); //$NON-NLS-1$
         }
         d = sched.getEndDate();
-        if ( null != d ) {
-          paramMap.put("SUB_END_DATE", fmt.format( d ) ); //$NON-NLS-1$
+        if (null != d) {
+          paramMap.put("SUB_END_DATE", fmt.format(d)); //$NON-NLS-1$
         }
         paramMap.put("SUB_SCHEDULE_NAME", sched.getTitle()); //$NON-NLS-1$
         paramMap.put("SUB_SCHEDULE_REF", sched.getScheduleReference()); //$NON-NLS-1$
@@ -163,17 +165,18 @@ public class SubscriptionExecute extends PentahoBase {
         paramMap.put("useContentRepository", Boolean.TRUE); //$NON-NLS-1$
         paramMap.put("content-handler-pattern", PentahoSystem.getApplicationContext().getBaseUrl() + "GetContent?id={0}"); //$NON-NLS-1$ //$NON-NLS-2$
 
-        
+        paramMap.put("SUB_DESTINATION", sub.getDestination());
+
         execute(jobName, paramMap, userSession);
       } // end while loop
-      if ( isFinalFiring ) {
+      if (isFinalFiring) {
         // done with this schedule, delete it from the Subscription Repository
         try {
-          SubscriptionRepositoryHelper.deleteScheduleContentAndSubscription(subscriptionRepository, sched );
+          SubscriptionRepositoryHelper.deleteScheduleContentAndSubscription(subscriptionRepository, sched);
         } catch (SubscriptionRepositoryCheckedException e) {
-          logger.error( Messages.getInstance().getErrorString( "SubscriptionExecute.ERROR_0004_SCHEDULE_DELETE_FAILED", scheduleReference ), e ); //$NON-NLS-1$
+          logger.error(Messages.getInstance().getErrorString("SubscriptionExecute.ERROR_0004_SCHEDULE_DELETE_FAILED", scheduleReference), e); //$NON-NLS-1$
         } catch (SubscriptionSchedulerException e) {
-          logger.error( Messages.getInstance().getErrorString( "SubscriptionExecute.ERROR_0004_SCHEDULE_DELETE_FAILED", scheduleReference ), e ); //$NON-NLS-1$
+          logger.error(Messages.getInstance().getErrorString("SubscriptionExecute.ERROR_0004_SCHEDULE_DELETE_FAILED", scheduleReference), e); //$NON-NLS-1$
         }
       }
     } finally {
@@ -181,7 +184,7 @@ public class SubscriptionExecute extends PentahoBase {
     }
   }
 
-  private void execute(final String jobName, final Map<String,Object> parametersMap, final IPentahoSession userSession) {
+  private void execute(final String jobName, final Map<String, Object> parametersMap, final IPentahoSession userSession) {
     try {
       LocaleHelper.setLocale(Locale.getDefault());
       logId = "Pro Subscription:" + jobName; //$NON-NLS-1$
@@ -193,7 +196,9 @@ public class SubscriptionExecute extends PentahoBase {
       String solutionName = (String) parametersMap.get("solution"); //$NON-NLS-1$
       String actionPath = (String) parametersMap.get("path"); //$NON-NLS-1$
       String actionName = (String) parametersMap.get("action"); //$NON-NLS-1$
-      
+
+      String subscriptionDestination = (String) parametersMap.get("SUB_DESTINATION");
+
       String instanceId = null;
       String processId = this.getClass().getName();
 
@@ -211,8 +216,7 @@ public class SubscriptionExecute extends PentahoBase {
       }
       if (SubscriptionExecute.debug) {
         if (SubscriptionExecute.debug) {
-          debug(Messages.getInstance().getString(
-              "SubscriptionExecute.DEBUG_EXECUTION_INFO", solutionName + "/" + actionPath + "/" + actionName)); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+          debug(Messages.getInstance().getString("SubscriptionExecute.DEBUG_EXECUTION_INFO", solutionName + "/" + actionPath + "/" + actionName)); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
         }
       }
 
@@ -238,15 +242,14 @@ public class SubscriptionExecute extends PentahoBase {
       parametersMap.put("content-handler-pattern", contentUrlPattern); //$NON-NLS-1$
       SimpleParameterProvider parameterProvider = new SimpleParameterProvider(parametersMap);
       IParameterProvider sessionParams = new PentahoSessionParameterProvider(userSession);
-      
+
       int lastDot = actionName.lastIndexOf('.');
       String type = actionName.substring(lastDot + 1);
       IPluginManager pluginManager = PentahoSystem.get(IPluginManager.class, userSession);
       IContentGenerator generator = pluginManager.getContentGeneratorForType(type, userSession);
 
-      if( generator == null ) {
-        BaseRequestHandler requestHandler = new BaseRequestHandler(userSession, null, outputHandler, parameterProvider,
-            null);
+      if (generator == null) {
+        BaseRequestHandler requestHandler = new BaseRequestHandler(userSession, null, outputHandler, parameterProvider, null);
         requestHandler.setParameterProvider(IParameterProvider.SCOPE_SESSION, sessionParams);
 
         requestHandler.setInstanceId(instanceId);
@@ -256,18 +259,18 @@ public class SubscriptionExecute extends PentahoBase {
         IRuntimeContext rt = null;
         try {
           rt = requestHandler.handleActionRequest(0, 0);
-          
-          if (!ignoreSubscriptionOutput && !outputHandler.isResponseExpected()) {
+          if (!StringUtils.isEmpty(subscriptionDestination)) {
+            emailContent(outputHandler, subscriptionName, solutionName, actionName, instanceId, subscriptionDestination);
+          } else if (!ignoreSubscriptionOutput && !outputHandler.isResponseExpected()) {
             if ((rt != null) && (rt.getStatus() == IRuntimeContext.RUNTIME_STATUS_SUCCESS)) {
               StringBuffer buffer = new StringBuffer();
               PentahoSystem.get(IMessageFormatter.class, userSession).formatSuccessMessage("text/html", rt, buffer, false); //$NON-NLS-1$
-              writeMessage( buffer.toString(), outputHandler, subscriptionName, solutionName, actionName, instanceId, userSession );
+              writeMessage(buffer.toString(), outputHandler, subscriptionName, solutionName, actionName, instanceId, userSession);
             } else {
               // we need an error message...
               StringBuffer buffer = new StringBuffer();
-              PentahoSystem.get(IMessageFormatter.class, userSession).formatFailureMessage(
-                  "text/html", rt, buffer, requestHandler.getMessages()); //$NON-NLS-1$
-              writeMessage( buffer.toString(), outputHandler, subscriptionName, solutionName, actionName, instanceId, userSession );
+              PentahoSystem.get(IMessageFormatter.class, userSession).formatFailureMessage("text/html", rt, buffer, requestHandler.getMessages()); //$NON-NLS-1$
+              writeMessage(buffer.toString(), outputHandler, subscriptionName, solutionName, actionName, instanceId, userSession);
             }
           }
         } finally {
@@ -280,26 +283,28 @@ public class SubscriptionExecute extends PentahoBase {
         generator.setItemName(actionName);
         generator.setInstanceId(instanceId);
         generator.setSession(userSession);
-        Map<String,IParameterProvider> parameterProviders = new HashMap<String,IParameterProvider>();
-        parameterProviders.put( IParameterProvider.SCOPE_REQUEST, parameterProvider);
-        parameterProviders.put( IParameterProvider.SCOPE_SESSION, new PentahoSessionParameterProvider(userSession));
+        Map<String, IParameterProvider> parameterProviders = new HashMap<String, IParameterProvider>();
+        parameterProviders.put(IParameterProvider.SCOPE_REQUEST, parameterProvider);
+        parameterProviders.put(IParameterProvider.SCOPE_SESSION, new PentahoSessionParameterProvider(userSession));
         generator.setParameterProviders(parameterProviders);
         try {
           generator.createContent();
           // we succeeded
-          if (!ignoreSubscriptionOutput && !outputHandler.isResponseExpected()) {
+          if (!StringUtils.isEmpty(subscriptionDestination)) {
+            emailContent(outputHandler, subscriptionName, solutionName, actionName, instanceId, subscriptionDestination);
+          } else if (!ignoreSubscriptionOutput && !outputHandler.isResponseExpected()) {
             String message = Messages.getInstance().getString("SubscriptionExecute.DEBUG_FINISHED_EXECUTION", jobName); //$NON-NLS-1$
-            writeMessage( message.toString(), outputHandler, subscriptionName, solutionName, actionName, instanceId, userSession );
+            writeMessage(message.toString(), outputHandler, subscriptionName, solutionName, actionName, instanceId, userSession);
           }
         } catch (Exception e) {
           e.printStackTrace();
           // we need an error message...
           if (!ignoreSubscriptionOutput && !outputHandler.isResponseExpected()) {
             String message = Messages.getInstance().getString("PRO_SUBSCRIPTREP.EXCEPTION_WITH_SCHEDULE", jobName); //$NON-NLS-1$
-            writeMessage( message.toString(), outputHandler, subscriptionName, solutionName, actionName, instanceId, userSession );
+            writeMessage(message.toString(), outputHandler, subscriptionName, solutionName, actionName, instanceId, userSession);
           }
         }
-        
+
       }
       if (SubscriptionExecute.debug) {
         SubscriptionExecute.logger.debug(Messages.getInstance().getString("SubscriptionExecute.DEBUG_FINISHED_EXECUTION", jobName)); //$NON-NLS-1$
@@ -309,9 +314,10 @@ public class SubscriptionExecute extends PentahoBase {
     }
   }
 
-  protected void writeMessage( String message, IOutputHandler outputHandler, String subscriptionName, String solutionName, String fileName, String instanceId, IPentahoSession userSession ) {
-    IContentItem outputContentItem = outputHandler.getOutputContentItem(IOutputHandler.RESPONSE,
-        IOutputHandler.CONTENT, subscriptionName, null, solutionName, instanceId, "text/html"); //$NON-NLS-1$
+  protected void writeMessage(String message, IOutputHandler outputHandler, String subscriptionName, String solutionName, String fileName, String instanceId,
+      IPentahoSession userSession) {
+    IContentItem outputContentItem = outputHandler.getOutputContentItem(IOutputHandler.RESPONSE, IOutputHandler.CONTENT, subscriptionName, null, solutionName,
+        instanceId, "text/html"); //$NON-NLS-1$
     outputContentItem.setMimeType("text/html"); //$NON-NLS-1$
     try {
       OutputStream os = outputContentItem.getOutputStream(fileName);
@@ -321,5 +327,28 @@ public class SubscriptionExecute extends PentahoBase {
       error(ex.getLocalizedMessage());
     }
   }
-  
+
+  protected void emailContent(IOutputHandler outputHandler, String subscriptionName, String solutionName, String fileName, String instanceId, String destination) {
+    IContentItem outputContentItem = outputHandler.getOutputContentItem(IOutputHandler.RESPONSE, IOutputHandler.CONTENT, subscriptionName, null, solutionName,
+        instanceId, null); //$NON-NLS-1$
+
+    fileName = subscriptionName;
+    String fileDate = DateFormat.getDateInstance(DateFormat.SHORT).format(outputContentItem.getFileDateTime());
+
+    if ("application/pdf".equals(outputContentItem.getMimeType())) {
+      fileName += ".pdf";
+    } else if ("text/html".equals(outputContentItem.getMimeType())) {
+      fileName += ".html";
+    } else if ("text/csv".equals(outputContentItem.getMimeType())) {
+      fileName += ".csv";
+    } else if ("application/vnd.ms-excel".equals(outputContentItem.getMimeType())) {
+      fileName += ".xls";
+    }
+
+    SubscriptionEmailContent emailer = new SubscriptionEmailContent(outputContentItem.getDataSource(), fileName, subscriptionName, destination);
+
+    if (!emailer.send()) {
+      SubscriptionExecute.logger.error("Problem sending subscription email.");
+    }
+  }
 }

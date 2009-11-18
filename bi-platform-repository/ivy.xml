@@ -63,13 +63,15 @@
         </dependency>
 
         <dependency org="javax.servlet"       name="servlet-api"         rev="2.4"/>
+    	<dependency org="javax.mail" name="mail" rev="1.3.2" />
+    	<dependency org="javax.activation" name="activation" rev="1.0.2" />     
 
         <!--  internal dependencies -->
 		<dependency org="org.pentaho" name="pentaho-vfs"                     rev="1.0"          changing="true"/>
         <dependency org="pentaho" name="pentaho-connections"                 rev="${dependency.pentaho-connections.revision}" changing="true"/>
         <dependency org="pentaho" name="pentaho-metadata"                rev="${dependency.pentaho-metadata.revision}" changing="true" />
-        
-        <dependency org="${ivy.artifact.group}" name="pentaho-bi-platform-api"             rev="${project.revision}" changing="true" conf="default->default"/>    
+
+        <dependency org="${ivy.artifact.group}" name="pentaho-bi-platform-api"             rev="${project.revision}" changing="true"/>    
         <dependency org="${ivy.artifact.group}" name="pentaho-bi-platform-util"            rev="${project.revision}" changing="true" conf="default->default"/>
         <dependency org="${ivy.artifact.group}" name="pentaho-bi-platform-engine-core"     rev="${project.revision}" changing="true" conf="default->default"/>
         <dependency org="${ivy.artifact.group}" name="pentaho-bi-platform-engine-security" rev="${project.revision}" changing="true" conf="default->default"/>        

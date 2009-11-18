@@ -74,7 +74,7 @@ function doParameterFormDisplay( id ) {
 function doClearEditingFields(form1, form2) {
 
 	var theForms = new Array(form1, form2);	
-	var theFields = new Array('editing', 'subscribe-title', /*'destination',*/ 'subscribe-id', 'subscribe', 'subscribe-name');
+	var theFields = new Array('editing', 'subscribe-title', 'destination', 'subscribe-id', 'subscribe', 'subscribe-name');
 	for (i=0; i < theForms.length; i++) {
 		if ( theForms[i] != null ) {
 			for (j=0; j < theFields.length; j++) {
@@ -238,13 +238,13 @@ function doSave( id, url, createNew ) {
 		hasSchedules = true;
 	}
 	
-/*
  	var destination = form.elements['destination'].value;
+/*
 	if( destination == '' && hasSchedules ) {
 		alert( 'You must enter a destination email address' );
 		return false;
 	}
-*/	
+*/
 	if( (element != null) && !hasSchedules ) {
 		if (!confirm('You have not selected any days for this to be delivered. Do you want to continue saving this?')) {
 			return false;
@@ -270,7 +270,7 @@ function doSave( id, url, createNew ) {
 
 	if (!USEPOSTFORFORMS) {
 		submitUrl += '&subscribe-name='+escape(name);		
-//		submitUrl += '&destination='+escape(destination);
+		submitUrl += '&destination='+escape(destination);
 		document.location.href=submitUrl;
 		return false;
 	} else {
