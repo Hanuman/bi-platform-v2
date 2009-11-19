@@ -76,7 +76,7 @@ INSTRUCTIONS
   <!-- custom dev_build properties -->
   <property name="source-solution" value="../bi-platform-sample-solution" />
   <property name="suppress-svn-validation" value="true" />
-  <property name="tomcat.lib.dir" value="${tomcat.dir}/common/lib" />
+  <property name="tomcat.lib.dir" value="${tomcat.dir}/lib" />
 
   <!-- These are the projects that will be compiled to class files and placed in WEB-INF/classes -->
   <property name="dev-project.list"
