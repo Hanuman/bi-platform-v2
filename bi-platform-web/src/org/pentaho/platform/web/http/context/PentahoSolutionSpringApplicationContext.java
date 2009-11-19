@@ -30,7 +30,7 @@ import org.springframework.web.context.support.XmlWebApplicationContext;
 
 /**
  * Overrides <code>getResourceByPath</code> so that relative paths are relative to the Pentaho solution repository's 
- * system directory instead of being relative to <code>WEB-INF</code>.
+ * system directory instead of being relative to servlet context root.
  * 
  * @author mlowery
  */
@@ -41,11 +41,8 @@ public class PentahoSolutionSpringApplicationContext extends XmlWebApplicationCo
     String solutionPath = PentahoHttpSessionHelper.getSolutionPath(getServletContext());
     if (solutionPath != null) {
       File file = new File(solutionPath + File.separator + "system" + File.separator + path);
-      if (file.exists()) {
-        resource = new FileSystemResource(file);
-      }
-    }
-    if (resource == null) {
+      resource = new FileSystemResource(file);
+    } else {
       resource = super.getResourceByPath(path);
     }
     return resource;
