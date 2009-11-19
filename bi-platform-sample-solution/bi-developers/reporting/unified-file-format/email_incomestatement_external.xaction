@@ -110,10 +110,28 @@
         <useContentRepository><![CDATA[true]]></useContentRepository> 
       </component-definition> 
     </action-definition>
-  
+ 
+    <action-definition> 
+      <component-name>JavascriptRule</component-name>
+      <action-type>Output content to browser</action-type>
+      <action-inputs>
+          <reportOutput type="content"/> 
+          <outputType type="string"/> 
+      </action-inputs>
+      <action-outputs> 
+          <myReport type="content"/> 
+      </action-outputs>
+      <component-definition> 
+        <script><![CDATA[ 
+                         myReport = rule.getRuntimeContext().getOutputContentItem(outputType).getOutputStream(rule.getActionName());
+                         Packages.org.apache.commons.io.IOUtils.copy(reportOutput.getInputStream(), myReport);
+		      ]]> </script> 
+      </component-definition> 
+    </action-definition>
+
+ 
     <actions> 
-      <condition><![CDATA[outputType=="application/pdf"
-]]></condition>  
+      <condition><![CDATA[outputType=="application/pdf"]]></condition>  
       <action-definition> 
         <component-name>EmailComponent</component-name>
         <action-type>E-Mail PDF</action-type>
