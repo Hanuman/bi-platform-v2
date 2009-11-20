@@ -45,12 +45,17 @@ import org.pentaho.platform.dataaccess.datasource.wizard.service.ConnectionServi
 import org.pentaho.platform.dataaccess.datasource.wizard.service.gwt.IConnectionService;
 import org.pentaho.platform.dataaccess.datasource.wizard.service.impl.utils.ConnectionServiceHelper;
 import org.pentaho.platform.dataaccess.datasource.wizard.service.messages.Messages;
+import org.pentaho.platform.engine.core.system.PentahoBase;
 import org.pentaho.platform.engine.core.system.PentahoSessionHolder;
 import org.pentaho.platform.engine.core.system.PentahoSystem;
 import org.pentaho.platform.engine.services.connection.PentahoConnectionFactory;
+import org.pentaho.platform.plugin.services.connections.sql.SQLConnection;
 import org.pentaho.platform.repository.hibernate.HibernateUtil;
 
-public class ConnectionServiceImpl implements IConnectionService {
+/**
+ * ConnectionServiceImpl extends PenahoBase so that it inherits the ILogger functionality.
+ */
+public class ConnectionServiceImpl extends PentahoBase implements IConnectionService {
 
   private IDataAccessPermissionHandler dataAccessPermHandler;
 
@@ -58,6 +63,10 @@ public class ConnectionServiceImpl implements IConnectionService {
 
   private static final Log logger = LogFactory.getLog(ConnectionServiceImpl.class);
 
+  public Log getLogger() {
+    return logger;
+  }
+  
   public ConnectionServiceImpl() {
     IPentahoSession session = PentahoSessionHolder.getSession();
     datasourceMgmtSvc = PentahoSystem.get(IDatasourceMgmtService.class, session);
@@ -214,10 +223,13 @@ public class ConnectionServiceImpl implements IConnectionService {
       IPentahoConnection pentahoConnection = null;
       pentahoConnection = PentahoConnectionFactory.getConnection(IPentahoConnection.SQL_DATASOURCE, connection
           .getDriverClass(), connection.getUrl(), connection.getUsername(), ConnectionServiceHelper
-          .getConnectionPassword(connection.getName(), connection.getPassword()), null, null);
+          .getConnectionPassword(connection.getName(), connection.getPassword()), null, this);
       if (pentahoConnection != null) {
+      	// make sure we have a native connection behind the SQLConnection object
+      	// if the native connection is null, the test of the connection failed
+        boolean testedOk = ((SQLConnection) pentahoConnection).getNativeConnection() != null;
         pentahoConnection.close();
-        return true;
+        return testedOk;
       } else {
         return false;
       }
@@ -235,6 +247,10 @@ public class ConnectionServiceImpl implements IConnectionService {
    * @return IConnection
    */
   private IConnection convertTo(IDatasource datasource) {
+    if( datasource == null ) {
+    	// make sure we don't attempt bad conversions
+      return null;
+    }
     IConnection returnDatasource = new org.pentaho.platform.dataaccess.datasource.beans.Connection();
     returnDatasource.setDriverClass(datasource.getDriverClass());
     returnDatasource.setName(datasource.getName());
@@ -251,6 +267,10 @@ public class ConnectionServiceImpl implements IConnectionService {
    * @return IDatasource
    */
   private IDatasource convertFrom(IConnection connection) {
+    if( connection == null ) {
+    	// make sure we don't attempt bad conversions
+      return null;
+    }
     IDatasource returnDatasource = (IDatasource) PentahoSystem.get(IDatasource.class, null);
     returnDatasource.setDriverClass(connection.getDriverClass());
     returnDatasource.setName(connection.getName());
@@ -261,6 +281,10 @@ public class ConnectionServiceImpl implements IConnectionService {
   }
 
   public IDatabaseConnection convertFromConnection(IConnection connection) throws ConnectionServiceException {
+    if( connection == null ) {
+    	// make sure we don't attempt bad conversions
+      return null;
+    }
     if (!hasDataAccessPermission()) {
       logger.error(Messages.getInstance().getErrorString("ConnectionServiceImpl.ERROR_0001_PERMISSION_DENIED")); //$NON-NLS-1$
       throw new ConnectionServiceException(Messages.getInstance()
@@ -278,10 +302,16 @@ public class ConnectionServiceImpl implements IConnectionService {
       return conn;
     } catch (ServiceException e) {
       throw new ConnectionServiceException(e);
+    } catch (Throwable e) {
+      throw new ConnectionServiceException(e);
     }
   }
 
   public IConnection convertToConnection(IDatabaseConnection connection) throws ConnectionServiceException {
+    if( connection == null ) {
+    	// make sure we don't attempt bad conversions
+      return null;
+    }
     if (!hasDataAccessPermission()) {
       logger.error(Messages.getInstance().getErrorString("ConnectionServiceImpl.ERROR_0001_PERMISSION_DENIED")); //$NON-NLS-1$
       throw new ConnectionServiceException(Messages.getInstance()

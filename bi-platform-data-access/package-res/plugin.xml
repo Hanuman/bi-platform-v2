@@ -21,7 +21,7 @@
     type="xml,gwt"
     title="%ConnectionService.TITLE%" 
     description="%ConnectionService.DESC%"
-    class="org.pentaho.platform.dataaccess.datasource.wizard.service.impl.ConnectionServiceImpl"/>
+    class="org.pentaho.platform.dataaccess.datasource.wizard.service.impl.ConnectionServiceConcrete"/>
 
   <webservice
     id="databaseConnectionService"
