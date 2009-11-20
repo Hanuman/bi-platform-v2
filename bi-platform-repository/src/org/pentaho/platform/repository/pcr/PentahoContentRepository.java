@@ -312,7 +312,6 @@ public class PentahoContentRepository implements IPentahoContentRepository {
     Assert.isTrue(!file.isFolder());
     Assert.hasText(file.getName());
     Assert.notNull(content);
-    Assert.hasText(file.getContentType());
     if (parentFolder != null) {
       Assert.hasText(parentFolder.getName());
     }

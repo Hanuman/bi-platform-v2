@@ -46,7 +46,7 @@ public class JcrRepositoryFileUtils {
       if (tmpCal != null) {
         lastModified = tmpCal.getTime();
       }
-      contentType = node.getProperty(addPentahoPrefix(session, PentahoJcrConstants.PENTAHO_RESOURCETYPE)).getString();
+      contentType = node.getProperty(addPentahoPrefix(session, PentahoJcrConstants.PENTAHO_CONTENTTYPE)).getString();
       versioned = isVersioned(session, node);
     }
 
@@ -82,8 +82,8 @@ public class JcrRepositoryFileUtils {
       parentFolderNode = session.getRootNode();
     }
     Node fileNode = parentFolderNode.addNode(file.getName(), PentahoJcrConstants.NT_FILE);
-    fileNode.addMixin(addPentahoPrefix(session, PentahoJcrConstants.PENTAHO_PENTAHOFILE));
-    fileNode.setProperty(addPentahoPrefix(session, PentahoJcrConstants.PENTAHO_RESOURCETYPE), file.getContentType());
+    fileNode.addMixin(addPentahoPrefix(session, PentahoJcrConstants.PENTAHO_MIXIN_PENTAHOFILE));
+    fileNode.setProperty(addPentahoPrefix(session, PentahoJcrConstants.PENTAHO_CONTENTTYPE), content.getContentType());
     // set created and last modified to same date when creating a new file
     fileNode.setProperty(addPentahoPrefix(session, PentahoJcrConstants.PENTAHO_PREVIEWLASTMODIFIED), fileNode
         .getProperty(PentahoJcrConstants.JCR_CREATED).getDate());
@@ -95,7 +95,7 @@ public class JcrRepositoryFileUtils {
     resourceNode.setProperty(PentahoJcrConstants.JCR_LASTMODIFIED, fileNode
         .getProperty(PentahoJcrConstants.JCR_CREATED).getDate());
 
-    resourceNode.addMixin(addPentahoPrefix(session, PentahoJcrConstants.PENTAHO_PENTAHORESOURCE));
+    resourceNode.addMixin(addPentahoPrefix(session, PentahoJcrConstants.PENTAHO_MIXIN_PENTAHORESOURCE));
     if (file.isVersioned()) {
       fileNode.setProperty(addPentahoPrefix(session, PentahoJcrConstants.PENTAHO_VERSIONED), true);
       resourceNode.addMixin(PentahoJcrConstants.MIX_VERSIONABLE);
@@ -112,7 +112,7 @@ public class JcrRepositoryFileUtils {
     Calendar lastModified = Calendar.getInstance();
 
     Node fileNode = nodeIdStrategy.findNodeById(session, file.getId());
-    fileNode.setProperty(addPentahoPrefix(session, PentahoJcrConstants.PENTAHO_RESOURCETYPE), file.getContentType());
+    fileNode.setProperty(addPentahoPrefix(session, PentahoJcrConstants.PENTAHO_CONTENTTYPE), file.getContentType());
     fileNode.setProperty(addPentahoPrefix(session, PentahoJcrConstants.PENTAHO_PREVIEWLASTMODIFIED), lastModified);
 
     Node resourceNode = fileNode.getNode(PentahoJcrConstants.JCR_CONTENT);
@@ -180,7 +180,7 @@ public class JcrRepositoryFileUtils {
   private static boolean isPentahoFile(final Session session, final Node node) throws RepositoryException {
     Value[] mixinTypeNames = node.getProperty(PentahoJcrConstants.JCR_MIXINTYPES).getValues();
     for (Value v : mixinTypeNames) {
-      if (addPentahoPrefix(session, PentahoJcrConstants.PENTAHO_PENTAHOFILE).equals(v.getString())) {
+      if (addPentahoPrefix(session, PentahoJcrConstants.PENTAHO_MIXIN_PENTAHOFILE).equals(v.getString())) {
         return true;
       }
     }
@@ -202,13 +202,13 @@ public class JcrRepositoryFileUtils {
   }
 
   public static String addPentahoPrefix(final Session session, final String name) throws RepositoryException {
-    String prefix = session.getWorkspace().getNamespaceRegistry().getPrefix(PentahoJcrConstants.PENTAHO_URI);
+    String prefix = session.getWorkspace().getNamespaceRegistry().getPrefix(PentahoJcrConstants.PENTAHO_NAMESPACE_URI);
     return prefix + ":" + name;
   }
 
   public static String removePentahoPrefix(final Session session, final String nameWithPrefix)
       throws RepositoryException {
-    String prefix = session.getWorkspace().getNamespaceRegistry().getPrefix(PentahoJcrConstants.PENTAHO_URI);
+    String prefix = session.getWorkspace().getNamespaceRegistry().getPrefix(PentahoJcrConstants.PENTAHO_NAMESPACE_URI);
     return nameWithPrefix.substring(prefix.length() + 1); // plus one for the colon
   }
 

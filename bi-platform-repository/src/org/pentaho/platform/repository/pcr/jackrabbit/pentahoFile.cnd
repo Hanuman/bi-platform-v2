@@ -1,5 +1,5 @@
 /*
-Pentaho file mixin node type.  (To be applied to nt:file nodes.)
+Pentaho file mixin node type.  (To be applied to nt:file or nt:linkedfile nodes.)
 
 Some of the properties in this node definition are copied from nt:resource because access control is applied to the 
 nt:resource node and we want users to be able to get an nt:file and "preview" some of the nt:resource node properties
@@ -41,8 +41,8 @@ mandatory autocreated
 // It has an on-parent-version setting of...
 ignore
 
-// Nodes of this node type have a property called 'ns:resourceType' of type STRING
-- ns:resourceType (string)
+// Nodes of this node type have a property called 'ns:contentType' of type STRING
+- ns:contentType (string)
 
 // and it is...
 mandatory

@@ -27,6 +27,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.pentaho.platform.api.repository.IPentahoContentRepository;
+import org.pentaho.platform.api.repository.IRepositoryFileContent;
 import org.pentaho.platform.api.repository.RepositoryFile;
 import org.pentaho.platform.repository.pcr.springsecurity.RepositoryFilePermission;
 import org.springframework.beans.BeansException;
@@ -286,7 +287,7 @@ public class PentahoContentRepositoryTests implements ApplicationContextAware {
         expectedMimeType);
     Date beginTime = Calendar.getInstance().getTime();
     RepositoryFile newFile = pentahoContentRepository.createFile(parentFolder, new RepositoryFile.Builder(expectedName)
-        .contentType(expectedContentType).build(), content);
+        .build(), content);
     Date endTime = Calendar.getInstance().getTime();
     assertTrue(beginTime.before(newFile.getLastModifiedDate()));
     assertTrue(endTime.after(newFile.getLastModifiedDate()));
@@ -316,7 +317,6 @@ public class PentahoContentRepositoryTests implements ApplicationContextAware {
     final String expectedName = "helloworld.xaction";
     final String parentFolderPath = "/pentaho/home/suzy";
     final String expectedAbsolutePath = parentFolderPath + RepositoryFile.SEPARATOR + expectedName;
-    final String expectedMimeType = "application/vnd.pentaho.runresult";
     final Map<String, String> expectedRunArguments = new HashMap<String, String>();
     expectedRunArguments.put("testKey", "testValue");
     RepositoryFile newFile = createRunResultFile(parentFolderPath, expectedName, expectedDataString, expectedEncoding,
@@ -340,22 +340,28 @@ public class PentahoContentRepositoryTests implements ApplicationContextAware {
   }
 
   @Test(expected = IllegalArgumentException.class)
-  public void testCreateFileUnrecognizedMimeType() throws Exception {
+  public void testCreateFileUnrecognizedContentType() throws Exception {
     pentahoContentRepository.startup();
     SecurityContextHolder.getContext().setAuthentication(AUTHENTICATION_SUZY);
     pentahoContentRepository.createUserHomeFolderIfNecessary();
     RepositoryFile parentFolder = pentahoContentRepository.getFile("/pentaho/home/suzy");
-    final String expectedDataString = "Hello World!";
-    final String expectedEncoding = "UTF-8";
-    byte[] data = expectedDataString.getBytes(expectedEncoding);
-    ByteArrayInputStream dataStream = new ByteArrayInputStream(data);
-    final String expectedContentType = "notsupported";
-    final String expectedMimeType = "text/plain";
-    final String expectedName = "helloworld.xaction";
-    final SimpleRepositoryFileContent content = new SimpleRepositoryFileContent(dataStream, expectedEncoding,
-        expectedMimeType);
-    pentahoContentRepository.createFile(parentFolder, new RepositoryFile.Builder(expectedName).contentType(
-        expectedContentType).build(), content);
+    //    final String expectedDataString = "Hello World!";
+    //    final String expectedEncoding = "UTF-8";
+    //    byte[] data = expectedDataString.getBytes(expectedEncoding);
+    //    ByteArrayInputStream dataStream = new ByteArrayInputStream(data);
+    //    final String expectedContentType = "notsupported";
+    //    final String expectedMimeType = "text/plain";
+    //    final String expectedName = "helloworld.xaction";
+    //    final SimpleRepositoryFileContent content = new SimpleRepositoryFileContent(dataStream, expectedEncoding,
+    //        expectedMimeType);
+    IRepositoryFileContent content = new IRepositoryFileContent() {
+      public String getContentType() {
+        return "notsupported";
+      }
+    };
+
+    pentahoContentRepository
+        .createFile(parentFolder, new RepositoryFile.Builder("helloworld.xaction").build(), content);
   }
 
   @Test
@@ -487,7 +493,7 @@ public class PentahoContentRepositoryTests implements ApplicationContextAware {
 
     final SimpleRepositoryFileContent content = new SimpleRepositoryFileContent(dataStream, encoding, mimeType);
     RepositoryFile newFile = pentahoContentRepository.createFile(parentFolder, new RepositoryFile.Builder(fileName)
-        .contentType(contentType).versioned(true).build(), content);
+        .versioned(true).build(), content);
     assertTrue(newFile.isVersioned());
     assertEquals(2, SimpleJcrTestUtils.getVersionCount(testJcrTemplate, parentFolderPath + RepositoryFile.SEPARATOR
         + fileName));
@@ -505,8 +511,7 @@ public class PentahoContentRepositoryTests implements ApplicationContextAware {
     final String expectedContentType = "runresult";
     final RunResultRepositoryFileContent content = new RunResultRepositoryFileContent(dataStream, expectedEncoding,
         expectedRunResultMimeType, expectedRunArguments);
-    return pentahoContentRepository.createFile(parentFolder, new RepositoryFile.Builder(expectedName).contentType(
-        expectedContentType).build(), content);
+    return pentahoContentRepository.createFile(parentFolder, new RepositoryFile.Builder(expectedName).build(), content);
   }
 
   private void assertAceExists(final Serializable id, final Sid sid, final Permission permission) {

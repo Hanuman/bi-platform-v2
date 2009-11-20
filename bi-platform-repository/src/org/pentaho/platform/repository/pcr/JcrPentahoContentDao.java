@@ -77,7 +77,6 @@ public class JcrPentahoContentDao implements IPentahoContentDao, InitializingBea
     Assert.hasText(file.getName());
     Assert.isTrue(!file.isFolder());
     Assert.notNull(content);
-    Assert.hasText(file.getContentType());
     if (parentFolder != null) {
       Assert.hasText(parentFolder.getName());
     }
@@ -85,7 +84,7 @@ public class JcrPentahoContentDao implements IPentahoContentDao, InitializingBea
     return (RepositoryFile) jcrTemplate.execute(new JcrCallback() {
       public Object doInJcr(final Session session) throws RepositoryException, IOException {
         Node fileNode = JcrRepositoryFileUtils.createFileNode(session, nodeIdStrategy, parentFolder, file, content,
-            findTransformer(file.getContentType()));
+            findTransformer(content.getContentType()));
         session.save();
         RepositoryFile newFile = JcrRepositoryFileUtils.fromFileNode(session, nodeIdStrategy, fileNode);
         JcrRepositoryFileUtils.checkinIfNecessary(session, nodeIdStrategy, newFile);
