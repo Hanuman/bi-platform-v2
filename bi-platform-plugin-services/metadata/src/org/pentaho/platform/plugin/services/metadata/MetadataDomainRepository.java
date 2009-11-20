@@ -27,7 +27,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.dom4j.Document;
 import org.dom4j.Element;
-import org.dom4j.Node;
 import org.pentaho.metadata.model.Domain;
 import org.pentaho.metadata.repository.DomainAlreadyExistsException;
 import org.pentaho.metadata.repository.DomainIdNullException;
@@ -36,6 +35,8 @@ import org.pentaho.metadata.repository.FileBasedMetadataDomainRepository;
 import org.pentaho.metadata.util.XmiParser;
 import org.pentaho.platform.api.engine.IAclHolder;
 import org.pentaho.platform.api.engine.IPentahoSession;
+import org.pentaho.platform.api.engine.ISolutionFile;
+import org.pentaho.platform.api.engine.ISolutionFilter;
 import org.pentaho.platform.api.repository.ISolutionRepository;
 import org.pentaho.platform.engine.core.system.PentahoSessionHolder;
 import org.pentaho.platform.engine.core.system.PentahoSystem;
@@ -57,7 +58,7 @@ public class MetadataDomainRepository extends FileBasedMetadataDomainRepository 
 
   protected final Log logger = LogFactory.getLog(MetadataDomainRepository.class);
   
-  public static String XMI_FILENAME = "metadata.xmi"; //$NON-NLS-1$
+  public static String LEGACY_XMI_FILENAME = "metadata.xmi"; //$NON-NLS-1$
   
   public static final int[] ACCESS_TYPE_MAP = new int[] { IAclHolder.ACCESS_TYPE_READ, IAclHolder.ACCESS_TYPE_WRITE,
     IAclHolder.ACCESS_TYPE_UPDATE, IAclHolder.ACCESS_TYPE_DELETE, IAclHolder.ACCESS_TYPE_ADMIN,
@@ -140,7 +141,7 @@ public class MetadataDomainRepository extends FileBasedMetadataDomainRepository 
  
   private void removeLegacyDomain(String domainId) {
     ISolutionRepository repo = PentahoSystem.get(ISolutionRepository.class, getSession());
-    repo.removeSolutionFile(domainId + "/" + XMI_FILENAME); //$NON-NLS-1$
+    repo.removeSolutionFile(domainId); 
     domains.remove(domainId);
   }
   
@@ -148,25 +149,61 @@ public class MetadataDomainRepository extends FileBasedMetadataDomainRepository 
   private void reloadLegacyDomains(boolean overwrite) {
     // also load the XMI domains
     ISolutionRepository repo = PentahoSystem.get(ISolutionRepository.class, getSession());
-    Document doc = repo.getSolutions(ISolutionRepository.ACTION_EXECUTE);
-    List nodes = doc.selectNodes("/repository/file[@type='FILE.FOLDER']"); //$NON-NLS-1$
+    // filter the repository looking for XMI files
+    Document doc = repo.getSolutionTree(ISolutionRepository.ACTION_EXECUTE, 
+        new ISolutionFilter() {
+      public boolean keepFile(ISolutionFile solutionFile, int actionOperation) {
+        return solutionFile.isDirectory() || solutionFile.getExtension().equalsIgnoreCase("xmi"); //$NON-NLS-1$
+      }
+    });
     int allSuccess = MetadataPublisher.NO_ERROR;
-    for (Object node : nodes) {
-      Node elem = ((Element) node).selectSingleNode("solution"); //$NON-NLS-1$
-      if (elem != null) {
-        String solution = elem.getText();
-        if (overwrite || !domains.containsKey(solution)) {
-          allSuccess |= loadMetadata(solution);
+    try {
+      // first look for metadata.xmi leaves in solution roots
+      // e.g. /tree/pentaho-solutions/somedir/metadata.xmi
+      List nodes = doc.selectNodes("/tree/branch/branch/leaf[@isDir='false']"); //$NON-NLS-1$
+      for (Object obj : nodes) {
+        Element node = (Element) obj;
+        Element pathNode = (Element)(node).selectSingleNode("path"); //$NON-NLS-1$
+        String path = pathNode.getText();
+        // remove the first node
+        int idx = path.indexOf(ISolutionRepository.SEPARATOR, 1);
+        path = path.substring( idx+1 ); 
+        // make sure the filename is 'metadata.xmi'
+        if( path.endsWith( LEGACY_XMI_FILENAME )) {
+          if (overwrite || !domains.containsKey(path)) {
+            allSuccess |= loadMetadata(path);
+          }
         }
       }
+
+      // now look for  */resources/metadata/*.xmi
+      // e.g. /tree/pentaho-solutions/some/resources/metadata/*.xmi
+      nodes = doc.selectNodes("/tree/branch/branch/branch/branch/leaf[@isDir='false']"); //$NON-NLS-1$
+      for (Object obj : nodes) {
+        // build up the directory path
+        Element node = (Element) obj;
+        String dir = node.getParent().attributeValue( "id" ); //$NON-NLS-1$
+        // make sure the parent branch ends with /resources/metadata
+        if( dir.endsWith( "/resources/metadata" ) ) { //$NON-NLS-1$
+          Element pathNode = (Element)(node).selectSingleNode("path"); //$NON-NLS-1$        
+          String path = pathNode.getText();
+          // remove the first node
+          int idx = path.indexOf(ISolutionRepository.SEPARATOR, 1);
+          path = path.substring( idx+1 ); 
+          if (overwrite || !domains.containsKey(path)) {
+            allSuccess |= loadMetadata(path);
+          }
+        }
+      }
+      
+    } catch (Exception e) {
+      e.printStackTrace();
     }
   }
 
-  private int loadMetadata(final String solution) {
+  private int loadMetadata(final String resourceName) {
     int result = MetadataPublisher.NO_ERROR;
-    String resourceName;
     InputStream xmiInputStream;
-    resourceName = solution + "/" + XMI_FILENAME; //$NON-NLS-1$
     xmiInputStream = null;
     ISolutionRepository repo = PentahoSystem.get(ISolutionRepository.class, getSession());
     if (repo.resourceExists(resourceName, ISolutionRepository.ACTION_EXECUTE)) {
@@ -174,8 +211,11 @@ public class MetadataDomainRepository extends FileBasedMetadataDomainRepository 
         xmiInputStream = repo.getResourceInputStream(resourceName, true, ISolutionRepository.ACTION_EXECUTE);
         Domain domain = new XmiParser().parseXmi(xmiInputStream);
         domain.setProperty(LEGACY_LOCATION, resourceName);
-        domain.setId(solution);
-        domains.put(solution, domain);
+        // The domain key is the full path and name of the XMI file within the solution repository
+        // e.g. mysolution/resources/metadata/mymodel.xmi or
+        // mysolution/metadata.xmi
+        domain.setId(resourceName);
+        domains.put(resourceName, domain);
       } catch (Throwable t) {
         logger.error(Messages.getInstance().getString("MetadataPublisher.ERROR_0001_COULD_NOT_LOAD", resourceName), t); //$NON-NLS-1$
         throw new RuntimeException(Messages.getInstance().getString("MetadataPublisher.ERROR_0001_COULD_NOT_LOAD"), t); //$NON-NLS-1$
@@ -227,9 +267,17 @@ public class MetadataDomainRepository extends FileBasedMetadataDomainRepository 
     XmiParser parser = new XmiParser();
     String xmi = parser.generateXmi(domain);
     try {
+      String domainId = domain.getId();
+      // parse the domain id into a path and filename
+      // e.g. domainId = mysolution/resources/metadata/mymodel.xmi
+      // path = mysolution/resources/metadata
+      // fileName = mymodel.xmi
+      int idx = domainId.lastIndexOf(ISolutionRepository.SEPARATOR);
+      String path = domainId.substring(0, idx);
+      String fileName = domainId.substring( idx+1);
       ISolutionRepository repo = PentahoSystem.get(ISolutionRepository.class, getSession());
       String solutionPath = PentahoSystem.getApplicationContext().getSolutionPath(""); //$NON-NLS-1$
-      repo.addSolutionFile(solutionPath, domain.getId(), XMI_FILENAME, xmi.getBytes(LocaleHelper.getSystemEncoding()), true);
+      repo.addSolutionFile(solutionPath, path, fileName, xmi.getBytes(LocaleHelper.getSystemEncoding()), true);
       
       // adds the domain to the domains list
       domains.put(domain.getId(), domain);
