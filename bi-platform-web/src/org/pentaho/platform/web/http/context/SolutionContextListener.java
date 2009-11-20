@@ -114,8 +114,7 @@ public class SolutionContextListener implements ServletContextListener {
       // TODO: Create a servlet that's loaded on startup to set this value
       baseUrl = "http://localhost:8080/pentaho/"; //$NON-NLS-1$
     }
-    IApplicationContext applicationContext = new WebApplicationContext(SolutionContextListener.solutionPath, baseUrl,
-        context.getRealPath(""), context); //$NON-NLS-1$
+    IApplicationContext applicationContext = createWebApplicationContext(baseUrl, context);
 
     /*
      * Copy out all the initParameter values from the servlet context and
@@ -138,6 +137,28 @@ public class SolutionContextListener implements ServletContextListener {
     this.showInitializationMessage(initOk, baseUrl);
   }
 
+  /**
+   * Provide a simple extension point for someone to be able to override the behavior
+   * of the WebApplicationContext. To extend or change behavior, you will need to 
+   * extend WebApplicationContext, and extend SolutionContextListener to override
+   * the createWebApplicationContext method. The subclassing is currently required
+   * because the initialization code above makes a specific setProperties call on the
+   * returned ApplicationContext method by casting it to a WebApplicationContext.
+   * 
+   * Tangible example where this would be needed - context.getRealPath("") doesn't
+   * work the same way on all platforms. In some cases, you need to pass in a null,
+   * not an empty string. For other servers that don't unpack the war, the 
+   * realPath call may need to be replaced with a parameter defined in the web.xml
+   * 
+   * @param bUrl
+   * @param context
+   * @return
+   */
+  protected WebApplicationContext createWebApplicationContext(String bUrl, ServletContext context) {
+    return new WebApplicationContext(SolutionContextListener.solutionPath, bUrl,
+        context.getRealPath(""), context); //$NON-NLS-1$
+  }
+  
   private void setObjectFactory(final ServletContext context) {
 
     final String SYSTEM_FOLDER = "/system"; //$NON-NLS-1$
