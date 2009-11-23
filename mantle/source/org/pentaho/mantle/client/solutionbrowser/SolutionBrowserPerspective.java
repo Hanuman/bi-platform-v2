@@ -21,6 +21,7 @@ package org.pentaho.mantle.client.solutionbrowser;
 
 import java.util.ArrayList;
 
+import org.pentaho.gwt.widgets.client.dialogs.IDialogCallback;
 import org.pentaho.gwt.widgets.client.dialogs.MessageDialogBox;
 import org.pentaho.gwt.widgets.client.menuitem.CheckBoxMenuItem;
 import org.pentaho.gwt.widgets.client.utils.ElementUtils;
@@ -212,7 +213,7 @@ public class SolutionBrowserPerspective extends HorizontalPanel {
     ExecuteWAQRPreviewCommand.setupNativeHooks();
     setupNativeHooks(SolutionBrowserPerspective.getInstance());
   }
-  
+
   private static native void setupNativeHooks(SolutionBrowserPerspective solutionNavigator)
   /*-{
     $wnd.sendMouseEvent = function(event) {
@@ -321,15 +322,51 @@ public class SolutionBrowserPerspective extends HorizontalPanel {
         ContentTypePlugin plugin = PluginOptionsHelper.getContentTypePlugin(filesListPanel.getSelectedFileItem().getName());
         if (plugin != null && plugin.hasCommand(mode)) {
           // load the editor for this plugin
-          String url = filesListPanel.getSelectedFileItem().getURL();
+          String url = plugin.getCommandUrl(filesListPanel.getSelectedFileItem(), mode);
           if (StringUtils.isEmpty(url)) {
-            url = plugin.getCommandUrl(filesListPanel.getSelectedFileItem(), mode);
+            url = filesListPanel.getSelectedFileItem().getURL();
           }
+
           if (GWT.isScript()) {
             if (url != null && !"".equals(url)) { //$NON-NLS-1$
-              // we have a URL so open it in a new tab
+              // we have a URL so open it
               if (mode == FileCommand.COMMAND.NEWWINDOW) {
                 Window.open(url, "_blank", "menubar=yes,location=no,resizable=yes,scrollbars=yes,status=no"); //$NON-NLS-1$ //$NON-NLS-2$
+              } else if (mode == FileCommand.COMMAND.BACKGROUND) {
+                RequestBuilder builder = new RequestBuilder(RequestBuilder.GET, url);
+                try {
+                  builder.sendRequest(null, new RequestCallback() {
+
+                    public void onError(Request request, Throwable exception) {
+                      MessageDialogBox dialogBox = new MessageDialogBox(
+                          Messages.getString("error"), Messages.getString("couldNotBackgroundExecute"), false, false, true); //$NON-NLS-1$ //$NON-NLS-2$
+                      dialogBox.center();
+                    }
+
+                    public void onResponseReceived(Request request, Response response) {
+                      MessageDialogBox dialogBox = new MessageDialogBox(Messages.getString("info"), //$NON-NLS-1$
+                          Messages.getString("backgroundExecutionWarning"), //$NON-NLS-1$
+                          true, false, true);
+                      dialogBox.setCallback(new IDialogCallback() {
+                        public void cancelPressed() {
+                        }
+
+                        public void okPressed() {
+                          if (isWorkspaceShowing()) {
+                            workspacePanel.refreshWorkspace();
+                          }
+                        }
+                      });
+                      dialogBox.center();
+                    }
+
+                  });
+                } catch (RequestException e) {
+                  MessageDialogBox dialogBox = new MessageDialogBox(Messages.getString("error"), //$NON-NLS-1$
+                      e.getMessage(), //$NON-NLS-1$
+                      true, false, true);
+                  dialogBox.center();
+                }
               } else {
                 UrlCommand cmd = new UrlCommand(url, filesListPanel.getSelectedFileItem().getLocalizedName());
                 cmd.execute(new CommandCallback() {
@@ -388,15 +425,15 @@ public class SolutionBrowserPerspective extends HorizontalPanel {
         }
       }
       contentTabPanel
-      .showNewURLTab(
+          .showNewURLTab(
               Messages.getString("editingColon") + filesListPanel.getSelectedFileItem().getLocalizedName(), Messages.getString("editingColon") + filesListPanel.getSelectedFileItem().getLocalizedName(), url, true); //$NON-NLS-1$ //$NON-NLS-2$
 
       // Store representation of file in the frame for reference later when save is called
       contentTabPanel.getCurrentFrame().setFileInfo(filesListPanel.getSelectedFileItem());
 
     } else if (filesListPanel.getSelectedFileItem().getName().endsWith(".analysisview.xaction")) { //$NON-NLS-1$
-      openFile("/" + filesListPanel.getSelectedFileItem().getSolution() + filesListPanel.getSelectedFileItem().getPath(), filesListPanel.getSelectedFileItem().getName(), filesListPanel.getSelectedFileItem()
-          .getLocalizedName(), COMMAND.RUN);
+      openFile("/" + filesListPanel.getSelectedFileItem().getSolution() + filesListPanel.getSelectedFileItem().getPath(), filesListPanel.getSelectedFileItem()
+          .getName(), filesListPanel.getSelectedFileItem().getLocalizedName(), COMMAND.RUN);
     } else {
       // check to see if a plugin supports editing
       ContentTypePlugin plugin = PluginOptionsHelper.getContentTypePlugin(filesListPanel.getSelectedFileItem().getName());
@@ -516,7 +553,8 @@ public class SolutionBrowserPerspective extends HorizontalPanel {
           MantleServiceCache.getService().hasAccess(filesListPanel.getSelectedFileItem().getSolution(), filesListPanel.getSelectedFileItem().getPath(),
               filesListPanel.getSelectedFileItem().getName(), 3, callback);
         } else {
-          contentTabPanel.showNewURLTab(filesListPanel.getSelectedFileItem().getLocalizedName(), filesListPanel.getSelectedFileItem().getLocalizedName(), url, true);
+          contentTabPanel.showNewURLTab(filesListPanel.getSelectedFileItem().getLocalizedName(), filesListPanel.getSelectedFileItem().getLocalizedName(), url,
+              true);
         }
       }
 
