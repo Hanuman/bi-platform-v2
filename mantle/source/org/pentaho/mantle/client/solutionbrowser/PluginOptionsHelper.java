@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.pentaho.gwt.widgets.client.utils.string.StringUtils;
 import org.pentaho.mantle.client.commands.AnalysisViewCommand;
 import org.pentaho.mantle.client.commands.UrlCommand;
 import org.pentaho.mantle.client.commands.WAQRCommand;
@@ -11,6 +12,7 @@ import org.pentaho.mantle.client.solutionbrowser.filelist.FileItem;
 import org.pentaho.mantle.client.solutionbrowser.filelist.FileCommand.COMMAND;
 
 import com.google.gwt.user.client.Command;
+import com.google.gwt.user.client.Window;
 
 public class PluginOptionsHelper {
 
@@ -20,7 +22,7 @@ public class PluginOptionsHelper {
   private static String newAnalysisViewOverrideCommandTitle;
   private static String newReportOverrideCommandUrl;
   private static String newReportOverrideCommandTitle;
-  
+
   public static void buildEnabledOptionsList(Map<String, String> settings) {
     enabledOptionsList.clear();
     contentTypePluginList.clear();
@@ -167,8 +169,8 @@ public class PluginOptionsHelper {
       }
     }
     return null;
-  }  
-  
+  }
+
   public static Command getNewAnalysisViewCommand() {
     if (newAnalysisViewOverrideCommandUrl == null) {
       return new AnalysisViewCommand();
@@ -183,8 +185,8 @@ public class PluginOptionsHelper {
     } else {
       return new UrlCommand(newReportOverrideCommandUrl, newReportOverrideCommandTitle);
     }
-  }  
-  
+  }
+
   public static class ContentTypePlugin {
 
     String fileExtension;
@@ -218,7 +220,18 @@ public class PluginOptionsHelper {
     }
 
     public String getCommandUrl(FileItem item, COMMAND cmd) {
-      return replacePattern(urlCommands.get(cmd), item);
+      String url = replacePattern(urlCommands.get(cmd), item);
+      if (!StringUtils.isEmpty(url)) {
+        if (!url.startsWith("http")) {
+          String href = Window.Location.getHref().substring(0, Window.Location.getHref().indexOf("Home"));
+          if (href.endsWith("/") || url.startsWith("/")) {
+            url = href += url;
+          } else {
+            url = href + "/" + url;
+          }
+        }
+      }
+      return url;
     }
 
     public String getFileIcon() {
@@ -226,5 +239,4 @@ public class PluginOptionsHelper {
     }
   }
 
-  
 }
