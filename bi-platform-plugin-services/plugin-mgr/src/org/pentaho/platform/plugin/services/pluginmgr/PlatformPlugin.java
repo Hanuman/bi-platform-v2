@@ -62,7 +62,8 @@ public class PlatformPlugin implements IPlatformPlugin, IPentahoInitializer {
 
   private String id;
 
-  private String sourceDescription;
+  //this value needs to default to an empty string so the plugin dir will not say "null" in the path if the path is not explicitly set
+  private String sourceDescription = "";  //$NON-NLS-1$
 
   private String lifecycleListenerClassname;
 
