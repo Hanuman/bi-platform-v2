@@ -132,13 +132,10 @@ public class ActionDelegate extends ComponentBase {
     if (contentOutputs.length > 0) {
 
       for (IActionOutput contentOutput : contentOutputs) {
-
-        if (!isStreamingOutput(contentOutput.getPublicName())) {
-          //we will deal with this output like normal non-streaming outputs post execution
-          continue;
+        if (isStreamingOutput(contentOutput.getPublicName())) {
+          streamOutputOps.setOutputStream(contentOutput);
         }
-
-        streamOutputOps.setOutputStream(contentOutput);
+        //else, we will deal with this output like normal non-streaming outputs post execution
       }
     }
 
