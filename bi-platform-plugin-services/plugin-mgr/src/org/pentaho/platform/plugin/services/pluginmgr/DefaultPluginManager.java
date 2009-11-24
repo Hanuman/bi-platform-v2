@@ -17,6 +17,7 @@
  */
 package org.pentaho.platform.plugin.services.pluginmgr;
 
+import java.io.File;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -373,17 +374,21 @@ public class DefaultPluginManager extends AbstractPluginManager {
     return services;
   }
 
-  private ClassLoader setPluginClassLoader(IPlatformPlugin plugin) {
+  private ClassLoader setPluginClassLoader(IPlatformPlugin plugin) throws PlatformPluginRegistrationException {
     ClassLoader loader = classLoaderMap.get(plugin.getId());
     if (loader == null) {
-      String pluginDir = PentahoSystem.getApplicationContext().getSolutionPath(
+      String pluginDirPath = PentahoSystem.getApplicationContext().getSolutionPath(
           "system/" + plugin.getSourceDescription()); //$NON-NLS-1$
       //need to scrub out duplicate file delimeters otherwise we will 
       //not be able to locate resources in jars.  This classloader ultimately
       //needs to be made less fragile
-      pluginDir = pluginDir.replace("//", "/"); //$NON-NLS-1$ //$NON-NLS-2$
-      Logger.debug(this, "plugin dir for " + plugin.getId() + " is [" + pluginDir + "]"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-      loader = new PluginClassLoader(pluginDir, this);
+      pluginDirPath = pluginDirPath.replace("//", "/"); //$NON-NLS-1$ //$NON-NLS-2$
+      Logger.debug(this, "plugin dir for " + plugin.getId() + " is [" + pluginDirPath + "]"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+      File pluginDir = new File(pluginDirPath);
+      if(!pluginDir.exists() || !pluginDir.isDirectory() || !pluginDir.canRead()) {
+        throw new PlatformPluginRegistrationException(Messages.getInstance().getErrorString("PluginManager.ERROR_0027_PLUGIN_DIR_UNAVAILABLE", pluginDir.getAbsolutePath())); //$NON-NLS-1$
+      }
+      loader = new PluginClassLoader(pluginDir, this.getClass().getClassLoader());
       classLoaderMap.put(plugin.getId(), loader);
     }
     return loader;

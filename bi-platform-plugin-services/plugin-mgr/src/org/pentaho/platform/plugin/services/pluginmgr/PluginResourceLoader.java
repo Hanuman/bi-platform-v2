@@ -159,7 +159,7 @@ public class PluginResourceLoader implements IPluginResourceLoader {
       return rootDir;
     }
     if (classLoader instanceof PluginClassLoader) {
-      return new File(((PluginClassLoader) classLoader).getPluginAbsPath());
+      return ((PluginClassLoader) classLoader).getPluginDir();
     }
     return null;
   }
