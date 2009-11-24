@@ -153,7 +153,7 @@ public class MetadataDomainRepository extends FileBasedMetadataDomainRepository 
     Document doc = repo.getSolutionTree(ISolutionRepository.ACTION_EXECUTE, 
         new ISolutionFilter() {
       public boolean keepFile(ISolutionFile solutionFile, int actionOperation) {
-        return solutionFile.isDirectory() || solutionFile.getExtension().equalsIgnoreCase("xmi"); //$NON-NLS-1$
+        return solutionFile.isDirectory() || solutionFile.getExtension().equalsIgnoreCase("xmi") || solutionFile.getExtension().equalsIgnoreCase(".xmi"); //$NON-NLS-1$ //$NON-NLS-2$
       }
     });
     int allSuccess = MetadataPublisher.NO_ERROR;
