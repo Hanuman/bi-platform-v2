@@ -13,11 +13,11 @@
   <inputs/>
 
   <outputs>
-    <outputstream type="string"> 
+    <chartContent type="content"> 
       <destinations> 
         <response>content</response> 
       </destinations> 
-    </outputstream> 
+    </chartContent> 
   </outputs>
 
   <resources> 
@@ -54,18 +54,18 @@
 
     
     <action-definition>
-      <component-name>ChartBeansComponent</component-name>
+      <component-name>ChartBeansAction</component-name>
       <action-inputs>
-	  <value-column type="string"/> 
-	  <category-column type="string"/> 
-	  <series-column type="string"/> 
-        <chartdata type="result-set" mapping="new_result"/>
+	  <valueColumn type="string"/> 
+	  <categoryColumn type="string"/> 
+	  <seriesColumn type="string"/> 
+        <chartData type="result-set" mapping="new_result"/>
       </action-inputs>
       <action-resources> 
-        <chart-model-xml type="resource" mapping="area"/>
+        <chartModelXml type="resource" mapping="area"/>
       </action-resources>
       <action-outputs>
-        <outputstream/>
+        <chartContent type="content"/>
       </action-outputs>
       <component-definition/> 
       <action-name>ChartBeans Area Chart</action-name>  
