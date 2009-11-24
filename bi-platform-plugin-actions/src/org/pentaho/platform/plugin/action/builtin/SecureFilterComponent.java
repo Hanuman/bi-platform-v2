@@ -187,6 +187,8 @@ public class SecureFilterComponent extends ComponentBase {
           }
         } else if (!entry.promptOne && (selMap.selectionCount() == 1)) {
           entry.inputParam.setValue(selMap.getValueAt(0));
+        } else if (!feedbackAllowed() && entry.isOptional) {
+          isOk = true;
         } else if (!feedbackAllowed()) {
           isOk = false;
         } else {
