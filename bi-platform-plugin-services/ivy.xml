@@ -120,7 +120,6 @@
         
         <!--  testing dependencies -->
     <dependency org="net.sf.ehcache" name="ehcache-core" rev="1.7.0" conf="test->default"/>
-    <dependency org="net.sf.ehcache" name="ehcache" rev="1.7.0" conf="test->default"/>
     <dependency org="junit" name="junit" rev="4.4" conf="test->default" />
     <dependency org="org.jmock" name="jmock-junit4" rev="2.5.1" conf="test->default" />
     <dependency org="pentaho" name="pentaho-bi-platform-test-foundation" rev="${project.revision}" changing="true"
