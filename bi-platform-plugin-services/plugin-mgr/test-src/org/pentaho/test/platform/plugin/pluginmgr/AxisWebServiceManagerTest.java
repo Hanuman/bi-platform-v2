@@ -144,6 +144,7 @@ public class AxisWebServiceManagerTest {
     public List<IPlatformPlugin> getPlugins(IPentahoSession session) throws PlatformPluginRegistrationException {
       PlatformPlugin p = new PlatformPlugin();
       p.setId("testPlugin");
+      p.setSourceDescription("");
 
       ContentGeneratorInfo cg1 = new ContentGeneratorInfo();
       cg1.setDescription("Mock web service execution generator");
