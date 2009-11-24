@@ -12,12 +12,12 @@
 
   <inputs/>
 
-  <outputs>
-    <outputstream type="string"> 
+  <outputs> 
+    <chartContent type="content"> 
       <destinations> 
         <response>content</response> 
       </destinations> 
-    </outputstream> 
+    </chartContent> 
   </outputs>
 
   <resources> 
@@ -34,7 +34,7 @@
       <component-name>JavascriptRule</component-name>
       <action-type>Create dial value in memory resultset.</action-type>
       <action-outputs> 
-        <results type="result-set" mapping="chartdata"/> 
+        <results type="result-set" mapping="chartData"/> 
       </action-outputs>
       <component-definition> 
         <script><![CDATA[var results = new JavaScriptResultSet();
@@ -47,18 +47,18 @@
     
     <action-definition>
       <action-name>Simple demonstration Flash dial chart.</action-name>  
-      <component-name>ChartBeansComponent</component-name>
+      <component-name>ChartBeansAction</component-name>
       <action-inputs> 
-        <chartdata type="result-set" />
+        <chartData type="result-set" />
       </action-inputs>
       <action-outputs>
-        <outputstream/>
+        <chartContent type="content"/>
       </action-outputs>
       <action-resources> 
-        <chart-model-xml type="resource" mapping="dial"/>
+        <chartModelXml type="resource" mapping="dial"/>
       </action-resources>
       <component-definition>  
-        <value-column>DIAL_DATA</value-column>
+        <valueColumn>DIAL_DATA</valueColumn>
       </component-definition>
       <logging-level>DEBUG</logging-level> 
     </action-definition>

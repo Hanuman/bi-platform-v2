@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<action-sequence>
+<action-sequence> 
   <name>Simple Horizontal Bar Example</name>
   <title>Chartbeans Horizontal Bar Chart</title>
   <version>1</version>
@@ -7,17 +7,17 @@
   <documentation> 
     <author>Gretchen Moran</author>  
     <description/>  
-    <help/>
+    <help/> 
   </documentation>
 
   <inputs/>
 
-  <outputs>
-    <outputstream type="string"> 
+  <outputs> 
+    <chartContent type="content"> 
       <destinations> 
         <response>content</response> 
       </destinations> 
-    </outputstream> 
+    </chartContent> 
   </outputs>
 
   <resources> 
@@ -26,12 +26,10 @@
         <location>chartbeans_horizbarchart.xml</location>  
         <mime-type>text/xml</mime-type> 
       </solution-file> 
-    </bar>  
-  </resources> 
-
-
+    </bar> 
+  </resources>
+  
   <actions> 
-
     <action-definition> 
       <component-name>SQLLookupRule</component-name>
       <action-type>New Chart Data Query</action-type>
@@ -51,26 +49,25 @@
      				ORDER BY 2 ASC]]></query> 
       </component-definition> 
     </action-definition>
-
-    
-    <action-definition>
-      <component-name>ChartBeansComponent</component-name>
-      <action-inputs>
-	  <value-column type="string"/> 
-	  <category-column type="string"/> 
-	  <series-column type="string"/> 
-        <chartdata type="result-set" mapping="new_result"/>
+  
+    <action-definition> 
+      <component-name>ChartBeansAction</component-name>
+      <action-inputs> 
+        <valueColumn type="string"/>  
+        <categoryColumn type="string"/>  
+        <seriesColumn type="string"/>  
+        <chartData type="result-set" mapping="new_result"/> 
       </action-inputs>
       <action-resources> 
-        <chart-model-xml type="resource" mapping="bar"/>
+        <chartModelXml type="resource" mapping="bar"/>  
       </action-resources>
-      <action-outputs>
-        <outputstream/>
+      <action-outputs> 
+        <chartContent type="content"/>
       </action-outputs>
-      <component-definition/> 
+      <component-definition/>  
       <action-name>ChartBeans Horizontal Bar Chart</action-name>  
       <logging-level>DEBUG</logging-level> 
     </action-definition>
-
+ 
   </actions> 
 </action-sequence>
