@@ -147,7 +147,7 @@ public class ChartAction implements IStreamingAction {
   public void execute() throws Exception {
 
     //
-    //According to the IAction contract, validate is now part of the execute operation
+    //Runtime value validation is now part of the execute operation
     //
     validate();
 
@@ -296,9 +296,9 @@ public class ChartAction implements IStreamingAction {
 
   /**
    * Define the OutputStream to which the resulting chart shall be written
-   * @param outStream Stream receive the chart
+   * @param outStream Stream to receive the chart
    */
-  public void setOutputStream(OutputStream outStream) {
+  public void setChartContentStream(OutputStream outStream) {
     outputStream = outStream;
   }
 
