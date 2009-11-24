@@ -23,6 +23,7 @@ import java.util.List;
  * Makes an Action privy to certain details about the action definition that is responsible for 
  * executing it.  This is the only Action interface that should know anything about an action definition
  * or the fact that it is even being executed by way of an action sequence at all, for that matter.
+ * This interface is often used in concert with {@link IPreProcessingAction}.
  * @see IAction
  * @author aphillips
  * @since 3.6
