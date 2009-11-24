@@ -1286,7 +1286,7 @@ Controller.prototype.addSelectedAvailItemsToDetails = function( addBeforeIdx )
   var detailsCtrl = this.wiz.getPg( 1 ).getDetailsCtrl();
 
   this.addItemsToDetails( selectedAvailItems, addBeforeIdx );
-  UIUtil.removeListCtrlsItemsFromListCtrl( detailsCtrl, filtersCtrl );
+  // UIUtil.removeListCtrlsItemsFromListCtrl( detailsCtrl, filtersCtrl );
   availableItemsCtrl.unselectAll();
 };
 
@@ -1313,7 +1313,7 @@ Controller.prototype.addSelectedAvailItemsToFilters = function( addBeforeIdx )
   var filtersCtrl = this.wiz.getPg( 1 ).getFiltersCtrl();
 
   this.addItemsToFilters( selectedAvailItems, addBeforeIdx );
-  UIUtil.removeListCtrlsItemsFromListCtrl( detailsCtrl, filtersCtrl );
+  // UIUtil.removeListCtrlsItemsFromListCtrl( detailsCtrl, filtersCtrl );
   availableItemsCtrl.unselectAll();
 };
 
