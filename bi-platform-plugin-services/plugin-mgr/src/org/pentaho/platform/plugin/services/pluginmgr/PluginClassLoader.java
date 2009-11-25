@@ -29,6 +29,7 @@ import java.util.List;
 import org.apache.commons.io.filefilter.WildcardFileFilter;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.pentaho.platform.engine.services.messages.Messages;
 
 /**
  * A custom implementation of {@link URLClassLoader} for Pentaho Platform Plugins.
@@ -36,7 +37,9 @@ import org.apache.commons.logging.LogFactory;
  * a root directory to search for resources related to plugins.
  * <p>
  * Note: {@link PluginClassLoader} will search for jar files in a 'lib' subdirectory
- * under the pluginDir provided in the constructor.
+ * under the pluginDir provided in the constructor.  Class and other resources will
+ * be visible to this classloader in either the root directory of the plugin or in
+ * the lib folder.
  * @author aphillips
  */
 public class PluginClassLoader extends URLClassLoader {
@@ -62,6 +65,16 @@ public class PluginClassLoader extends URLClassLoader {
       }
     }
   }
+  
+  /**
+   * Convenience method that creates a {@link PluginClassLoader} with the current
+   * classloader as it's parent.
+   * @param pluginDir the root directory of the plugin
+   * @param o the object from which the parent classloader will be derived
+   */
+  public PluginClassLoader(final File pluginDir, Object o) {
+    this(pluginDir, o.getClass().getClassLoader());
+  }
 
   protected static URL[] getPluginUrls(File pluginDir) {
     List<URL> urls = new ArrayList<URL>();
@@ -69,11 +82,11 @@ public class PluginClassLoader extends URLClassLoader {
     try {
       urls.add(pluginDir.toURI().toURL());
       urls.add(libDir.toURI().toURL());
-      addJars(urls, libDir);
     } catch (MalformedURLException e) {
-      // TODO Auto-generated catch block
-      e.printStackTrace();
+      log.warn(Messages.getInstance().getString("PluginClassLoader.WARN_FAILED_TO_ADD_PLUGIN_DIR_TO_CLASSPATH", pluginDir //$NON-NLS-1$
+          .getAbsolutePath(), libDir.getAbsolutePath()), e);
     }
+    addJars(urls, libDir);
     return urls.toArray(new URL[urls.size()]);
   }
 
@@ -93,10 +106,8 @@ public class PluginClassLoader extends URLClassLoader {
             }
             urls.add(url);
           } catch (MalformedURLException e) {
-            if (log.isDebugEnabled()) {
-              log.debug(MessageFormat.format("failed to add jar file {0} to classpath. Exception: {1}", file //$NON-NLS-1$
-                  .getAbsolutePath(), e.getMessage()));
-            }
+            log.warn(MessageFormat.format("PluginClassLoader.WARN_FAILED_TO_ADD_JAR_TO_CLASSPATH", file //$NON-NLS-1$
+                .getAbsolutePath()), e);
           }
         }
       }
@@ -145,9 +156,9 @@ public class PluginClassLoader extends URLClassLoader {
     }
     return t;
   }
-  
+
   @Override
   public String toString() {
-    return super.toString() + ((pluginDir != null)?" at "+pluginDir.getAbsolutePath():""); //$NON-NLS-1$ //$NON-NLS-2$
+    return super.toString() + ((pluginDir != null) ? " at " + pluginDir.getAbsolutePath() : ""); //$NON-NLS-1$ //$NON-NLS-2$
   }
 }
