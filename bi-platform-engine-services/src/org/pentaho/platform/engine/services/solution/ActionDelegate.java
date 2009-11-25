@@ -364,9 +364,10 @@ public class ActionDelegate extends ComponentBase {
     @Override
     public void failedToSetValue(String name, Object value, String destPropertyType, Throwable cause)
         throws ActionExecutionException {
+      String className = (value != null)?value.getClass().getName():"ClassNameNotAvailable"; //$NON-NLS-1$
       throw new ActionExecutionException(Messages.getInstance().getErrorString(
           "ActionDelegate.ERROR_0006_FAILED_TO_SET_RESOURCE", //$NON-NLS-1$
-          name, value.getClass().getName(), actionBean.getClass().getSimpleName(), destPropertyType), cause);
+          name, className, actionBean.getClass().getSimpleName(), destPropertyType), cause);
     }
 
     @Override
@@ -400,9 +401,10 @@ public class ActionDelegate extends ComponentBase {
     @Override
     public void failedToSetValue(String name, Object value, String destPropertyType, Throwable cause)
         throws ActionExecutionException {
+      String className = (value != null)?value.getClass().getName():"ClassNameNotAvailable"; //$NON-NLS-1$
       throw new ActionExecutionException(Messages.getInstance().getErrorString(
           "ActionDelegate.ERROR_0005_FAILED_TO_SET_INPUT", //$NON-NLS-1$
-          name, value.getClass().getName(), actionBean.getClass().getSimpleName(), destPropertyType), cause);
+          name, className, actionBean.getClass().getSimpleName(), destPropertyType), cause);
     }
 
     @Override
