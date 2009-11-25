@@ -143,6 +143,12 @@ public class ChartAction implements IStreamingAction {
    * a usable chart.
    * 
    * @see org.pentaho.platform.api.action.IAction#execute()
+   * @throws ChartBootException
+   * @throws ChartProcessingException
+   * @throws ResourceException
+   * @throws InvalidChartDefinition
+   * @throws IOException
+   * @throws PersistenceException
    */
   public void execute() throws Exception {
 
@@ -528,12 +534,20 @@ public class ChartAction implements IStreamingAction {
   }
 
   /**
-   * Set the XML representation of the ChartModel
-   * @param chartStyleXml XML serialized representation of the ChartModel
+   * Set the XML representation of the ChartModel as an InputStream
+   * @param chartModelStream XML serialized representation of the ChartModel
    * @throws IOException if there is a problem converting the input stream to an encoded string
    */
-  public void setChartModelXml(InputStream chartModelStream) throws IOException {
+  public void setChartModelXmlStream(InputStream chartModelStream) throws IOException {
     chartModelXml = IOUtils.toString(chartModelStream, LocaleHelper.getSystemEncoding());
+  }
+  
+  /**
+   * Set the XML representation of the ChartModel
+   * @param chartStyleXml XML serialized representation of the ChartModel
+   */
+  public void setChartModelXml(String chartModelXml){
+    this.chartModelXml = chartModelXml;
   }
 
   /**
