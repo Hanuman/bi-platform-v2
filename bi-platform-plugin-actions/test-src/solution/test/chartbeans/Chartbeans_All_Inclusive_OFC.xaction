@@ -56,11 +56,11 @@
   </inputs>
 
   <outputs>
-    <outputstream type="content"> 
+    <chartContent type="content"> 
       <destinations> 
         <response>content</response> 
       </destinations> 
-    </outputstream> 
+    </chartContent> 
   </outputs>
   
   <!-- Define an input called 'REGION'. This will be passed in when the user clicks on a slice of the pie chart -->  
@@ -72,7 +72,7 @@
       <component-name>JavascriptRule</component-name>
       <action-inputs />
       <action-outputs> 
-        <rtn type="result-set" mapping="chartdata"/> 
+        <rtn type="result-set" mapping="chartData"/> 
       </action-outputs>
       <component-definition>
         <script>
@@ -99,9 +99,9 @@
     </action-definition>
     
     <action-definition>
-      <component-name>ChartBeansComponent</component-name>
+      <component-name>ChartBeansAction</component-name>
       <action-inputs> 
-        <chartdata type="result-set" />
+        <chartData type="result-set" />
         <series-column type="string"/>
         <category-column type="string"/>
         <value-column type="string"/>
@@ -112,7 +112,7 @@
       </action-inputs>
       <action-resources/> 
       <action-outputs>
-        <outputstream/>
+        <chartContent type="content"/>
       </action-outputs>
       <component-definition> 
         <chart-model-xml><![CDATA[

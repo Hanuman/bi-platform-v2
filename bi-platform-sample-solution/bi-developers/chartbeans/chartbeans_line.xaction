@@ -78,7 +78,7 @@
         <chartData type="result-set" mapping="new_result"/> 
       </action-inputs>
       <action-resources> 
-        <chartModelXml type="resource" mapping="line"/> 
+        <chartModelXmlStream type="resource" mapping="line"/> 
       </action-resources>
       <action-outputs> 
         <chartContent type="content"/>

@@ -62,7 +62,7 @@
         <chartData type="result-set" mapping="new_result"/>
       </action-inputs>
       <action-resources> 
-        <chartModelXml type="resource" mapping="area"/>
+        <chartModelXmlStream type="resource" mapping="area"/>
       </action-resources>
       <action-outputs>
         <chartContent type="content"/>

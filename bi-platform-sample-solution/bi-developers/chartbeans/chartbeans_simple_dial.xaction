@@ -55,7 +55,7 @@
         <chartContent type="content"/>
       </action-outputs>
       <action-resources> 
-        <chartModelXml type="resource" mapping="dial"/>
+        <chartModelXmlStream type="resource" mapping="dial"/>
       </action-resources>
       <component-definition>  
         <valueColumn>DIAL_DATA</valueColumn>

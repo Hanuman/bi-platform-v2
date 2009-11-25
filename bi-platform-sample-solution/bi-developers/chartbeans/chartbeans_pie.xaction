@@ -59,7 +59,7 @@
         <chartData type="result-set" mapping="new_result"/> 
       </action-inputs>
       <action-resources> 
-        <chartModelXml type="resource" mapping="pie"/> 
+        <chartModelXmlStream type="resource" mapping="pie"/> 
       </action-resources>
       <action-outputs> 
         <chartContent type="content"/>
