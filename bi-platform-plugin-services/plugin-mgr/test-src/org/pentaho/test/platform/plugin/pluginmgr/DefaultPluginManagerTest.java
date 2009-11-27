@@ -56,6 +56,7 @@ import org.pentaho.platform.engine.core.solution.ContentInfo;
 import org.pentaho.platform.engine.core.solution.PluginOperation;
 import org.pentaho.platform.engine.core.system.PentahoSystem;
 import org.pentaho.platform.engine.core.system.StandaloneSession;
+import org.pentaho.platform.engine.core.system.boot.PlatformInitializationException;
 import org.pentaho.platform.engine.services.solution.SolutionEngine;
 import org.pentaho.platform.plugin.services.pluginmgr.DefaultPluginManager;
 import org.pentaho.platform.plugin.services.pluginmgr.PlatformPlugin;
@@ -107,9 +108,10 @@ public class DefaultPluginManagerTest {
 
   @Test
   @SuppressWarnings("deprecation")
-  public void test2_Plugin1ReceivesLifecycleEvents() {
-    microPlatform.define(IPluginProvider.class, Tst2PluginProvider.class).init();
+  public void test2_Plugin1ReceivesLifecycleEvents() throws PlatformInitializationException {
+    microPlatform.define(IPluginProvider.class, Tst2PluginProvider.class).start();
 
+    CheckingLifecycleListener.clearFlags();
     pluginManager.reload(session);
 
     assertFalse("unload was called", CheckingLifecycleListener.unloadedCalled);
@@ -117,6 +119,7 @@ public class DefaultPluginManagerTest {
     assertTrue("loaded was not called", CheckingLifecycleListener.loadedCalled);
 
     //reload again, this time we expect the plugin to be unloaded first
+    CheckingLifecycleListener.clearFlags();
     pluginManager.reload(session);
 
     assertTrue("unload was not called", CheckingLifecycleListener.unloadedCalled);
@@ -466,6 +469,12 @@ public class DefaultPluginManagerTest {
   
   public static class CheckingLifecycleListener implements IPluginLifecycleListener {
     public static boolean initCalled, loadedCalled, unloadedCalled;
+    
+    public static void clearFlags() {
+      initCalled = false;
+      loadedCalled = false;
+      unloadedCalled = false;
+    }
 
     public void init() {
       initCalled = true;
@@ -473,6 +482,9 @@ public class DefaultPluginManagerTest {
     }
 
     public void loaded() {
+      if(!initCalled) {
+        throw new IllegalStateException("init() should have been called prior to loaded()");
+      }
       loadedCalled = true;
     }
 
