@@ -107,7 +107,6 @@ public class DefaultPluginManagerTest {
   }
 
   @Test
-  @SuppressWarnings("deprecation")
   public void test2_Plugin1ReceivesLifecycleEvents() throws PlatformInitializationException {
     microPlatform.define(IPluginProvider.class, Tst2PluginProvider.class).start();
 

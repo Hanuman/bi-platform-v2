@@ -233,15 +233,15 @@ public class SystemPathPluginProviderTest {
     
     assertEquals("\"Test Type Missing type\" should not have been loaded", 0, CollectionUtils.countMatches(contentTypes, new Predicate() {
       public boolean evaluate(Object object) {
-        IContentInfo contentType = (IContentInfo)object;
-        return contentType.getTitle().equals("Test Type Missing type");
+        IContentInfo type = (IContentInfo)object;
+        return type.getTitle().equals("Test Type Missing type");
       }
     }));
     
     assertEquals("\"test-type-missing-title\" should not have been loaded", 0, CollectionUtils.countMatches(contentTypes, new Predicate() {
       public boolean evaluate(Object object) {
-        IContentInfo contentType = (IContentInfo)object;
-        return contentType.getExtension().equals("test-type-missing-title");
+        IContentInfo type = (IContentInfo)object;
+        return type.getExtension().equals("test-type-missing-title");
       }
     }));
   }
