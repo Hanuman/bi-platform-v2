@@ -245,7 +245,7 @@ public class PluginResourceLoader implements IPluginResourceLoader {
     List<URL> urls = new ArrayList<URL>(files.size());
     while (fileIter.hasNext()) {
       try {
-        urls.add(((File) fileIter.next()).toURL());
+        urls.add(((File) fileIter.next()).toURI().toURL());
       } catch (MalformedURLException e) {
         Logger.warn(this, "Could not create url", e); //$NON-NLS-1$
       }
