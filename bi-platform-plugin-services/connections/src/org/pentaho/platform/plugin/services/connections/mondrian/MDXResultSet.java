@@ -49,6 +49,8 @@ public class MDXResultSet implements IPentahoResultSet, IPeekable, IMultiDimensi
 
   private Object peekRow[];
 
+  private boolean formattedCellValues = false; // should we return formatted or plain cell values
+
   public MDXResultSet() {
     
   }
@@ -172,9 +174,13 @@ public class MDXResultSet implements IPentahoResultSet, IPeekable, IMultiDimensi
     int[] key = new int[2];
     key[0] = column;
     key[1] = row;
-    return nativeResultSet.getCell(key).getValue();
+    if( formattedCellValues ) {
+      return nativeResultSet.getCell(key).getFormattedValue();
+    } else {
+      return nativeResultSet.getCell(key).getValue();
+    }
   }
-
+  
   /*
    * (non-Javadoc)
    * 
@@ -332,4 +338,17 @@ public class MDXResultSet implements IPentahoResultSet, IPeekable, IMultiDimensi
     }
     return row;
   }
+
+  /**
+   * Sets the 'formatted cell values' flag. If this flag is set calls to
+   * getValueAt (and methods like next() and peek() that use getValueAt)
+   * returns the formatted value of the cell instead of the plain number.
+   * BISERVER-3543
+   * @param formattedCellValues
+   */
+  public void setFormattedCellValues( boolean formattedCellValues ) {
+    this.formattedCellValues = formattedCellValues;
+  }
+  
+
 }
