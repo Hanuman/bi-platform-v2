@@ -43,10 +43,14 @@ import org.pentaho.platform.engine.services.runtime.TemplateUtil;
 import org.pentaho.platform.engine.services.solution.ComponentBase;
 import org.pentaho.platform.plugin.action.messages.Messages;
 import org.pentaho.platform.plugin.services.connections.mondrian.MDXConnection;
+import org.pentaho.platform.plugin.services.connections.mondrian.MDXResultSet;
+import org.pentaho.platform.plugin.services.connections.mondrian.MDXResultSetExt;
 
 public abstract class MDXBaseComponent extends ComponentBase implements IDataComponent, IPreparedComponent {
 
   private static final long serialVersionUID = 495868243986115468L;
+
+  public static final String FORMATTED_CELL_VALUES = "formattedCellValues"; //$NON-NLS-1$
 
   private IPentahoResultSet rSet;
 
@@ -325,6 +329,14 @@ public abstract class MDXBaseComponent extends ComponentBase implements IDataCom
 
       // execute the query, read the results and cache them
       IPentahoResultSet resultSet = localConnection.executeQuery(rawQuery);
+      if( resultSet != null && resultSet instanceof MDXResultSet) {
+        // BISERVER-3543 - set the result set to return formatted cell values 
+        boolean formattedCellValues = false;
+        if( isDefinedInput(FORMATTED_CELL_VALUES) ) {
+          formattedCellValues = getInputBooleanValue(FORMATTED_CELL_VALUES, false);
+        }
+        ((MDXResultSet) resultSet).setFormattedCellValues(formattedCellValues);
+      }
       rSet = resultSet;
       if (resultSet != null) {
         MdxQueryAction mdxQueryAction = (MdxQueryAction) getActionDefinition();
