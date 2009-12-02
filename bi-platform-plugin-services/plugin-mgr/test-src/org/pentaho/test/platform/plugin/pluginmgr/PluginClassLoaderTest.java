@@ -78,9 +78,10 @@ public class PluginClassLoaderTest {
         .toString());
     
     //NOTE: implicit loading of a class (i.e. "new" or static method access) is always performed by the 
-    //classloader of the enclosing class, so if we set Thread.currentThread().setContextClassLoader(pluginLoader);
-    //and then did a new ClassToOverride(), the pluginLoader would *not* be asked to load ClassToOverride, rather
-    //the current classloader will be asked to load it.
+    //classloader of the enclosing class (the "current" classloader), so if we set 
+    //Thread.currentThread().setContextClassLoader(pluginLoader) and then did a new ClassToOverride(), 
+    //the pluginLoader would *not* be asked to load ClassToOverride, rather the current classloader 
+    //will be asked to load it.
     
     //
     //2. Ask a class that we are certain was loaded by the private loader to implicitly create an instance 
@@ -100,7 +101,7 @@ public class PluginClassLoaderTest {
     assertEquals("wrong class", "org.pentaho.test.platform.engine.services.TestClassForClassloader", testClass
         .getName());
   }
-
+  
   @Test
   public void testLoadClassAsResource() throws IOException, ClassNotFoundException {
     // test the byte array first
