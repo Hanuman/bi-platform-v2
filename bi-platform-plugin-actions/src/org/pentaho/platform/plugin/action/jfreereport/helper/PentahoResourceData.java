@@ -25,6 +25,7 @@ import org.pentaho.actionsequence.dom.IActionResource;
 import org.pentaho.platform.api.engine.IActionSequenceResource;
 import org.pentaho.platform.api.engine.ISolutionFile;
 import org.pentaho.platform.api.repository.ISolutionRepository;
+import org.pentaho.platform.engine.core.system.PentahoSystem;
 import org.pentaho.platform.engine.services.actionsequence.ActionSequenceResource;
 import org.pentaho.reporting.libraries.resourceloader.FactoryParameterKey;
 import org.pentaho.reporting.libraries.resourceloader.ResourceData;
@@ -43,19 +44,9 @@ public class PentahoResourceData extends AbstractResourceData {
 
   private static final long serialVersionUID = 1806026106310340013L;
 
-  /**
-   * @deprecated replaced with the solution repository key (where applicable)
-   */
-  @Deprecated
-  public static final String PENTAHO_RUNTIME_CONTEXT_KEY = "pentahoRuntimeContext"; //$NON-NLS-1$
-
-  public static final String PENTAHO_SOLUTION_REPOSITORY_KEY = "pentahoSolutionRepository"; //$NON-NLS-1$
-
   private String filename;
 
   private ResourceKey key;
-
-  private ISolutionRepository solutionRepository;
 
   /**
    * constructor which takes a resource key for data loading specifics
@@ -69,12 +60,6 @@ public class PentahoResourceData extends AbstractResourceData {
 
     this.key = key;
     this.filename = (String) key.getIdentifier();
-    this.solutionRepository = (ISolutionRepository) key.getFactoryParameters().get(
-        new FactoryParameterKey(PentahoResourceData.PENTAHO_SOLUTION_REPOSITORY_KEY));
-    if (solutionRepository == null) {
-      throw new ResourceLoadingException(
-          "PentahoResourceData: Failed to retrieve solution repository from resource key"); //$NON-NLS-1$
-    }
   }
 
   /**
@@ -91,6 +76,7 @@ public class PentahoResourceData extends AbstractResourceData {
     final IActionSequenceResource resource = new ActionSequenceResource(
         "", resourceType, "application/binary", (String) key.getIdentifier()); //$NON-NLS-1$ //$NON-NLS-2$
     try {
+      ISolutionRepository solutionRepository = PentahoSystem.get(ISolutionRepository.class);
       return solutionRepository.getResourceInputStream(resource, true, ISolutionRepository.ACTION_EXECUTE);
     } catch (FileNotFoundException e) {
       throw new ResourceLoadingException(e.getLocalizedMessage(), e);
@@ -121,6 +107,7 @@ public class PentahoResourceData extends AbstractResourceData {
   public long getVersion(final ResourceManager caller) throws ResourceLoadingException {
     final IActionSequenceResource resource = new ActionSequenceResource(
         "", IActionResource.SOLUTION_FILE_RESOURCE, "application/binary", (String) key.getIdentifier()); //$NON-NLS-1$ //$NON-NLS-2$
+    ISolutionRepository solutionRepository = PentahoSystem.get(ISolutionRepository.class);
     final ISolutionFile file = solutionRepository.getSolutionFile(resource, ISolutionRepository.ACTION_EXECUTE);
     long version = -1L;
     if (file != null) {

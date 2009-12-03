@@ -533,10 +533,6 @@ public class JFreeReportComponent extends AbstractJFreeReportComponent {
       // get the host:port portion only
       helperObjects.put(new FactoryParameterKey("hostColonPort"), getHostColonPort(pentahoBaseURL)); //$NON-NLS-1$ 
 
-      // Add the solution repository so that the PentahoResourceData class has access to the solution repository
-      helperObjects.put(new FactoryParameterKey(PentahoResourceData.PENTAHO_SOLUTION_REPOSITORY_KEY), PentahoSystem
-          .get(ISolutionRepository.class, getRuntimeContext().getSession()));
-
       Iterator it = getInputNames().iterator();
       while (it.hasNext()) {
         try {
