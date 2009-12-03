@@ -313,12 +313,8 @@ public class RepositoryFile implements ISearchable, Comparable, AclObjectIdentit
   }
 
   public ISolutionFile[] listFiles() {
-    Object[] objArray = getChildrenFiles().toArray();
-    ISolutionFile[] childrenArray = new ISolutionFile[objArray.length];
-    for (int i = 0; i < objArray.length; i++) {
-      childrenArray[i] = (ISolutionFile) objArray[i];
-    }
-    return childrenArray;
+    Set<ISolutionFile> files = getChildrenFiles();
+    return files.toArray(new ISolutionFile[] {});
   }
 
   public RepositoryFile[] listRepositoryFiles() {

@@ -61,6 +61,7 @@ import org.pentaho.platform.util.messages.LocaleHelper;
 import org.pentaho.platform.util.xml.XmlHelper;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
@@ -72,6 +73,8 @@ public class SolutionRepositoryServiceImpl implements ISolutionRepositoryService
   private static final Log logger = LogFactory.getLog(SolutionRepositoryServiceImpl.class);
   private static final String RESPONSE_DOCUMENT_ENCODING = "UTF-8"; //$NON-NLS-1$
   private static final String RESPONSE_DOCUMENT_VERSION_NUM = "1.0"; //$NON-NLS-1$
+
+  private static final String REPOSITORY_SERVICE_FILEINFO_CACHE_REGION = "repository-service-fileinfo-cache";
 
   /**
    * contains instance of a sax parser factory. Use getSAXParserFactory() method to get a copy of the factory.
@@ -94,6 +97,9 @@ public class SolutionRepositoryServiceImpl implements ISolutionRepositoryService
     if (!cacheManager.cacheEnabled(ISolutionRepository.REPOSITORY_SERVICE_CACHE_REGION)) {
       cacheManager.addCacheRegion(ISolutionRepository.REPOSITORY_SERVICE_CACHE_REGION);
     }    
+    if (!cacheManager.cacheEnabled(REPOSITORY_SERVICE_FILEINFO_CACHE_REGION)) {
+      cacheManager.addCacheRegion(REPOSITORY_SERVICE_FILEINFO_CACHE_REGION);
+    }
   }
   
   public SolutionRepositoryServiceImpl() {
@@ -189,16 +195,19 @@ public class SolutionRepositoryServiceImpl implements ISolutionRepositoryService
     return isAdministrator || repository.hasAccess(file, IPentahoAclEntry.PERM_EXECUTE);
   }
 
-  private void processRepositoryFile(IPentahoSession session, boolean isAdministrator, ISolutionRepository repository,
-      Node parentNode, ISolutionFile file, String[] filters) {
-    if (!accept(isAdministrator, repository, file)) {
-      // we don't want this file, skip to the next one
+  private void processRepositoryFile(IPentahoSession session, boolean isAdministrator, ISolutionRepository repository, Node parentNode, ISolutionFile file,
+      String[] filters) {
+
+    final String name = file.getFileName();
+
+    // MDD 10/16/2008 Not always.. what about 'system'
+    if (name.startsWith("system") || name.startsWith("tmp") || name.startsWith(".")) { //$NON-NLS-1$
+      // slip hidden files (starts with .)
+      // skip the system & tmp dir, we DO NOT ever want this to hit the client
       return;
     }
 
-    String name = file.getFileName();
-    if (name.startsWith(".")) { //$NON-NLS-1$
-      // these are hidden files of some type that are never shown
+     if (!accept(isAdministrator, repository, file)) {
       // we don't want this file, skip to the next one
       return;
     }
@@ -206,12 +215,6 @@ public class SolutionRepositoryServiceImpl implements ISolutionRepositoryService
       if (file.isDirectory()) {
         // we always process directories
           
-        // MDD 10/16/2008 Not always.. what about 'system'
-        if (file.getFileName().startsWith("system")) { //$NON-NLS-1$
-          // skip the system dir, we DO NOT ever want this to hit the client
-          return;
-        }
-        
         // maintain legacy behavior
         if (repository.getRootFolder(ISolutionRepository.ACTION_EXECUTE).getFullPath().equals(file.getFullPath())) {
           // never output the root folder as part of the repo doc; skip root and process its children
@@ -222,8 +225,14 @@ public class SolutionRepositoryServiceImpl implements ISolutionRepositoryService
           return;
         }
         
-        Element child = parentNode instanceof Document ? ((Document) parentNode).createElement("file") : parentNode.getOwnerDocument().createElement("file");  //$NON-NLS-1$//$NON-NLS-2$
-        parentNode.appendChild(child);
+      Element child = null;
+      final String key = file.getFullPath() + file.getLastModified() + LocaleHelper.getLocale();
+      ICacheManager cacheManager = PentahoSystem.getCacheManager(null);
+      if (cacheManager != null && cacheManager.cacheEnabled(REPOSITORY_SERVICE_FILEINFO_CACHE_REGION)) {
+        child = (Element) cacheManager.getFromRegionCache(REPOSITORY_SERVICE_FILEINFO_CACHE_REGION, key);
+      }
+      if (child == null) {
+        child = parentNode instanceof Document ? ((Document) parentNode).createElement("file") : parentNode.getOwnerDocument().createElement("file"); //$NON-NLS-1$ //$NON-NLS-2$
         try {
           String localizedName = repository.getLocalizedFileProperty(file, "name", ISolutionRepository.ACTION_EXECUTE); //$NON-NLS-1$
           child.setAttribute("localized-name", localizedName == null || "".equals(localizedName) ? name : localizedName); //$NON-NLS-1$ //$NON-NLS-2$
@@ -242,6 +251,19 @@ public class SolutionRepositoryServiceImpl implements ISolutionRepositoryService
         child.setAttribute("name", name); //$NON-NLS-1$
         child.setAttribute("isDirectory", "true"); //$NON-NLS-1$ //$NON-NLS-2$
         child.setAttribute("lastModifiedDate", "" + file.getLastModified()); //$NON-NLS-1$ //$NON-NLS-2$
+        if (cacheManager != null && cacheManager.cacheEnabled(REPOSITORY_SERVICE_FILEINFO_CACHE_REGION)) {
+          cacheManager.putInRegionCache(REPOSITORY_SERVICE_FILEINFO_CACHE_REGION, key, child);
+        }
+      } else {
+        Element newChild = parentNode instanceof Document ? ((Document) parentNode).createElement("file") : parentNode.getOwnerDocument().createElement("file"); //$NON-NLS-1$//$NON-NLS-2$
+        NamedNodeMap attributes = child.getAttributes();
+        for (int i = 0; i < attributes.getLength(); i++) {
+          Node attribute = attributes.item(i);
+          newChild.setAttribute(attribute.getNodeName(), attribute.getNodeValue());
+        }
+        child = newChild;
+      }
+      parentNode.appendChild(child);
   
           
         ISolutionFile[] children = file.listFiles();
@@ -270,7 +292,31 @@ public class SolutionRepositoryServiceImpl implements ISolutionRepositoryService
           }
     
           if (addFile) {
-            Element child = parentNode instanceof Document ? ((Document) parentNode).createElement("file") : parentNode.getOwnerDocument().createElement("file"); //$NON-NLS-1$ //$NON-NLS-2$
+
+          ICacheManager cacheManager = PentahoSystem.getCacheManager(null);
+          Element child = null;
+          final String key = file.getFullPath() + file.getLastModified() + LocaleHelper.getLocale();
+          if (cacheManager != null && cacheManager.cacheEnabled(REPOSITORY_SERVICE_FILEINFO_CACHE_REGION)) {
+            child = (Element) cacheManager.getFromRegionCache(REPOSITORY_SERVICE_FILEINFO_CACHE_REGION, key);
+          }
+          if (child == null) {
+            child = parentNode instanceof Document ? ((Document) parentNode).createElement("file") : parentNode.getOwnerDocument().createElement("file"); //$NON-NLS-1$ //$NON-NLS-2$
+            if (cacheManager != null && cacheManager.cacheEnabled(REPOSITORY_SERVICE_FILEINFO_CACHE_REGION)) {
+              cacheManager.putInRegionCache(REPOSITORY_SERVICE_FILEINFO_CACHE_REGION, key, child);
+            }
+          } else {
+            Element newChild = parentNode instanceof Document ? ((Document) parentNode).createElement("file") : parentNode.getOwnerDocument().createElement("file"); //$NON-NLS-1$ //$NON-NLS-2$
+
+            NamedNodeMap attributes = child.getAttributes();
+            for (int i = 0; i < attributes.getLength(); i++) {
+              Node attribute = attributes.item(i);
+              newChild.setAttribute(attribute.getNodeName(), attribute.getNodeValue());
+            }
+
+            parentNode.appendChild(newChild);
+            return;
+          }
+
             parentNode.appendChild(child);
             IFileInfo fileInfo = null;
             try {

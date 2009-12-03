@@ -198,20 +198,16 @@ public class AclPublisher implements IAclPublisher {
   private void publishDefaultFolderAcls(final IAclSolutionFile rootFile) {
     if ((rootFile != null) && (rootFile.isDirectory())) {
       // publish acl for folder if it doesn't already exist...
-      if (SpringSecurityPermissionMgr.instance().getPermissions(rootFile).size() == 0) {
-        SpringSecurityPermissionMgr.instance().setPermissions(getDefaultAclList(), rootFile);
+      if (rootFile.getAccessControls().size() == 0) {
+        SpringSecurityPermissionMgr.instance().setPermissions(defaultAcls, rootFile);
       }
       // Now, recurse through kids looking for folders...
       Set kids = rootFile.getChildrenFiles();
       if (kids != null) { // Doesn't have to have kids in it...
         Iterator it = kids.iterator();
-        IAclSolutionFile aChild = null;
         while (it.hasNext()) {
-          aChild = (IAclSolutionFile) it.next();
-          if (aChild.isDirectory()) {
-            publishDefaultFolderAcls(aChild); // Recursively publish ACLs
-            // for all child folders
-          }
+          // Recursively publish ACLs for all child folders
+          publishDefaultFolderAcls((IAclSolutionFile) it.next()); 
         }
       }
     }
@@ -219,18 +215,20 @@ public class AclPublisher implements IAclPublisher {
 
   private void publishOverrideAcls(final IAclSolutionFile rootFile) {
     Map<IPermissionRecipient, IPermissionMask> overridePerms = getOverrideAclList(rootFile.getFullPath());
-    Map<IPermissionRecipient, IPermissionMask> currentPerms = SpringSecurityPermissionMgr.instance().getPermissions(rootFile);
-    if ((overridePerms.size() > 0)
-        && ((currentPerms.size() == 0) || (currentPerms.entrySet().containsAll(defaultAcls.entrySet()) && (currentPerms
-            .size() == defaultAcls.size())))) {
-      // We've got overridden acls and the file contains ONLY the default acls or NO acls at all
-      SpringSecurityPermissionMgr.instance().setPermissions(overridePerms, rootFile);
+    if (overridePerms.size() > 0) {
+      Map<IPermissionRecipient, IPermissionMask> currentPerms = SpringSecurityPermissionMgr.instance().getPermissions(rootFile);
+      if ((currentPerms.size() == 0) || (currentPerms.size() == defaultAcls.size()) && (currentPerms.entrySet().containsAll(defaultAcls.entrySet()))) {
+        // We've got overridden acls and the file contains ONLY the default acls or NO acls at all
+        SpringSecurityPermissionMgr.instance().setPermissions(overridePerms, rootFile);
+      }
     }
 
     // Recurse through this files children
-    Iterator iter = rootFile.getChildrenFiles().iterator();
-    while (iter.hasNext()) {
-      publishOverrideAcls((IAclSolutionFile) iter.next());
+    if (rootFile.isDirectory()) {
+      Iterator iter = rootFile.getChildrenFiles().iterator();
+      while (iter.hasNext()) {
+        publishOverrideAcls((IAclSolutionFile) iter.next());
+      }
     }
   }
 
