@@ -140,9 +140,6 @@ public class JFreeReportLoadComponent extends AbstractJFreeReportComponent {
         String repDef = resource.getAddress();
         ReportGenerator generator = ReportGenerator.getInstance();
 
-        // add the runtime context so that PentahoResourceData class can get access to the solution repo
-        generator.setObject(PentahoResourceData.PENTAHO_RUNTIME_CONTEXT_KEY, getRuntimeContext());
-
         report = generator.parseReport(new InputSource(new ByteArrayInputStream(repDef.getBytes())),
             getDefinedResourceURL(null));
       }
@@ -165,9 +162,6 @@ public class JFreeReportLoadComponent extends AbstractJFreeReportComponent {
       if (o != null) {
         String repDef = o.getStringValue();
         ReportGenerator generator = ReportGenerator.getInstance();
-
-        // add the runtime context so that PentahoResourceData class can get access to the solution repo
-        generator.setObject(PentahoResourceData.PENTAHO_RUNTIME_CONTEXT_KEY, getRuntimeContext());
 
         // get base URL
         String baseURL = PentahoSystem.getApplicationContext().getBaseUrl();
@@ -203,10 +197,6 @@ public class JFreeReportLoadComponent extends AbstractJFreeReportComponent {
 
     try {
       ReportGenerator generator = ReportGenerator.getInstance();
-
-      // add the runtime context so that PentahoResourceData class can get access to the solution repo
-      generator.setObject(PentahoResourceData.PENTAHO_RUNTIME_CONTEXT_KEY, getRuntimeContext());
-
       report = generator.parseReport(resourceUrl, getDefinedResourceURL(resourceUrl));
     } catch (Exception ex) {
       throw new Exception(Messages.getInstance().getErrorString("JFreeReport.ERROR_0007_COULD_NOT_PARSE", reportLocation), ex); //$NON-NLS-1$
@@ -298,9 +288,6 @@ public class JFreeReportLoadComponent extends AbstractJFreeReportComponent {
 
       // get the host:port portion only
       helperObjects.put(new FactoryParameterKey("hostColonPort"), getHostColonPort(pentahoBaseURL)); //$NON-NLS-1$ 
-
-      // add the runtime context so that PentahoResourceData class can get access to the solution repo
-      helperObjects.put(new FactoryParameterKey(PentahoResourceData.PENTAHO_RUNTIME_CONTEXT_KEY), getRuntimeContext());
 
       Iterator it = getInputNames().iterator();
       while (it.hasNext()) {
