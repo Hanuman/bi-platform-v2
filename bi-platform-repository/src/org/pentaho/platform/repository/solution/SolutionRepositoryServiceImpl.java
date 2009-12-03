@@ -50,6 +50,7 @@ import org.pentaho.platform.api.repository.ISolutionRepository;
 import org.pentaho.platform.api.repository.ISolutionRepositoryService;
 import org.pentaho.platform.api.repository.SolutionRepositoryServiceException;
 import org.pentaho.platform.engine.core.solution.ActionInfo;
+import org.pentaho.platform.engine.core.solution.FileInfo;
 import org.pentaho.platform.engine.core.system.PentahoSystem;
 import org.pentaho.platform.engine.security.SecurityHelper;
 import org.pentaho.platform.engine.security.SimplePermissionMask;
@@ -58,9 +59,11 @@ import org.pentaho.platform.engine.security.SimpleUser;
 import org.pentaho.platform.engine.services.messages.Messages;
 import org.pentaho.platform.util.StringUtil;
 import org.pentaho.platform.util.messages.LocaleHelper;
+import org.pentaho.platform.util.web.MimeHelper;
 import org.pentaho.platform.util.xml.XmlHelper;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
@@ -72,6 +75,8 @@ public class SolutionRepositoryServiceImpl implements ISolutionRepositoryService
   private static final Log logger = LogFactory.getLog(SolutionRepositoryServiceImpl.class);
   private static final String RESPONSE_DOCUMENT_ENCODING = "UTF-8"; //$NON-NLS-1$
   private static final String RESPONSE_DOCUMENT_VERSION_NUM = "1.0"; //$NON-NLS-1$
+
+  private static final String REPOSITORY_SERVICE_FILEINFO_CACHE_REGION = "repository-service-fileinfo-cache";
 
   /**
    * contains instance of a sax parser factory. Use getSAXParserFactory() method to get a copy of the factory.
@@ -93,9 +98,12 @@ public class SolutionRepositoryServiceImpl implements ISolutionRepositoryService
     ICacheManager cacheManager = PentahoSystem.getCacheManager(null);
     if (!cacheManager.cacheEnabled(ISolutionRepository.REPOSITORY_SERVICE_CACHE_REGION)) {
       cacheManager.addCacheRegion(ISolutionRepository.REPOSITORY_SERVICE_CACHE_REGION);
-    }    
+    }
+    if (!cacheManager.cacheEnabled(REPOSITORY_SERVICE_FILEINFO_CACHE_REGION)) {
+      cacheManager.addCacheRegion(REPOSITORY_SERVICE_FILEINFO_CACHE_REGION);
+    }
   }
-  
+
   public SolutionRepositoryServiceImpl() {
     super();
   }
@@ -189,41 +197,44 @@ public class SolutionRepositoryServiceImpl implements ISolutionRepositoryService
     return isAdministrator || repository.hasAccess(file, IPentahoAclEntry.PERM_EXECUTE);
   }
 
-  private void processRepositoryFile(IPentahoSession session, boolean isAdministrator, ISolutionRepository repository,
-      Node parentNode, ISolutionFile file, String[] filters) {
-    if (!accept(isAdministrator, repository, file)) {
+  private void processRepositoryFile(IPentahoSession session, boolean isAdministrator, ISolutionRepository repository, Node parentNode, ISolutionFile file,
+      String[] filters) {
+
+    final String name = file.getFileName();
+
+    // MDD 10/16/2008 Not always.. what about 'system'
+    if (name.startsWith("system") || name.startsWith("tmp") || name.startsWith(".")) { //$NON-NLS-1$
+      // slip hidden files (starts with .)
+      // skip the system & tmp dir, we DO NOT ever want this to hit the client
+      return;
+    }
+    
+     if (!accept(isAdministrator, repository, file)) {
       // we don't want this file, skip to the next one
       return;
     }
 
-    String name = file.getFileName();
-    if (name.startsWith(".")) { //$NON-NLS-1$
-      // these are hidden files of some type that are never shown
-      // we don't want this file, skip to the next one
-      return;
-    }
-    
-      if (file.isDirectory()) {
-        // we always process directories
-          
-        // MDD 10/16/2008 Not always.. what about 'system'
-        if (file.getFileName().startsWith("system")) { //$NON-NLS-1$
-          // skip the system dir, we DO NOT ever want this to hit the client
-          return;
+    if (file.isDirectory()) {
+      // we always process directories
+      
+      // maintain legacy behavior
+      if (repository.getRootFolder(ISolutionRepository.ACTION_EXECUTE).getFullPath().equals(file.getFullPath())) {
+        // never output the root folder as part of the repo doc; skip root and process its children
+        ISolutionFile[] children = file.listFiles();
+        for (ISolutionFile childSolutionFile : children) {
+          processRepositoryFile(session, isAdministrator, repository, parentNode, childSolutionFile, filters);
         }
-        
-        // maintain legacy behavior
-        if (repository.getRootFolder(ISolutionRepository.ACTION_EXECUTE).getFullPath().equals(file.getFullPath())) {
-          // never output the root folder as part of the repo doc; skip root and process its children
-          ISolutionFile[] children = file.listFiles();
-          for (ISolutionFile childSolutionFile : children) {
-            processRepositoryFile(session, isAdministrator, repository, parentNode, childSolutionFile, filters);
-          }
-          return;
-        }
-        
-        Element child = parentNode instanceof Document ? ((Document) parentNode).createElement("file") : parentNode.getOwnerDocument().createElement("file");  //$NON-NLS-1$//$NON-NLS-2$
-        parentNode.appendChild(child);
+        return;
+      }
+
+      Element child = null;
+      final String key = file.getFullPath() + file.getLastModified() + LocaleHelper.getLocale();
+      ICacheManager cacheManager = PentahoSystem.getCacheManager(null);
+      if (cacheManager != null && cacheManager.cacheEnabled(REPOSITORY_SERVICE_FILEINFO_CACHE_REGION)) {
+        child = (Element) cacheManager.getFromRegionCache(REPOSITORY_SERVICE_FILEINFO_CACHE_REGION, key);
+      }
+      if (child == null) {
+        child = parentNode instanceof Document ? ((Document) parentNode).createElement("file") : parentNode.getOwnerDocument().createElement("file"); //$NON-NLS-1$ //$NON-NLS-2$
         try {
           String localizedName = repository.getLocalizedFileProperty(file, "name", ISolutionRepository.ACTION_EXECUTE); //$NON-NLS-1$
           child.setAttribute("localized-name", localizedName == null || "".equals(localizedName) ? name : localizedName); //$NON-NLS-1$ //$NON-NLS-2$
@@ -242,170 +253,204 @@ public class SolutionRepositoryServiceImpl implements ISolutionRepositoryService
         child.setAttribute("name", name); //$NON-NLS-1$
         child.setAttribute("isDirectory", "true"); //$NON-NLS-1$ //$NON-NLS-2$
         child.setAttribute("lastModifiedDate", "" + file.getLastModified()); //$NON-NLS-1$ //$NON-NLS-2$
-  
-          
-        ISolutionFile[] children = file.listFiles();
-        for (ISolutionFile childSolutionFile : children) {
-          processRepositoryFile(session, isAdministrator, repository, child, childSolutionFile, filters);
+        if (cacheManager != null && cacheManager.cacheEnabled(REPOSITORY_SERVICE_FILEINFO_CACHE_REGION)) {
+          cacheManager.putInRegionCache(REPOSITORY_SERVICE_FILEINFO_CACHE_REGION, key, child);
         }
-      } else {     
-        InputStream pluginInputStream = null;
-        try {
+      } else {
+        Element newChild = parentNode instanceof Document ? ((Document) parentNode).createElement("file") : parentNode.getOwnerDocument().createElement("file"); //$NON-NLS-1$//$NON-NLS-2$
+        NamedNodeMap attributes = child.getAttributes();
+        for (int i = 0; i < attributes.getLength(); i++) {
+          Node attribute = attributes.item(i);
+          newChild.setAttribute(attribute.getNodeName(), attribute.getNodeValue());
+        }
+        child = newChild;
+      }
+      parentNode.appendChild(child);
+
+      ISolutionFile[] children = file.listFiles();
+      for (ISolutionFile childSolutionFile : children) {
+        processRepositoryFile(session, isAdministrator, repository, child, childSolutionFile, filters);
+      }
+
+    } else {
+      InputStream pluginInputStream = null;
+      try {
           int lastPoint = name.lastIndexOf('.');
           String extension = ""; //$NON-NLS-1$
           if (lastPoint != -1) {
             // ignore anything with no extension
             extension = name.substring(lastPoint + 1).toLowerCase();
           }
-    
-          // xaction and URL support are built in
-          boolean addFile = acceptFilter(name, filters) || "xaction".equals(extension) || "url".equals(extension); //$NON-NLS-1$ //$NON-NLS-2$
-          boolean isPlugin = false;
-          // see if there is a plugin for this file type
-          IPluginManager pluginManager = PentahoSystem.get(IPluginManager.class, session);
-          if (pluginManager != null) {
-            Set<String> types = pluginManager.getContentTypes();
-            isPlugin = types != null && types.contains(extension);
-            addFile |= isPlugin;
-          }
-    
-          if (addFile) {
-            Element child = parentNode instanceof Document ? ((Document) parentNode).createElement("file") : parentNode.getOwnerDocument().createElement("file"); //$NON-NLS-1$ //$NON-NLS-2$
-            parentNode.appendChild(child);
-            IFileInfo fileInfo = null;
-            try {
-                // the visibility flag for action-sequences is controlled by
-                // /action-sequence/documentation/result-type
-                // and we should no longer be looking at 'visible' because it was
-                // never actually used!
-                String visible = "none".equals(repository.getLocalizedFileProperty(file, "documentation/result-type", ISolutionRepository.ACTION_EXECUTE)) ? "false" : "true"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
-                child.setAttribute("visible", (visible == null || "".equals(visible) || "true".equals(visible)) ? "true" : "false");  //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
-            } catch (Exception e) {
-              child.setAttribute("visible", "true"); //$NON-NLS-1$ //$NON-NLS-2$
-            }
-            if (name.endsWith(".xaction")) { //$NON-NLS-1$
-              // add special props?
-              // localization..
-            } else if (name.endsWith(".url")) { //$NON-NLS-1$
-    
-              // add special props
-              String props = new String(file.getData());
-              StringTokenizer tokenizer = new StringTokenizer(props, "\n"); //$NON-NLS-1$
-              while (tokenizer.hasMoreTokens()) {
-                String line = tokenizer.nextToken();
-                int pos = line.indexOf('=');
-                if (pos > 0) {
-                  String propname = line.substring(0, pos);
-                  String value = line.substring(pos + 1);
-                  if ((value != null) && (value.length() > 0) && (value.charAt(value.length() - 1) == '\r')) {
-                    value = value.substring(0, value.length() - 1);
-                  }
-                  if ("URL".equalsIgnoreCase(propname)) { //$NON-NLS-1$
-                    child.setAttribute("url", value); //$NON-NLS-1$
-                  }
-                }
-              }
-            } else if (isPlugin) {
-              // must be a plugin - make it look like a URL
-              try {
-                // get the file info object for this file
-                // not all plugins are going to actually use the inputStream, so we have a special
-                // wrapper inputstream so that we can pay that price when we need to (2X speed boost)
-                pluginInputStream = new PluginFileInputStream(repository, file);
-                fileInfo = pluginManager.getFileInfo(extension, session, file, pluginInputStream);
-                String handlerId = pluginManager.getContentGeneratorIdForType(extension, session);
-                String fileUrl = pluginManager.getContentGeneratorUrlForType(extension, session);
-                String solution = file.getSolutionPath();
-                String path = ""; //$NON-NLS-1$
-                if (solution.startsWith(ISolutionRepository.SEPARATOR + "")) { //$NON-NLS-1$
-                  solution = solution.substring(1);
-                }
-                int pos = solution.indexOf(ISolutionRepository.SEPARATOR);
-                if (pos != -1) {
-                  path = solution.substring(pos + 1);
-                  solution = solution.substring(0, pos);
-                }
-                String url = null;
-                if (!"".equals(fileUrl)) { //$NON-NLS-1$
-                  url = PentahoSystem.getApplicationContext().getBaseUrl() + fileUrl
-                      + "?solution=" + solution + "&path=" + path + "&action=" + name; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-                } else {
-                  IContentInfo info = pluginManager.getContentInfoFromExtension(extension, session);
-                  for (IPluginOperation operation : info.getOperations()) {
-                    if (operation.getId().equalsIgnoreCase("RUN")) { //$NON-NLS-1$
-                  	  String command = operation.getCommand();
-                      command = command.replaceAll("\\{solution\\}", solution); //$NON-NLS-1$
-                      command = command.replaceAll("\\{path\\}", path); //$NON-NLS-1$
-                      command = command.replaceAll("\\{name\\}", name); //$NON-NLS-1$
-                      url = PentahoSystem.getApplicationContext().getBaseUrl() + command;
-                      break;
-                    }
-                  }
-                  if (url == null) {
-                    url = PentahoSystem.getApplicationContext().getBaseUrl()
-                      + "content/" + handlerId + "?solution=" + solution + "&path=" + path + "&action=" + name; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
-                  }
-                }
-                child.setAttribute("url", url); //$NON-NLS-1$
-                
-                String paramServiceUrl = PentahoSystem.getApplicationContext().getBaseUrl() 
-                  + "content/" + handlerId + "?solution=" + solution + "&path=" + path + "&action=" + name; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
-                
-                child.setAttribute("param-service-url", paramServiceUrl); //$NON-NLS-1$
-                
-              } catch (Throwable t) {
-                t.printStackTrace();
-              }
-    
-            }
-    
-            // localization
-            try {
-              String localizedName = null;
-              if (name.endsWith(".url")) { //$NON-NLS-1$
-                localizedName = repository.getLocalizedFileProperty(file, "url_name", ISolutionRepository.ACTION_EXECUTE); //$NON-NLS-1$
-              } else if (fileInfo != null) {
-                localizedName = fileInfo.getTitle();
-              } else {
-                localizedName = repository.getLocalizedFileProperty(file, "title", ISolutionRepository.ACTION_EXECUTE); //$NON-NLS-1$
-              }
-              child
-                  .setAttribute("localized-name", localizedName == null || "".equals(localizedName) ? name : localizedName); //$NON-NLS-1$ //$NON-NLS-2$
-            } catch (Exception e) {
-              child.setAttribute("localized-name", name); //$NON-NLS-1$
-            }
-            try {
-              // only folders, urls and xactions have descriptions
-              if (name.endsWith(".url")) { //$NON-NLS-1$
-                String url_description = repository.getLocalizedFileProperty(file, "url_description", ISolutionRepository.ACTION_EXECUTE); //$NON-NLS-1$
-                String description = repository.getLocalizedFileProperty(file, "description", ISolutionRepository.ACTION_EXECUTE); //$NON-NLS-1$
-                if (url_description == null && description == null) {
-                  child.setAttribute("description", name); //$NON-NLS-1$
-                } else {
-                  child.setAttribute("description", url_description == null || "".equals(url_description) ? description //$NON-NLS-1$ //$NON-NLS-2$
-                      : url_description);
-                }
-              } else if (name.endsWith(".xaction")) { //$NON-NLS-1$
-                String description = repository.getLocalizedFileProperty(file, "description", ISolutionRepository.ACTION_EXECUTE); //$NON-NLS-1$
-                child.setAttribute("description", description == null || "".equals(description) ? name : description); //$NON-NLS-1$ //$NON-NLS-2$
-              } else if (fileInfo != null) {
-                child.setAttribute("description", fileInfo.getDescription()); //$NON-NLS-1$
-              } else {
-                child.setAttribute("description", name); //$NON-NLS-1$
-              }
-            } catch (Exception e) {
-              child.setAttribute("description", "xxxxxxx"); //$NON-NLS-1$ //$NON-NLS-2$
-            }
-    
-            // add permissions for each file/folder
-            child.setAttribute("name", name); //$NON-NLS-1$
-            child.setAttribute("isDirectory", "" + file.isDirectory()); //$NON-NLS-1$ //$NON-NLS-2$
-            child.setAttribute("lastModifiedDate", "" + file.getLastModified()); //$NON-NLS-1$ //$NON-NLS-2$
-          }
-        } finally {
-          IOUtils.closeQuietly(pluginInputStream);
+
+        // xaction and URL support are built in
+        boolean addFile = acceptFilter(name, filters) || "xaction".equals(extension) || "url".equals(extension); //$NON-NLS-1$ //$NON-NLS-2$
+        boolean isPlugin = false;
+        // see if there is a plugin for this file type
+        IPluginManager pluginManager = PentahoSystem.get(IPluginManager.class, session);
+        if (pluginManager != null) {
+          Set<String> types = pluginManager.getContentTypes();
+          isPlugin = types != null && types.contains(extension);
+          addFile |= isPlugin;
         }
-      } // else isfile
+
+        if (addFile) {
+
+          ICacheManager cacheManager = PentahoSystem.getCacheManager(null);
+          Element child = null;
+          final String key = file.getFullPath() + file.getLastModified() + LocaleHelper.getLocale();
+          if (cacheManager != null && cacheManager.cacheEnabled(REPOSITORY_SERVICE_FILEINFO_CACHE_REGION)) {
+            child = (Element) cacheManager.getFromRegionCache(REPOSITORY_SERVICE_FILEINFO_CACHE_REGION, key);
+          }
+          if (child == null) {
+            child = parentNode instanceof Document ? ((Document) parentNode).createElement("file") : parentNode.getOwnerDocument().createElement("file"); //$NON-NLS-1$ //$NON-NLS-2$
+            if (cacheManager != null && cacheManager.cacheEnabled(REPOSITORY_SERVICE_FILEINFO_CACHE_REGION)) {
+              cacheManager.putInRegionCache(REPOSITORY_SERVICE_FILEINFO_CACHE_REGION, key, child);
+            }
+          } else {
+            Element newChild = parentNode instanceof Document ? ((Document) parentNode).createElement("file") : parentNode.getOwnerDocument().createElement("file"); //$NON-NLS-1$ //$NON-NLS-2$
+
+            NamedNodeMap attributes = child.getAttributes();
+            for (int i = 0; i < attributes.getLength(); i++) {
+              Node attribute = attributes.item(i);
+              newChild.setAttribute(attribute.getNodeName(), attribute.getNodeValue());
+            }
+
+            parentNode.appendChild(newChild);
+            return;
+          }
+
+          parentNode.appendChild(child);
+          IFileInfo fileInfo = null;
+          try {
+            // the visibility flag for action-sequences is controlled by
+            // /action-sequence/documentation/result-type
+            // and we should no longer be looking at 'visible' because it was
+            // never actually used!
+            String visible = "none".equals(repository.getLocalizedFileProperty(file, "documentation/result-type", ISolutionRepository.ACTION_EXECUTE)) ? "false" : "true"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+            child.setAttribute("visible", (visible == null || "".equals(visible) || "true".equals(visible)) ? "true" : "false"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
+          } catch (Exception e) {
+            child.setAttribute("visible", "true"); //$NON-NLS-1$ //$NON-NLS-2$
+          }
+          if (name.endsWith(".xaction")) { //$NON-NLS-1$
+            // add special props?
+            // localization..
+          } else if (name.endsWith(".url")) { //$NON-NLS-1$
+
+            // add special props
+            String props = new String(file.getData());
+            StringTokenizer tokenizer = new StringTokenizer(props, "\n"); //$NON-NLS-1$
+            while (tokenizer.hasMoreTokens()) {
+              String line = tokenizer.nextToken();
+              int pos = line.indexOf('=');
+              if (pos > 0) {
+                String propname = line.substring(0, pos);
+                String value = line.substring(pos + 1);
+                if ((value != null) && (value.length() > 0) && (value.charAt(value.length() - 1) == '\r')) {
+                  value = value.substring(0, value.length() - 1);
+                }
+                if ("URL".equalsIgnoreCase(propname)) { //$NON-NLS-1$
+                  child.setAttribute("url", value); //$NON-NLS-1$
+                }
+              }
+            }
+          } else if (isPlugin) {
+            // must be a plugin - make it look like a URL
+            try {
+              // get the file info object for this file
+              // not all plugins are going to actually use the inputStream, so we have a special
+              // wrapper inputstream so that we can pay that price when we need to (2X speed boost)
+              pluginInputStream = new PluginFileInputStream(repository, file);
+              fileInfo = pluginManager.getFileInfo(extension, session, file, pluginInputStream);
+              String handlerId = pluginManager.getContentGeneratorIdForType(extension, session);
+              String fileUrl = pluginManager.getContentGeneratorUrlForType(extension, session);
+              String solution = file.getSolutionPath();
+              String path = ""; //$NON-NLS-1$
+              if (solution.startsWith(ISolutionRepository.SEPARATOR + "")) { //$NON-NLS-1$
+                solution = solution.substring(1);
+              }
+              int pos = solution.indexOf(ISolutionRepository.SEPARATOR);
+              if (pos != -1) {
+                path = solution.substring(pos + 1);
+                solution = solution.substring(0, pos);
+              }
+              String url = null;
+              if (!"".equals(fileUrl)) { //$NON-NLS-1$
+                url = PentahoSystem.getApplicationContext().getBaseUrl() + fileUrl + "?solution=" + solution + "&path=" + path + "&action=" + name; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+              } else {
+                IContentInfo info = pluginManager.getContentInfoFromExtension(extension, session);
+                for (IPluginOperation operation : info.getOperations()) {
+                  if (operation.getId().equalsIgnoreCase("RUN")) { //$NON-NLS-1$
+                    String command = operation.getCommand();
+                    command = command.replaceAll("\\{solution\\}", solution); //$NON-NLS-1$
+                    command = command.replaceAll("\\{path\\}", path); //$NON-NLS-1$
+                    command = command.replaceAll("\\{name\\}", name); //$NON-NLS-1$
+                    url = PentahoSystem.getApplicationContext().getBaseUrl() + command;
+                    break;
+                  }
+                }
+                if (url == null) {
+                  url = PentahoSystem.getApplicationContext().getBaseUrl()
+                      + "content/" + handlerId + "?solution=" + solution + "&path=" + path + "&action=" + name; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+                }
+              }
+              child.setAttribute("url", url); //$NON-NLS-1$
+
+              String paramServiceUrl = PentahoSystem.getApplicationContext().getBaseUrl()
+                  + "content/" + handlerId + "?solution=" + solution + "&path=" + path + "&action=" + name; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+
+              child.setAttribute("param-service-url", paramServiceUrl); //$NON-NLS-1$
+
+            } catch (Throwable t) {
+              t.printStackTrace();
+            }
+          }
+          
+          // localization
+          try {
+            String localizedName = null;
+            if (name.endsWith(".url")) { //$NON-NLS-1$
+              localizedName = repository.getLocalizedFileProperty(file, "url_name", ISolutionRepository.ACTION_EXECUTE); //$NON-NLS-1$
+            } else if (fileInfo != null) {
+              localizedName = fileInfo.getTitle();
+            } else {
+              localizedName = repository.getLocalizedFileProperty(file, "title", ISolutionRepository.ACTION_EXECUTE); //$NON-NLS-1$
+            }
+            child.setAttribute("localized-name", localizedName == null || "".equals(localizedName) ? name : localizedName); //$NON-NLS-1$ //$NON-NLS-2$
+          } catch (Exception e) {
+            child.setAttribute("localized-name", name); //$NON-NLS-1$
+          }
+          try {
+            // only folders, urls and xactions have descriptions
+            if (name.endsWith(".url")) { //$NON-NLS-1$
+              String url_description = repository.getLocalizedFileProperty(file, "url_description", ISolutionRepository.ACTION_EXECUTE); //$NON-NLS-1$
+              String description = repository.getLocalizedFileProperty(file, "description", ISolutionRepository.ACTION_EXECUTE); //$NON-NLS-1$
+              if (url_description == null && description == null) {
+                child.setAttribute("description", name); //$NON-NLS-1$
+              } else {
+                child.setAttribute("description", url_description == null || "".equals(url_description) ? description //$NON-NLS-1$ //$NON-NLS-2$
+                    : url_description);
+              }
+            } else if (name.endsWith(".xaction")) { //$NON-NLS-1$
+              String description = repository.getLocalizedFileProperty(file, "description", ISolutionRepository.ACTION_EXECUTE); //$NON-NLS-1$
+              child.setAttribute("description", description == null || "".equals(description) ? name : description); //$NON-NLS-1$ //$NON-NLS-2$
+            } else if (fileInfo != null) {
+              child.setAttribute("description", fileInfo.getDescription()); //$NON-NLS-1$
+            } else {
+              child.setAttribute("description", name); //$NON-NLS-1$
+            }
+          } catch (Exception e) {
+            child.setAttribute("description", "xxxxxxx"); //$NON-NLS-1$ //$NON-NLS-2$
+          }
+
+          // add permissions for each file/folder
+          child.setAttribute("name", name); //$NON-NLS-1$
+          child.setAttribute("isDirectory", "" + file.isDirectory()); //$NON-NLS-1$ //$NON-NLS-2$
+          child.setAttribute("lastModifiedDate", "" + file.getLastModified()); //$NON-NLS-1$ //$NON-NLS-2$
+        }
+      } finally {
+        IOUtils.closeQuietly(pluginInputStream);
+      }
+    } // else isfile
   }
 
   public org.w3c.dom.Document getSolutionRepositoryDoc(IPentahoSession session, String[] filters) throws ParserConfigurationException {
@@ -426,7 +471,7 @@ public class SolutionRepositoryServiceImpl implements ISolutionRepositoryService
     if (cacheManager != null && cacheManager.cacheEnabled(ISolutionRepository.REPOSITORY_SERVICE_CACHE_REGION)) {
       document = (org.w3c.dom.Document) cacheManager.getFromRegionCache(ISolutionRepository.REPOSITORY_SERVICE_CACHE_REGION, session.getName() + LocaleHelper.getLocale());
     }
-      
+
     if (document == null) {
       ISolutionRepository repository = PentahoSystem.get(ISolutionRepository.class, session);
       ISolutionFile rootFile = repository.getRootFolder(ISolutionRepository.ACTION_EXECUTE);
@@ -436,6 +481,7 @@ public class SolutionRepositoryServiceImpl implements ISolutionRepositoryService
       root.setAttribute("path", rootFile.getFullPath()); //$NON-NLS-1$
       boolean isAdministrator = SecurityHelper.isPentahoAdministrator(session);
       processRepositoryFile(session, isAdministrator, repository, root, rootFile, filters);
+
       // only attempt to add to the cache if by this point it exists, it's possible that
       // the implementation of the ICacheManager might not allow the creation of new
       // or custom caches like this.
@@ -448,7 +494,6 @@ public class SolutionRepositoryServiceImpl implements ISolutionRepositoryService
     return document;
   }
 
-  
   /**
    * Returns an XML snippet consisting of a single <code>file</code> element. The <code>file</code> element is the same 
    * as would have been returned by <code>getSolutionRepositoryDoc</code>.
@@ -545,7 +590,7 @@ public class SolutionRepositoryServiceImpl implements ISolutionRepositoryService
     }
     // TODO sbarkdull, what if its not instanceof
   }
-  
+
   /**
    * Gets ACLs based on a solution repository file.
    * 
@@ -593,18 +638,18 @@ public class SolutionRepositoryServiceImpl implements ISolutionRepositoryService
       if (permRecipient instanceof SimpleRole) {
         sb
             .append("<entry role='" + permRecipient.getName() + "' permissions='" + filePerm.getValue().getMask() //$NON-NLS-1$ //$NON-NLS-2$
-                + "'/>"); //$NON-NLS-1$
+            + "'/>"); //$NON-NLS-1$
       } else {
         // entry belongs to a user
         sb
             .append("<entry user='" + permRecipient.getName() + "' permissions='" + filePerm.getValue().getMask() //$NON-NLS-1$ //$NON-NLS-2$
-                + "'/>"); //$NON-NLS-1$
+            + "'/>"); //$NON-NLS-1$
       }
     }
     sb.append("</acl>"); //$NON-NLS-1$
     return sb.toString();
   }
-  
+
   /**
    * Get a SAX Parser Factory
    * 
@@ -620,8 +665,6 @@ public class SolutionRepositoryServiceImpl implements ISolutionRepositoryService
     }
     return threadLocalSAXParserFactory;
   }
-  
-  
 
   /**
    * This class is basically a wrapper for the solution file inputstream, but it will only
@@ -629,87 +672,77 @@ public class SolutionRepositoryServiceImpl implements ISolutionRepositoryService
    * benefit (9s down to 3s).
    */
   private class PluginFileInputStream extends InputStream {
-    
+
     private ISolutionRepository repository;
     private ISolutionFile file;
     private InputStream inputStream;
-    
-    public PluginFileInputStream(ISolutionRepository repository, ISolutionFile file)
-    {
+
+    public PluginFileInputStream(ISolutionRepository repository, ISolutionFile file) {
       this.repository = repository;
       this.file = file;
     }
-    
-    public int read() throws IOException
-    {
+
+    public int read() throws IOException {
       if (inputStream == null) {
         inputStream = repository.getResourceInputStream(file.getFullPath(), true, ISolutionRepository.ACTION_EXECUTE);
       }
       return inputStream.read();
     }
-    
-    public int read(byte[] b) throws IOException
-    {
+
+    public int read(byte[] b) throws IOException {
       if (inputStream == null) {
         inputStream = repository.getResourceInputStream(file.getFullPath(), true, ISolutionRepository.ACTION_EXECUTE);
       }
       return inputStream.read(b);
     }
-    
-    public int read(byte[] b, int off, int len) throws IOException
-    {
+
+    public int read(byte[] b, int off, int len) throws IOException {
       if (inputStream == null) {
         inputStream = repository.getResourceInputStream(file.getFullPath(), true, ISolutionRepository.ACTION_EXECUTE);
       }
       return inputStream.read(b, off, len);
     }
 
-    public synchronized void mark(int readlimit)
-    {
+    public synchronized void mark(int readlimit) {
       if (inputStream != null) {
         inputStream.mark(readlimit);
       }
     }
 
-    public boolean markSupported()
-    {
+    public boolean markSupported() {
       if (inputStream != null) {
         return inputStream.markSupported();
       }
       return super.markSupported();
     }
 
-    public synchronized void reset() throws IOException
-    {
+    public synchronized void reset() throws IOException {
       if (inputStream != null) {
         inputStream.reset();
       }
       super.reset();
     }
-    
-    public long skip(long n) throws IOException
-    {
+
+    public long skip(long n) throws IOException {
       if (inputStream != null) {
         inputStream.skip(n);
       }
       return super.skip(n);
     }
-    
-    public void close() throws IOException
-    {
+
+    public void close() throws IOException {
       if (inputStream != null) {
         inputStream.close();
       }
     }
-    
-    public int available() throws IOException
-    {
+
+    public int available() throws IOException {
       if (inputStream != null) {
         return inputStream.available();
       }
       return 0;
     }
-    
+
   }
-  
+
 }

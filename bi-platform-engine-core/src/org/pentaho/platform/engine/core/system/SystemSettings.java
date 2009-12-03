@@ -100,11 +100,17 @@ public class SystemSettings extends PentahoBase implements ISystemSettings {
   }
 
   public List getSystemSettings(final String path, final String settingName) {
+    List settings = (List)settingsDocumentMap.get(path + settingName);
+    if (settings != null) {
+      return settings;
+    }
     Document doc = getSystemSettingsDocument(path);
     if (doc == null) {
       return null;
     }
-    return doc.selectNodes("//" + settingName); //$NON-NLS-1$
+    settings = doc.selectNodes("//" + settingName); //$NON-NLS-1$
+    settingsDocumentMap.put(path + settingName, settings);
+    return settings;
   }
 
   public List getSystemSettings(final String settingName) {
