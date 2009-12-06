@@ -47,7 +47,6 @@ import org.pentaho.platform.api.engine.ActionValidationException;
 import org.pentaho.platform.api.engine.IComponent;
 import org.pentaho.platform.api.engine.ILogger;
 import org.pentaho.platform.api.repository.IContentItem;
-import org.pentaho.platform.api.util.IBeanUtil;
 import org.pentaho.platform.engine.core.output.SimpleContentItem;
 import org.pentaho.platform.engine.services.messages.Messages;
 
