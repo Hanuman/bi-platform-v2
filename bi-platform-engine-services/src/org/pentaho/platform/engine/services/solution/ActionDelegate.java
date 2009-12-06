@@ -19,7 +19,6 @@
 
 package org.pentaho.platform.engine.services.solution;
 
-import java.beans.PropertyDescriptor;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
@@ -27,9 +26,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.beanutils.BeanUtilsBean;
-import org.apache.commons.beanutils.ConvertUtilsBean;
-import org.apache.commons.beanutils.PropertyUtilsBean;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -51,21 +47,20 @@ import org.pentaho.platform.api.engine.ActionValidationException;
 import org.pentaho.platform.api.engine.IComponent;
 import org.pentaho.platform.api.engine.ILogger;
 import org.pentaho.platform.api.repository.IContentItem;
+import org.pentaho.platform.api.util.IBeanUtil;
 import org.pentaho.platform.engine.core.output.SimpleContentItem;
 import org.pentaho.platform.engine.services.messages.Messages;
 
 /**
  * The purpose of the {@link ActionDelegate} is to represent an action object 
  * (which implements {@link IAction}) as an {@link IComponent}.
+ * 
+ * @see IAction
  */
 @SuppressWarnings("serial")
 public class ActionDelegate extends ComponentBase {
 
-  //PropertyUtils are strictly typed and do not do type conversion
-  private static PropertyUtilsBean beanUtil = new PropertyUtilsBean();
-
-  //BeanUtils will make a best effort to convert to the requested type on copy or set
-  private static BeanUtilsBean typeConvertingBeanUtil;
+  private static ActionBeanUtil beanUtil;
 
   private Object actionBean;
 
@@ -73,18 +68,9 @@ public class ActionDelegate extends ComponentBase {
 
   private IActionOutput[] actionDefintionOutputs;
 
-  {
-    //
-    //Configure a bean util that throws exceptions during type conversion
-    //
-    ConvertUtilsBean convertUtil = new ConvertUtilsBean();
-    convertUtil.register(true, true, 0);
-
-    typeConvertingBeanUtil = new BeanUtilsBean(convertUtil);
-  }
-
   public ActionDelegate(Object actionBean) {
     this.actionBean = actionBean;
+    beanUtil = new ActionBeanUtil();
   }
 
   public Object getActionBean() {
@@ -113,7 +99,7 @@ public class ActionDelegate extends ComponentBase {
     }
     return (publicOutput.getType().equals(ActionSequenceDocument.CONTENT_TYPE) && publicOutput.getDestinations().length > 0);
   }
-
+  
   /**
    * Wires up inputs outputs and resources to an Action and executes it.
    */
@@ -190,7 +176,7 @@ public class ActionDelegate extends ComponentBase {
           //          warn(SimpleContentItem.class.getSimpleName() + " is for testing purposes only and should not be used in production.");
         }
       } else if (beanUtil.isReadable(actionBean, outputName)) {
-        Object outputVal = beanUtil.getSimpleProperty(actionBean, outputName);
+        Object outputVal = beanUtil.getValue(actionBean, outputName);
         output.setValue(outputVal);
       } else {
         if (loggingLevel <= ILogger.WARN) {
@@ -250,21 +236,19 @@ public class ActionDelegate extends ComponentBase {
       //2. if there is an indexed setter method bean utils will that (note: a simple getter is required as well though it will not be invoked)
       //3. if there is an array-based getter like List<String> getNames(), bean utils will insert the new value into the array reference 
       //   it gets from the array getter.
-      if (beanUtil.isWriteable(actionBean, name) || (beanUtil.getResolver().isIndexed(name))
-          && beanUtil.isReadable(actionBean, name)) {
+      if (beanUtil.isWriteable(actionBean, name)) {
 
         //we get the value at the latest point possible
         Object val = getValueToSet(name);
         try {
           //trying our best to set the input value to the type specified by the action bean
-          typeConvertingBeanUtil.copyProperty(actionBean, name, val);
+          beanUtil.setValue(actionBean, name, val);
         } catch (Exception e) {
           String propertyType = ""; //$NON-NLS-1$
           try {
-            PropertyDescriptor desc = beanUtil.getPropertyDescriptor(actionBean, name);
-            propertyType = desc.getPropertyType().getName();
+            propertyType = beanUtil.getClass(actionBean, name).getName();
           } catch (Throwable t) {
-            //we are in a catch, we should never let an exception escape here
+            //we are in a nested catch, we should never let an exception escape here
           }
           failedToSetValue(name, val, propertyType, e);
         }
@@ -284,7 +268,7 @@ public class ActionDelegate extends ComponentBase {
     public StreamingOutputOps(Map<String, IContentItem> outputContentItems) {
       this.outputContentItems = outputContentItems;
     }
-    
+
     public void setOutputStream(IActionOutput actionOutput) throws Exception {
       curActionOutput = actionOutput;
       super.setValue(actionOutput.getName());
@@ -294,7 +278,7 @@ public class ActionDelegate extends ComponentBase {
     public String getPropertyNameSuffix() {
       return "Stream"; //$NON-NLS-1$
     }
-    
+
     @Override
     public void failedToSetValue(String name, Object value, String destPropertyType, Throwable cause)
         throws ActionExecutionException {
@@ -364,7 +348,7 @@ public class ActionDelegate extends ComponentBase {
     @Override
     public void failedToSetValue(String name, Object value, String destPropertyType, Throwable cause)
         throws ActionExecutionException {
-      String className = (value != null)?value.getClass().getName():"ClassNameNotAvailable"; //$NON-NLS-1$
+      String className = (value != null) ? value.getClass().getName() : "ClassNameNotAvailable"; //$NON-NLS-1$
       throw new ActionExecutionException(Messages.getInstance().getErrorString(
           "ActionDelegate.ERROR_0006_FAILED_TO_SET_RESOURCE", //$NON-NLS-1$
           name, className, actionBean.getClass().getSimpleName(), destPropertyType), cause);
@@ -401,7 +385,7 @@ public class ActionDelegate extends ComponentBase {
     @Override
     public void failedToSetValue(String name, Object value, String destPropertyType, Throwable cause)
         throws ActionExecutionException {
-      String className = (value != null)?value.getClass().getName():"ClassNameNotAvailable"; //$NON-NLS-1$
+      String className = (value != null) ? value.getClass().getName() : "ClassNameNotAvailable"; //$NON-NLS-1$
       throw new ActionExecutionException(Messages.getInstance().getErrorString(
           "ActionDelegate.ERROR_0005_FAILED_TO_SET_INPUT", //$NON-NLS-1$
           name, className, actionBean.getClass().getSimpleName(), destPropertyType), cause);
