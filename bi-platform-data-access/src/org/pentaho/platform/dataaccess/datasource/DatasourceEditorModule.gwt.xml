@@ -19,6 +19,7 @@
     <exclude name="**/DatasourceDebugGwtServlet*"/>
     <exclude name="**/SwingDatasourceEditor*"/>
     <exclude name="**/SwingDatasourceSelectionDialog*"/>
+    <exclude name="**/ConnectionServiceConcrete*"/>
     <exclude name="**/ConnectionServiceImpl*"/>
 	<exclude name="**/DatasourceServiceImpl*"/>        
     <exclude name="**/InMemoryConnectionServiceImpl*"/>        
