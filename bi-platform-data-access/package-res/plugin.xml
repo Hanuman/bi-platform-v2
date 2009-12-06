@@ -18,10 +18,18 @@
    
   <webservice
     id="connectionService"
-    type="xml,gwt"
+    type="gwt"
+    title="%ConnectionService.TITLE%" 
+    description="%ConnectionService.DESC%"
+    class="org.pentaho.platform.dataaccess.datasource.wizard.service.impl.ConnectionServiceImpl"/>
+
+  <webservice
+    id="soapConnectionService"
+    type="xml"
     title="%ConnectionService.TITLE%" 
     description="%ConnectionService.DESC%"
     class="org.pentaho.platform.dataaccess.datasource.wizard.service.impl.ConnectionServiceConcrete"/>
+
 
   <webservice
     id="databaseConnectionService"

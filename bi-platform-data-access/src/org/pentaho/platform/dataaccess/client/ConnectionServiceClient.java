@@ -473,7 +473,7 @@ public class ConnectionServiceClient implements IConnectionService, ObjectSuppli
    */
   public void setHost(String host) {
     // create the service url
-    serviceUrl = host+"/content/ws-run/connectionService"; //$NON-NLS-1$
+    serviceUrl = host+"/content/ws-run/soapConnectionService"; //$NON-NLS-1$
   }
 
   /**
