@@ -49,6 +49,7 @@ import org.pentaho.platform.api.engine.ILogger;
 import org.pentaho.platform.api.repository.IContentItem;
 import org.pentaho.platform.engine.core.output.SimpleContentItem;
 import org.pentaho.platform.engine.services.messages.Messages;
+import org.pentaho.platform.util.web.MimeHelper;
 
 /**
  * The purpose of the {@link ActionDelegate} is to represent an action object 
@@ -316,7 +317,10 @@ public class ActionDelegate extends ComponentBase {
         //most output handlers will manage multiple destinations for us and hand us back a MultiContentItem
         contentItem = getRuntimeContext().getOutputContentItem(curActionOutput.getPublicName(), mimeType);
       } else {
-        String extension = ".bin"; //TODO: should we be asking the action bean for the extension like we do for mime type? //$NON-NLS-1$
+        String extension = MimeHelper.getExtension(mimeType);
+        if(extension == null) {
+          extension = ".bin"; //$NON-NLS-1$
+        }
         contentItem = getRuntimeContext().getOutputItem(curActionOutput.getName(), mimeType, extension);
       }
 
