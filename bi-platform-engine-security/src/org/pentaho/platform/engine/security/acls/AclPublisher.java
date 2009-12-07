@@ -205,9 +205,13 @@ public class AclPublisher implements IAclPublisher {
       Set kids = rootFile.getChildrenFiles();
       if (kids != null) { // Doesn't have to have kids in it...
         Iterator it = kids.iterator();
+        IAclSolutionFile aChild = null;
         while (it.hasNext()) {
           // Recursively publish ACLs for all child folders
-          publishDefaultFolderAcls((IAclSolutionFile) it.next()); 
+          aChild = (IAclSolutionFile)it.next();
+          if (aChild.isDirectory()) {
+            publishDefaultFolderAcls(aChild);
+          }
         }
       }
     }
