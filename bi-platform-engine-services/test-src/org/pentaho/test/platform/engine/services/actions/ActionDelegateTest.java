@@ -521,6 +521,7 @@ public class ActionDelegateTest {
         return null;
       }
 
+      @SuppressWarnings("unchecked")
       public List getFileVersions() {
         // TODO Auto-generated method stub
         return null;
