@@ -19,18 +19,34 @@ package org.pentaho.platform.api.action;
 
 import java.io.OutputStream;
 
+import org.pentaho.platform.api.engine.IOutputHandler;
+import org.pentaho.platform.api.engine.ISolutionEngine;
+
 
 /**
  * The interface for Actions that want to stream content to the caller.
  * A "streaming" output is a special type of action definition output that
- * will result in an {@link OutputStream} being set on the Action.  An output
- * is considered a special "streaming" output if:
- * <ol>
- * <li>if the output defined in the action definition section has a 
- * counterpart of the same name in the action sequence outputs 
- * <li>AND that output is of type "content" 
- * <li>AND it has a destination defined
- * </ol>
+ * will result in an {@link OutputStream} being set on the Action.  
+ * 
+ * It is generally recommended that if your Action bean yields any content
+ * for user consumption, that it implement {@link IStreamingAction}.  This
+ * guarantees that your Action will have the option of:
+ * <ul> 
+ * <li>streaming the generated content back to the user, such as an HTTP servlet response
+ * <li>saving the content to a content repository
+ * <li>communicating with existing BI Platform components (such as EmailComponent, which
+ * expects to find attachments in the content repository)
+ * </ul>
+ * <p>
+ * From the perspective of the Action Sequence itself, an output is considered 
+ * a "streaming" output if the attribute "type" is set to "content", e.g.
+ * <code>
+ * <myContentOutput type="content"/>
+ * </code>
+ * The output may or may not have a globally defined destination to which it corresponds.
+ * If the output does correspond to a globally defined output with a destination, then
+ * the source of the {@link OutputStream} will be determined by the {@link IOutputHandler}
+ * provided during the execution of the Action Sequence by the {@link ISolutionEngine}.
  * <p>
  * In the case that an output is considered "streaming", it will basically be
  * treated similar to an input in that it will be set on the Action with a 
