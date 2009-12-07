@@ -10,7 +10,12 @@ import static org.junit.Assert.assertTrue;
 
 import java.io.ByteArrayOutputStream;
 import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.io.Reader;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -18,6 +23,7 @@ import java.util.Map;
 import org.apache.commons.logging.LogFactory;
 import org.junit.Before;
 import org.junit.Test;
+import org.pentaho.commons.connection.IPentahoStreamSource;
 import org.pentaho.platform.api.action.IAction;
 import org.pentaho.platform.api.action.IStreamingAction;
 import org.pentaho.platform.api.engine.ILogger;
@@ -27,10 +33,13 @@ import org.pentaho.platform.api.engine.IPluginManager;
 import org.pentaho.platform.api.engine.ISolutionEngine;
 import org.pentaho.platform.api.engine.PluginBeanException;
 import org.pentaho.platform.api.engine.IPentahoDefinableObjectFactory.Scope;
+import org.pentaho.platform.api.repository.ContentException;
+import org.pentaho.platform.api.repository.IContentItem;
 import org.pentaho.platform.engine.core.output.SimpleOutputHandler;
 import org.pentaho.platform.engine.core.system.PentahoSystem;
 import org.pentaho.platform.engine.core.system.StandaloneSession;
 import org.pentaho.platform.engine.core.system.boot.PlatformInitializationException;
+import org.pentaho.platform.engine.services.outputhandler.BaseOutputHandler;
 import org.pentaho.platform.engine.services.solution.ActionDelegate;
 import org.pentaho.platform.engine.services.solution.SolutionEngine;
 import org.pentaho.platform.util.web.SimpleUrlFactory;
@@ -112,6 +121,7 @@ public class ActionDelegateTest {
     booter.define(ISolutionEngine.class, SolutionEngine.class, Scope.GLOBAL);
     booter.define(IPluginManager.class, TestPluginManager.class, Scope.GLOBAL);
     booter.define("systemStartupSession", StandaloneSession.class, Scope.GLOBAL);
+    booter.define("contentrepo", TestOutputHandler.class, Scope.GLOBAL);
 
     actionList.clear();
     actionList.add(new TestAllIOAction());
@@ -119,24 +129,25 @@ public class ActionDelegateTest {
     booter.start();
     PentahoSystem.get(ISolutionEngine.class).setLoggingLevel(ILogger.DEBUG);
   }
-  
+
   @Test
   public void testIndexedInputs() {
     TestIndexedInputsAction action1 = new TestIndexedInputsAction();
-    
+
     execute("testIndexedInputs.xaction", action1);
-    
-    
-    
+
     assertTrue("messages list should have elements", action1.getAllMessages().size() > 0);
     assertTrue("otherMessages list should have elements", action1.getOtherMessages().size() > 0);
-    
-    for(int i=0; i < 3; i++) {
-      assertEquals("action string type input \"messages_"+i+"\" is incorrect/not set", "indexed messages_"+i+" text", action1.getMessages(i));
-      assertEquals("action string type input \"otherMessages_"+i+"\" is incorrect/not set", "other indexed messages_"+i+" text", action1.getOtherMessages().get(i));
+
+    for (int i = 0; i < 3; i++) {
+      assertEquals("action string type input \"messages_" + i + "\" is incorrect/not set", "indexed messages_" + i
+          + " text", action1.getMessages(i));
+      assertEquals("action string type input \"otherMessages_" + i + "\" is incorrect/not set",
+          "other indexed messages_" + i + " text", action1.getOtherMessages().get(i));
     }
-    
-    assertEquals("action string type input \"scalarMessage\" is incorrect/not set", "scalar message text", action1.getTextOfScalarMessage());
+
+    assertEquals("action string type input \"scalarMessage\" is incorrect/not set", "scalar message text", action1
+        .getTextOfScalarMessage());
   }
 
   @Test
@@ -286,21 +297,36 @@ public class ActionDelegateTest {
 
     assertEquals("string type input \"message\" is incorrect/not set", "message input text", action1.getMessage());
 
-    System.out.println(out.toString());
+    assertTrue("output stream should contain this text", out.toString().contains("message input text"));
   }
 
+  /**
+   * Tests destination-less content outputs to make sure an Outputstream is still created and provided to the action
+   * bean.
+   * <p>
+   * This test implies the following code snippets return non-null results for datasource and contentItem.
+   * What this means to an action bean is it will be handed an outputstream for any output of type content
+   * that it declares as an output, regardless of the fact that it may have a public counterpart with a destination.
+   * <code>
+   * IPentahoStreamSource datasource = runtimeContext.getDataSource(actionInput.getName());
+   * </code>
+   * or
+   * <code>
+   * IActionParameter actionParameter = paramManager.getCurrentInput(parameterName);
+   * IContentItem contentItem = actionParameter.getValue();
+   * </code>
+   */
   @Test
-  public void testNonStreamingContentOutput() throws PlatformInitializationException, FileNotFoundException {
+  public void testStreamingWithDestinationlessOutput() throws PlatformInitializationException, FileNotFoundException {
     TestStreamingAction action1 = new TestStreamingAction();
 
     assertNull(action1.getMyContentOutputStream());
 
-    execute("testContentNonStreamingOutput.xaction", action1);
+    execute("testStreamingWithDestinationlessOutput.xaction", action1);
 
-    assertNull("output stream should not have been set on action1", action1.getMyContentOutputStream());
-    assertNotNull("we expect some content here", action1.getMyContentOutput());
-    assertEquals("this content is not written out as a normal non-streamed output", action1.getMyContentOutput()
-        .toString());
+    assertNotNull("output stream was not set on action1", action1.getMyContentOutputStream());
+
+    assertTrue("output stream should contain this text", action1.getMyContentOutputStream().toString().contains("message input text"));
   }
 
   /*
@@ -422,4 +448,118 @@ public class ActionDelegateTest {
         false, new HashMap(), outputHandler, null, new SimpleUrlFactory(""), new ArrayList());
   }
 
+  public static class TestOutputHandler extends BaseOutputHandler {
+    public static ByteArrayOutputStream BOS = new ByteArrayOutputStream();
+    private IContentItem contentItem = new IContentItem() {
+
+      public void setName(String name) {
+        // TODO Auto-generated method stub
+
+      }
+
+      public void setMimeType(String mimeType) {
+        // TODO Auto-generated method stub
+
+      }
+
+      public void removeVersion(String fileId) {
+        // TODO Auto-generated method stub
+
+      }
+
+      public void removeAllVersions() {
+        // TODO Auto-generated method stub
+
+      }
+
+      public void makeTransient() {
+        // TODO Auto-generated method stub
+
+      }
+
+      public String getUrl() {
+        // TODO Auto-generated method stub
+        return null;
+      }
+
+      public String getTitle() {
+        // TODO Auto-generated method stub
+        return null;
+      }
+
+      public Reader getReader() throws ContentException {
+        // TODO Auto-generated method stub
+        return null;
+      }
+
+      public String getPath() {
+        // TODO Auto-generated method stub
+        return null;
+      }
+
+      public OutputStream getOutputStream(String actionName) throws IOException {
+        return BOS;
+      }
+
+      public String getName() {
+        // TODO Auto-generated method stub
+        return null;
+      }
+
+      public String getMimeType() {
+        // TODO Auto-generated method stub
+        return null;
+      }
+
+      public InputStream getInputStream() throws ContentException {
+        // TODO Auto-generated method stub
+        return null;
+      }
+
+      public String getId() {
+        // TODO Auto-generated method stub
+        return null;
+      }
+
+      public List getFileVersions() {
+        // TODO Auto-generated method stub
+        return null;
+      }
+
+      public long getFileSize() {
+        // TODO Auto-generated method stub
+        return 0;
+      }
+
+      public String getFileId() {
+        // TODO Auto-generated method stub
+        return null;
+      }
+
+      public Date getFileDateTime() {
+        // TODO Auto-generated method stub
+        return null;
+      }
+
+      public IPentahoStreamSource getDataSource() {
+        // TODO Auto-generated method stub
+        return null;
+      }
+
+      public String getActionName() {
+        // TODO Auto-generated method stub
+        return null;
+      }
+
+      public void closeOutputStream() {
+        // TODO Auto-generated method stub
+
+      }
+    };
+
+    @Override
+    public IContentItem getFileOutputContentItem() {
+      return contentItem;
+    }
+  }
 }

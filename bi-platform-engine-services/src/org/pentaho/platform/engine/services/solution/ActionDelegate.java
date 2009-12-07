@@ -84,45 +84,42 @@ public class ActionDelegate extends ComponentBase {
   }
 
   /**
-   * This method will tell you if an output in the action definition should be treated like
-   * and input and passed to the Action as an OutputStream.  An output should be assigned an OutputStream
-   * if it has a counterpart of the same name in the action sequence outputs AND that output
-   * is of type "content" AND it has a destination defined. 
-   * @param privateOutputName the name of the action definition output to check
-   * @return true if we should deal with this output as an OutputStream writable by the Action
+   * This method will tell you if an output in the action definition references an 
+   * output stream that has a global/public destination, such as "response", or "content".
+   * An action definition output is considered thusly, if it has a counterpart of the 
+   * same name in the action sequence outputs AND that output is of type "content" 
+   * AND it has declared one or more destinations. 
+   * @param contentOutput the action definition output to check
+   * @return true if this output corresponds to a public destintion-bound output
    */
-  protected boolean isStreamingOutput(String privateOutputName) {
-    IActionSequenceOutput publicOutput = getActionDefinition().getDocument().getOutput(privateOutputName);
+  protected boolean hasPublicDestination(IActionOutput contentOutput) {
+    String resolvedName = contentOutput.getPublicName();
+    IActionSequenceOutput publicOutput = getActionDefinition().getDocument().getOutput(resolvedName);
     if (publicOutput == null) {
       return false;
     }
     return (publicOutput.getType().equals(ActionSequenceDocument.CONTENT_TYPE) && publicOutput.getDestinations().length > 0);
   }
-  
+
   /**
    * Wires up inputs outputs and resources to an Action and executes it.
    */
   @Override
   protected boolean executeAction() throws Throwable {
     //
-    //Provide output stream for streaming actions.  We are going to look for an output where
-    //type = "content", which is a required output for IStreamingActions.  If this output
-    //is found, an OutputStream will be retrieved for this output and that OutputStream will
-    //be handed to the IStreamingAction.
+    //Provide output stream for the streaming action.  We are going to look for all outputs where
+    //type = "content", and derive output streams to hand to the IStreamingAction.
     //
     Map<String, IContentItem> outputContentItems = new HashMap<String, IContentItem>();
     StreamingOutputOps streamOutputOps = new StreamingOutputOps(outputContentItems);
 
     IActionOutput[] contentOutputs = getActionDefinition().getOutputs(ActionSequenceDocument.CONTENT_TYPE);
     if (contentOutputs.length > 0) {
-
       for (IActionOutput contentOutput : contentOutputs) {
-        if (isStreamingOutput(contentOutput.getPublicName())) {
-          streamOutputOps.setOutputStream(contentOutput);
-        }
-        //else, we will deal with this output like normal non-streaming outputs post execution
+        streamOutputOps.setOutputStream(contentOutput);
       }
     }
+    //else, This is not necessarily an error condition. Let the action bean decide.
 
     //
     //Create a map for passing undeclared inputs if an IVarArgsAction
@@ -226,9 +223,6 @@ public class ActionDelegate extends ComponentBase {
       name = compatibilityToCamelCase(name);
       name = format(name);
 
-      /* InputVal has a concrete type that may be determined by the type attribute 
-       * of the action sequence input.  See type mappings in documentation. */
-      //    Object inputVal = input.getValue();
       //here we check if we can set the input value on the bean.  There are three ways that bean utils will go about this
       //1. use a simple property setter method
       //.. in the case of an indexed property there are two methods:
@@ -310,8 +304,21 @@ public class ActionDelegate extends ComponentBase {
             "ActionDelegate.ERROR_0001_MIMETYPE_NOT_DECLARED")); //$NON-NLS-1$
       }
 
-      //most output handlers will manage multiple destinations for us and hand us back a MultiContentItem
-      IContentItem contentItem = getRuntimeContext().getOutputContentItem(curActionOutput.getPublicName(), mimeType);
+      IContentItem contentItem = null;
+
+      //
+      //If the output is mapped publicly and has a destination associated with it, then we will be asking
+      //the current IOuputHandler to create an IContentItem (OuputStream) for us.  Otherwise, we will asking the 
+      //IContentOutputHandler impl registered to handle content destined for "contentrepo" to create
+      //an IContentItem (OutputStream) for us.
+      //
+      if (hasPublicDestination(curActionOutput)) {
+        //most output handlers will manage multiple destinations for us and hand us back a MultiContentItem
+        contentItem = getRuntimeContext().getOutputContentItem(curActionOutput.getPublicName(), mimeType);
+      } else {
+        String extension = ".bin"; //TODO: should we be asking the action bean for the extension like we do for mime type? //$NON-NLS-1$
+        contentItem = getRuntimeContext().getOutputItem(curActionOutput.getName(), mimeType, extension);
+      }
 
       if (contentItem == null) {
         //this is the best I can do here to point users to a tangible problem without unwrapping code in RuntimeEngine - AP
