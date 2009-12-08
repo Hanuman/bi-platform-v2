@@ -1586,10 +1586,8 @@ public class AdhocWebService extends ServletBase {
       // newly saved files to show up in the next directory listing.
       // if overwrite is true, they are saving over an existing file, so that file's name
       // will already be in the cached sol. repos. tree.
-      if ( !overwrite ) {
-        invalidateSolutionRepositoryTree( userSession );
-        repository.reloadSolutionRepository( userSession, repository.getLoggingLevel() );
-      }
+      invalidateSolutionRepositoryTree( userSession );
+      repository.reloadSolutionRepository( userSession, repository.getLoggingLevel() );
       
     } else {
       // TODO sbarkdull, if any of the saves fails, remove the saved files
