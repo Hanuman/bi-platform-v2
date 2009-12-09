@@ -64,6 +64,17 @@ public abstract class SimpleContentGenerator extends BaseContentGenerator {
     }
     
     createContent( out );
+    
+    try {
+      // we created the output stream, let's be sure it's closed
+      // do not leave it up to the implementations of SimpleContentGenerator
+      // do do this or not
+      out.flush();
+      out.close();
+    } catch (Exception ignored) {
+      // this is cleanup code anyway, the output stream was probably
+      // closed by the impl
+    }    
   }
 
   public abstract void createContent( OutputStream out ) throws Exception;
