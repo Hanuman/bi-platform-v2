@@ -802,8 +802,12 @@ private void addToRepository( final IFileInfo info, final String solution, final
   }
 
   public Document getSolutionTree(final int actionOperation, final ISolutionFilter filter) {
-    //return (SolutionReposHelper.getActionSequences(new FileSolutionFile(rootFile, rootFile), actionOperation));
-    return (SolutionReposHelper.processSolutionTree(new FileSolutionFile(rootFile, rootFile), actionOperation));
+    // create a document to return
+    Document document = DocumentHelper.createDocument();
+    Element root = document.addElement(SolutionReposHelper.TREE_NODE_NAME);
+    // process the tree using the filter provided as a parameter
+    SolutionReposHelper.processSolutionTree(root, new FileSolutionFile(rootFile, rootFile), filter, actionOperation);
+    return document;
   }
 
   public Document getSolutionTree(final int actionOperation) {
