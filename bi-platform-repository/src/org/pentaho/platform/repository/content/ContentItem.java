@@ -218,6 +218,7 @@ public class ContentItem extends PentahoBase implements IContentItem, ISearchabl
           cif = newContentFile(actionName);
         }
         if (cif != null) {
+          cif.setFileDateTime(new Date());
           outputStream = cif.getOutputStream(true);
           return outputStream;
         }
@@ -229,6 +230,7 @@ public class ContentItem extends PentahoBase implements IContentItem, ISearchabl
           cif = newContentFile(actionName);
         }
         if (cif != null) {
+          cif.setFileDateTime(new Date());
           outputStream = cif.getOutputStream(true, true);
           return outputStream;
         }
