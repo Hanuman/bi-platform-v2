@@ -69,6 +69,8 @@ public class PlatformPlugin implements IPlatformPlugin, IPentahoInitializer {
 
   private IPluginLifecycleListener lifecycleListener;
 
+  private ClassLoaderType loaderType;
+
   public void init(IPentahoSession session) {
     for (IPentahoInitializer initializer : initializers) {
       initializer.init(session);
@@ -206,9 +208,12 @@ public class PlatformPlugin implements IPlatformPlugin, IPentahoInitializer {
     return metaProviderMap;
   }
 
-  public String getName() {
-    // TODO Auto-generated method stub
-    return null;
+  public ClassLoaderType getLoaderType() {
+    return loaderType;
+  }
+  
+  public void setLoadertype(ClassLoaderType loaderType) {
+    this.loaderType = loaderType;
   }
 
 }

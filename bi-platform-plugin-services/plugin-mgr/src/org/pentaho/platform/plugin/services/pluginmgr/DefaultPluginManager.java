@@ -389,6 +389,9 @@ public class DefaultPluginManager extends AbstractPluginManager {
         throw new PlatformPluginRegistrationException(Messages.getInstance().getErrorString("PluginManager.ERROR_0027_PLUGIN_DIR_UNAVAILABLE", pluginDir.getAbsolutePath())); //$NON-NLS-1$
       }
       loader = new PluginClassLoader(pluginDir, this.getClass().getClassLoader());
+      if(plugin.getLoaderType() == IPlatformPlugin.ClassLoaderType.OVERRIDING) {
+        ((PluginClassLoader)loader).setOverrideLoad(true);
+      }
       classLoaderMap.put(plugin.getId(), loader);
     }
     return loader;

@@ -37,6 +37,10 @@ import org.pentaho.ui.xul.XulOverlay;
  * @author jdixon
  */
 public interface IPlatformPlugin extends IPluginLifecycleListener {
+  
+  public enum ClassLoaderType {
+    DEFAULT, OVERRIDING
+  }
 
   /**
    * Returns the unique ID of this plugin
@@ -126,4 +130,6 @@ public interface IPlatformPlugin extends IPluginLifecycleListener {
   public Map<String, String> getMetaProviderMap();
   
   public Collection<PluginServiceDefinition> getServices();
+
+  public ClassLoaderType getLoaderType();
 }

@@ -47,7 +47,7 @@ public class PluginClassLoader extends URLClassLoader {
 
   private File pluginDir;
 
-  private boolean overrideLoad = true;
+  private boolean overrideLoad = false;
 
   /**
    * Creates a class loader for loading plugin classes and discovering resources.
@@ -65,7 +65,7 @@ public class PluginClassLoader extends URLClassLoader {
       }
     }
   }
-  
+
   /**
    * Convenience method that creates a {@link PluginClassLoader} with the current
    * classloader as it's parent.
@@ -76,6 +76,23 @@ public class PluginClassLoader extends URLClassLoader {
     this(pluginDir, o.getClass().getClassLoader());
   }
 
+  /**
+   * Controls whether or not this classloader will eagerly load a class
+   * requested by {@link #loadClass(String, boolean)} ahead of the parent
+   * classloader.   or delegate the load to the parent.  If this method
+   * is not called, the default behavior will apply which is to *not* 
+   * override classloading.
+   * @param b if true, loadClass method will look to this loader first to load a class,
+   * otherwise, the parent classloader will be queried first.  
+   */
+  public void setOverrideLoad(boolean b) {
+    overrideLoad = b;
+    if (b) {
+      log.debug("classloader "+this+" is set to override mode.  loadClass will now attempt to load " //$NON-NLS-1$ //$NON-NLS-2$
+          + "the class from the classpath known to this classloader before delegating to the parent classloader"); //$NON-NLS-1$
+    }
+  }
+
   protected static URL[] getPluginUrls(File pluginDir) {
     List<URL> urls = new ArrayList<URL>();
     File libDir = new File(pluginDir, "lib"); //$NON-NLS-1$
@@ -83,8 +100,9 @@ public class PluginClassLoader extends URLClassLoader {
       urls.add(pluginDir.toURI().toURL());
       urls.add(libDir.toURI().toURL());
     } catch (MalformedURLException e) {
-      log.warn(Messages.getInstance().getString("PluginClassLoader.WARN_FAILED_TO_ADD_PLUGIN_DIR_TO_CLASSPATH", pluginDir //$NON-NLS-1$
-          .getAbsolutePath(), libDir.getAbsolutePath()), e);
+      log.warn(Messages.getInstance().getString(
+          "PluginClassLoader.WARN_FAILED_TO_ADD_PLUGIN_DIR_TO_CLASSPATH", pluginDir //$NON-NLS-1$
+              .getAbsolutePath(), libDir.getAbsolutePath()), e);
     }
     addJars(urls, libDir);
     return urls.toArray(new URL[urls.size()]);

@@ -50,6 +50,8 @@ public class PluginClassLoaderTest {
   @Test
   public void testOverrideLoad() throws ClassNotFoundException, SecurityException, InstantiationException,
       IllegalAccessException {
+    pluginLoader.setOverrideLoad(true);
+    
     String className = "org.pentaho.test.platform.plugin.pluginmgr.ClassToOverride";
 
     Class clazz = Class.forName(className, true, getClass().getClassLoader());
@@ -69,6 +71,8 @@ public class PluginClassLoaderTest {
   
   @Test
   public void testImplicitLoad() throws ClassNotFoundException, InstantiationException, IllegalAccessException {
+    pluginLoader.setOverrideLoad(true);
+    
     //
     //1. Implicitly create an instance of ClassToOverride and check that it was loaded by the default loader.
     //

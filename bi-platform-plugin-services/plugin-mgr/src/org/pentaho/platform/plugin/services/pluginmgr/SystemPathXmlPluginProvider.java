@@ -149,6 +149,7 @@ public class SystemPathXmlPluginProvider implements IPluginProvider {
     processLifecycleListeners(plugin, doc);
     processBeans(plugin, doc);
     processWebservices(plugin, doc);
+    
 
     String listenerCount = (StringUtils.isEmpty(plugin.getLifecycleListenerClassname())) ? "0" : "1"; //$NON-NLS-1$//$NON-NLS-2$
 
@@ -248,6 +249,13 @@ public class SystemPathXmlPluginProvider implements IPluginProvider {
       
       plugin.setId(name);
       PluginMessageLogger.add(Messages.getInstance().getString("SystemPathXmlPluginProvider.DISCOVERED_PLUGIN", name, folder)); //$NON-NLS-1$
+      
+      IPlatformPlugin.ClassLoaderType loaderType = IPlatformPlugin.ClassLoaderType.DEFAULT;
+      String loader = node.attributeValue("loader"); //$NON-NLS-1$
+      if(!StringUtils.isEmpty(loader)) {
+        loaderType = IPlatformPlugin.ClassLoaderType.valueOf(loader.toUpperCase());
+      }
+      plugin.setLoadertype(loaderType);
     }
   }
 
