@@ -52,6 +52,7 @@ public abstract class AbstractServiceTypeManager implements IServiceTypeManager 
     if (serviceInstance == null) {
       try {
         serviceInstance = serviceClassMap.get(serviceId).newInstance();
+        serviceInstanceMap.put(serviceId, serviceInstance);
       } catch (InstantiationException e) {
         throw new ServiceException(e);
       } catch (IllegalAccessException e) {
