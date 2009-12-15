@@ -38,8 +38,11 @@ import org.pentaho.commons.connection.IPentahoConnection;
 import org.pentaho.commons.connection.IPentahoResultSet;
 import org.pentaho.metadata.messages.LocaleHelper;
 import org.pentaho.platform.api.data.IDatasourceService;
+import org.pentaho.platform.api.engine.IConnectionUserRoleMapper;
 import org.pentaho.platform.api.engine.ILogger;
+import org.pentaho.platform.api.engine.PentahoAccessControlException;
 import org.pentaho.platform.engine.core.system.IPentahoLoggingConnection;
+import org.pentaho.platform.engine.core.system.PentahoSessionHolder;
 import org.pentaho.platform.engine.core.system.PentahoSystem;
 import org.pentaho.platform.plugin.services.messages.Messages;
 import org.pentaho.platform.util.logging.Logger;
@@ -56,6 +59,7 @@ public class MDXConnection implements IPentahoLoggingConnection {
    * mondrian-specific MDX Connection string.
    */
   public static final String CONNECTION_STRING_KEY = "mdx-connection-string"; //$NON-NLS-1$
+  public static final String MDX_CONNECTION_MAPPER_KEY = "Mondrian-UserRoleMapper"; //$NON-NLS-1$
 
   Connection nativeConnection = null;
 
@@ -119,7 +123,8 @@ public class MDXConnection implements IPentahoLoggingConnection {
       Util.PropertyList properties = Util.parseConnectString(connectStr);
       init(properties);
   }
-
+  
+  @SuppressWarnings( "unchecked" )
   protected void init(final Properties properties) {
       Util.PropertyList pl = new Util.PropertyList();
       Enumeration enum1 = properties.keys();
@@ -160,6 +165,31 @@ public class MDXConnection implements IPentahoLoggingConnection {
     init(buffer.toString());
   }
 
+  protected void mapPlatformRolesToMondrianRoles(Util.PropertyList properties) throws PentahoAccessControlException {
+    if (properties.get(RolapConnectionProperties.Role.name(), null) == null) {
+      // Only if the action sequence/requester hasn't already injected a role in here do this.
+      IConnectionUserRoleMapper mondrianUserRoleMapper = PentahoSystem.get(IConnectionUserRoleMapper.class, MDXConnection.MDX_CONNECTION_MAPPER_KEY, null);
+      if (mondrianUserRoleMapper != null) {
+        // Do role mapping
+        String[] validMondrianRolesForUser = mondrianUserRoleMapper.mapConnectionRoles(PentahoSessionHolder.getSession(), properties.get(RolapConnectionProperties.CatalogName.name()));
+        if ( (validMondrianRolesForUser != null) && (validMondrianRolesForUser.length>0) ) {
+          StringBuffer buff = new StringBuffer();
+          String aRole = null;
+          for (int i=0; i<validMondrianRolesForUser.length; i++) {
+            aRole = validMondrianRolesForUser[i];
+            // According to http://mondrian.pentaho.org/documentation/configuration.php
+            // double-comma escapes a comma
+            if (i>0) {
+              buff.append(",");
+            }
+            buff.append(aRole.replaceAll(",", ",,"));
+          }
+          properties.put(RolapConnectionProperties.Role.name(), buff.toString());
+        }
+      }
+    }
+  }
+  
   protected void init(Util.PropertyList properties) {
     try {
       if (nativeConnection != null) { // Assume we're open
@@ -173,6 +203,8 @@ public class MDXConnection implements IPentahoLoggingConnection {
       }
       
       String dataSourceName = properties.get(RolapConnectionProperties.DataSource.name());
+      
+      mapPlatformRolesToMondrianRoles(properties);
       
       if (dataSourceName != null) {
         IDatasourceService datasourceService =  PentahoSystem.getObjectFactory().get(IDatasourceService.class ,null);
@@ -206,6 +238,7 @@ public class MDXConnection implements IPentahoLoggingConnection {
     return nativeConnection != null;
   }
 
+  @SuppressWarnings( "unchecked" )
   public IPentahoResultSet prepareAndExecuteQuery(final String query, final List parameters) throws Exception {
     throw new UnsupportedOperationException();
   }

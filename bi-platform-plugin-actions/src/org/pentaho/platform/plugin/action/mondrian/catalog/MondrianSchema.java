@@ -17,6 +17,7 @@
 */
 package org.pentaho.platform.plugin.action.mondrian.catalog;
 
+import java.util.Arrays;
 import java.util.List;
 
 import org.apache.commons.lang.builder.ToStringBuilder;
@@ -26,9 +27,27 @@ public class MondrianSchema {
 
     private List<MondrianCube> cubes;
 
+    private String[] roleNames;
+    
     public MondrianSchema(final String name, final List<MondrianCube> cubes) {
+      this(name, cubes, null);
+    }
+    
+    public MondrianSchema(final String name, final List<MondrianCube> cubes, String[] roles) {
       this.name = name;
       this.cubes = cubes;
+      if ( (roles != null) ) {
+        if (roles.length>0) {
+          this.roleNames = new String[roles.length];
+          System.arraycopy(roles, 0, this.roleNames, 0, roles.length);
+          Arrays.sort(this.roleNames); // Required for binary search to work
+        } else {
+          // Since they're passing in an empty array, set this
+          // to an empty array as well. This conscious choice could be
+          // undesirable behavior - use cases to be seen
+          this.roleNames = new String[0];
+        }
+      }
     }
 
     public String getName() {
@@ -39,6 +58,11 @@ public class MondrianSchema {
       return cubes;
     }
 
+    // This smethod must always return a sorted array
+    public String[] getRoleNames() {
+      return this.roleNames;
+    }
+    
     @Override
     public String toString() {
       return new ToStringBuilder(this).append("name", name).append("cubes", cubes).toString(); //$NON-NLS-1$ //$NON-NLS-2$

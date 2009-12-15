@@ -74,7 +74,6 @@ import org.pentaho.platform.plugin.action.messages.Messages;
 import org.pentaho.platform.plugin.action.mondrian.catalog.MondrianCatalogServiceException.Reason;
 import org.pentaho.platform.repository.solution.filebased.FileSolutionFile;
 import org.pentaho.platform.util.logging.Logger;
-import org.pentaho.platform.util.xml.XmlHelper;
 import org.pentaho.platform.util.xml.dom4j.XmlDom4JHelper;
 
 
@@ -526,7 +525,19 @@ public class MondrianCatalogHelper implements IMondrianCatalogService {
           mondrianCubes.add(new MondrianCube(name));
         }
       }
-      schema = new MondrianSchema(schemaName, mondrianCubes);
+      
+      // Interpret the role names
+      MondrianDef.Role[] roles = schemaFromXml.roles;
+      String[] roleNames = null;
+      
+      if ( (roles != null) && (roles.length>0)) {
+        roleNames = new String[roles.length];
+        for (int i=0; i<roles.length; i++) {
+          roleNames[i] = roles[i].name; // Note - getName() doesn't return the role name, it returns the word Role
+        }
+      }
+
+      schema = new MondrianSchema(schemaName, mondrianCubes, roleNames);
 
     } catch (XOMException e) {
       if (MondrianCatalogHelper.logger.isErrorEnabled()) {
@@ -622,7 +633,7 @@ public class MondrianCatalogHelper implements IMondrianCatalogService {
   
 	public static int addToCatalog( String baseUrl, boolean enableXmla, String schemaSolutionPath, IPentahoSession session, String jndiName, boolean overwrite ) {
 
-		IMondrianCatalogService mondrianCatalogService = MondrianCatalogHelper.getInstance();
+    IMondrianCatalogService mondrianCatalogService = MondrianCatalogHelper.getInstance();
 		
 	    String dsUrl = baseUrl;
 	    if (!dsUrl.endsWith("/")) { //$NON-NLS-1$
@@ -642,6 +653,7 @@ public class MondrianCatalogHelper implements IMondrianCatalogService {
 	    String catName = mondrianSchema.getName();
 	    String dsName = "Provider=Mondrian;DataSource=" + mondrianSchema.getName(); //$NON-NLS-1$
 	    String dsDesc = "Published Mondrian Schema " + mondrianSchema.getName() + " using jndi datasource " + jndiName; //$NON-NLS-1$ //$NON-NLS-2$
+	    String[] roleNames = mondrianSchema.getRoleNames();
 	    
 	    // verify JNDI
 	    try {
@@ -662,8 +674,11 @@ public class MondrianCatalogHelper implements IMondrianCatalogService {
 	    MondrianDataSource ds = new MondrianDataSource(dsName, dsDesc, dsUrl, catConnectStr, dsProviderName,
 	        dsProviderType, dsAuthMode, null);
 
-	    MondrianCatalog cat = new MondrianCatalog(catName, catConnectStr, catDef, ds, new MondrianSchema(catName,
-	        new ArrayList<MondrianCube>()));
+	    // MB - 12/2009 - TODO: Figure out the empty list
+	    // Curious why we aren't adding the cubes from the read schema into the created schema.
+	    MondrianCatalog cat = new MondrianCatalog(catName, catConnectStr, catDef, ds, 
+	        new MondrianSchema(catName, new ArrayList<MondrianCube>(), roleNames)
+	    );
 
 	    try {
 	      mondrianCatalogService.addCatalog(cat, overwrite, session);
