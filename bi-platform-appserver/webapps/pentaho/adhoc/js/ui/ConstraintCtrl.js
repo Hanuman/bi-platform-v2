@@ -183,7 +183,7 @@ ConstraintCtrl.prototype.isChecked = function()
 /*private*/
 ConstraintCtrl.prototype.createLogicalElem = function()
 {
-	var values = [ "AND", "OR" ];
+	var values = [ "AND", "OR", "AND_NOT", "OR_NOT" ];
 	return UIUtil.createSelectElem( values, values );
 }
 
