@@ -96,6 +96,10 @@
     <exclude org="com.google.gwt" module="gwt-user" />
     <exclude org="com.google.gwt" module="gwt-dev" />
     <exclude org="commons-logging" module="commons-logging-api" />
+    
+    <!-- Temporary overrides for pentaho commons projects.  This section will be removed upon release -->
+    <override org="pentaho" module="pentaho-metadata" rev="${dependency.pentaho-metadata.revision}" />
+    <override org="pentaho" module="pentaho-chartbeans" rev="${dependency.pentaho-chartbeans.revision}" />
 
   </dependencies>
 
