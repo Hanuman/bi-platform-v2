@@ -31,7 +31,7 @@ MQLConstraintParser = function()
 /*static*/MQLConstraintParser.RE_NOT_FUNCTION_PARTS = /^\s*(NOT)\((.+)\)\s*$/;
 
 // break strFunction into the logical func (AND|OR) and the param list, drop the parenthesis. if strFunction is "AND( x; y ), return "And" and "x; y".
-MQLConstraintParser.RE_LOGICAL_FUNCTION_PARTS = /^\s*(AND|OR)\((.+)\)\s*$/;
+MQLConstraintParser.RE_LOGICAL_FUNCTION_PARTS = /^\s*(AND_NOT|OR_NOT|AND|OR)\((.+)\)\s*$/;
 
 /**
  * break strFunction into the logical func (AND|OR) and the param list, drop the parenthesis
