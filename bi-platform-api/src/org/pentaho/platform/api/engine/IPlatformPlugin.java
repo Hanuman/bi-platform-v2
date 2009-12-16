@@ -20,6 +20,7 @@
 
 package org.pentaho.platform.api.engine;
 
+import java.net.URLClassLoader;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -129,7 +130,18 @@ public interface IPlatformPlugin extends IPluginLifecycleListener {
    */
   public Map<String, String> getMetaProviderMap();
   
+  /**
+   * Returns the list of the webservices defined by this plugin.
+   * @return the definitions of the webservices for this plugin
+   */
   public Collection<PluginServiceDefinition> getServices();
 
+  /**
+   * Indicates what kind of classloader should be used to load classes and
+   * resources from this plugin.  The default classloader type is no more 
+   * than an extension of {@link URLClassLoader}.
+   * @see IPlatformPlugin.ClassLoaderType
+   * @return the type of classloader to use for this plugin 
+   */
   public ClassLoaderType getLoaderType();
 }
