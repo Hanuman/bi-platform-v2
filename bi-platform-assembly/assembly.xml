@@ -163,19 +163,14 @@
   <target name="assemble-tomcat-biserver" depends="install-antcontrib,init.stage.pentaho">
     <sequential>
 
-      <!-- Copy pure tomcat 5.5.26 -->
+      <!-- Copy pure tomcat 6.0 -->
       <copy todir="${stage.dir.server}/tomcat">
         <fileset dir="${tomcat.dir}">
-          <exclude name="webapps/balancer/**" />
-          <exclude name="webapps/jsp-examples/**" />
-          <exclude name="webapps/examples/**" />
-          <exclude name="webapps/servlets-examples/**" />
-          <exclude name="webapps/tomcat-docs/**" />
           <exclude name="webapps/docs/**" />
-          <exclude name="webapps/webdav/**" />
+          <exclude name="webapps/examples/**" />
+          <exclude name="webapps/host-manager/**" />
+          <exclude name="webapps/manager/**" />
           <exclude name="webapps/ROOT/**" />
-          <exclude name="server/webapps/**" />
-          <exclude name="conf/Catalina/*/*manager.xml" />
           <exclude name="bin/setclasspath.bat" />
         </fileset>
       </copy>
