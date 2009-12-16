@@ -95,5 +95,47 @@ PentahoSystem which is initialized after Spring
   
   <!-- actual bean defined in applicationContext-pentaho-security-*.spring.xml; aliased here -->
   <alias name="pentahoUserRoleListService" alias="IUserDetailsRoleListService"/>
+
+<!--  This mondrian user/role mapper assumes that roles from the platform also exist in mondrian -->
   
+  <!--
+  Disabled by default in 3.5.2. In trunk, this should be enabled. 
+  
+  <bean id="Mondrian-UserRoleMapper" 
+        name="Mondrian-One-To-One-UserRoleMapper"  
+        class="org.pentaho.platform.plugin.action.mondrian.mapper.MondrianOneToOneUserRoleListMapper" 
+        scope="singleton" />
+  -->
+  
+  <!--  
+  
+  This sample mapper assumes that a translator is needed (in the form of a Map) to map a platform role to a mondrian role
+  
+  Note- Key = platform role, value = mondrian role
+  
+  <bean id="Mondrian-UserRoleMapper" 
+        name="Mondrian-SampleLookupMap-UserRoleMapper" 
+        class="org.pentaho.platform.plugin.action.mondrian.mapper.MondrianLookupMapUserRoleListMapper" 
+        scope="singleton">
+    <property name="lookupMap">
+    	<map>
+    		<entry key="ceo" value="M_CEO" />
+    		<entry key="cto" value="M_CTO" />
+    		<entry key="dev" value="M_DEV" />
+    	</map>
+    </property>
+  </bean>
+   -->
+  
+  <!--  
+  This sample mapper assumes that every user has their mondrian roles in their session under then named session variable
+  
+  <bean id="Mondrian-UserRoleMapper" 
+        name="Mondrian-SampleUserSession-UserRoleMapper" 
+        class="org.pentaho.platform.plugin.action.mondrian.mapper.MondrianUserSessionUserRoleListMapper" 
+        scope="singleton">
+  	<property name="sessionProperty" value="MondrianUserRoles" />
+  </bean>
+  
+  -->  
 </beans>
