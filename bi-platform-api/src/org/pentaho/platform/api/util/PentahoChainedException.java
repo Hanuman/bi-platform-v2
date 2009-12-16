@@ -87,7 +87,7 @@ public class PentahoChainedException extends RuntimeException {
       lastReason = aReason;
       aReason = aReason.getCause();
     }
-    return (aReason != null) ? aReason : lastReason;
+    return lastReason;
   }
 
   /**

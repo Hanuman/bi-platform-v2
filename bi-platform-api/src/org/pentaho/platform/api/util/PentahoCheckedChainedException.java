@@ -78,7 +78,7 @@ abstract public class PentahoCheckedChainedException extends Exception {
       lastReason = aReason;
       aReason = aReason.getCause();
     }
-    return (aReason != null) ? aReason : lastReason;
+    return lastReason;
   }
 
   /**
