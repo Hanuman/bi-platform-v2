@@ -24,7 +24,6 @@ import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -32,10 +31,6 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.commons.fileupload.FileItem;
-import org.apache.commons.fileupload.FileItemFactory;
-import org.apache.commons.fileupload.disk.DiskFileItemFactory;
-import org.apache.commons.fileupload.servlet.ServletFileUpload;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -264,7 +259,7 @@ public class GenericServlet extends ServletBase {
     } catch (Exception e) {
       StringBuffer buffer = new StringBuffer();
       error(Messages.getErrorString("GenericServlet.ERROR_0002_BAD_GENERATOR", request.getQueryString()), e); //$NON-NLS-1$
-      List errorList = new ArrayList();
+      List<String> errorList = new ArrayList<String>();
       String msg = e.getMessage();
       errorList.add(msg);
       PentahoSystem.get(IMessageFormatter.class, PentahoHttpSessionHelper.getPentahoSession(request)).formatFailureMessage(
@@ -282,11 +277,9 @@ public class GenericServlet extends ServletBase {
     if (maxAge == null || "0".equals(maxAge)) { //$NON-NLS-1$
       return;
     }
-    if (maxAge != null) {
-      HttpServletResponse response = (HttpServletResponse) pathParams.getParameter("httpresponse"); //$NON-NLS-1$
-      if (response != null) {
-        response.setHeader("Cache-Control", "max-age=" + maxAge); //$NON-NLS-1$ //$NON-NLS-2$
-      }
+    HttpServletResponse response = (HttpServletResponse) pathParams.getParameter("httpresponse"); //$NON-NLS-1$
+    if (response != null) {
+      response.setHeader("Cache-Control", "max-age=" + maxAge); //$NON-NLS-1$ //$NON-NLS-2$
     }
   }
 
