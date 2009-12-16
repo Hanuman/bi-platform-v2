@@ -1,3 +1,22 @@
+/*
+ * This program is free software; you can redistribute it and/or modify it under the 
+ * terms of the GNU Lesser General Public License, version 2.1 as published by the Free Software 
+ * Foundation.
+ *
+ * You should have received a copy of the GNU Lesser General Public License along with this 
+ * program; if not, you can obtain a copy at http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html 
+ * or from the Free Software Foundation, Inc., 
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+ *
+ * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; 
+ * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU Lesser General Public License for more details.
+ *
+ * Copyright 2009 Pentaho Corporation.  All rights reserved.
+ * 
+ * @author mbatchelor and gmoran
+ *
+*/
 package org.pentaho.test.platform.plugin;
 
 import java.util.HashMap;
@@ -8,6 +27,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.pentaho.platform.api.data.IDatasourceService;
 import org.pentaho.platform.api.engine.IConnectionUserRoleMapper;
+import org.pentaho.platform.api.engine.IPentahoSession;
 import org.pentaho.platform.api.engine.ISolutionEngine;
 import org.pentaho.platform.api.engine.PentahoAccessControlException;
 import org.pentaho.platform.api.engine.IPentahoDefinableObjectFactory.Scope;
@@ -35,6 +55,7 @@ import org.springframework.security.GrantedAuthority;
 import org.springframework.security.GrantedAuthorityImpl;
 import org.springframework.security.providers.UsernamePasswordAuthenticationToken;
 
+@SuppressWarnings("nls")
 public class UserRoleMapperTest {
 
   private MicroPlatform microPlatform;
@@ -55,21 +76,19 @@ public class UserRoleMapperTest {
     }
 
     MondrianCatalogHelper catalogService = (MondrianCatalogHelper)PentahoSystem.get(IMondrianCatalogService.class);
-    catalogService.setDataSourcesConfig("file:" + //$NON-NLS-1$
-        PentahoSystem.getApplicationContext().getSolutionPath("test/analysis/test-datasources.xml")); //$NON-NLS-1$
+    catalogService.setDataSourcesConfig("file:" + 
+        PentahoSystem.getApplicationContext().getSolutionPath("test/analysis/test-datasources.xml")); 
     
     // JNDI
-    System.setProperty("java.naming.factory.initial", "org.osjava.sj.SimpleContextFactory"); //$NON-NLS-1$ //$NON-NLS-2$
-    System.setProperty("org.osjava.sj.root", "test-src/solution/system/simple-jndi"); //$NON-NLS-1$ //$NON-NLS-2$
-    System.setProperty("org.osjava.sj.delimiter", "/"); //$NON-NLS-1$ //$NON-NLS-2$
+    System.setProperty("java.naming.factory.initial", "org.osjava.sj.SimpleContextFactory");
+    System.setProperty("org.osjava.sj.root", "test-src/solution/system/simple-jndi");
+    System.setProperty("org.osjava.sj.delimiter", "/");
     
   }
   
   @Test
   public void testReadRolesInSchema() {
-    StandaloneSession session;
-    session = new StandaloneSession();
-    UserRoleMapperTest.createJoe(session);
+    IPentahoSession session = this.createSession("joe", "ceo", "Admin", "Authenticated");
     MondrianCatalogHelper helper = (MondrianCatalogHelper)PentahoSystem.get(IMondrianCatalogService.class);;
     Assert.assertNotNull(helper);
     MondrianCatalog mc = helper.getCatalog("SteelWheelsRoles", session);
@@ -85,9 +104,7 @@ public class UserRoleMapperTest {
   
   @Test
   public void testReadRolesInPlatform() {
-    StandaloneSession session;
-    session = new StandaloneSession();
-    UserRoleMapperTest.createJoe(session);
+    IPentahoSession session = this.createSession("joe", "ceo", "Admin", "Authenticated");
     
     Authentication auth = SecurityHelper.getAuthentication(session, false);
     Assert.assertNotNull(auth);
@@ -102,9 +119,7 @@ public class UserRoleMapperTest {
 
   @Test
   public void testMondrianUserSessionUserRoleListMapper() {
-    StandaloneSession session;
-    session = new StandaloneSession();
-    UserRoleMapperTest.createJoe(session);
+    IPentahoSession session = this.createSession("joe", "ceo", "Admin", "Authenticated");
     
     session.setAttribute("rolesAttribute", new Object[]{"mondrianRole1", "mondrianRole2", "mondrianRole3"});
     PentahoSessionHolder.setSession(session);
@@ -126,9 +141,7 @@ public class UserRoleMapperTest {
 
   @Test
   public void testNoMatchMondrianUserSessionUserRoleListMapper() {
-    StandaloneSession session;
-    session = new StandaloneSession();
-    UserRoleMapperTest.createJoe(session);
+    IPentahoSession session = this.createSession("joe", "ceo", "Admin", "Authenticated");
     
     PentahoSessionHolder.setSession(session);
     
@@ -145,9 +158,7 @@ public class UserRoleMapperTest {
 
   @Test
   public void testLookupMapUserRoleListMapper() {
-    StandaloneSession session;
-    session = new StandaloneSession();
-    UserRoleMapperTest.createJoe(session);
+    IPentahoSession session = this.createSession("joe", "ceo", "Admin", "Authenticated");
     
     Map<String, String> lookup = new HashMap<String, String>();
     lookup.put("ceo", "Role1");
@@ -169,9 +180,7 @@ public class UserRoleMapperTest {
   
   @Test
   public void testNoMatchLookupMapUserRoleListMapper() {
-    StandaloneSession session;
-    session = new StandaloneSession();
-    UserRoleMapperTest.createJoe(session);
+    IPentahoSession session = this.createSession("joe", "ceo", "Admin", "Authenticated");
     
     Map<String, String> lookup = new HashMap<String, String>();
     lookup.put("No Match", "Role1");
@@ -190,9 +199,7 @@ public class UserRoleMapperTest {
 
   @Test
   public void testMondrianOneToOneUserRoleListMapper() {
-    StandaloneSession session;
-    session = new StandaloneSession();
-    UserRoleMapperTest.createSimpleBob(session);
+    IPentahoSession session = createSession("simplebob", "Role1", "Role2");
 
     IConnectionUserRoleMapper mapper = new MondrianOneToOneUserRoleListMapper();
     try {
@@ -209,9 +216,7 @@ public class UserRoleMapperTest {
   
   @Test
   public void testNoMatchMondrianOneToOneUserRoleListMapper() {
-    StandaloneSession session;
-    session = new StandaloneSession();
-    UserRoleMapperTest.createJoe(session);
+    IPentahoSession session = this.createSession("joe", "ceo", "Admin", "Authenticated");
 
     IConnectionUserRoleMapper mapper = new MondrianOneToOneUserRoleListMapper();
     try {
@@ -222,44 +227,22 @@ public class UserRoleMapperTest {
       Assert.fail(e.getMessage());
     }
   }
-
   
-  public static void createSuzy(StandaloneSession session) {
-    session.setAuthenticated("suzy"); //$NON-NLS-1$
-    GrantedAuthority[] auths = new GrantedAuthority[3];
-    auths[0] = new GrantedAuthorityImpl("ROLE_CTO"); //$NON-NLS-1$
-    auths[1] = new GrantedAuthorityImpl("ROLE_IS"); //$NON-NLS-1$
-    auths[2] = new GrantedAuthorityImpl("ROLE_AUTHENTICATED"); //$NON-NLS-1$
-    UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken("suzy", "none", auths //$NON-NLS-1$ //$NON-NLS-2$
-    );
-    // We now have a credential. We need to bind it into the IPentahoSession
-    SecurityHelper.setPrincipal(auth, session);
-    // We should be good to go now...
-  }
+  public IPentahoSession createSession(String uname, String... authorities) {
+    StandaloneSession session = new StandaloneSession();
+    session.setAuthenticated(uname); 
+    
+    GrantedAuthority[] auths = new GrantedAuthority[authorities.length];
+    for (int i=0; i<authorities.length; i++) {
+      auths[i] = new GrantedAuthorityImpl(authorities[i]);
+    }
 
-  public static void createJoe(StandaloneSession session) {
-    session.setAuthenticated("joe"); //$NON-NLS-1$
-    GrantedAuthority[] auths = new GrantedAuthority[3];
-    auths[0] = new GrantedAuthorityImpl("ceo"); //$NON-NLS-1$
-    auths[1] = new GrantedAuthorityImpl("Admin"); //$NON-NLS-1$
-    auths[2] = new GrantedAuthorityImpl("Authenticated"); //$NON-NLS-1$
-    UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken("joe", "none", auths //$NON-NLS-1$ //$NON-NLS-2$
+    UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(uname, "none", auths
     );
     // We now have a credential. We need to bind it into the IPentahoSession
     SecurityHelper.setPrincipal(auth, session);
     // We should be good to go now...
-  }
- 
-  public static void createSimpleBob(StandaloneSession session) {
-    session.setAuthenticated("simplebob"); //$NON-NLS-1$
-    GrantedAuthority[] auths = new GrantedAuthority[2];
-    auths[0] = new GrantedAuthorityImpl("Role1"); //$NON-NLS-1$
-    auths[1] = new GrantedAuthorityImpl("Role2"); //$NON-NLS-1$
-    UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken("simplebob", "none", auths //$NON-NLS-1$ //$NON-NLS-2$
-    );
-    // We now have a credential. We need to bind it into the IPentahoSession
-    SecurityHelper.setPrincipal(auth, session);
-    // We should be good to go now...
+    return session;
   }
 
 }
