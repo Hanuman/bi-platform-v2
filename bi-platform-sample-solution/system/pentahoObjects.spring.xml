@@ -96,6 +96,8 @@ PentahoSystem which is initialized after Spring
   <!-- actual bean defined in applicationContext-pentaho-security-*.spring.xml; aliased here -->
   <alias name="pentahoUserRoleListService" alias="IUserDetailsRoleListService"/>
 
+  <bean id="IMondrianCatalogService" class="org.pentaho.platform.plugin.action.mondrian.catalog.MondrianCatalogHelper" scope="singleton" />
+
 <!--  This mondrian user/role mapper assumes that roles from the platform also exist in mondrian -->
   
   <!--
