@@ -54,7 +54,7 @@ public class MondrianLookupMapUserRoleListMapper extends MondrianAbstractPlatfor
    * she will receive the role M_ENG,M_SVCS (which mondrian will resolve additively).
    * 
    */
-  protected String[] mapRoles(String[] mondrianRoles, String[] platformRoles, String mondrianCatalog) {
+  protected String[] mapRoles(String[] mondrianRoles, String[] platformRoles) {
     String[] rtn = null;
     // This mapper doesn't need the mondrian catalog to do the mapping
     if ( (mondrianRoles != null) && (platformRoles != null) ) {

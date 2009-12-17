@@ -42,6 +42,7 @@ import mondrian.xmla.DataSourcesConfig.Catalogs;
 import mondrian.xmla.DataSourcesConfig.DataSource;
 import mondrian.xmla.DataSourcesConfig.DataSources;
 
+import org.apache.commons.collections.list.SetUniqueList;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
@@ -104,7 +105,10 @@ public class MondrianCatalogHelper implements IMondrianCatalogService {
   
   @SuppressWarnings("unchecked")
   private List<MondrianCatalog> getCatalogs(IPentahoSession pentahoSession) {
-    return (List<MondrianCatalog>)PentahoSystem.getCacheManager(pentahoSession).getAllValuesFromRegionCache(MONDRIAN_CATALOG_CACHE_REGION);
+    List<MondrianCatalog> catalogs = (List<MondrianCatalog>)PentahoSystem.getCacheManager(pentahoSession).getAllValuesFromRegionCache(MONDRIAN_CATALOG_CACHE_REGION);
+    // remove duplicates
+    SetUniqueList uniqueCatalogs = SetUniqueList.decorate(catalogs); 
+    return uniqueCatalogs;
   }
   
   /**
@@ -138,7 +142,7 @@ public class MondrianCatalogHelper implements IMondrianCatalogService {
    */
   private MondrianCatalog getCatalogByCatalog(MondrianCatalog catalog, IPentahoSession pentahoSession) {
     if(catalog != null) {
-      MondrianCatalog foundCatalog = getCatalogByName(catalog.getName(), pentahoSession);
+      MondrianCatalog foundCatalog = getCatalogFromCache(catalog.getName(), pentahoSession);
       // Was the catalog found by name?
       if(foundCatalog != null) {
         // Use the existing comparator
@@ -150,8 +154,12 @@ public class MondrianCatalogHelper implements IMondrianCatalogService {
     return null;
   }
   
-  private static final MondrianCatalog getCatalogByName(String catalogName, IPentahoSession pentahoSession) {
-    return (MondrianCatalog)PentahoSystem.getCacheManager(pentahoSession).getFromRegionCache(MONDRIAN_CATALOG_CACHE_REGION, catalogName);
+  private static final MondrianCatalog getCatalogFromCache(String context, IPentahoSession pentahoSession) {
+    //  NOTE that the context can be the catalog name or the definition string for the catalog. If you are using the definition string to 
+    //  retrieve the catalog form the cache, you cannot be guaranteed what datasource is in play; so under these circumstances, this catalog's
+    //  definition is the only part of the catalog that can be trusted. As this feature was added to enable looking up Mondrian
+    //  roles from the schema, we don't much care which datasource is in play. 
+    return (MondrianCatalog)PentahoSystem.getCacheManager(pentahoSession).getFromRegionCache(MONDRIAN_CATALOG_CACHE_REGION, context);
   }
   
   public static MondrianCatalogHelper getInstance() {
@@ -438,26 +446,26 @@ public class MondrianCatalogHelper implements IMondrianCatalogService {
 	    IOUtils.closeQuietly(sxml);
   }
   
-  public MondrianCatalog getCatalog(final String name, final IPentahoSession pentahoSession) {
+  public MondrianCatalog getCatalog(final String context, final IPentahoSession pentahoSession) {
     if (MondrianCatalogHelper.logger.isDebugEnabled()) {
       MondrianCatalogHelper.logger.debug("getCatalog"); //$NON-NLS-1$
     }
     init(pentahoSession);
 
-    MondrianCatalog cat = getCatalogByName(name, pentahoSession);
+    MondrianCatalog cat = getCatalogFromCache(context, pentahoSession);
     if (null != cat) {
       if (hasAccess(cat, CatalogPermission.READ, pentahoSession)) {
         return cat;
       } else {
         if (MondrianCatalogHelper.logger.isDebugEnabled()) {
-          MondrianCatalogHelper.logger.debug("user requested catalog with name \"" + name //$NON-NLS-1$
+          MondrianCatalogHelper.logger.debug("user requested catalog with name \"" + context //$NON-NLS-1$
               + "\", but had insufficient privileges; returning null"); //$NON-NLS-1$
         }
         return null;
       }
     } else {
       if (MondrianCatalogHelper.logger.isDebugEnabled()) {
-        MondrianCatalogHelper.logger.debug("user requested catalog with name\"" + name + "\", but catalog doesn't exist"); //$NON-NLS-1$ //$NON-NLS-2$
+        MondrianCatalogHelper.logger.debug("user requested catalog with name\"" + context + "\", but catalog doesn't exist"); //$NON-NLS-1$ //$NON-NLS-2$
       }
       return null;
     }
@@ -492,6 +500,7 @@ public class MondrianCatalogHelper implements IMondrianCatalogService {
             MondrianCatalog mondrianCatalog = new MondrianCatalog(useSchemaNameAsCatalogName ? schema.getName()
                 : catalog.name, catalog.dataSourceInfo, catalog.definition, mondrianDataSource, schema);
             cacheMgr.putInRegionCache(MONDRIAN_CATALOG_CACHE_REGION, mondrianCatalog.getName(), mondrianCatalog);
+            cacheMgr.putInRegionCache(MONDRIAN_CATALOG_CACHE_REGION, mondrianCatalog.getDefinition(), mondrianCatalog);
           } catch (Exception e) {
             MondrianCatalogHelper.logger.error(Messages.getInstance().getErrorString("MondrianCatalogHelper.ERROR_0013_FAILED_TO_LOAD_SCHEMA", catalog.definition), e); //$NON-NLS-1$
             
@@ -572,7 +581,7 @@ public class MondrianCatalogHelper implements IMondrianCatalogService {
   }
 
   protected MondrianSchema getSchema(final String catalogName, final IPentahoSession pentahoSession) {
-    MondrianCatalog catalog = getCatalogByName(catalogName, pentahoSession);
+    MondrianCatalog catalog = getCatalogFromCache(catalogName, pentahoSession);
     if (null == catalog) {
       return null;
     } else {
@@ -773,5 +782,6 @@ public class MondrianCatalogHelper implements IMondrianCatalogService {
 
 	    return 0;
 	}
+
 
 }
