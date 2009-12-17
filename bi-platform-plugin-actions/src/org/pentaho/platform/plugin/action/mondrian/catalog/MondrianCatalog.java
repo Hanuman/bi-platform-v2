@@ -17,6 +17,8 @@
 */
 package org.pentaho.platform.plugin.action.mondrian.catalog;
 
+import java.io.Serializable;
+
 import org.apache.commons.lang.builder.ToStringBuilder;
 
 /**
@@ -24,7 +26,10 @@ import org.apache.commons.lang.builder.ToStringBuilder;
  * 
  * @author mlowery
  */
-public class MondrianCatalog {
+public class MondrianCatalog implements Serializable {
+  
+  private static final long serialVersionUID = 1L;
+
   private String name;
 
   private String dataSourceInfo; // optionally overrides this.dataSource.dataSourceInfo

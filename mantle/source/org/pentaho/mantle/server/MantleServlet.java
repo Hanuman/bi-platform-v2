@@ -320,7 +320,7 @@ public class MantleServlet extends RemoteServiceServlet implements MantleService
 
   public void flushMondrianSchemaCache() {
     if (isAdministrator()) {
-      mondrian.rolap.agg.AggregationManager.instance().getCacheControl(null).flushSchemaCache();
+      MondrianCatalogHelper.getInstance().reInit(getPentahoSession());
     }
   }
 
