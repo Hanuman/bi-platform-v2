@@ -32,7 +32,7 @@ public class AdminAclEntryVoter extends AclEntryVoter {
   // ~ Methods =========================================================================================================
 
   @Override
-  public int vote(Authentication authentication, Object object, ConfigAttributeDefinition config) {
+  public int vote(final Authentication authentication, final Object object, final ConfigAttributeDefinition config) {
     int vote = super.vote(authentication, object, config);
     if (vote == AccessDecisionVoter.ACCESS_DENIED) {
       if (isAdmin(authentication)) {

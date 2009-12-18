@@ -1,12 +1,9 @@
 package org.pentaho.platform.repository.pcr;
 
 import java.io.IOException;
-import java.io.Serializable;
 import java.util.List;
-import java.util.Map;
 
 import javax.jcr.Item;
-import javax.jcr.ItemNotFoundException;
 import javax.jcr.Node;
 import javax.jcr.PathNotFoundException;
 import javax.jcr.RepositoryException;
@@ -14,7 +11,6 @@ import javax.jcr.Session;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
 import org.pentaho.platform.api.repository.IPentahoContentDao;
 import org.pentaho.platform.api.repository.IRepositoryFileContent;
 import org.pentaho.platform.api.repository.RepositoryFile;
@@ -38,7 +34,7 @@ public class JcrPentahoContentDao implements IPentahoContentDao, InitializingBea
 
   private JcrTemplate jcrTemplate;
 
-  private NodeIdStrategy nodeIdStrategy = new UuidNodeIdStrategy();
+  private NodeIdStrategy nodeIdStrategy;
 
   private List<Transformer<IRepositoryFileContent>> transformers;
 
@@ -49,6 +45,7 @@ public class JcrPentahoContentDao implements IPentahoContentDao, InitializingBea
     super();
     this.jcrTemplate = jcrTemplate;
     this.transformers = transformers;
+    this.nodeIdStrategy = new UuidNodeIdStrategy(jcrTemplate);
   }
 
   // ~ Methods =========================================================================================================
@@ -64,8 +61,10 @@ public class JcrPentahoContentDao implements IPentahoContentDao, InitializingBea
 
     return (RepositoryFile) jcrTemplate.execute(new JcrCallback() {
       public Object doInJcr(final Session session) throws RepositoryException, IOException {
+        JcrRepositoryFileUtils.checkoutNearestVersionableFileIfNecessary(session, nodeIdStrategy, parentFolder);
         Node folderNode = JcrRepositoryFileUtils.createFolderNode(session, nodeIdStrategy, parentFolder, file);
         session.save();
+        JcrRepositoryFileUtils.checkinNearestVersionableFileIfNecessary(session, nodeIdStrategy, parentFolder);
         return JcrRepositoryFileUtils.fromFileNode(session, nodeIdStrategy, folderNode);
       }
     });
@@ -83,12 +82,12 @@ public class JcrPentahoContentDao implements IPentahoContentDao, InitializingBea
 
     return (RepositoryFile) jcrTemplate.execute(new JcrCallback() {
       public Object doInJcr(final Session session) throws RepositoryException, IOException {
+        JcrRepositoryFileUtils.checkoutNearestVersionableFileIfNecessary(session, nodeIdStrategy, parentFolder);
         Node fileNode = JcrRepositoryFileUtils.createFileNode(session, nodeIdStrategy, parentFolder, file, content,
             findTransformer(content.getContentType()));
         session.save();
-        RepositoryFile newFile = JcrRepositoryFileUtils.fromFileNode(session, nodeIdStrategy, fileNode);
-        JcrRepositoryFileUtils.checkinIfNecessary(session, nodeIdStrategy, newFile);
-        return newFile;
+        JcrRepositoryFileUtils.checkinNearestVersionableFileIfNecessary(session, nodeIdStrategy, parentFolder);
+        return JcrRepositoryFileUtils.fromFileNode(session, nodeIdStrategy, fileNode);
       }
     });
   }
@@ -102,11 +101,11 @@ public class JcrPentahoContentDao implements IPentahoContentDao, InitializingBea
 
     jcrTemplate.execute(new JcrCallback() {
       public Object doInJcr(final Session session) throws RepositoryException, IOException {
-        JcrRepositoryFileUtils.checkoutIfNecessary(session, nodeIdStrategy, file);
+        JcrRepositoryFileUtils.checkoutNearestVersionableFileIfNecessary(session, nodeIdStrategy, file);
         JcrRepositoryFileUtils.updateFileNode(session, nodeIdStrategy, file, content, findTransformer(file
             .getContentType()));
         session.save();
-        JcrRepositoryFileUtils.checkinIfNecessary(session, nodeIdStrategy, file);
+        JcrRepositoryFileUtils.checkinNearestVersionableFileIfNecessary(session, nodeIdStrategy, file);
         return null;
       }
     });
@@ -213,83 +212,32 @@ public class JcrPentahoContentDao implements IPentahoContentDao, InitializingBea
     });
   }
 
-  public void updateFile(RepositoryFile file, IRepositoryFileContent content) {
+  /**
+   * {@inheritDoc}
+   */
+  public void updateFile(final RepositoryFile file, final IRepositoryFileContent content) {
     Assert.notNull(file);
     Assert.isTrue(!file.isFolder());
     internalUpdateFile(file, content);
   }
 
   /**
-   * Allows for configurable node id getting, setting, and finding.
-   * 
-   * @author mlowery
+   * {@inheritDoc}
    */
-  public static interface NodeIdStrategy {
-
-    /**
-     * Returns the id of the given node.
-     * @param node node from which to get id
-     * @return id
-     */
-    Serializable getId(final Node node);
-
-    /**
-     * Sets the id of the given node.
-     * @param node node for which to set id
-     * @param id id to set
-     */
-    void setId(final Node node, final Serializable id);
-
-    /**
-     * Returns the node with the given id.
-     * @param session session to use
-     * @param id id of node to find
-     * @return found node or {@code null}
-     */
-    Node findNodeById(final Session session, final Serializable id);
-  }
-
-  /**
-   * {@link NodeIdStrategy} that uses node UUIDs.
-   * 
-   * @author mlowery
-   */
-  public class UuidNodeIdStrategy implements NodeIdStrategy {
-
-    /**
-     * Returns UUID of node. Obviously won't work on nodes that are not mix:referenceable.
-     */
-    public Serializable getId(final Node node) {
-      try {
-        return node.getUUID();
-      } catch (RepositoryException e) {
-        throw jcrTemplate.convertJcrAccessException(e);
-      }
-    }
-
-    /**
-     * Adds mix:referenceable to node. Node will get an actual id on save.
-     */
-    public void setId(final Node node, final Serializable ignored) {
-      try {
-        node.addMixin(PentahoJcrConstants.MIX_REFERENCEABLE);
-      } catch (RepositoryException e) {
-        throw jcrTemplate.convertJcrAccessException(e);
-      }
-    }
-
-    /**
-     * Uses {@code session.getNodeByUUID}.
-     */
-    public Node findNodeById(final Session session, final Serializable id) {
-      try {
-        return session.getNodeByUUID(id.toString());
-      } catch (ItemNotFoundException e) {
+  public void deleteFile(final RepositoryFile file) {
+    Assert.notNull(file);
+    Assert.notNull(file.getId());
+    Assert.notNull(file.getParentId());
+    jcrTemplate.execute(new JcrCallback() {
+      public Object doInJcr(final Session session) throws RepositoryException, IOException {
+        RepositoryFile parentFolder = JcrRepositoryFileUtils.getFileById(session, nodeIdStrategy, file.getParentId());
+        JcrRepositoryFileUtils.checkoutNearestVersionableFileIfNecessary(session, nodeIdStrategy, parentFolder);
+        JcrRepositoryFileUtils.deleteFile(session, nodeIdStrategy, file);
+        session.save();
+        JcrRepositoryFileUtils.checkinNearestVersionableFileIfNecessary(session, nodeIdStrategy, parentFolder);
         return null;
-      } catch (RepositoryException e) {
-        throw jcrTemplate.convertJcrAccessException(e);
       }
-    }
+    });
   }
 
   /**

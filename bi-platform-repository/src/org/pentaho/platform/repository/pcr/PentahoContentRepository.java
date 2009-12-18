@@ -9,10 +9,10 @@ import org.pentaho.platform.api.repository.IPentahoContentDao;
 import org.pentaho.platform.api.repository.IPentahoContentRepository;
 import org.pentaho.platform.api.repository.IRepositoryFileContent;
 import org.pentaho.platform.api.repository.RepositoryFile;
-import org.pentaho.platform.repository.pcr.springsecurity.AclServicePreparer;
 import org.pentaho.platform.repository.pcr.springsecurity.RepositoryFilePermission;
 import org.springframework.security.Authentication;
 import org.springframework.security.GrantedAuthority;
+import org.springframework.security.GrantedAuthorityImpl;
 import org.springframework.security.acls.Acl;
 import org.springframework.security.acls.MutableAcl;
 import org.springframework.security.acls.MutableAclService;
@@ -27,6 +27,11 @@ import org.springframework.security.context.SecurityContextHolder;
 import org.springframework.security.providers.UsernamePasswordAuthenticationToken;
 import org.springframework.security.userdetails.User;
 import org.springframework.security.userdetails.UserDetails;
+import org.springframework.transaction.TransactionDefinition;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.TransactionCallback;
+import org.springframework.transaction.support.TransactionCallbackWithoutResult;
+import org.springframework.transaction.support.TransactionTemplate;
 import org.springframework.util.Assert;
 
 /**
@@ -34,12 +39,11 @@ import org.springframework.util.Assert;
  * Security's {@link MutableAclService}.
  * 
  * <p>
- * All <strong>public</strong> methods in this class should be protected via Spring Security with the exception of:
- * <ul>
- * <li>{@link #startup}</li>
- * <li>{@link #shutdown}</li>
- * </ul>
+ * {@link #startup} and {@link #shutdown} should not be called directly. They should be called from a helper class.
  * </p>
+ * 
+ * TODO mlowery create helper class for startup and shutdown; helper would set the repo admin Authentication and then 
+ * call startup on this; in a finally block, the Authentication would be set back to null
  * 
  * @author mlowery
  */
@@ -63,65 +67,60 @@ public class PentahoContentRepository implements IPentahoContentRepository {
 
   private MutableAclService mutableAclService;
 
-  private AclServicePreparer aclServicePreparer;
+  /**
+   * Jackrabbit repository super user.
+   */
+  private String repositoryAdminUsername;
 
-  private String systemUsername;
+  /**
+   * Jackrabbit repository super user authority.
+   */
+  private String repositoryAdminAuthorityName;
 
   private boolean startedUp;
 
-  private String regularUserAuthorityName;
+  /**
+   * The name of the authority which is granted to all authenticated users, regardless of tenant.
+   */
+  private String commonAuthenticatedAuthorityName;
+
+  private RepositoryAdminHelper repositoryAdminHelper = new RepositoryAdminHelper();
+
+  private TenantAdminHelper tenantAdminHelper = new TenantAdminHelper();
+
+  /**
+   * Only used by RepositoryAdminHelper and TenantAdminHelper internal classes. (The enclosing class uses declarative
+   * transactions.)
+   */
+  private TransactionTemplate txnTemplate;
 
   // ~ Constructors ====================================================================================================
 
   public PentahoContentRepository(final IPentahoContentDao contentDao, final MutableAclService mutableAclService,
-      final AclServicePreparer aclServicePreparer, final String systemUsername, final String regularUserAuthorityName) {
+      final TransactionTemplate txnTemplate, final String repositoryAdminUsername,
+      final String repositoryAdminAuthorityName, final String regularUserAuthorityName) {
     super();
     Assert.notNull(contentDao);
     Assert.notNull(mutableAclService);
-    Assert.notNull(aclServicePreparer);
-    Assert.hasText(systemUsername);
+    Assert.notNull(txnTemplate);
+    Assert.hasText(repositoryAdminUsername);
+    Assert.hasText(repositoryAdminAuthorityName);
     Assert.hasText(regularUserAuthorityName);
 
     this.contentDao = contentDao;
     this.mutableAclService = mutableAclService;
-    this.aclServicePreparer = aclServicePreparer;
-    this.systemUsername = systemUsername;
-    this.regularUserAuthorityName = regularUserAuthorityName;
+    this.txnTemplate = txnTemplate;
+    initTransactionTemplate();
+    this.repositoryAdminUsername = repositoryAdminUsername;
+    this.repositoryAdminAuthorityName = repositoryAdminAuthorityName;
+    this.commonAuthenticatedAuthorityName = regularUserAuthorityName;
   }
 
   // ~ Methods =========================================================================================================
 
-  /**
-   * Creates initial folder structure including home and public folders. Assigns ACLs to those initial folders.
-   */
-  private void internalPrepareRepositoryIfNecessary() {
-    Assert.isNull(SecurityContextHolder.getContext().getAuthentication(),
-        "prepareRepositoryIfNecessary must be run before any users login");
-
-    Authentication systemAuthentication = internalCreateSystemAuthentication();
-    SecurityContextHolder.getContext().setAuthentication(systemAuthentication);
-    try {
-      aclServicePreparer.prepareAclServiceIfNecessary();
-      internalCreateInitialFoldersIfNecessary();
-    } finally {
-      SecurityContextHolder.getContext().setAuthentication(null);
-    }
-    startedUp = true;
-  }
-
-  /**
-   * Creates "system" authentication.  Note that {@code RunAsManager} is not used here as it is only relevant when 
-   * there is an already-authenticated user; there is no already-authenticated user here.
-   * 
-   * @return system authentication
-   */
-  private Authentication internalCreateSystemAuthentication() {
-    final GrantedAuthority[] systemUserAuthorities = new GrantedAuthority[0];
-    final String password = "ignored";
-    UserDetails systemUserDetails = new User(systemUsername, password, true, true, true, true, systemUserAuthorities);
-    Authentication systemAuthentication = new UsernamePasswordAuthenticationToken(systemUserDetails, password,
-        systemUserAuthorities);
-    return systemAuthentication;
+  private void initTransactionTemplate() {
+    // a new transaction must be created (in order to run with the correct user privileges)
+    txnTemplate.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRES_NEW);
   }
 
   /**
@@ -132,37 +131,25 @@ public class PentahoContentRepository implements IPentahoContentRepository {
     Assert.state(startedUp, "startup must be called first");
   }
 
-  private void internalCreateInitialFoldersIfNecessary() {
-    // check to see if this has already been run before
-    if (contentDao.getFile(PATH_ROOT) != null) {
-      return;
-    }
-    RepositoryFile rootFolder = internalCreateFolder(null,
-        new RepositoryFile.Builder(FOLDER_ROOT).folder(true).build(), false);
-    internalAddPermission(rootFolder, new GrantedAuthoritySid(regularUserAuthorityName), RepositoryFilePermission.READ);
-    internalAddPermission(rootFolder, new GrantedAuthoritySid(regularUserAuthorityName),
-        RepositoryFilePermission.EXECUTE);
-
-    // inherits the ACEs from parent ACL
-    internalCreateFolder(rootFolder, new RepositoryFile.Builder(FOLDER_PUBLIC).folder(true).build(), true);
-    // inherits the ACEs from parent ACL
-    internalCreateFolder(rootFolder, new RepositoryFile.Builder(FOLDER_HOME).folder(true).build(), true);
-  }
-
-  private void internalAddPermission(final RepositoryFile file, final Sid recipient, final Permission permission) {
+  private void internalAddPermission(final RepositoryFile file, final Sid recipient, final Permission permission,
+      final boolean granting) {
     Assert.notNull(file);
     Assert.notNull(recipient);
     Assert.notNull(permission);
 
     Serializable fileId = file.getId();
-    MutableAcl acl = internalCreateAclIfNecessary(file, true);
+    MutableAcl acl = internalCreateAcl(file, true);
 
-    acl.insertAce(acl.getEntries().length, permission, recipient, true);
+    acl.insertAce(acl.getEntries().length, permission, recipient, granting);
     mutableAclService.updateAcl(acl);
 
     if (logger.isDebugEnabled()) {
       logger.debug("Added permission " + permission + " for Sid " + recipient + " content node " + fileId);
     }
+  }
+
+  private void internalAddPermission(final RepositoryFile file, final Sid recipient, final Permission permission) {
+    internalAddPermission(file, recipient, permission, true);
   }
 
   /**
@@ -192,15 +179,20 @@ public class PentahoContentRepository implements IPentahoContentRepository {
    */
   public synchronized RepositoryFile createUserHomeFolderIfNecessary() {
     assertStartedUp();
-    RepositoryFile homeFolder = contentDao.getFile(PATH_ROOT + RepositoryFile.SEPARATOR + FOLDER_HOME);
-    RepositoryFile userHomeFolder = contentDao.getFile(homeFolder.getAbsolutePath() + RepositoryFile.SEPARATOR
-        + internalGetUsername());
-    if (userHomeFolder == null) {
-      return internalCreateFolder(homeFolder, new RepositoryFile.Builder(internalGetUsername()).folder(true).build(),
-          false);
-    } else {
-      return userHomeFolder;
-    }
+    repositoryAdminHelper.createTenantRootFolderIfNecessary(internalGetTenantId(),
+        internalGetTenantAdminAuthorityName(), internalGetTenantAuthenticatedAuthorityName());
+    tenantAdminHelper.createInitialFoldersIfNecessary(internalGetTenantId(), internalGetTenantAdminAuthorityName(),
+        internalGetTenantAuthenticatedAuthorityName());
+    String username = internalGetUsername();
+    return tenantAdminHelper.createUserHomeFolderIfNecessary(internalGetTenantRootFolderPath(), username);
+  }
+
+  private String internalGetTenantRootFolderPath() {
+    return PATH_ROOT + RepositoryFile.SEPARATOR + internalGetTenantId();
+  }
+
+  private RepositoryFile internalGetTenantRootFolder() {
+    return contentDao.getFile(internalGetTenantRootFolderPath());
   }
 
   private RepositoryFile internalCreateFile(final RepositoryFile parentFolder, final RepositoryFile file,
@@ -209,7 +201,7 @@ public class PentahoContentRepository implements IPentahoContentRepository {
     Assert.notNull(content);
 
     RepositoryFile newFile = contentDao.createFile(parentFolder, file, content);
-    internalCreateAclIfNecessary(newFile, inheritAces);
+    internalCreateAcl(newFile, inheritAces);
 
     return newFile;
   }
@@ -219,7 +211,7 @@ public class PentahoContentRepository implements IPentahoContentRepository {
     Assert.notNull(file);
 
     RepositoryFile newFile = contentDao.createFolder(parentFolder, file);
-    internalCreateAclIfNecessary(newFile, inheritAces);
+    internalCreateAcl(newFile, inheritAces);
 
     return newFile;
   }
@@ -232,42 +224,36 @@ public class PentahoContentRepository implements IPentahoContentRepository {
   }
 
   private void internalSetFullControl(final RepositoryFile file, final Sid sid) {
-    // TODO mlowery don't call addPermission as this is a connect to db per addPermission call
+    // TODO mlowery don't call addPermission as this is a connect to jcr per addPermission call
     internalAddPermission(file, sid, RepositoryFilePermission.APPEND);
     internalAddPermission(file, sid, RepositoryFilePermission.DELETE);
     internalAddPermission(file, sid, RepositoryFilePermission.DELETE_CHILD);
-    internalAddPermission(file, sid, RepositoryFilePermission.EXECUTE);
+    // TODO uncomment this when custom privileges are supported
+    //    internalAddPermission(file, sid, RepositoryFilePermission.EXECUTE);
     internalAddPermission(file, sid, RepositoryFilePermission.READ);
     internalAddPermission(file, sid, RepositoryFilePermission.READ_ACL);
-    internalAddPermission(file, sid, RepositoryFilePermission.READ_ATTRIBUTES);
-    internalAddPermission(file, sid, RepositoryFilePermission.TAKE_OWNERSHIP);
+    // TODO uncomment this when custom privileges are supported
+    //    internalAddPermission(file, sid, RepositoryFilePermission.TAKE_OWNERSHIP);
     internalAddPermission(file, sid, RepositoryFilePermission.WRITE);
     internalAddPermission(file, sid, RepositoryFilePermission.WRITE_ACL);
-    internalAddPermission(file, sid, RepositoryFilePermission.WRITE_ATTRIBUTES);
   }
 
-  private MutableAcl internalCreateAclIfNecessary(final RepositoryFile file, final boolean inheritAces) {
+  private MutableAcl internalCreateAcl(final RepositoryFile file, final boolean inheritAces) {
     Assert.notNull(file);
 
-    MutableAcl acl;
     Serializable fileId = file.getId();
     ObjectIdentity oid = new ObjectIdentityImpl(RepositoryFile.class, fileId);
-    try {
-      acl = (MutableAcl) mutableAclService.readAclById(oid);
-    } catch (NotFoundException nfe) {
-      // owner is set here to the currently authenticated user
-      acl = mutableAclService.createAcl(oid);
-      // link up parent (but only if this isn't the root node)
-      if (file.getParentId() != null) {
-        Acl newParent = mutableAclService.readAclById(new ObjectIdentityImpl(RepositoryFile.class, file.getParentId()));
-        acl.setParent(newParent);
-      }
+    MutableAcl acl = mutableAclService.createAcl(oid);
+    // link up parent (but only if this isn't the root node)
+    if (file.getParentId() != null) {
+      Acl newParent = mutableAclService.readAclById(new ObjectIdentityImpl(RepositoryFile.class, file.getParentId()));
+      acl.setParent(newParent);
     }
     if (!inheritAces) {
       acl.setEntriesInheriting(false);
       internalSetFullControl(file, new PrincipalSid(internalGetUsername()));
     }
-    return acl;
+    return mutableAclService.updateAcl(acl);
   }
 
   /**
@@ -299,7 +285,9 @@ public class PentahoContentRepository implements IPentahoContentRepository {
    * {@inheritDoc}
    */
   public synchronized void startup() {
-    internalPrepareRepositoryIfNecessary();
+    Assert.isNull(SecurityContextHolder.getContext().getAuthentication(), "startup must be run before any users login");
+    repositoryAdminHelper.createRepositoryRootFolderIfNecessary();
+    startedUp = true;
   }
 
   /**
@@ -312,10 +300,8 @@ public class PentahoContentRepository implements IPentahoContentRepository {
     Assert.isTrue(!file.isFolder());
     Assert.hasText(file.getName());
     Assert.notNull(content);
-    if (parentFolder != null) {
-      Assert.hasText(parentFolder.getName());
-    }
-
+    // external callers never allowed to create files at repo root
+    Assert.notNull(parentFolder);
     return internalCreateFile(parentFolder, file, content, true);
   }
 
@@ -327,9 +313,8 @@ public class PentahoContentRepository implements IPentahoContentRepository {
     Assert.notNull(file);
     Assert.isTrue(file.isFolder());
     Assert.hasText(file.getName());
-    if (parentFolder != null) {
-      Assert.hasText(parentFolder.getName());
-    }
+    // external callers never allowed to create folders at repo root
+    Assert.notNull(parentFolder);
     return internalCreateFolder(parentFolder, file, true);
   }
 
@@ -383,6 +368,219 @@ public class PentahoContentRepository implements IPentahoContentRepository {
     }
 
     internalUpdateFile(file, content);
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  public void deleteFile(RepositoryFile file) {
+    assertStartedUp();
+    Assert.notNull(file);
+    Assert.notNull(file.getId());
+    // acl deleted when file node is deleted
+    contentDao.deleteFile(file);
+  }
+
+  public Acl getAcl(final RepositoryFile file) {
+    Assert.notNull(file);
+    return mutableAclService.readAclById(new ObjectIdentityImpl(RepositoryFile.class, file.getId()));
+  }
+
+  private String internalGetTenantId() {
+    return "acme";
+  }
+
+  /**
+   * @return name of authority granted to all authenticated users of the current tenant; must not be the same as
+   * {@link #commonAuthenticatedAuthorityName}.
+   */
+  private String internalGetTenantAuthenticatedAuthorityName() {
+    return "Acme_Authenticated";
+  }
+
+  /**
+   * @return name of authority granted to the admin of the current tenant
+   */
+  private String internalGetTenantAdminAuthorityName() {
+    return "Acme_Admin";
+  }
+
+  /**
+   * 
+   * <p>
+   * Uses programmatic transaction management (via TransactionTemplate) in order to re-use private methods from enclosing
+   * class. 
+   * </p>
+   */
+  private class RepositoryAdminHelper {
+
+    public RepositoryFile createRepositoryRootFolderIfNecessary() {
+      Authentication origAuthn = SecurityContextHolder.getContext().getAuthentication();
+      SecurityContextHolder.getContext().setAuthentication(createRepositoryAdminAuthentication());
+      try {
+        return (RepositoryFile) txnTemplate.execute(new TransactionCallback() {
+          public Object doInTransaction(final TransactionStatus status) {
+            RepositoryFile rootFolder = contentDao.getFile(PATH_ROOT);
+            if (rootFolder == null) {
+              // because this is running as the repo admin, the owner of this folder is the repo admin who also has full
+              // control (no need to do a setOwner call)
+              rootFolder = internalCreateFolder(null, new RepositoryFile.Builder(FOLDER_ROOT).folder(true).build(),
+                  false);
+              // allow all authenticated users to see the contents of this folder (and its ACL)
+              internalAddPermission(rootFolder, new GrantedAuthoritySid(commonAuthenticatedAuthorityName),
+                  RepositoryFilePermission.READ);
+              internalAddPermission(rootFolder, new GrantedAuthoritySid(commonAuthenticatedAuthorityName),
+                  RepositoryFilePermission.READ_ACL);
+              // TODO uncomment this line
+              //    internalAddPermission(rootFolder, new GrantedAuthoritySid(commonAuthorityName),
+              //        RepositoryFilePermission.EXECUTE);
+            }
+            return rootFolder;
+          }
+        });
+      } finally {
+        SecurityContextHolder.getContext().setAuthentication(origAuthn);
+      }
+
+    }
+
+    public RepositoryFile createTenantRootFolderIfNecessary(final String tenantRootFolderName,
+        final String tenantAdminAuthorityName, final String tenantAuthenticatedAuthorityName) {
+      Authentication origAuthn = SecurityContextHolder.getContext().getAuthentication();
+      SecurityContextHolder.getContext().setAuthentication(createRepositoryAdminAuthentication());
+      try {
+        return (RepositoryFile) txnTemplate.execute(new TransactionCallback() {
+          public Object doInTransaction(final TransactionStatus status) {
+            RepositoryFile rootFolder = contentDao.getFile(PATH_ROOT);
+            RepositoryFile tenantRootFolder = contentDao.getFile(rootFolder.getAbsolutePath()
+                + RepositoryFile.SEPARATOR + tenantRootFolderName);
+            if (tenantRootFolder == null) {
+              tenantRootFolder = internalCreateFolder(rootFolder, new RepositoryFile.Builder(tenantRootFolderName)
+                  .folder(true).build(), false);
+              Sid ownerSid = new GrantedAuthoritySid(tenantAdminAuthorityName);
+              internalSetOwner(tenantRootFolder, ownerSid);
+              internalSetFullControl(tenantRootFolder, ownerSid);
+              internalAddPermission(tenantRootFolder, new GrantedAuthoritySid(tenantAuthenticatedAuthorityName),
+                  RepositoryFilePermission.READ);
+              internalAddPermission(tenantRootFolder, new GrantedAuthoritySid(tenantAuthenticatedAuthorityName),
+                  RepositoryFilePermission.READ_ACL);
+            }
+            return tenantRootFolder;
+          }
+        });
+      } finally {
+        SecurityContextHolder.getContext().setAuthentication(origAuthn);
+      }
+    }
+
+    private Authentication createRepositoryAdminAuthentication() {
+      final GrantedAuthority[] repositoryAdminAuthorities = new GrantedAuthority[2];
+      // necessary for AclAuthorizationStrategyImpl
+      repositoryAdminAuthorities[0] = new GrantedAuthorityImpl(repositoryAdminAuthorityName);
+      // necessary for unit test (Spring Security requires Authenticated role on all methods of PentahoContentRepository)
+      repositoryAdminAuthorities[1] = new GrantedAuthorityImpl(commonAuthenticatedAuthorityName);
+      final String password = "ignored";
+      UserDetails repositoryAdminUserDetails = new User(repositoryAdminUsername, password, true, true, true, true,
+          repositoryAdminAuthorities);
+      Authentication repositoryAdminAuthentication = new UsernamePasswordAuthenticationToken(
+          repositoryAdminUserDetails, password, repositoryAdminAuthorities);
+      return repositoryAdminAuthentication;
+    }
+
+  }
+
+  /**
+   * 
+   * <p>
+   * Uses programmatic transaction management (via TransactionTemplate) in order to re-use private methods from enclosing
+   * class. 
+   * </p>
+   */
+  private class TenantAdminHelper {
+    public void createInitialFoldersIfNecessary(final String tenantRootFolderName,
+        final String tenantAdminAuthorityName, final String tenantAuthenticatedAuthorityName) {
+      Authentication origAuthn = SecurityContextHolder.getContext().getAuthentication();
+      SecurityContextHolder.getContext().setAuthentication(createTenantAdminAuthentication());
+      try {
+        txnTemplate.execute(new TransactionCallbackWithoutResult() {
+          public void doInTransactionWithoutResult(final TransactionStatus status) {
+            RepositoryFile tenantRootFolder = contentDao.getFile(PATH_ROOT + RepositoryFile.SEPARATOR
+                + tenantRootFolderName);
+            Assert.notNull(tenantRootFolder);
+            if (contentDao.getFile(tenantRootFolder.getAbsolutePath() + RepositoryFile.SEPARATOR + FOLDER_PUBLIC) == null) {
+              // public folder is versioned
+              RepositoryFile tenantPublicFolder = internalCreateFolder(tenantRootFolder, new RepositoryFile.Builder(
+                  FOLDER_PUBLIC).folder(true).versioned(true).build(), true);
+              Sid ownerSid = new GrantedAuthoritySid(tenantAdminAuthorityName);
+              internalSetOwner(tenantPublicFolder, ownerSid);
+              internalAddPermission(tenantRootFolder, new GrantedAuthoritySid(tenantAuthenticatedAuthorityName),
+                  RepositoryFilePermission.READ);
+              internalAddPermission(tenantRootFolder, new GrantedAuthoritySid(tenantAuthenticatedAuthorityName),
+                  RepositoryFilePermission.READ_ACL);
+              internalAddPermission(tenantRootFolder, new GrantedAuthoritySid(tenantAuthenticatedAuthorityName),
+                  RepositoryFilePermission.APPEND);
+              internalAddPermission(tenantRootFolder, new GrantedAuthoritySid(tenantAuthenticatedAuthorityName),
+                  RepositoryFilePermission.DELETE_CHILD);
+              // TODO mlowery uncomment
+              // internalAddPermission(tenantRootFolder, new GrantedAuthoritySid(tenantAuthenticatedAuthorityName),
+              //   RepositoryFilePermission.EXECUTE);
+              internalAddPermission(tenantRootFolder, new GrantedAuthoritySid(tenantAuthenticatedAuthorityName),
+                  RepositoryFilePermission.WRITE);
+              // TODO mlowery don't want to give write_acl access on the folder itself but also don't want a special
+              // "createPublicFile" and "createPublicFolder" methods either
+              internalAddPermission(tenantRootFolder, new GrantedAuthoritySid(tenantAuthenticatedAuthorityName),
+                  RepositoryFilePermission.WRITE_ACL);
+              // inherits the ACEs from parent ACL
+              RepositoryFile tenantHomeFolder = internalCreateFolder(tenantRootFolder, new RepositoryFile.Builder(
+                  FOLDER_HOME).folder(true).build(), true);
+              internalSetOwner(tenantHomeFolder, ownerSid);
+            }
+          }
+        });
+      } finally {
+        SecurityContextHolder.getContext().setAuthentication(origAuthn);
+      }
+    }
+
+    public RepositoryFile createUserHomeFolderIfNecessary(final String tenantRootFolderPath, final String username) {
+      Authentication origAuthn = SecurityContextHolder.getContext().getAuthentication();
+      SecurityContextHolder.getContext().setAuthentication(createTenantAdminAuthentication());
+      try {
+        return (RepositoryFile) txnTemplate.execute(new TransactionCallback() {
+          public Object doInTransaction(final TransactionStatus status) {
+            RepositoryFile userHomeFolder = contentDao.getFile(tenantRootFolderPath + RepositoryFile.SEPARATOR
+                + FOLDER_HOME + RepositoryFile.SEPARATOR + username);
+            if (userHomeFolder == null) {
+              RepositoryFile tenantHomeFolder = contentDao.getFile(tenantRootFolderPath + RepositoryFile.SEPARATOR
+                  + FOLDER_HOME);
+              // user home folder is versioned
+              userHomeFolder = internalCreateFolder(tenantHomeFolder, new RepositoryFile.Builder(username).folder(true)
+                  .versioned(true).build(), false);
+              Sid ownerSid = new PrincipalSid(username);
+              internalSetOwner(userHomeFolder, ownerSid);
+              internalSetFullControl(userHomeFolder, ownerSid);
+            }
+            return userHomeFolder;
+          }
+        });
+      } finally {
+        SecurityContextHolder.getContext().setAuthentication(origAuthn);
+      }
+    }
+
+    private Authentication createTenantAdminAuthentication() {
+      final GrantedAuthority[] repositoryAdminAuthorities = new GrantedAuthority[2];
+      // necessary for AclAuthorizationStrategyImpl
+      repositoryAdminAuthorities[0] = new GrantedAuthorityImpl(repositoryAdminAuthorityName);
+      // necessary for unit test (Spring Security requires Authenticated role on all methods of PentahoContentRepository)
+      repositoryAdminAuthorities[1] = new GrantedAuthorityImpl(commonAuthenticatedAuthorityName);
+      final String password = "ignored";
+      UserDetails repositoryAdminUserDetails = new User(repositoryAdminUsername, password, true, true, true, true,
+          repositoryAdminAuthorities);
+      Authentication repositoryAdminAuthentication = new UsernamePasswordAuthenticationToken(
+          repositoryAdminUserDetails, password, repositoryAdminAuthorities);
+      return repositoryAdminAuthentication;
+    }
   }
 
 }

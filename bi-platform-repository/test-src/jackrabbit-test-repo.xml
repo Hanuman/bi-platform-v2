@@ -39,12 +39,12 @@
             security manager:
             class: FQN of class implementing the JackrabbitSecurityManager interface
         -->
-        <SecurityManager class="org.apache.jackrabbit.core.security.simple.SimpleSecurityManager" workspaceName="security">
+        <SecurityManager class="org.apache.jackrabbit.core.DefaultSecurityManager" workspaceName="security">
             <!--
             workspace access:
             class: FQN of class implementing the WorkspaceAccessManager interface
             -->
-            <!-- <WorkspaceAccessManager class="..."/> -->
+            <WorkspaceAccessManager class="org.pentaho.commons.security.jackrabbit.SpringSecurityWorkspaceAccessManager"/>
             <!-- <param name="config" value="${rep.home}/security.xml"/> -->
         </SecurityManager>
 
@@ -52,7 +52,7 @@
             access manager:
             class: FQN of class implementing the AccessManager interface
         -->
-        <AccessManager class="org.apache.jackrabbit.core.security.simple.SimpleAccessManager">
+        <AccessManager class="org.apache.jackrabbit.core.security.DefaultAccessManager">
             <!-- <param name="config" value="${rep.home}/access.xml"/> -->
         </AccessManager>
 
@@ -65,8 +65,14 @@
               administrator user id (default value if param is missing is 'admin')
             -->
            <param name="adminId" value="admin"/>
+           
+           <param name="principalProvider" 
+               value="org.pentaho.platform.repository.pcr.jackrabbit.TestPrincipalProvider"/>
         </LoginModule>
     </Security>
+
+
+
 
     <!--
         location of workspaces root directory and name of default workspace
@@ -102,6 +108,10 @@
             <param name="extractorPoolSize" value="2"/>
             <param name="supportHighlighting" value="true"/>
         </SearchIndex>
+        
+        <WorkspaceSecurity> 
+            <AccessControlProvider class="org.pentaho.platform.repository.pcr.jackrabbit.PentahoAccessControlProvider" />
+        </WorkspaceSecurity> 
     </Workspace>
 
     <!--

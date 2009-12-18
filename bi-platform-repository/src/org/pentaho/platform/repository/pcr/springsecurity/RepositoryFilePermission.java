@@ -18,7 +18,7 @@ import org.springframework.security.acls.domain.DefaultPermissionFactory;
 public class RepositoryFilePermission extends AbstractPermission {
   
   private static final long serialVersionUID = -5386252944598776600L;
-
+  
   public static final Permission READ = new RepositoryFilePermission(1 << 0, 'R'); // 1
 
   public static final Permission WRITE = new RepositoryFilePermission(1 << 1, 'W'); // 2
@@ -31,9 +31,9 @@ public class RepositoryFilePermission extends AbstractPermission {
 
   public static final Permission DELETE_CHILD = new RepositoryFilePermission(1 << 5, 'C'); // 32
 
-  public static final Permission READ_ATTRIBUTES = new RepositoryFilePermission(1 << 6, 'T'); // 64
-
-  public static final Permission WRITE_ATTRIBUTES = new RepositoryFilePermission(1 << 7, 'B'); // 128
+//  public static final Permission READ_ATTRIBUTES = new RepositoryFilePermission(1 << 6, 'T'); // 64
+//
+//  public static final Permission WRITE_ATTRIBUTES = new RepositoryFilePermission(1 << 7, 'B'); // 128
 
   public static final Permission READ_ACL = new RepositoryFilePermission(1 << 8, 'P'); // 256
 

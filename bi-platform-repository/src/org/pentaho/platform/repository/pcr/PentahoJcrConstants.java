@@ -62,9 +62,9 @@ public interface PentahoJcrConstants {
 
   String PENTAHO_AUX = "aux";
 
-  String PENTAHO_PREVIEWLASTMODIFIED = "previewLastModified";
+//  String PENTAHO_PREVIEWLASTMODIFIED = "previewLastModified";
 
-  String PENTAHO_VERSIONED = "versioned";
+  //String PENTAHO_VERSIONED = "versioned";
 
   String PENTAHO_CONTENTTYPE = "contentType";
 }

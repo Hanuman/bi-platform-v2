@@ -5,6 +5,7 @@ import org.apache.commons.logging.LogFactory;
 import org.pentaho.platform.api.repository.IPentahoContentRepository;
 import org.springframework.context.ApplicationEvent;
 import org.springframework.context.ApplicationListener;
+import org.springframework.security.context.SecurityContextHolder;
 import org.springframework.security.event.authentication.InteractiveAuthenticationSuccessEvent;
 import org.springframework.util.Assert;
 

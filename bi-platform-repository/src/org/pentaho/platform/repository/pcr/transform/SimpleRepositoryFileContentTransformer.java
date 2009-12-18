@@ -7,9 +7,9 @@ import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
+import org.pentaho.platform.repository.pcr.NodeIdStrategy;
 import org.pentaho.platform.repository.pcr.PentahoJcrConstants;
 import org.pentaho.platform.repository.pcr.SimpleRepositoryFileContent;
-import org.pentaho.platform.repository.pcr.JcrPentahoContentDao.NodeIdStrategy;
 import org.pentaho.platform.repository.pcr.JcrPentahoContentDao.Transformer;
 import org.springframework.util.StringUtils;
 

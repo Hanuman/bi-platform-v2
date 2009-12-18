@@ -19,6 +19,8 @@
         <dependency org="commons-lang"     name="commons-lang"     rev="2.2"   transitive="false"/>
         <dependency org="dom4j"               name="dom4j"               rev="1.6.1" transitive="false"/>
         <dependency org="org.springframework.security"   name="spring-security-core"      rev="2.0.5.RELEASE" transitive="false"/>
+        <dependency org="org.springframework.security"   name="spring-security-acl"       rev="2.0.5.RELEASE" transitive="false"/>
+        
         
         
         <!--  internal dependencies -->

@@ -178,8 +178,6 @@ public class RepositoryFile implements Comparable<RepositoryFile> {
     }
 
     public RepositoryFile build() {
-      // currently folder versioning is not supported
-      assertTrue(!(folder && versioned));
       RepositoryFile result = new RepositoryFile(name, id, parentId);
       result.createdDate = this.createdDate;
       result.lastModifiedDate = this.lastModifiedDate;

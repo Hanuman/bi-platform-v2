@@ -20,12 +20,159 @@
       <sec:user password="password" name="suzy" authorities="Authenticated" />
     </sec:user-service>
   </sec:authentication-provider>
-  
-  <sec:authentication-manager alias="authenticationManager"/>
+
+  <sec:authentication-manager alias="authenticationManager" />
 
   <bean id="jcrRepository" class="org.springframework.extensions.jcr.jackrabbit.RepositoryFactoryBean">
     <property name="configuration" value="/jackrabbit-test-repo.xml" />
     <property name="homeDir" value="file:/tmp" />
+  </bean>
+
+  <bean id="Privilege.JCR_READ" class="org.springframework.beans.factory.config.FieldRetrievingFactoryBean">
+    <property name="staticField" value="org.apache.jackrabbit.api.jsr283.security.Privilege.JCR_READ" />
+  </bean>
+  <bean id="Privilege.JCR_WRITE" class="org.springframework.beans.factory.config.FieldRetrievingFactoryBean">
+    <property name="staticField" value="org.apache.jackrabbit.api.jsr283.security.Privilege.JCR_WRITE" />
+  </bean>
+  <bean id="Privilege.JCR_REMOVE_NODE" class="org.springframework.beans.factory.config.FieldRetrievingFactoryBean">
+    <property name="staticField" value="org.apache.jackrabbit.api.jsr283.security.Privilege.JCR_REMOVE_NODE" />
+  </bean>
+  <bean id="Privilege.JCR_REMOVE_CHILD_NODES" class="org.springframework.beans.factory.config.FieldRetrievingFactoryBean">
+    <property name="staticField" value="org.apache.jackrabbit.api.jsr283.security.Privilege.JCR_REMOVE_CHILD_NODES" />
+  </bean>
+  <bean id="Privilege.JCR_READ_ACCESS_CONTROL" class="org.springframework.beans.factory.config.FieldRetrievingFactoryBean">
+    <property name="staticField" value="org.apache.jackrabbit.api.jsr283.security.Privilege.JCR_READ_ACCESS_CONTROL" />
+  </bean>
+  <bean id="Privilege.JCR_MODIFY_ACCESS_CONTROL" class="org.springframework.beans.factory.config.FieldRetrievingFactoryBean">
+    <property name="staticField" value="org.apache.jackrabbit.api.jsr283.security.Privilege.JCR_MODIFY_ACCESS_CONTROL" />
+  </bean>
+  <bean id="Privilege.JCR_NODE_TYPE_MANAGEMENT" class="org.springframework.beans.factory.config.FieldRetrievingFactoryBean">
+    <property name="staticField" value="org.apache.jackrabbit.api.jsr283.security.Privilege.JCR_NODE_TYPE_MANAGEMENT" />
+  </bean>
+  <bean id="Privilege.JCR_VERSION_MANAGEMENT" class="org.springframework.beans.factory.config.FieldRetrievingFactoryBean">
+    <property name="staticField" value="org.apache.jackrabbit.api.jsr283.security.Privilege.JCR_VERSION_MANAGEMENT" />
+  </bean>
+
+  <!-- The authority name granted to the repository admin. -->
+  <bean id="executePrivilegeName" class="java.lang.String">
+    <constructor-arg value="{http://www.pentaho.org/jcr/1.0}execute" />
+  </bean>
+  
+  <!-- The authority name granted to the repository admin. -->
+  <bean id="jackrabbitWritePrivilegeName" class="java.lang.String">
+    <constructor-arg value="{internal}write" />
+  </bean>
+
+  <bean id="aclService" class="org.pentaho.platform.repository.pcr.jackrabbit.JackrabbitMutableAclService">
+    <constructor-arg ref="jcrTemplate" />
+    <constructor-arg ref="commonAuthenticatedAuthorityName" />
+    <constructor-arg>
+      <bean class="org.springframework.security.acls.domain.ConsoleAuditLogger" />
+    </constructor-arg>
+    <constructor-arg>
+      <map>
+        <entry key-ref="RepositoryFilePermission.EXECUTE">
+          <list>
+            <ref bean="executePrivilegeName" />
+          </list>
+        </entry>
+        <entry key-ref="RepositoryFilePermission.READ">
+          <list>
+            <ref bean="Privilege.JCR_READ" />
+          </list>
+        </entry>
+        <entry key-ref="RepositoryFilePermission.WRITE">
+          <list>
+            <!-- JCR_NODE_TYPE_MANAGEMENT is required when creating a node of a specific type -->
+            <ref bean="jackrabbitWritePrivilegeName" />
+            <ref bean="Privilege.JCR_VERSION_MANAGEMENT" />
+          </list>
+        </entry>
+        <entry key-ref="RepositoryFilePermission.DELETE">
+          <list>
+            <ref bean="Privilege.JCR_REMOVE_NODE" />
+          </list>
+        </entry>
+        <entry key-ref="RepositoryFilePermission.APPEND">
+          <list>
+            <!-- JCR_NODE_TYPE_MANAGEMENT is required when creating a node of a specific type -->
+            <ref bean="jackrabbitWritePrivilegeName" />
+            <ref bean="Privilege.JCR_VERSION_MANAGEMENT" />
+          </list>
+        </entry>
+        <entry key-ref="RepositoryFilePermission.DELETE_CHILD">
+          <list>
+            <ref bean="Privilege.JCR_REMOVE_CHILD_NODES" />
+          </list>
+        </entry>
+        <entry key-ref="RepositoryFilePermission.READ_ACL">
+          <list>
+            <ref bean="Privilege.JCR_READ_ACCESS_CONTROL" />
+          </list>
+        </entry>
+        <entry key-ref="RepositoryFilePermission.WRITE_ACL">
+          <list>
+            <ref bean="Privilege.JCR_MODIFY_ACCESS_CONTROL" />
+          </list>
+        </entry>
+      </map>
+    </constructor-arg>
+    <constructor-arg>
+      <map>
+        <entry key-ref="executePrivilegeName">
+          <list>
+            <ref bean="RepositoryFilePermission.EXECUTE" />
+          </list>
+        </entry>
+        <entry key-ref="Privilege.JCR_READ">
+          <list>
+            <ref bean="RepositoryFilePermission.READ" />
+          </list>
+        </entry>
+        <entry key-ref="Privilege.JCR_WRITE">
+          <list>
+            <ref bean="RepositoryFilePermission.WRITE" />
+            <ref bean="RepositoryFilePermission.APPEND" />
+          </list>
+        </entry>
+        <entry key-ref="jackrabbitWritePrivilegeName">
+          <list>
+            <ref bean="RepositoryFilePermission.WRITE" />
+            <ref bean="RepositoryFilePermission.APPEND" />
+          </list>
+        </entry>
+        <entry key-ref="Privilege.JCR_REMOVE_NODE">
+          <list>
+            <ref bean="RepositoryFilePermission.DELETE" />
+          </list>
+        </entry>
+        <entry key-ref="Privilege.JCR_REMOVE_CHILD_NODES">
+          <list>
+            <ref bean="RepositoryFilePermission.DELETE_CHILD" />
+          </list>
+        </entry>
+        <entry key-ref="Privilege.JCR_READ_ACCESS_CONTROL">
+          <list>
+            <ref bean="RepositoryFilePermission.READ_ACL" />
+          </list>
+        </entry>
+        <entry key-ref="Privilege.JCR_MODIFY_ACCESS_CONTROL">
+          <list>
+            <ref bean="RepositoryFilePermission.WRITE_ACL" />
+          </list>
+        </entry>
+        <entry key-ref="Privilege.JCR_NODE_TYPE_MANAGEMENT">
+          <!-- JCR_NODE_TYPE_MANAGEMENT doesn't translate to a RepositoryFilePermission -->
+          <list>
+          </list>
+        </entry>
+        <entry key-ref="Privilege.JCR_VERSION_MANAGEMENT">
+          <!-- JCR_VERSION_MANAGEMENT doesn't translate to a RepositoryFilePermission -->
+          <list>
+          </list>
+        </entry>
+      </map>
+    </constructor-arg>
   </bean>
 
 </beans>

@@ -1,7 +1,8 @@
 package org.pentaho.platform.api.repository;
 
-import java.io.InputStream;
 import java.util.List;
+
+import org.springframework.security.acls.Acl;
 
 /**
  * Entry point into the content repository.
@@ -47,7 +48,7 @@ public interface IPentahoContentRepository {
    * Gets file. Use this method to test for file existence too.
    * 
    * @param absPath absolute path to file
-   * @return file or {@code null} if the file does not exist
+   * @return file or {@code null} if the file does not exist or access is denied
    */
   RepositoryFile getFile(final String absPath);
   
@@ -105,4 +106,16 @@ public interface IPentahoContentRepository {
    * @param content updated content
    */
   void updateFile(final RepositoryFile file, final IRepositoryFileContent content);
+  
+  /**
+   * Deletes a file or folder.
+   * 
+   * @param file file to delete
+   */
+  void deleteFile(final RepositoryFile file);
+  
+  // ~ Access query methods ============================================================================================
+
+  Acl getAcl(final RepositoryFile file);
+
 }

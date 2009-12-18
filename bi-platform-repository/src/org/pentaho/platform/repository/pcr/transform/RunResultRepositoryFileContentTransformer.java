@@ -13,10 +13,10 @@ import javax.jcr.Session;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.pentaho.platform.repository.pcr.JcrRepositoryFileUtils;
+import org.pentaho.platform.repository.pcr.NodeIdStrategy;
 import org.pentaho.platform.repository.pcr.PentahoJcrConstants;
 import org.pentaho.platform.repository.pcr.RunResultRepositoryFileContent;
 import org.pentaho.platform.repository.pcr.SimpleRepositoryFileContent;
-import org.pentaho.platform.repository.pcr.JcrPentahoContentDao.NodeIdStrategy;
 import org.pentaho.platform.repository.pcr.JcrPentahoContentDao.Transformer;
 
 public class RunResultRepositoryFileContentTransformer implements Transformer<RunResultRepositoryFileContent> {

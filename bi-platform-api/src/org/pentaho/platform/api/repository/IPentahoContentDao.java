@@ -1,6 +1,5 @@
 package org.pentaho.platform.api.repository;
 
-import java.io.InputStream;
 import java.util.List;
 
 public interface IPentahoContentDao {
@@ -9,7 +8,7 @@ public interface IPentahoContentDao {
    * Returns file at given absolute path.
    * 
    * @param absPath absolute path
-   * @return file or {@code null} if file does not exist
+   * @return file or {@code null} if file does not exist or access is denied
    */
   RepositoryFile getFile(final String absPath);
   
@@ -59,4 +58,11 @@ public interface IPentahoContentDao {
    * @param content updated content
    */
   void updateFile(final RepositoryFile file, final IRepositoryFileContent content);
+  
+  /**
+   * Deletes a file or folder.
+   * 
+   * @param file file to delete
+   */
+  void deleteFile(final RepositoryFile file);
 }
