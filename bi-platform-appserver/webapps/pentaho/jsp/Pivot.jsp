@@ -740,10 +740,10 @@
     dojo.registerModulePath("adhoc", "../adhoc/js");
   </script>
 
-<script src="adhoc/js/common/ui/messages/Messages.getInstance().js" type="text/javascript"></script>
+<script src="adhoc/js/common/ui/messages/Messages.js" type="text/javascript"></script>
 
 <script type="text/javascript">
-    Messages.getInstance().addBundle("adhoc.ui.messages", "message_strings");
+    Messages.addBundle("adhoc.ui.messages", "message_strings");
   </script>
 
 <script src="adhoc/js/common/ui/MessageCtrl.js" type="text/javascript"></script>

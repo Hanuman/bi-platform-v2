@@ -50,7 +50,7 @@
       <artifact name="jpivot" type="jar" />
     </dependency>
     <dependency org="com.tonbeller" name="tbutils-wcf" rev="1.8.0-070305" />
-    <dependency org="com.tonbeller" name="wcf" rev="1.8.0-070305" />
+    <dependency org="com.tonbeller" name="wcf" rev="${dependency.wcf.revision}" />
     <dependency org="com.sun.xml.messaging.saaj" name="saaj-impl" rev="1.3">
       <exclude org="javax.activation" module="activation" />
     </dependency>

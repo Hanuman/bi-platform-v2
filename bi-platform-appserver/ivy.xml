@@ -25,7 +25,7 @@
           <exclude org="dom4j" name="dom4j" />
           <exclude org="net.sf.ehcache" name="ehcache" />
         </dependency>
-        <dependency org="com.tonbeller" name="jpivot" rev="1.8.0-081008">
+        <dependency org="com.tonbeller" name="jpivot" rev="1.8.0-091218">
           <artifact name="jpivot" type="jar" />
         </dependency>
 		<dependency org="quartz"			name="quartz"              rev="1.5.2">
