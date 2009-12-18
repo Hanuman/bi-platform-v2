@@ -29,6 +29,7 @@ import org.pentaho.platform.engine.core.system.PentahoSystem;
 import org.pentaho.platform.engine.security.SecurityHelper;
 import org.pentaho.platform.plugin.action.mondrian.catalog.IMondrianCatalogService;
 import org.pentaho.platform.plugin.action.mondrian.catalog.MondrianCatalog;
+import org.pentaho.platform.plugin.action.mondrian.catalog.MondrianCatalogHelper;
 import org.pentaho.platform.plugin.action.mondrian.catalog.MondrianSchema;
 import org.springframework.security.Authentication;
 import org.springframework.security.GrantedAuthority;
@@ -51,7 +52,7 @@ public abstract class MondrianAbstractPlatformUserRoleMapper implements IConnect
    * @param platformRoles Sorted list of the roles defined in the catalog
    * @return
    */
-  protected abstract String[] mapRoles(String[] mondrianRoles, String[] platformRoles, String catalogName);
+  protected abstract String[] mapRoles(String[] mondrianRoles, String[] platformRoles);
   
   /**
    * This method returns the role names as found in the Mondrian schema. The returned names
@@ -60,13 +61,13 @@ public abstract class MondrianAbstractPlatformUserRoleMapper implements IConnect
    * @param catalogName The name of the catalog
    * @return Array of role names from the schema file
    */
-  protected String[] getMondrianRolesFromCatalog(IPentahoSession userSession, String catalogName) {
+  protected String[] getMondrianRolesFromCatalog(IPentahoSession userSession, String context) {
     String[] rtn = null; 
     // Get the catalog service
     IMondrianCatalogService catalogService = PentahoSystem.get(IMondrianCatalogService.class);
     if (catalogService != null) {
       // Get the catalog by name
-      MondrianCatalog catalog = catalogService.getCatalog(catalogName, userSession);
+      MondrianCatalog catalog = catalogService.getCatalog(context, userSession);
       if (catalog != null) {
         // The roles are in the schema object
         MondrianSchema schema = catalog.getSchema();
@@ -111,15 +112,15 @@ public abstract class MondrianAbstractPlatformUserRoleMapper implements IConnect
   /* (non-Javadoc)
    * @see org.pentaho.platform.api.engine.IConnectionUserRoleMapper#mapConnectionRoles(org.pentaho.platform.api.engine.IPentahoSession, java.lang.String)
    */
-  public String[] mapConnectionRoles(IPentahoSession userSession, String connectionContextName)
+  public String[] mapConnectionRoles(IPentahoSession userSession, String connectionContext)
       throws PentahoAccessControlException {
     // The connectionContextName for this mapper is the Mondrian Catalog.
-    String[] mondrianRoleNames = getMondrianRolesFromCatalog(userSession, connectionContextName);
+    String[] mondrianRoleNames = getMondrianRolesFromCatalog(userSession, connectionContext);
     String[] platformRoleNames = getPlatformRolesFromSession(userSession);
     String[] mappedResult = null;
     if ( (mondrianRoleNames != null) && (platformRoleNames != null) && 
         (mondrianRoleNames.length > 0) && (platformRoleNames.length >0) ) {
-      mappedResult = mapRoles(mondrianRoleNames, platformRoleNames, connectionContextName);
+      mappedResult = mapRoles(mondrianRoleNames, platformRoleNames);
     }
     return mappedResult;
   }
@@ -127,7 +128,7 @@ public abstract class MondrianAbstractPlatformUserRoleMapper implements IConnect
   /* (non-Javadoc)
    * @see org.pentaho.platform.api.engine.IConnectionUserRoleMapper#mapConnectionUser(org.pentaho.platform.api.engine.IPentahoSession, java.lang.String)
    */
-  public Object mapConnectionUser(IPentahoSession userSession, String connectionContextName)
+  public Object mapConnectionUser(IPentahoSession userSession, String context)
       throws PentahoAccessControlException {
     throw new UnsupportedOperationException();
   }

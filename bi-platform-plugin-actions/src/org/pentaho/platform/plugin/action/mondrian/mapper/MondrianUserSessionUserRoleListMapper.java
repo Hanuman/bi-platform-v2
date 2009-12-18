@@ -43,7 +43,7 @@ public class MondrianUserSessionUserRoleListMapper extends MondrianAbstractPlatf
   //
   @Override
   @SuppressWarnings( "unchecked" )
-  protected String[] mapRoles(String[] mondrianRoles, String[] platformRoles, String mondrianCatalog) {
+  protected String[] mapRoles(String[] mondrianRoles, String[] platformRoles) {
     //
     // Note - this mapper doesn't need the mondrian catalog for mapping
     // or in fact any of the passed parameters. The roles for this

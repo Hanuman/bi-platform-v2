@@ -17,12 +17,16 @@
 */
 package org.pentaho.platform.plugin.action.mondrian.catalog;
 
+import java.io.Serializable;
 import java.util.Arrays;
 import java.util.List;
 
 import org.apache.commons.lang.builder.ToStringBuilder;
 
-public class MondrianSchema {
+public class MondrianSchema implements Serializable {
+    
+    private static final long serialVersionUID = 1L;
+
     private String name;
 
     private List<MondrianCube> cubes;

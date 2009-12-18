@@ -42,10 +42,15 @@ public interface IMondrianCatalogService {
       throws MondrianCatalogServiceException;
 
   /**
-   * Returns the catalog with the given name or <code>null</code> if name not recognized. 
-   * @param name of the catalog to fetch
+   * Returns the catalog with the given context - name or definition allowable. Returns <code>null</code> if context not recognized. 
+   * @param context Either the name of the catalog to fetch, or the catalog's definition string
+   * 
+   *    NOTE that the context can be the catalog name or the definition string for the catalog. If you are using the definition string to 
+   *    retrieve the catalog from the cache, you cannot be guaranteed what datasource is in play; so under these circumstances, this catalog's
+   *    definition is the only part of the catalog that can be trusted. As this feature was added to enable looking up Mondrian
+   *    roles from the schema, we don't much care which datasource is in play. 
    */
-  MondrianCatalog getCatalog(String name, final IPentahoSession pentahoSession);
+  MondrianCatalog getCatalog(String context, final IPentahoSession pentahoSession);
 
   /**
    * this method loads a Mondrian schema
@@ -56,6 +61,7 @@ public interface IMondrianCatalogService {
    * @return Mondrian Schema object
    */
   MondrianSchema loadMondrianSchema(String solutionLocation, IPentahoSession pentahoSession);
+  
   
 
 }

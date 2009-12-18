@@ -29,7 +29,7 @@ public class MondrianOneToOneUserRoleListMapper extends MondrianAbstractPlatform
    * This mapper maps directly from a Pentaho to a Mondrian role. This is useful when your
    * roles exist both in the platform and identically named in the mondrian catalog.
    */
-  protected String[] mapRoles(String[] mondrianRoles, String[] platformRoles, String mondrianCatalog) {
+  protected String[] mapRoles(String[] mondrianRoles, String[] platformRoles) {
     //
     // This class assumes that the platform roles list contains roles that
     // are defined in the mondrian schema. All roles that the user has 

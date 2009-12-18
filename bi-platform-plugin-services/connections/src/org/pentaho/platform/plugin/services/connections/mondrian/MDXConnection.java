@@ -171,7 +171,7 @@ public class MDXConnection implements IPentahoLoggingConnection {
       IConnectionUserRoleMapper mondrianUserRoleMapper = PentahoSystem.get(IConnectionUserRoleMapper.class, MDXConnection.MDX_CONNECTION_MAPPER_KEY, null);
       if (mondrianUserRoleMapper != null) {
         // Do role mapping
-        String[] validMondrianRolesForUser = mondrianUserRoleMapper.mapConnectionRoles(PentahoSessionHolder.getSession(), properties.get(RolapConnectionProperties.CatalogName.name()));
+        String[] validMondrianRolesForUser = mondrianUserRoleMapper.mapConnectionRoles(PentahoSessionHolder.getSession(), properties.get(RolapConnectionProperties.Catalog.name()));
         if ( (validMondrianRolesForUser != null) && (validMondrianRolesForUser.length>0) ) {
           StringBuffer buff = new StringBuffer();
           String aRole = null;
