@@ -21,16 +21,7 @@
 
 package org.pentaho.platform.plugin.action.mondrian;
 
-import java.util.Properties;
-
-import mondrian.olap.Connection;
-import mondrian.olap.Cube;
-import mondrian.olap.Dimension;
-import mondrian.olap.Hierarchy;
-import mondrian.olap.Member;
-import mondrian.olap.MondrianException;
-import mondrian.olap.Schema;
-
+import mondrian.olap.*;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.pentaho.commons.connection.IPentahoConnection;
@@ -39,15 +30,20 @@ import org.pentaho.platform.engine.core.system.PentahoSystem;
 import org.pentaho.platform.engine.services.connection.PentahoConnectionFactory;
 import org.pentaho.platform.engine.services.solution.ComponentBase;
 import org.pentaho.platform.plugin.action.messages.Messages;
+import org.pentaho.platform.plugin.action.mondrian.catalog.MondrianCatalogComplementInfo;
+import org.pentaho.platform.plugin.action.mondrian.catalog.MondrianCatalogHelper;
 import org.pentaho.platform.plugin.services.connections.mondrian.MDXConnection;
 import org.pentaho.platform.plugin.services.connections.sql.SQLConnection;
 import org.pentaho.platform.util.logging.Logger;
 
+import java.util.HashSet;
+import java.util.Properties;
+
 /**
  * @author James Dixon
- * 
- * TODO To change the template for this generated type comment go to Window -
- * Preferences - Java - Code Style - Code Templates
+ *         <p/>
+ *         TODO To change the template for this generated type comment go to Window -
+ *         Preferences - Java - Code Style - Code Templates
  */
 public class MondrianModelComponent extends ComponentBase {
 
@@ -132,7 +128,7 @@ public class MondrianModelComponent extends ComponentBase {
    */
   @Deprecated
   public static String getInitialQuery(final String modelPath, final String connectionString, final String driver,
-      final String user, final String password, final String cubeName, IPentahoSession session) throws Throwable {
+                                       final String user, final String password, final String cubeName, IPentahoSession session) throws Throwable {
     return MondrianModelComponent.getInitialQuery(modelPath, connectionString, driver, user, password, cubeName, null,
         session);
   }
@@ -151,7 +147,7 @@ public class MondrianModelComponent extends ComponentBase {
    */
   @Deprecated
   public static String getInitialQuery(String modelPath, final String connectionString, final String driver,
-      final String user, final String password, final String cubeName, final String roleName, IPentahoSession session)
+                                       final String user, final String password, final String cubeName, final String roleName, IPentahoSession session)
       throws Throwable {
 
     Properties properties = new Properties();
@@ -201,7 +197,7 @@ public class MondrianModelComponent extends ComponentBase {
    */
   @Deprecated
   public static String getInitialQuery(final String modelPath, final String connectionString, final String cubeName,
-      IPentahoSession session) throws Throwable {
+                                       IPentahoSession session) throws Throwable {
     return MondrianModelComponent.getInitialQuery(modelPath, connectionString, cubeName, null, session);
   }
 
@@ -209,14 +205,13 @@ public class MondrianModelComponent extends ComponentBase {
    * @param modelPath
    * @param jndi
    * @param cubeName
-   * @param roleName
    * @return mdx string that represents the initial query
    * @throws Throwable
    * @deprecated
    */
   @Deprecated
   public static String getInitialQuery(String modelPath, String jndi, final String cubeName, final String roleName,
-      IPentahoSession session) throws Throwable {
+                                       IPentahoSession session) throws Throwable {
 
     Properties properties = new Properties();
 
@@ -243,7 +238,12 @@ public class MondrianModelComponent extends ComponentBase {
 
     String measuresMdx = null;
     String columnsMdx = null;
+    String whereMdx = "";
     StringBuffer rowsMdx = new StringBuffer();
+
+    // Get catalog info, if exists
+    String catalog = connection.getCatalogName();
+    MondrianCatalogComplementInfo catalogComplementInfo = MondrianCatalogHelper.getInstance().getCatalogComplementInfoMap(catalog);
 
     try {
 
@@ -289,6 +289,50 @@ public class MondrianModelComponent extends ComponentBase {
         return null;
       }
 
+
+      // If we have any whereConditions block, we need to find which hierarchies they are in
+      // and not include them in the rows
+      HashSet<Hierarchy> whereHierarchies = new HashSet<Hierarchy>();
+      if (catalogComplementInfo != null && catalogComplementInfo.getWhereCondition() != null &&
+          !catalogComplementInfo.getWhereCondition().equals("")) {
+
+        final String rawString = catalogComplementInfo.getWhereCondition();
+
+        // Caveat - It's possible that we have in the where condition a hierarchy that we don't have access
+        // permissions; In this case, we'll ditch the where condition at all. Same for any error that
+        // we find here
+
+
+        try {
+
+          // According to Julian, the better way to resolve the names is to build a query
+          final String queryStr = "select " + rawString + " on columns, {} on rows from " + cube.getName();
+          final Query query = connection.parseQuery(queryStr);
+
+
+          final Hierarchy[] hierarchies = query.getMdxHierarchiesOnAxis(AxisOrdinal.StandardAxisOrdinal.COLUMNS);
+          boolean isWhereValid = true;
+
+          for (int i = 0; i < hierarchies.length && isWhereValid; i++) {
+            final Hierarchy hierarchy = hierarchies[i];
+            if (connection.getRole().canAccess(hierarchy)) {
+              whereHierarchies.add(hierarchy);
+            } else {
+              isWhereValid = false;
+              whereHierarchies.clear();
+            }
+          }
+
+          if (isWhereValid) {
+            whereMdx = " WHERE " + rawString;
+          }
+        } catch (Exception e) {
+          // We found an error in the where slicer, so we'll just act like it wasn't here
+          whereHierarchies.clear();
+        }
+      }
+
+
       Dimension dimensions[] = cube.getDimensions();
       if ((dimensions == null) || (dimensions.length == 0)) {
         Logger
@@ -305,6 +349,16 @@ public class MondrianModelComponent extends ComponentBase {
               .error(
                   "MondrianModelComponent", Messages.getErrorString("MondrianModel.ERROR_0007_NO_HIERARCHIES", element.getName(), cubeName, connection.getConnectString())); //$NON-NLS-1$ //$NON-NLS-2$
           return null;
+        }
+
+        if (!connection.getRole().canAccess(hierarchy)) {
+          // We can't access this element
+          continue;
+        }
+
+        if (whereHierarchies.contains(hierarchy)) {
+          // We have it on the where condition - skip it
+          continue;
         }
 
         Member member = hierarchy.getDefaultMember();
@@ -331,7 +385,8 @@ public class MondrianModelComponent extends ComponentBase {
         StringBuffer result = new StringBuffer(measuresMdx.length() + columnsMdx.length() + rowsMdx.length() + 50);
         result.append(measuresMdx).append(columnsMdx).append("NON EMPTY {(") //$NON-NLS-1$
             .append(rowsMdx).append(")} ON rows ") //$NON-NLS-1$
-            .append("from [" + cube.getName() + "]"); //$NON-NLS-1$ //$NON-NLS-2$
+            .append("from [" + cube.getName() + "]") //$NON-NLS-1$ //$NON-NLS-2$
+            .append(whereMdx);
 
         return result.toString();
 
@@ -353,7 +408,7 @@ public class MondrianModelComponent extends ComponentBase {
   }
 
   protected SQLConnection getConnection(final String jndiName, final String driver, final String userId,
-      final String password, final String connectionInfo) {
+                                        final String password, final String connectionInfo) {
     SQLConnection connection = null;
     try {
       if (jndiName != null) {
