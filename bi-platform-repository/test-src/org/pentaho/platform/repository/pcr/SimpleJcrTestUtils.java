@@ -1,11 +1,13 @@
 package org.pentaho.platform.repository.pcr;
 
+import java.util.Date;
+
 import javax.jcr.Item;
 import javax.jcr.Node;
 import javax.jcr.PathNotFoundException;
+import javax.jcr.Property;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
-import javax.jcr.version.Version;
 import javax.jcr.version.VersionHistory;
 import javax.jcr.version.VersionIterator;
 
@@ -126,6 +128,36 @@ public class SimpleJcrTestUtils {
       }
     });
 
+  }
+  
+  public static boolean isLocked(final JcrTemplate jcrTemplate, final String absPath) {
+    return (Boolean) jcrTemplate.execute(new JcrCallback() {
+      public Object doInJcr(final Session session) throws RepositoryException {
+        Item item = session.getItem(absPath);
+        Assert.isTrue(item.isNode());
+        return ((Node) item).isLocked();
+      }
+    });
+  }
+  
+  public static String getString(final JcrTemplate jcrTemplate, final String absPath) {
+    return (String) jcrTemplate.execute(new JcrCallback() {
+      public Object doInJcr(final Session session) throws RepositoryException {
+        Item item = session.getItem(absPath);
+        Assert.isTrue(!item.isNode());
+        return ((Property) item).getString();
+      }
+    });
+  }
+  
+  public static Date getDate(final JcrTemplate jcrTemplate, final String absPath) {
+    return (Date) jcrTemplate.execute(new JcrCallback() {
+      public Object doInJcr(final Session session) throws RepositoryException {
+        Item item = session.getItem(absPath);
+        Assert.isTrue(!item.isNode());
+        return ((Property) item).getDate().getTime();
+      }
+    });
   }
 
 }

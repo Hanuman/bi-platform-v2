@@ -1,6 +1,7 @@
 package org.pentaho.platform.repository.pcr;
 
 import java.io.IOException;
+import java.util.Calendar;
 import java.util.List;
 
 import javax.jcr.Item;
@@ -8,16 +9,19 @@ import javax.jcr.Node;
 import javax.jcr.PathNotFoundException;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
+import javax.jcr.lock.Lock;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.pentaho.platform.api.repository.IPentahoContentDao;
 import org.pentaho.platform.api.repository.IRepositoryFileContent;
+import org.pentaho.platform.api.repository.LockSummary;
 import org.pentaho.platform.api.repository.RepositoryFile;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.extensions.jcr.JcrCallback;
 import org.springframework.extensions.jcr.JcrTemplate;
 import org.springframework.util.Assert;
+import org.springframework.util.StringUtils;
 
 /**
  * CRUD operations against JCR. Note that there is no access control in this class (implicit or explicit).
@@ -38,14 +42,17 @@ public class JcrPentahoContentDao implements IPentahoContentDao, InitializingBea
 
   private List<Transformer<IRepositoryFileContent>> transformers;
 
+  private ILockTokenHelper lockTokenHelper;
+
   // ~ Constructors ====================================================================================================
 
   public JcrPentahoContentDao(final JcrTemplate jcrTemplate,
-      final List<Transformer<IRepositoryFileContent>> transformers) {
+      final List<Transformer<IRepositoryFileContent>> transformers, final ILockTokenHelper lockTokenHelper) {
     super();
     this.jcrTemplate = jcrTemplate;
     this.transformers = transformers;
     this.nodeIdStrategy = new UuidNodeIdStrategy(jcrTemplate);
+    this.lockTokenHelper = lockTokenHelper;
   }
 
   // ~ Methods =========================================================================================================
@@ -240,6 +247,42 @@ public class JcrPentahoContentDao implements IPentahoContentDao, InitializingBea
     });
   }
 
+  public LockSummary getLockSummary(final RepositoryFile file) {
+    Assert.notNull(file);
+    Assert.notNull(file.getId());
+    Assert.isTrue(!file.isFolder());
+    return (LockSummary) jcrTemplate.execute(new JcrCallback() {
+      public Object doInJcr(final Session session) throws RepositoryException, IOException {
+        return JcrRepositoryFileUtils.getLockSummary(session, nodeIdStrategy, file);
+      }
+    });
+  }
+
+  public void lockFile(final RepositoryFile file, final String message) {
+    Assert.notNull(file);
+    Assert.notNull(file.getId());
+    Assert.isTrue(!file.isFolder());
+    jcrTemplate.execute(new JcrCallback() {
+      public Object doInJcr(final Session session) throws RepositoryException, IOException {
+
+        JcrRepositoryFileUtils.lockFile(session, nodeIdStrategy, file, message, lockTokenHelper);
+        return null;
+      }
+    });
+  }
+
+  public void unlockFile(final RepositoryFile file) {
+    Assert.notNull(file);
+    Assert.notNull(file.getId());
+    Assert.isTrue(!file.isFolder());
+    jcrTemplate.execute(new JcrCallback() {
+      public Object doInJcr(final Session session) throws RepositoryException, IOException {
+        JcrRepositoryFileUtils.unlockFile(session, nodeIdStrategy, file, lockTokenHelper);
+        return null;
+      }
+    });
+  }
+
   /**
    * A pluggable method for reading and writing {@link IRepositoryFileContent} implementations.
    * 
@@ -297,6 +340,43 @@ public class JcrPentahoContentDao implements IPentahoContentDao, InitializingBea
     void updateContentNode(final Session session, final NodeIdStrategy nodeIdStrategy, final T content,
         final Node resourceNode) throws RepositoryException, IOException;
 
+  }
+
+  /**
+   * Helper class that stores, retrieves, and removes lock tokens. In section 8.4.7 of the JSR-170 specification, it 
+   * states, "the user must additionally ensure that a reference to the lock token is preserved separately so that it 
+   * can later be attached to another session." This manual step is necessary when using open-scoped locks and this 
+   * implementation uses open-scoped locks exclusively.
+   * 
+   * @author mlowery
+   */
+  public static interface ILockTokenHelper {
+    /**
+     * Stores a lock token associated with the session's user.
+     * 
+     * @param session session whose userID will be used
+     * @param lock recently created lock; can get the locked node and lock token from this object
+     */
+    void addLockToken(final Session session, final NodeIdStrategy nodeIdStrategy, final Lock lock)
+        throws RepositoryException;
+
+    /**
+     * Returns all lock tokens belonging to the session's user. Lock tokens can then be added to the session by calling
+     * {@code Session.addLockToken(token)}.
+     * 
+     * @param session session whose userID will be used
+     * @return list of tokens
+     */
+    List<String> getLockTokens(final Session session, final NodeIdStrategy nodeIdStrategy) throws RepositoryException;
+
+    /**
+     * Removes a lock token
+     * 
+     * @param session session whose userID will be used
+     * @param lock lock whose token is to be removed; can get the locked node and lock token from this object
+     */
+    void removeLockToken(final Session session, final NodeIdStrategy nodeIdStrategy, final Lock lock)
+        throws RepositoryException;
   }
 
 }

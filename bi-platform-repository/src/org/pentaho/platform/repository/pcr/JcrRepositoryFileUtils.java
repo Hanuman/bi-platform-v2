@@ -14,11 +14,15 @@ import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.Value;
+import javax.jcr.lock.Lock;
 
 import org.pentaho.platform.api.repository.IRepositoryFileContent;
+import org.pentaho.platform.api.repository.LockSummary;
 import org.pentaho.platform.api.repository.RepositoryFile;
+import org.pentaho.platform.repository.pcr.JcrPentahoContentDao.ILockTokenHelper;
 import org.pentaho.platform.repository.pcr.JcrPentahoContentDao.Transformer;
 import org.springframework.util.Assert;
+import org.springframework.util.StringUtils;
 
 public class JcrRepositoryFileUtils {
   public static RepositoryFile getFileById(final Session session, final NodeIdStrategy nodeIdStrategy,
@@ -110,6 +114,7 @@ public class JcrRepositoryFileUtils {
 
     Node fileNode = parentFolderNode.addNode(file.getName(), PentahoJcrConstants.NT_FILE);
     fileNode.addMixin(addPentahoPrefix(session, PentahoJcrConstants.PENTAHO_MIXIN_PENTAHOFILE));
+    fileNode.addMixin(addPentahoPrefix(session, PentahoJcrConstants.PENTAHO_MIXIN_LOCKABLE));
     fileNode.setProperty(addPentahoPrefix(session, PentahoJcrConstants.PENTAHO_CONTENTTYPE), content.getContentType());
     nodeIdStrategy.setId(fileNode, null);
     Node resourceNode = fileNode.addNode(PentahoJcrConstants.JCR_CONTENT, PentahoJcrConstants.NT_RESOURCE);
@@ -260,7 +265,7 @@ public class JcrRepositoryFileUtils {
    * Conditionally checks out node representing file if node is versionable.
    */
   public static void checkoutNearestVersionableFileIfNecessary(final Session session,
-      final NodeIdStrategy nodeIdStrategy, final RepositoryFile file) throws RepositoryException, IOException {
+      final NodeIdStrategy nodeIdStrategy, final RepositoryFile file) throws RepositoryException {
     // file could be null meaning the caller is using null as the parent folder; that's OK; in this case the node in
     // question would be the repository root node and that is never versioned
     if (file != null) {
@@ -273,11 +278,11 @@ public class JcrRepositoryFileUtils {
    * Conditionally checks out node if node is versionable.
    */
   public static void checkoutNearestVersionableNodeIfNecessary(final Session session,
-      final NodeIdStrategy nodeIdStrategy, final Node node) throws RepositoryException, IOException {
+      final NodeIdStrategy nodeIdStrategy, final Node node) throws RepositoryException {
     Assert.notNull(node);
 
     Node versionableNode = findNearestVersionableNode(node);
-    
+
     if (versionableNode != null) {
       versionableNode.checkout();
     }
@@ -287,7 +292,7 @@ public class JcrRepositoryFileUtils {
    * Conditionally checks in node representing file if node is versionable.
    */
   public static void checkinNearestVersionableFileIfNecessary(final Session session,
-      final NodeIdStrategy nodeIdStrategy, final RepositoryFile file) throws RepositoryException, IOException {
+      final NodeIdStrategy nodeIdStrategy, final RepositoryFile file) throws RepositoryException {
     // file could be null meaning the caller is using null as the parent folder; that's OK; in this case the node in
     // question would be the repository root node and that is never versioned
     if (file != null) {
@@ -300,11 +305,11 @@ public class JcrRepositoryFileUtils {
    * Conditionally checks in node if node is versionable.
    */
   public static void checkinNearestVersionableNodeIfNecessary(final Session session,
-      final NodeIdStrategy nodeIdStrategy, final Node node) throws RepositoryException, IOException {
+      final NodeIdStrategy nodeIdStrategy, final Node node) throws RepositoryException {
     Assert.notNull(node);
-    
+
     Node versionableNode = findNearestVersionableNode(node);
-    
+
     if (versionableNode != null) {
       versionableNode.checkin();
     }
@@ -313,18 +318,18 @@ public class JcrRepositoryFileUtils {
   /**
    * Returns the nearest versionable node (possibly the node itself) or null if the root is reached.
    */
-    private static Node findNearestVersionableNode(final Node node) throws RepositoryException, IOException {
-      Node currentNode = node;
-      while (!currentNode.isNodeType(PentahoJcrConstants.MIX_VERSIONABLE)) {
-        try {
-          currentNode = currentNode.getParent();
-        } catch (ItemNotFoundException e) {
-          // at the root
-          return null;
-        }
+  private static Node findNearestVersionableNode(final Node node) throws RepositoryException {
+    Node currentNode = node;
+    while (!currentNode.isNodeType(PentahoJcrConstants.MIX_VERSIONABLE)) {
+      try {
+        currentNode = currentNode.getParent();
+      } catch (ItemNotFoundException e) {
+        // at the root
+        return null;
       }
-      return currentNode;
     }
+    return currentNode;
+  }
 
   public static void deleteFile(final Session session, final NodeIdStrategy nodeIdStrategy, final RepositoryFile file)
       throws RepositoryException, IOException {
@@ -333,4 +338,64 @@ public class JcrRepositoryFileUtils {
     Assert.notNull(fileNode);
     fileNode.remove();
   }
+
+  public static void lockFile(final Session session, final NodeIdStrategy nodeIdStrategy, final RepositoryFile file,
+      final String message, final ILockTokenHelper lockTokenHelper) throws RepositoryException, IOException {
+    // locks are always deep in this impl
+    final boolean isDeep = true;
+    // locks are always open-scoped since a session is short-lived and all work occurs in a transaction
+    // anyway; from spec, "if a lock is enabled and then disabled within the same transaction, its effect never 
+    // makes it to the persistent workspace and therefore it does nothing"
+    final boolean isSessionScoped = false;
+    Node fileNode = nodeIdStrategy.findNodeById(session, file.getId());
+    Assert.isTrue(fileNode.isNodeType(addPentahoPrefix(session, PentahoJcrConstants.PENTAHO_MIXIN_LOCKABLE)));
+    Lock lock = fileNode.lock(isDeep, isSessionScoped);
+
+    lockTokenHelper.addLockToken(session, nodeIdStrategy, lock);
+
+    // add custom lock properties
+    checkoutNearestVersionableNodeIfNecessary(session, nodeIdStrategy, fileNode);
+    if (StringUtils.hasText(message)) {
+      fileNode.setProperty(addPentahoPrefix(session, PentahoJcrConstants.PENTAHO_LOCKMESSAGE), message);
+    }
+    fileNode.setProperty(addPentahoPrefix(session, PentahoJcrConstants.PENTAHO_LOCKDATE), Calendar.getInstance());
+    session.save();
+    checkinNearestVersionableNodeIfNecessary(session, nodeIdStrategy, fileNode);
+  }
+
+  public static void unlockFile(final Session session, final NodeIdStrategy nodeIdStrategy, final RepositoryFile file,
+      final ILockTokenHelper lockTokenHelper) throws RepositoryException, IOException {
+    Node fileNode = nodeIdStrategy.findNodeById(session, file.getId());
+    List<String> lockTokens = lockTokenHelper.getLockTokens(session, nodeIdStrategy);
+    for (String lockToken : lockTokens) {
+      session.addLockToken(lockToken);
+    }
+    Lock lock = fileNode.getLock();
+    // don't need lock token anymore
+    lockTokenHelper.removeLockToken(session, nodeIdStrategy, lock);
+    fileNode.unlock();
+    // remove custom lock properties
+    checkoutNearestVersionableNodeIfNecessary(session, nodeIdStrategy, fileNode);
+    if (fileNode.hasProperty(addPentahoPrefix(session, PentahoJcrConstants.PENTAHO_LOCKMESSAGE))) {
+      fileNode.getProperty(addPentahoPrefix(session, PentahoJcrConstants.PENTAHO_LOCKMESSAGE)).remove();
+    }
+    fileNode.getProperty(addPentahoPrefix(session, PentahoJcrConstants.PENTAHO_LOCKDATE)).remove();
+    session.save();
+    checkinNearestVersionableNodeIfNecessary(session, nodeIdStrategy, fileNode);
+  }
+
+  public static LockSummary getLockSummary(final Session session, final NodeIdStrategy nodeIdStrategy,
+      final RepositoryFile file) throws RepositoryException, IOException {
+    Node fileNode = nodeIdStrategy.findNodeById(session, file.getId());
+    if (fileNode.isLocked()) {
+      Assert.isTrue(fileNode.isNodeType(addPentahoPrefix(session, PentahoJcrConstants.PENTAHO_MIXIN_LOCKABLE)));
+      Lock lock = fileNode.getLock();
+      return new LockSummary(lock.getLockOwner(), fileNode.getProperty(
+          addPentahoPrefix(session, PentahoJcrConstants.PENTAHO_LOCKDATE)).getDate().getTime(), fileNode.getProperty(
+          addPentahoPrefix(session, PentahoJcrConstants.PENTAHO_LOCKMESSAGE)).getString());
+    } else {
+      return null;
+    }
+  }
+
 }

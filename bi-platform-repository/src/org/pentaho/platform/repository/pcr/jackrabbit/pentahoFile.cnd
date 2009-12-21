@@ -1,14 +1,5 @@
 /*
 Pentaho file mixin node type.  (To be applied to nt:file or nt:linkedfile nodes.)
-
-Some of the properties in this node definition are copied from nt:resource because access control is applied to the 
-nt:resource node and we want users to be able to get an nt:file and "preview" some of the nt:resource node properties
-without being blocked by access control.
-
-Properties from nt:resource include:
--- lastModified
-
-These should be kept in sync with the actual property values on the nt:resource. 
 */
 
 // The namespace declaration
@@ -21,6 +12,8 @@ These should be kept in sync with the actual property values on the nt:resource.
 mixin
 
 // Nodes of this node type have a property called 'ns:contentType' of type STRING
+// contentType is distinct from mime type; two files can have the same mime type (e.g. text/xml) but be of two different
+// contentTypes--xaction vs. xdash
 - ns:contentType (string)
 
 // and it is...

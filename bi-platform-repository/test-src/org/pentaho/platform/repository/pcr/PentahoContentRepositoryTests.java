@@ -5,7 +5,6 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 
 import java.io.ByteArrayInputStream;
 import java.io.Serializable;
@@ -14,6 +13,9 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import javax.jcr.Node;
+import javax.jcr.Property;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.logging.Log;
@@ -33,7 +35,6 @@ import org.springframework.context.ApplicationContextAware;
 import org.springframework.dao.DataRetrievalFailureException;
 import org.springframework.extensions.jcr.JcrTemplate;
 import org.springframework.extensions.jcr.SessionFactory;
-import org.springframework.security.AccessDeniedException;
 import org.springframework.security.Authentication;
 import org.springframework.security.GrantedAuthority;
 import org.springframework.security.GrantedAuthorityImpl;
@@ -454,8 +455,9 @@ public class PentahoContentRepositoryTests implements ApplicationContextAware {
     SecurityContextHolder.getContext().setAuthentication(AUTHENTICATION_SUZY);
     pentahoContentRepository.createUserHomeFolderIfNecessary();
     final String parentOfFolderToDeletePath = "/pentaho/acme/home/suzy";
-    RepositoryFile parentFolder = pentahoContentRepository.getFile(parentOfFolderToDeletePath); 
-    RepositoryFile newFolder = pentahoContentRepository.createFolder(parentFolder, new RepositoryFile.Builder("test").folder(true).build());
+    RepositoryFile parentFolder = pentahoContentRepository.getFile(parentOfFolderToDeletePath);
+    RepositoryFile newFolder = pentahoContentRepository.createFolder(parentFolder, new RepositoryFile.Builder("test")
+        .folder(true).build());
     assertNotNull(newFolder);
     final String folderToDeletePath = parentOfFolderToDeletePath + "/test";
     assertNotNull(SimpleJcrTestUtils.getItem(testJcrTemplate, folderToDeletePath));
@@ -465,7 +467,7 @@ public class PentahoContentRepositoryTests implements ApplicationContextAware {
     assertNull(SimpleJcrTestUtils.getItem(testJcrTemplate, "/pentaho/acme/home/suzy/test"));
     assertTrue(SimpleJcrTestUtils.getVersionCount(testJcrTemplate, parentOfFolderToDeletePath) > versionCount);
   }
-  
+
   @Test
   public void testWriteToPublic() throws Exception {
     pentahoContentRepository.startup();
@@ -508,12 +510,48 @@ public class PentahoContentRepositoryTests implements ApplicationContextAware {
     RepositoryFile newFile = pentahoContentRepository.createFile(parentFolder, new RepositoryFile.Builder(fileName)
         .versioned(true).build(), content);
     assertTrue(newFile.isVersioned());
-    final String filePath = parentFolderPath + RepositoryFile.SEPARATOR
-    + fileName;
+    final String filePath = parentFolderPath + RepositoryFile.SEPARATOR + fileName;
     int versionCount = SimpleJcrTestUtils.getVersionCount(testJcrTemplate, filePath);
     assertTrue(versionCount > 0);
     pentahoContentRepository.updateFile(newFile, content);
     assertTrue(SimpleJcrTestUtils.getVersionCount(testJcrTemplate, filePath) > versionCount);
+  }
+
+  @Test
+  public void testLockFile() throws Exception {
+    pentahoContentRepository.startup();
+    SecurityContextHolder.getContext().setAuthentication(AUTHENTICATION_SUZY);
+    pentahoContentRepository.createUserHomeFolderIfNecessary();
+    final String parentFolderPath = "/pentaho/acme/public";
+    RepositoryFile parentFolder = pentahoContentRepository.getFile(parentFolderPath);
+    final String dataString = "Hello World!";
+    final String encoding = "UTF-8";
+    byte[] data = dataString.getBytes(encoding);
+    ByteArrayInputStream dataStream = new ByteArrayInputStream(data);
+    final String mimeType = "text/plain";
+    final String fileName = "helloworld.xaction";
+
+    final SimpleRepositoryFileContent content = new SimpleRepositoryFileContent(dataStream, encoding, mimeType);
+    RepositoryFile newFile = pentahoContentRepository.createFile(parentFolder, new RepositoryFile.Builder(fileName)
+        .build(), content);
+    final String filePath = parentFolderPath + RepositoryFile.SEPARATOR + fileName;
+    assertNull(pentahoContentRepository.getLockSummary(newFile));
+    final String lockMessage = "test by Mat";
+    pentahoContentRepository.lockFile(newFile, lockMessage);
+
+    assertTrue(SimpleJcrTestUtils.isLocked(testJcrTemplate, filePath));
+    assertTrue(SimpleJcrTestUtils.getString(testJcrTemplate, filePath + "/pho:lockMessage")
+        .equals(lockMessage));
+    assertNotNull(SimpleJcrTestUtils.getDate(testJcrTemplate, filePath + "/pho:lockDate"));
+
+    SecurityContextHolder.getContext().setAuthentication(AUTHENTICATION_TIFFANY);
+    assertNotNull(pentahoContentRepository.getLockSummary(pentahoContentRepository.getFile(filePath)));
+
+    SecurityContextHolder.getContext().setAuthentication(AUTHENTICATION_SUZY);
+    pentahoContentRepository.unlockFile(newFile);
+
+    assertFalse(SimpleJcrTestUtils.isLocked(testJcrTemplate, filePath));
+    assertNull(pentahoContentRepository.getLockSummary(newFile));
   }
 
   private RepositoryFile createRunResultFile(final String parentFolderPath, final String expectedName,

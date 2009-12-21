@@ -67,4 +67,20 @@ public interface PentahoJcrConstants {
   //String PENTAHO_VERSIONED = "versioned";
 
   String PENTAHO_CONTENTTYPE = "contentType";
+
+  String PENTAHO_LOCKMESSAGE = "lockMessage";
+  
+  String PENTAHO_LOCKDATE = "lockDate";
+
+  String PENTAHO_MIXIN_LOCKABLE = "pentahoLockable";
+
+  String MIX_LOCKABLE = "mix:lockable";
+
+  String PENTAHO_INTERNALFOLDER = "pentahoInternalFolder";
+
+  String PENTAHO_LOCKEDNODEREF = "lockedNodeRef";
+
+  String PENTAHO_LOCKTOKEN = "lockToken";
+
+  String PENTAHO_LOCKTOKENSTORAGE = "pentahoLockTokenStorage";
 }

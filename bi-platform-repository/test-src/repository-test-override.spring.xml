@@ -52,6 +52,9 @@
   <bean id="Privilege.JCR_VERSION_MANAGEMENT" class="org.springframework.beans.factory.config.FieldRetrievingFactoryBean">
     <property name="staticField" value="org.apache.jackrabbit.api.jsr283.security.Privilege.JCR_VERSION_MANAGEMENT" />
   </bean>
+  <bean id="Privilege.JCR_LOCK_MANAGEMENT" class="org.springframework.beans.factory.config.FieldRetrievingFactoryBean">
+    <property name="staticField" value="org.apache.jackrabbit.api.jsr283.security.Privilege.JCR_LOCK_MANAGEMENT" />
+  </bean>
 
   <!-- The authority name granted to the repository admin. -->
   <bean id="executePrivilegeName" class="java.lang.String">
@@ -86,6 +89,7 @@
             <!-- JCR_NODE_TYPE_MANAGEMENT is required when creating a node of a specific type -->
             <ref bean="jackrabbitWritePrivilegeName" />
             <ref bean="Privilege.JCR_VERSION_MANAGEMENT" />
+            <ref bean="Privilege.JCR_LOCK_MANAGEMENT" />
           </list>
         </entry>
         <entry key-ref="RepositoryFilePermission.DELETE">
@@ -98,6 +102,7 @@
             <!-- JCR_NODE_TYPE_MANAGEMENT is required when creating a node of a specific type -->
             <ref bean="jackrabbitWritePrivilegeName" />
             <ref bean="Privilege.JCR_VERSION_MANAGEMENT" />
+            <ref bean="Privilege.JCR_LOCK_MANAGEMENT" />
           </list>
         </entry>
         <entry key-ref="RepositoryFilePermission.DELETE_CHILD">
@@ -168,6 +173,11 @@
         </entry>
         <entry key-ref="Privilege.JCR_VERSION_MANAGEMENT">
           <!-- JCR_VERSION_MANAGEMENT doesn't translate to a RepositoryFilePermission -->
+          <list>
+          </list>
+        </entry>
+        <entry key-ref="Privilege.JCR_LOCK_MANAGEMENT">
+          <!-- JCR_LOCK_MANAGEMENT doesn't translate to a RepositoryFilePermission -->
           <list>
           </list>
         </entry>

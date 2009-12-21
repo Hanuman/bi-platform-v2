@@ -8,6 +8,7 @@ import org.apache.commons.logging.LogFactory;
 import org.pentaho.platform.api.repository.IPentahoContentDao;
 import org.pentaho.platform.api.repository.IPentahoContentRepository;
 import org.pentaho.platform.api.repository.IRepositoryFileContent;
+import org.pentaho.platform.api.repository.LockSummary;
 import org.pentaho.platform.api.repository.RepositoryFile;
 import org.pentaho.platform.repository.pcr.springsecurity.RepositoryFilePermission;
 import org.springframework.security.Authentication;
@@ -405,6 +406,27 @@ public class PentahoContentRepository implements IPentahoContentRepository {
     return "Acme_Admin";
   }
 
+  public LockSummary getLockSummary(final RepositoryFile file) {
+    Assert.notNull(file);
+    Assert.notNull(file.getId());
+    Assert.isTrue(!file.isFolder());
+    return contentDao.getLockSummary(file);
+  }
+
+  public void lockFile(final RepositoryFile file, final String message) {
+    Assert.notNull(file);
+    Assert.notNull(file.getId());
+    Assert.isTrue(!file.isFolder());
+    contentDao.lockFile(file, message);
+  }
+
+  public void unlockFile(final RepositoryFile file) {
+    Assert.notNull(file);
+    Assert.notNull(file.getId());
+    Assert.isTrue(!file.isFolder());
+    contentDao.unlockFile(file);
+  }
+
   /**
    * 
    * <p>
@@ -522,8 +544,8 @@ public class PentahoContentRepository implements IPentahoContentRepository {
               internalAddPermission(tenantRootFolder, new GrantedAuthoritySid(tenantAuthenticatedAuthorityName),
                   RepositoryFilePermission.DELETE_CHILD);
               // TODO mlowery uncomment
-              // internalAddPermission(tenantRootFolder, new GrantedAuthoritySid(tenantAuthenticatedAuthorityName),
-              //   RepositoryFilePermission.EXECUTE);
+//              internalAddPermission(tenantRootFolder, new GrantedAuthoritySid(tenantAuthenticatedAuthorityName),
+//                  RepositoryFilePermission.EXECUTE);
               internalAddPermission(tenantRootFolder, new GrantedAuthoritySid(tenantAuthenticatedAuthorityName),
                   RepositoryFilePermission.WRITE);
               // TODO mlowery don't want to give write_acl access on the folder itself but also don't want a special

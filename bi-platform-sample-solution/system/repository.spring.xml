@@ -112,6 +112,9 @@
         org.pentaho.platform.api.repository.IPentahoContentRepository.updateFile=PROPAGATION_REQUIRED
         org.pentaho.platform.api.repository.IPentahoContentRepository.getAcl=PROPAGATION_REQUIRED,readOnly
         org.pentaho.platform.api.repository.IPentahoContentRepository.deleteFile=PROPAGATION_REQUIRED
+        org.pentaho.platform.api.repository.IPentahoContentRepository.lockFile=PROPAGATION_REQUIRED
+        org.pentaho.platform.api.repository.IPentahoContentRepository.unlockFile=PROPAGATION_REQUIRED
+        org.pentaho.platform.api.repository.IPentahoContentRepository.getLockSummary=PROPAGATION_REQUIRED,readOnly
         </value>
     </property>
   </bean>
@@ -181,6 +184,9 @@
         org.pentaho.platform.api.repository.IPentahoContentRepository.updateFile=VOTE_ROLE_FILE_Authenticated
         org.pentaho.platform.api.repository.IPentahoContentRepository.getAcl=VOTE_ROLE_FILE_Authenticated
         org.pentaho.platform.api.repository.IPentahoContentRepository.deleteFile=VOTE_ROLE_FILE_Authenticated
+        org.pentaho.platform.api.repository.IPentahoContentRepository.lockFile=VOTE_ROLE_FILE_Authenticated
+        org.pentaho.platform.api.repository.IPentahoContentRepository.unlockFile=VOTE_ROLE_FILE_Authenticated
+        org.pentaho.platform.api.repository.IPentahoContentRepository.getLockSummary=VOTE_ROLE_FILE_Authenticated
       </value>
     </property>
   </bean>
@@ -203,9 +209,11 @@
       <list>
         <value>classpath:/org/pentaho/platform/repository/pcr/jackrabbit/pentahoFile.cnd</value>
         <value>classpath:/org/pentaho/platform/repository/pcr/jackrabbit/pentahoResource.cnd</value>
+        <value>classpath:/org/pentaho/platform/repository/pcr/jackrabbit/pentahoLockable.cnd</value>
+        <value>classpath:/org/pentaho/platform/repository/pcr/jackrabbit/pentahoInternalFolder.cnd</value>
+        <value>classpath:/org/pentaho/platform/repository/pcr/jackrabbit/pentahoLockTokenStorage.cnd</value>
       </list>
     </property>
-
   </bean>
 
   <bean id="credentialsStrategy" class="org.pentaho.platform.repository.pcr.sejcr.SpringSecurityCredentialsStrategy" />
@@ -227,6 +235,9 @@
           </constructor-arg>
         </bean>
       </list>
+    </constructor-arg>
+    <constructor-arg>
+      <bean class="org.pentaho.platform.repository.pcr.DefaultLockTokenHelper" />
     </constructor-arg>
   </bean>
 

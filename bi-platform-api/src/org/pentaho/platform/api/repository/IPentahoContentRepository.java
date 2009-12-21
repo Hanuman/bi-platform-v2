@@ -114,6 +114,31 @@ public interface IPentahoContentRepository {
    */
   void deleteFile(final RepositoryFile file);
   
+  // ~ Lock methods ====================================================================================================
+  
+  /**
+   * Locks a file.
+   * 
+   * @param file file to lock
+   * @param lock message
+   */
+  void lockFile(final RepositoryFile file, final String message);
+  
+  /**
+   * Unlocks a file.
+   * 
+   * @param file file to unlock
+   */
+  void unlockFile(final RepositoryFile file);
+  
+  /**
+   * Returns a non-null lock summary instance if this file is locked.
+   * 
+   * @param file file whose lock summary to get
+   * @return lock summary or {@code null} if file is not locked
+   */
+  LockSummary getLockSummary(final RepositoryFile file);
+  
   // ~ Access query methods ============================================================================================
 
   Acl getAcl(final RepositoryFile file);
