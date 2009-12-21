@@ -40,13 +40,30 @@ public class MondrianCatalog implements Serializable {
 
   private MondrianSchema schema;
 
+
+  // We will hold the extra information not directly related to XMLA properties
+  private MondrianCatalogComplementInfo mondrianCatalogComplementInfo;
+
+  private String whereCondition;
+
+
   public MondrianCatalog(final String name, final String dataSourceInfo, final String definition,
       final MondrianDataSource dataSource, final MondrianSchema schema) {
+
+    this(name, dataSourceInfo, definition, dataSource, schema, new MondrianCatalogComplementInfo());
+  }
+
+
+  public MondrianCatalog(final String name, final String dataSourceInfo, final String definition,
+                         final MondrianDataSource dataSource, final MondrianSchema schema,
+                         final MondrianCatalogComplementInfo mondrianCatalogComplementInfo) {
+
     this.name = name;
     this.dataSourceInfo = dataSourceInfo;
     this.definition = definition;
     this.dataSource = dataSource;
     this.schema = schema;
+    this.mondrianCatalogComplementInfo = mondrianCatalogComplementInfo;
   }
 
   public String getName() {
@@ -63,6 +80,10 @@ public class MondrianCatalog implements Serializable {
 
   public MondrianSchema getSchema() {
     return schema;
+  }
+
+  public MondrianCatalogComplementInfo getMondrianCatalogComplementInfo() {
+    return mondrianCatalogComplementInfo;
   }
 
   /**

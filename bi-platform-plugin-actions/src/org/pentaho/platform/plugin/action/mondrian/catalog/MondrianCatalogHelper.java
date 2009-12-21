@@ -99,6 +99,12 @@ public class MondrianCatalogHelper implements IMondrianCatalogService {
    */
   private boolean useSchemaNameAsCatalogName = true;
 
+  /**
+   * Holds the additional catalog information
+   */
+  private Map<String, MondrianCatalogComplementInfo> catalogComplementInfoMap;
+
+
   // ~ Constructors ====================================================================================================
 
   private static final MondrianCatalogHelper instance = new MondrianCatalogHelper();
@@ -256,12 +262,61 @@ public class MondrianCatalogHelper implements IMondrianCatalogService {
       }
       final Parser parser = XOMUtil.createDefaultParser();
       final DOMWrapper doc = parser.parse(replacedConfigString);
+      catalogComplementInfoMap = makeCatalogComplementInfoMap(doc);
       return new DataSourcesConfig.DataSources(doc);
 
     } catch (XOMException e) {
       throw Util.newError(e, Messages.getInstance().getErrorString("MondrianCatalogHelper.ERROR_0002_FAILED_TO_PARSE_DATASOURCE_CONFIG", dataSourcesConfigString)); //$NON-NLS-1$
     }
   }
+
+  protected Map<String, MondrianCatalogComplementInfo> makeCatalogComplementInfoMap(final DOMWrapper doc) {
+
+    HashMap<String, MondrianCatalogComplementInfo> map = new HashMap();
+
+    DOMWrapper dataSource = doc.getElementChildren()[0];
+    DOMWrapper catalogs = null;
+
+    // Search Catalogs
+    for (int i = 0; i < dataSource.getElementChildren().length; i++) {
+      DOMWrapper element = dataSource.getElementChildren()[i];
+      if (element.getTagName().equals("Catalogs")) {
+        catalogs = element;
+        break;
+      }
+    }
+
+    // Generate the map. We need the name and the variables
+    for (int i = 0; i < catalogs.getElementChildren().length; i++) {
+      final DOMWrapper catalog = catalogs.getElementChildren()[i];
+      if (catalog.getTagName() != "Catalog") {
+        continue;
+      }
+
+      final String roleVariable = getDOMWrapperElementText(catalog, "RoleVariable");
+      final String whereCondition = getDOMWrapperElementText(catalog, "WhereCondition");
+
+      MondrianCatalogComplementInfo complementInfo = new MondrianCatalogComplementInfo();
+      complementInfo.setWhereCondition(whereCondition);
+      map.put(getDOMWrapperElementText(catalog, "Definition"), complementInfo);
+    }
+
+
+    return map;
+  }
+
+  private String getDOMWrapperElementText(final DOMWrapper element, final String name) {
+
+    for (int i = 0; i < element.getElementChildren().length; i++) {
+      DOMWrapper child = element.getElementChildren()[i];
+      if (child.getTagName().equals(name)) {
+        return child.getText();
+      }
+    }
+
+    return null;
+  }
+
 
   protected Map<String, MondrianCatalog> makeCatalogMap(final List<MondrianCatalog> cats) {
     Map<String, MondrianCatalog> map = new HashMap<String, MondrianCatalog>();
@@ -531,8 +586,11 @@ public class MondrianCatalogHelper implements IMondrianCatalogService {
           try {
             MondrianSchema schema = makeSchema(docAtUrlToString(catalog.definition, pentahoSession));
   
+            MondrianCatalogComplementInfo catalogComplementInfo = getCatalogComplementInfoMap(catalog.definition);
+
             MondrianCatalog mondrianCatalog = new MondrianCatalog(useSchemaNameAsCatalogName ? schema.getName()
-                : catalog.name, catalog.dataSourceInfo, catalog.definition, mondrianDataSource, schema);
+                    : catalog.name, catalog.dataSourceInfo, catalog.definition, mondrianDataSource, schema,
+                    catalogComplementInfo);
             localCatalogs.add(mondrianCatalog);
           } catch (Exception e) {
             MondrianCatalogHelper.logger.error(Messages.getInstance().getErrorString("MondrianCatalogHelper.ERROR_0013_FAILED_TO_LOAD_SCHEMA", catalog.definition), e); //$NON-NLS-1$
@@ -546,6 +604,16 @@ public class MondrianCatalogHelper implements IMondrianCatalogService {
     return localCatalogs;
   }
   
+  /**
+   * Method to access the MondrianCatalogComplementInfo taken a catalog name.
+   *
+   * @param name Catalog schema location
+   * @return MondrianCatalogComplementInfo object
+   */
+  public MondrianCatalogComplementInfo getCatalogComplementInfoMap(String name) {
+    return catalogComplementInfoMap.get(name);
+  }
+
   /**
    * this method loads a mondrian schema
    * 
