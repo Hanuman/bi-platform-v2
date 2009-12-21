@@ -18,8 +18,37 @@
 
   <script src="../js/pentaho-ajax.js" type="text/javascript"></script>
   <script src="../js/utils.js" type="text/javascript"></script>
+
+  <!--   Temporary fix for GWT localization BISERVER-3640 -->
+  <script src="../js/browserLocale.js" type="text/javascript"></script>
+
   <script type="text/javascript">
-    djConfig = { isDebug: false};
+    function getLocalePref() { 
+      var m = document.getElementsByTagName('meta'); 
+      for(var i in m){ 
+        if(m[i].name == "gwt:property") { 
+          return m[i].content.substring(m[i].content.indexOf('=')+1); 
+        } 
+      } 
+      // we didn't find it..
+      // default to old behavior
+      if ( navigator ) {
+        if ( navigator.language ) {
+          return navigator.language;
+        }
+        else if ( navigator.browserLanguage ) {
+          return navigator.browserLanguage;
+        }
+        else if ( navigator.systemLanguage ) {
+          return navigator.systemLanguage;
+        }
+        else if ( navigator.userLanguage ) {
+          return navigator.userLanguage;
+        }
+      }      
+    }
+
+    djConfig = { isDebug: false, locale: getLocalePref() };
   </script>
 
   <script src="../js/dojo.js" type="text/javascript"></script>
@@ -122,9 +151,6 @@
   <script src="js/controller/RepositoryBrowserController.js" type="text/javascript"></script>
   <script src="js/controller/Controller.js" type="text/javascript"></script>
   
-  <!--   Temporary fix for GWT localization BISERVER-3640 -->
-  <script src="../js/browserLocale.js" type="text/javascript"></script>
-
   <script language='javascript' src='../content/data-access/resources/gwt/DatasourceEditor.nocache.js'></script>
   
   <script type="text/javascript">
