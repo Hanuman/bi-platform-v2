@@ -16,7 +16,7 @@ import org.apache.jackrabbit.core.state.NodeState;
 import org.apache.jackrabbit.core.value.InternalValue;
 import org.apache.jackrabbit.spi.Name;
 import org.apache.jackrabbit.spi.Path;
-import org.pentaho.platform.repository.pcr.jackrabbit.PentahoDefaultAccessControlEditor;
+import org.pentaho.platform.repository.pcr.jcr.jackrabbit.PentahoDefaultAccessControlEditor;
 
      /**
       * <code>SecurityItemModifier</code>: An abstract helper class to allow classes
