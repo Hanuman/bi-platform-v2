@@ -8,14 +8,12 @@ import static org.junit.Assert.assertTrue;
 
 import java.io.ByteArrayInputStream;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import javax.jcr.Node;
-import javax.jcr.Property;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.logging.Log;
@@ -23,11 +21,16 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.jackrabbit.api.jsr283.security.Privilege;
 import org.junit.After;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.pentaho.platform.api.engine.IPentahoSession;
 import org.pentaho.platform.api.repository.IPentahoContentRepository;
 import org.pentaho.platform.api.repository.IRepositoryFileContent;
 import org.pentaho.platform.api.repository.RepositoryFile;
+import org.pentaho.platform.engine.core.system.PentahoSessionHolder;
+import org.pentaho.platform.engine.core.system.StandaloneSession;
+import org.pentaho.platform.engine.security.SecurityHelper;
 import org.pentaho.platform.repository.pcr.springsecurity.RepositoryFilePermission;
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
@@ -59,33 +62,17 @@ public class PentahoContentRepositoryTests implements ApplicationContextAware {
 
   private static final Log logger = LogFactory.getLog(PentahoContentRepositoryTests.class);
 
-  private static final Authentication AUTHENTICATION_JOE;
+  private static final String USERNAME_SUZY = "suzy";
 
-  private static final Authentication AUTHENTICATION_SUZY;
+  private static final String USERNAME_TIFFANY = "tiffany";
 
-  private static final Authentication AUTHENTICATION_TIFFANY;
+  private static final String USERNAME_PAT = "pat";
 
-  private static final Authentication AUTHENTICATION_PAT;
+  private static final String USERNAME_JOE = "joe";
 
-  static {
-    final String password = "password";
-    final GrantedAuthority[] acmeAdminAuthorities = new GrantedAuthority[] { new GrantedAuthorityImpl("Authenticated"),
-        new GrantedAuthorityImpl("Acme_Admin") };
-    final GrantedAuthority[] acmeNonAdminAuthorities = new GrantedAuthority[] {
-        new GrantedAuthorityImpl("Authenticated"), new GrantedAuthorityImpl("Acme_Authenticated") };
-    final GrantedAuthority[] duffNonAdminAuthorities = new GrantedAuthority[] {
-        new GrantedAuthorityImpl("Authenticated"), new GrantedAuthorityImpl("Duff_Authenticated") };
+  private static final String TENANT_ID_ACME = "acme";
 
-    UserDetails joe = new User("joe", password, true, true, true, true, acmeAdminAuthorities);
-    UserDetails suzy = new User("suzy", password, true, true, true, true, acmeNonAdminAuthorities);
-    UserDetails tiffany = new User("tiffany", password, true, true, true, true, acmeNonAdminAuthorities);
-    UserDetails pat = new User("pat", password, true, true, true, true, duffNonAdminAuthorities);
-
-    AUTHENTICATION_JOE = new UsernamePasswordAuthenticationToken(joe, password, acmeNonAdminAuthorities);
-    AUTHENTICATION_SUZY = new UsernamePasswordAuthenticationToken(suzy, password, acmeNonAdminAuthorities);
-    AUTHENTICATION_TIFFANY = new UsernamePasswordAuthenticationToken(tiffany, password, acmeNonAdminAuthorities);
-    AUTHENTICATION_PAT = new UsernamePasswordAuthenticationToken(pat, password, duffNonAdminAuthorities);
-  }
+  private static final String TENANT_ID_DUFF = "duff";
 
   // ~ Instance fields =================================================================================================
 
@@ -98,9 +85,9 @@ public class PentahoContentRepositoryTests implements ApplicationContextAware {
 
   private String repositoryAdminUsername;
 
-  private Sid repositoryAdminSid;
+  private String commonAuthenticatedAuthorityName;
 
-  private Sid commonAuthenticatedAuthorityName;
+  private Sid commonAuthenticatedAuthoritySid;
 
   private String repositoryAdminAuthorityName;
 
@@ -112,44 +99,49 @@ public class PentahoContentRepositoryTests implements ApplicationContextAware {
 
   // ~ Methods =========================================================================================================
 
+  @BeforeClass
+  public static void setUpClass() throws Exception {
+    PentahoSessionHolder.setStrategyName(PentahoSessionHolder.MODE_GLOBAL);
+  }
+
   @Before
   public void setUp() throws Exception {
-    SecurityContextHolder.getContext().setAuthentication(null);
+    logout();
   }
 
   @After
   public void tearDown() throws Exception {
-    SecurityContextHolder.getContext().setAuthentication(createRepositoryAdminAuthentication());
+    loginAsRepositoryAdmin();
     SimpleJcrTestUtils.deleteItem(testJcrTemplate, "/pentaho");
-    SecurityContextHolder.getContext().setAuthentication(null);
+    logout();
   }
 
   @Test(expected = IllegalStateException.class)
   public void testNotStartedUp() throws Exception {
-    SecurityContextHolder.getContext().setAuthentication(AUTHENTICATION_SUZY);
-    pentahoContentRepository.createUserHomeFolderIfNecessary();
+    login(USERNAME_SUZY, TENANT_ID_ACME);
+    pentahoContentRepository.getOrCreateUserHomeFolder();
   }
 
   @Test
   public void testStartup() throws Exception {
     pentahoContentRepository.startup();
     final String rootFolderPath = "/pentaho";
-    SecurityContextHolder.getContext().setAuthentication(createRepositoryAdminAuthentication());
+    loginAsRepositoryAdmin();
     // make sure pentaho root folder exists
     assertNotNull(SimpleJcrTestUtils.getItem(testJcrTemplate, rootFolderPath));
     // make sure ACEs exist
-    assertLocalAceExists(pentahoContentRepository.getFile(rootFolderPath), commonAuthenticatedAuthorityName,
+    assertLocalAceExists(pentahoContentRepository.getFile(rootFolderPath), commonAuthenticatedAuthoritySid,
         RepositoryFilePermission.READ);
-    assertLocalAceExists(pentahoContentRepository.getFile(rootFolderPath), commonAuthenticatedAuthorityName,
+    assertLocalAceExists(pentahoContentRepository.getFile(rootFolderPath), commonAuthenticatedAuthoritySid,
         RepositoryFilePermission.READ_ACL);
     // assertOwner(pentahoContentRepository.getFile(rootFolderPath), repositoryAdminSid);
   }
 
   @Test
-  public void testCreateUserHomeFolderIfNecessary() throws Exception {
+  public void testGetOrCreateUserHomeFolder() throws Exception {
     pentahoContentRepository.startup();
-    SecurityContextHolder.getContext().setAuthentication(AUTHENTICATION_SUZY);
-    RepositoryFile suzyHomeFolder = pentahoContentRepository.createUserHomeFolderIfNecessary();
+    login(USERNAME_SUZY, TENANT_ID_ACME);
+    RepositoryFile suzyHomeFolder = pentahoContentRepository.getOrCreateUserHomeFolder();
     assertNotNull(suzyHomeFolder);
     final String tenantRootFolderPath = "/pentaho/acme";
     final String publicFolderPath = tenantRootFolderPath + "/public";
@@ -175,12 +167,12 @@ public class PentahoContentRepositoryTests implements ApplicationContextAware {
   @Test
   public void testGetFileAccessDenied() throws Exception {
     pentahoContentRepository.startup();
-    SecurityContextHolder.getContext().setAuthentication(AUTHENTICATION_TIFFANY);
-    RepositoryFile tiffanyHomeFolder = pentahoContentRepository.createUserHomeFolderIfNecessary();
+    login(USERNAME_TIFFANY, TENANT_ID_ACME);
+    RepositoryFile tiffanyHomeFolder = pentahoContentRepository.getOrCreateUserHomeFolder();
     assertNotNull(tiffanyHomeFolder);
     assertNotNull(pentahoContentRepository.createFolder(tiffanyHomeFolder, new RepositoryFile.Builder("test").folder(
         true).build()));
-    SecurityContextHolder.getContext().setAuthentication(AUTHENTICATION_SUZY);
+    login(USERNAME_SUZY, TENANT_ID_ACME);
     final String acmeTenantRootFolderPath = "/pentaho/acme";
     final String homeFolderPath = acmeTenantRootFolderPath + "/home";
     final String tiffanyFolderPath = homeFolderPath + "/tiffany";
@@ -192,7 +184,7 @@ public class PentahoContentRepositoryTests implements ApplicationContextAware {
     final String tiffanySubFolderPath = tiffanyFolderPath + "/test";
     assertNull(pentahoContentRepository.getFile(tiffanySubFolderPath));
     // make sure Pat can't see acme folder (pat is in the duff tenant)
-    SecurityContextHolder.getContext().setAuthentication(AUTHENTICATION_PAT);
+    login(USERNAME_PAT, TENANT_ID_DUFF);
     assertNull(pentahoContentRepository.getFile(acmeTenantRootFolderPath));
     assertFalse(SimpleJcrTestUtils.hasPrivileges(testJcrTemplate, acmeTenantRootFolderPath, Privilege.JCR_READ));
     assertFalse(SimpleJcrTestUtils.hasPrivileges(testJcrTemplate, acmeTenantRootFolderPath,
@@ -202,17 +194,17 @@ public class PentahoContentRepositoryTests implements ApplicationContextAware {
   @Test
   public void testGetFileAdmin() throws Exception {
     pentahoContentRepository.startup();
-    SecurityContextHolder.getContext().setAuthentication(AUTHENTICATION_TIFFANY);
-    RepositoryFile tiffanyHomeFolder = pentahoContentRepository.createUserHomeFolderIfNecessary();
+    login(USERNAME_TIFFANY, TENANT_ID_ACME);
+    RepositoryFile tiffanyHomeFolder = pentahoContentRepository.getOrCreateUserHomeFolder();
     pentahoContentRepository.createFolder(tiffanyHomeFolder, new RepositoryFile.Builder("test").folder(true).build());
-    SecurityContextHolder.getContext().setAuthentication(AUTHENTICATION_JOE);
+    login(USERNAME_JOE, TENANT_ID_ACME, true);
     pentahoContentRepository.getFile("/pentaho/acme/home/tiffany/test");
   }
 
   @Test
   public void testGetFileNotExist() throws Exception {
     pentahoContentRepository.startup();
-    SecurityContextHolder.getContext().setAuthentication(AUTHENTICATION_TIFFANY);
+    login(USERNAME_TIFFANY, TENANT_ID_ACME);
     RepositoryFile file2 = pentahoContentRepository.getFile("/doesnotexist");
     assertNull(file2);
   }
@@ -232,18 +224,18 @@ public class PentahoContentRepositoryTests implements ApplicationContextAware {
   }
 
   @Test
-  public void testCreateHomeUserHomeFolderIfNecessaryTwice() throws Exception {
+  public void testGetOrCreateUserHomeFolderTwice() throws Exception {
     pentahoContentRepository.startup();
-    SecurityContextHolder.getContext().setAuthentication(AUTHENTICATION_SUZY);
-    assertNotNull(pentahoContentRepository.createUserHomeFolderIfNecessary());
-    assertNotNull(pentahoContentRepository.createUserHomeFolderIfNecessary());
+    login(USERNAME_SUZY, TENANT_ID_ACME);
+    assertNotNull(pentahoContentRepository.getOrCreateUserHomeFolder());
+    assertNotNull(pentahoContentRepository.getOrCreateUserHomeFolder());
   }
 
   @Test
   public void testCreateFolder() throws Exception {
     pentahoContentRepository.startup();
-    SecurityContextHolder.getContext().setAuthentication(AUTHENTICATION_SUZY);
-    pentahoContentRepository.createUserHomeFolderIfNecessary();
+    login(USERNAME_SUZY, TENANT_ID_ACME);
+    pentahoContentRepository.getOrCreateUserHomeFolder();
     RepositoryFile parentFolder = pentahoContentRepository.getFile("/pentaho/acme/home/suzy");
     RepositoryFile newFolder = new RepositoryFile.Builder("test").folder(true).build();
     Date beginTime = Calendar.getInstance().getTime();
@@ -259,7 +251,7 @@ public class PentahoContentRepositoryTests implements ApplicationContextAware {
   @Test(expected = DataRetrievalFailureException.class)
   public void testCreateFolderAccessDenied() throws Exception {
     pentahoContentRepository.startup();
-    SecurityContextHolder.getContext().setAuthentication(AUTHENTICATION_SUZY);
+    login(USERNAME_SUZY, TENANT_ID_ACME);
     RepositoryFile parentFolder = pentahoContentRepository.getFile("/pentaho");
     RepositoryFile newFolder = new RepositoryFile.Builder("test").folder(true).build();
     pentahoContentRepository.createFolder(parentFolder, newFolder);
@@ -268,7 +260,7 @@ public class PentahoContentRepositoryTests implements ApplicationContextAware {
   @Test(expected = IllegalArgumentException.class)
   public void testCreateFolderAtRootIllegal() throws Exception {
     pentahoContentRepository.startup();
-    SecurityContextHolder.getContext().setAuthentication(AUTHENTICATION_SUZY);
+    login(USERNAME_SUZY, TENANT_ID_ACME);
     RepositoryFile newFolder = new RepositoryFile.Builder("test").folder(true).build();
     pentahoContentRepository.createFolder(null, newFolder);
   }
@@ -276,7 +268,7 @@ public class PentahoContentRepositoryTests implements ApplicationContextAware {
   @Test(expected = IllegalArgumentException.class)
   public void testCreateFileAtRootIllegal() throws Exception {
     pentahoContentRepository.startup();
-    SecurityContextHolder.getContext().setAuthentication(AUTHENTICATION_SUZY);
+    login(USERNAME_SUZY, TENANT_ID_ACME);
     final String dataString = "Hello World!";
     final String encoding = "UTF-8";
     byte[] data = dataString.getBytes(encoding);
@@ -289,8 +281,8 @@ public class PentahoContentRepositoryTests implements ApplicationContextAware {
   @Test
   public void testCreateSimpleFile() throws Exception {
     pentahoContentRepository.startup();
-    SecurityContextHolder.getContext().setAuthentication(AUTHENTICATION_SUZY);
-    pentahoContentRepository.createUserHomeFolderIfNecessary();
+    login(USERNAME_SUZY, TENANT_ID_ACME);
+    pentahoContentRepository.getOrCreateUserHomeFolder();
     RepositoryFile parentFolder = pentahoContentRepository.getFile("/pentaho/acme/home/suzy");
     final String expectedDataString = "Hello World!";
     final String expectedEncoding = "UTF-8";
@@ -326,8 +318,8 @@ public class PentahoContentRepositoryTests implements ApplicationContextAware {
   @Test
   public void testCreateRunResultFile() throws Exception {
     pentahoContentRepository.startup();
-    SecurityContextHolder.getContext().setAuthentication(AUTHENTICATION_SUZY);
-    pentahoContentRepository.createUserHomeFolderIfNecessary();
+    login(USERNAME_SUZY, TENANT_ID_ACME);
+    pentahoContentRepository.getOrCreateUserHomeFolder();
     final String expectedDataString = "Hello World!";
     final String expectedEncoding = "UTF-8";
     final String expectedRunResultMimeType = "text/plain";
@@ -359,8 +351,8 @@ public class PentahoContentRepositoryTests implements ApplicationContextAware {
   @Test(expected = IllegalArgumentException.class)
   public void testCreateFileUnrecognizedContentType() throws Exception {
     pentahoContentRepository.startup();
-    SecurityContextHolder.getContext().setAuthentication(AUTHENTICATION_SUZY);
-    pentahoContentRepository.createUserHomeFolderIfNecessary();
+    login(USERNAME_SUZY, TENANT_ID_ACME);
+    pentahoContentRepository.getOrCreateUserHomeFolder();
     RepositoryFile parentFolder = pentahoContentRepository.getFile("/pentaho/acme/home/suzy");
     //    final String expectedDataString = "Hello World!";
     //    final String expectedEncoding = "UTF-8";
@@ -384,10 +376,10 @@ public class PentahoContentRepositoryTests implements ApplicationContextAware {
   @Test
   public void testGetChildren() throws Exception {
     pentahoContentRepository.startup();
-    SecurityContextHolder.getContext().setAuthentication(AUTHENTICATION_SUZY);
+    login(USERNAME_SUZY, TENANT_ID_ACME);
     List<RepositoryFile> children = pentahoContentRepository.getChildren(pentahoContentRepository.getFile("/pentaho"));
     assertEquals(0, children.size());
-    pentahoContentRepository.createUserHomeFolderIfNecessary();
+    pentahoContentRepository.getOrCreateUserHomeFolder();
     children = pentahoContentRepository.getChildren(pentahoContentRepository.getFile("/pentaho"));
     assertEquals(1, children.size());
     RepositoryFile f0 = children.get(0);
@@ -405,10 +397,10 @@ public class PentahoContentRepositoryTests implements ApplicationContextAware {
   @Test
   public void testListHomeFolders() throws Exception {
     pentahoContentRepository.startup();
-    SecurityContextHolder.getContext().setAuthentication(AUTHENTICATION_SUZY);
-    pentahoContentRepository.createUserHomeFolderIfNecessary();
-    SecurityContextHolder.getContext().setAuthentication(AUTHENTICATION_TIFFANY);
-    pentahoContentRepository.createUserHomeFolderIfNecessary();
+    login(USERNAME_SUZY, TENANT_ID_ACME);
+    pentahoContentRepository.getOrCreateUserHomeFolder();
+    login(USERNAME_TIFFANY, TENANT_ID_ACME);
+    pentahoContentRepository.getOrCreateUserHomeFolder();
     List<RepositoryFile> children = pentahoContentRepository.getChildren(pentahoContentRepository
         .getFile("/pentaho/acme/home"));
     assertEquals(1, children.size());
@@ -417,8 +409,8 @@ public class PentahoContentRepositoryTests implements ApplicationContextAware {
   @Test
   public void testUpdateFile() throws Exception {
     pentahoContentRepository.startup();
-    SecurityContextHolder.getContext().setAuthentication(AUTHENTICATION_SUZY);
-    pentahoContentRepository.createUserHomeFolderIfNecessary();
+    login(USERNAME_SUZY, TENANT_ID_ACME);
+    pentahoContentRepository.getOrCreateUserHomeFolder();
 
     final String parentFolderPath = "/pentaho/acme/home/suzy";
     final String expectedEncoding = "UTF-8";
@@ -452,8 +444,8 @@ public class PentahoContentRepositoryTests implements ApplicationContextAware {
   @Test
   public void testDeleteVersionedFile() throws Exception {
     pentahoContentRepository.startup();
-    SecurityContextHolder.getContext().setAuthentication(AUTHENTICATION_SUZY);
-    pentahoContentRepository.createUserHomeFolderIfNecessary();
+    login(USERNAME_SUZY, TENANT_ID_ACME);
+    pentahoContentRepository.getOrCreateUserHomeFolder();
     final String parentOfFolderToDeletePath = "/pentaho/acme/home/suzy";
     RepositoryFile parentFolder = pentahoContentRepository.getFile(parentOfFolderToDeletePath);
     RepositoryFile newFolder = pentahoContentRepository.createFolder(parentFolder, new RepositoryFile.Builder("test")
@@ -471,8 +463,8 @@ public class PentahoContentRepositoryTests implements ApplicationContextAware {
   @Test
   public void testWriteToPublic() throws Exception {
     pentahoContentRepository.startup();
-    SecurityContextHolder.getContext().setAuthentication(AUTHENTICATION_SUZY);
-    pentahoContentRepository.createUserHomeFolderIfNecessary();
+    login(USERNAME_SUZY, TENANT_ID_ACME);
+    pentahoContentRepository.getOrCreateUserHomeFolder();
     final String parentFolderPath = "/pentaho/acme/public";
     final String encoding = "UTF-8";
     final Map<String, String> runArguments = new HashMap<String, String>();
@@ -484,8 +476,8 @@ public class PentahoContentRepositoryTests implements ApplicationContextAware {
   @Test
   public void testCreateVersionedFolder() throws Exception {
     pentahoContentRepository.startup();
-    SecurityContextHolder.getContext().setAuthentication(AUTHENTICATION_SUZY);
-    pentahoContentRepository.createUserHomeFolderIfNecessary();
+    login(USERNAME_SUZY, TENANT_ID_ACME);
+    pentahoContentRepository.getOrCreateUserHomeFolder();
     RepositoryFile parentFolder = pentahoContentRepository.getFile("/pentaho/acme/home/suzy");
     RepositoryFile newFolder = new RepositoryFile.Builder("test").folder(true).versioned(true).build();
     newFolder = pentahoContentRepository.createFolder(parentFolder, newFolder);
@@ -494,8 +486,8 @@ public class PentahoContentRepositoryTests implements ApplicationContextAware {
   @Test
   public void testCreateVersionedFile() throws Exception {
     pentahoContentRepository.startup();
-    SecurityContextHolder.getContext().setAuthentication(AUTHENTICATION_SUZY);
-    pentahoContentRepository.createUserHomeFolderIfNecessary();
+    login(USERNAME_SUZY, TENANT_ID_ACME);
+    pentahoContentRepository.getOrCreateUserHomeFolder();
     final String parentFolderPath = "/pentaho/acme/home/suzy";
     RepositoryFile parentFolder = pentahoContentRepository.getFile(parentFolderPath);
 
@@ -520,8 +512,8 @@ public class PentahoContentRepositoryTests implements ApplicationContextAware {
   @Test
   public void testLockFile() throws Exception {
     pentahoContentRepository.startup();
-    SecurityContextHolder.getContext().setAuthentication(AUTHENTICATION_SUZY);
-    pentahoContentRepository.createUserHomeFolderIfNecessary();
+    login(USERNAME_SUZY, TENANT_ID_ACME);
+    pentahoContentRepository.getOrCreateUserHomeFolder();
     final String parentFolderPath = "/pentaho/acme/public";
     RepositoryFile parentFolder = pentahoContentRepository.getFile(parentFolderPath);
     final String dataString = "Hello World!";
@@ -540,14 +532,13 @@ public class PentahoContentRepositoryTests implements ApplicationContextAware {
     pentahoContentRepository.lockFile(newFile, lockMessage);
 
     assertTrue(SimpleJcrTestUtils.isLocked(testJcrTemplate, filePath));
-    assertTrue(SimpleJcrTestUtils.getString(testJcrTemplate, filePath + "/pho:lockMessage")
-        .equals(lockMessage));
+    assertTrue(SimpleJcrTestUtils.getString(testJcrTemplate, filePath + "/pho:lockMessage").equals(lockMessage));
     assertNotNull(SimpleJcrTestUtils.getDate(testJcrTemplate, filePath + "/pho:lockDate"));
 
-    SecurityContextHolder.getContext().setAuthentication(AUTHENTICATION_TIFFANY);
+    login(USERNAME_TIFFANY, TENANT_ID_ACME);
     assertNotNull(pentahoContentRepository.getLockSummary(pentahoContentRepository.getFile(filePath)));
 
-    SecurityContextHolder.getContext().setAuthentication(AUTHENTICATION_SUZY);
+    login(USERNAME_SUZY, TENANT_ID_ACME);
     pentahoContentRepository.unlockFile(newFile);
 
     assertFalse(SimpleJcrTestUtils.isLocked(testJcrTemplate, filePath));
@@ -584,20 +575,6 @@ public class PentahoContentRepositoryTests implements ApplicationContextAware {
     return SimpleJcrTestUtils.getNodeId(testJcrTemplate, absPath);
   }
 
-  private Authentication createRepositoryAdminAuthentication() {
-    final GrantedAuthority[] repositoryAdminAuthorities = new GrantedAuthority[2];
-    // necessary for AclAuthorizationStrategyImpl
-    repositoryAdminAuthorities[0] = new GrantedAuthorityImpl(repositoryAdminAuthorityName);
-    // necessary for unit test (Spring Security requires Authenticated role on all methods of PentahoContentRepository)
-    repositoryAdminAuthorities[1] = new GrantedAuthorityImpl("Authenticated");
-    final String password = "ignored";
-    UserDetails repositoryAdminUserDetails = new User(repositoryAdminUsername, password, true, true, true, true,
-        repositoryAdminAuthorities);
-    Authentication repositoryAdminAuthentication = new UsernamePasswordAuthenticationToken(repositoryAdminUserDetails,
-        password, repositoryAdminAuthorities);
-    return repositoryAdminAuthentication;
-  }
-
   public void setApplicationContext(final ApplicationContext applicationContext) throws BeansException {
     pentahoContentRepository = (IPentahoContentRepository) applicationContext.getBean("pentahoContentRepository");
     SessionFactory jcrSessionFactory = (SessionFactory) applicationContext.getBean("jcrSessionFactory");
@@ -607,9 +584,66 @@ public class PentahoContentRepositoryTests implements ApplicationContextAware {
     //    testMutableAclService = (MutableAclService) applicationContext.getBean("aclService");
     repositoryAdminUsername = (String) applicationContext.getBean("repositoryAdminUsername");
     repositoryAdminAuthorityName = (String) applicationContext.getBean("repositoryAdminAuthorityName");
-    repositoryAdminSid = new PrincipalSid(repositoryAdminUsername);
-    commonAuthenticatedAuthorityName = new GrantedAuthoritySid((String) applicationContext
-        .getBean("commonAuthenticatedAuthorityName"));
+    commonAuthenticatedAuthorityName = (String) applicationContext.getBean("commonAuthenticatedAuthorityName");
+    commonAuthenticatedAuthoritySid = new GrantedAuthoritySid(commonAuthenticatedAuthorityName);
+  }
+
+  /**
+   * Logs in with given username.
+   * 
+   * @param username username of user
+   * @param tenantId tenant to which this user belongs
+   * @tenantAdmin true to add the tenant admin authority to the user's roles
+   */
+  private void login(final String username, final String tenantId, final boolean tenantAdmin) {
+    StandaloneSession pentahoSession = new StandaloneSession(username);
+    pentahoSession.setAuthenticated(username);
+    pentahoSession.setAttribute(IPentahoSession.TENANT_ID_KEY, tenantId);
+    final String password = "password";
+    final String tenantAuthenticatedAuthorityNameSuffix = "_Authenticated";
+    final String tenantAdminAuthorityNameSuffix = "_Admin";
+
+    List<GrantedAuthority> authList = new ArrayList<GrantedAuthority>();
+    authList.add(new GrantedAuthorityImpl(commonAuthenticatedAuthorityName));
+    authList.add(new GrantedAuthorityImpl(tenantId + tenantAuthenticatedAuthorityNameSuffix));
+    if (tenantAdmin) {
+      authList.add(new GrantedAuthorityImpl(tenantId + tenantAdminAuthorityNameSuffix));
+    }
+    GrantedAuthority[] authorities = authList.toArray(new GrantedAuthority[0]);
+    UserDetails userDetails = new User(username, password, true, true, true, true, authorities);
+    Authentication auth = new UsernamePasswordAuthenticationToken(userDetails, password, authorities);
+    SecurityHelper.setPrincipal(auth, pentahoSession);
+    PentahoSessionHolder.setSession(pentahoSession);
+    // this line necessary for Spring Security's MethodSecurityInterceptor
+    SecurityContextHolder.getContext().setAuthentication(auth);
+  }
+
+  private void loginAsRepositoryAdmin() {
+    StandaloneSession pentahoSession = new StandaloneSession(repositoryAdminUsername);
+    pentahoSession.setAuthenticated(repositoryAdminUsername);
+    final GrantedAuthority[] repositoryAdminAuthorities = new GrantedAuthority[2];
+    // necessary for AclAuthorizationStrategyImpl
+    repositoryAdminAuthorities[0] = new GrantedAuthorityImpl(repositoryAdminAuthorityName);
+    // necessary for unit test (Spring Security requires Authenticated role on all methods of PentahoContentRepository)
+    repositoryAdminAuthorities[1] = new GrantedAuthorityImpl(commonAuthenticatedAuthorityName);
+    final String password = "ignored";
+    UserDetails repositoryAdminUserDetails = new User(repositoryAdminUsername, password, true, true, true, true,
+        repositoryAdminAuthorities);
+    Authentication repositoryAdminAuthentication = new UsernamePasswordAuthenticationToken(repositoryAdminUserDetails,
+        password, repositoryAdminAuthorities);
+    SecurityHelper.setPrincipal(repositoryAdminAuthentication, pentahoSession);
+    PentahoSessionHolder.setSession(pentahoSession);
+    // this line necessary for Spring Security's MethodSecurityInterceptor
+    SecurityContextHolder.getContext().setAuthentication(repositoryAdminAuthentication);
+  }
+
+  private void logout() {
+    PentahoSessionHolder.removeSession();
+    SecurityContextHolder.getContext().setAuthentication(null);
+  }
+
+  private void login(final String username, final String tenantId) {
+    login(username, tenantId, false);
   }
 
 }

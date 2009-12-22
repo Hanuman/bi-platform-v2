@@ -10,15 +10,12 @@ import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.lock.Lock;
-import javax.jcr.query.Query;
-import javax.jcr.query.QueryResult;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.pentaho.platform.api.engine.IPentahoSession;
+import org.pentaho.platform.engine.core.system.PentahoSessionHolder;
 import org.pentaho.platform.repository.pcr.JcrPentahoContentDao.ILockTokenHelper;
-import org.springframework.security.Authentication;
-import org.springframework.security.context.SecurityContextHolder;
-import org.springframework.security.userdetails.UserDetails;
 import org.springframework.util.Assert;
 
 public class DefaultLockTokenHelper implements ILockTokenHelper {
@@ -45,19 +42,15 @@ public class DefaultLockTokenHelper implements ILockTokenHelper {
   // ~ Methods =========================================================================================================
 
   private String internalGetTenantId() {
-    return "acme";
+    IPentahoSession pentahoSession = PentahoSessionHolder.getSession();
+    Assert.state(pentahoSession != null, "this method cannot be called with a null IPentahoSession");
+    return (String) pentahoSession.getAttribute(IPentahoSession.TENANT_ID_KEY);
   }
 
   private String internalGetUsername() {
-    Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-
-    Assert.state(auth != null);
-
-    if (auth.getPrincipal() instanceof UserDetails) {
-      return ((UserDetails) auth.getPrincipal()).getUsername();
-    } else {
-      return auth.getPrincipal().toString();
-    }
+    IPentahoSession pentahoSession = PentahoSessionHolder.getSession();
+    Assert.state(pentahoSession != null, "this method cannot be called with a null IPentahoSession");
+    return pentahoSession.getName();
   }
 
   private Node getOrCreateLockTokensNode(final Session session, final NodeIdStrategy nodeIdStrategy)
@@ -107,16 +100,14 @@ public class DefaultLockTokenHelper implements ILockTokenHelper {
 
   public void removeLockToken(final Session session, final NodeIdStrategy nodeIdStrategy, final Lock lock)
       throws RepositoryException {
-    String tenantId = internalGetTenantId();
-    String username = internalGetUsername();
     Node lockTokensNode = getOrCreateLockTokensNode(session, nodeIdStrategy);
-    Query query = session.getWorkspace().getQueryManager().createQuery(
-        MessageFormat.format(PATTERN_QUERY_LOCK_TOKEN, tenantId, username, lock.getNode().getUUID()), Query.XPATH);
-    QueryResult queryResult = query.execute();
-    NodeIterator nodes = queryResult.getNodes();
+    NodeIterator nodes = lockTokensNode.getNodes();
     JcrRepositoryFileUtils.checkoutNearestVersionableNodeIfNecessary(session, nodeIdStrategy, lockTokensNode);
     while (nodes.hasNext()) {
-      nodes.nextNode().remove();
+      Node node = nodes.nextNode();
+      if (node.getName().equals(lock.getLockToken())) {
+        node.remove();
+      }
     }
     session.save();
     JcrRepositoryFileUtils.checkinNearestVersionableNodeIfNecessary(session, nodeIdStrategy, lockTokensNode);

@@ -40,7 +40,7 @@ public class Demo implements ApplicationContextAware {
     // simulate interactive login
     login();
     // create the user's home folder if necessary
-    pentahoContentRepository.createUserHomeFolderIfNecessary();
+    pentahoContentRepository.getOrCreateUserHomeFolder();
     // encoding of content
     String encoding = "UTF-8";
     // stream for Pentaho content repository to read from during file creation

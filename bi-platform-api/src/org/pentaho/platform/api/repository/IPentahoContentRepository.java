@@ -31,7 +31,7 @@ public interface IPentahoContentRepository {
    * Starts up the repository.
    */
   void startup();
-  
+
   /**
    * Shuts down the repository.
    */
@@ -42,7 +42,7 @@ public interface IPentahoContentRepository {
    * 
    * @return home folder
    */
-  RepositoryFile createUserHomeFolderIfNecessary();
+  RepositoryFile getOrCreateUserHomeFolder();
 
   /**
    * Gets file. Use this method to test for file existence too.
@@ -51,7 +51,7 @@ public interface IPentahoContentRepository {
    * @return file or {@code null} if the file does not exist or access is denied
    */
   RepositoryFile getFile(final String absPath);
-  
+
   /**
    * Gets content for read.
    * 
@@ -69,7 +69,7 @@ public interface IPentahoContentRepository {
    * @return content
    */
   <T extends IRepositoryFileContent> T getContentForExecute(final RepositoryFile file, final Class<T> contentClass);
-  
+
   /**
    * Creates a file.
    * 
@@ -79,8 +79,9 @@ public interface IPentahoContentRepository {
    * @param content file content
    * @return file that is equal to given file except with id populated
    */
-  RepositoryFile createFile(final RepositoryFile parentFolder, final RepositoryFile file, final IRepositoryFileContent content);
-  
+  RepositoryFile createFile(final RepositoryFile parentFolder, final RepositoryFile file,
+      final IRepositoryFileContent content);
+
   /**
    * Creates a folder.
    * 
@@ -98,24 +99,25 @@ public interface IPentahoContentRepository {
    * @return list of children (never {@code null})
    */
   List<RepositoryFile> getChildren(final RepositoryFile folder);
-  
+
   /**
    * Updates a file and/or the content of a file.
    * 
-   * @param file updated file
+   * @param file updated file (not a folder)
    * @param content updated content
+   * @return updated file (possible with new version number)
    */
-  void updateFile(final RepositoryFile file, final IRepositoryFileContent content);
-  
+  RepositoryFile updateFile(final RepositoryFile file, final IRepositoryFileContent content);
+
   /**
    * Deletes a file or folder.
    * 
    * @param file file to delete
    */
   void deleteFile(final RepositoryFile file);
-  
+
   // ~ Lock methods ====================================================================================================
-  
+
   /**
    * Locks a file.
    * 
@@ -123,14 +125,14 @@ public interface IPentahoContentRepository {
    * @param lock message
    */
   void lockFile(final RepositoryFile file, final String message);
-  
+
   /**
    * Unlocks a file.
    * 
    * @param file file to unlock
    */
   void unlockFile(final RepositoryFile file);
-  
+
   /**
    * Returns a non-null lock summary instance if this file is locked.
    * 
@@ -138,7 +140,7 @@ public interface IPentahoContentRepository {
    * @return lock summary or {@code null} if file is not locked
    */
   LockSummary getLockSummary(final RepositoryFile file);
-  
+
   // ~ Access query methods ============================================================================================
 
   Acl getAcl(final RepositoryFile file);

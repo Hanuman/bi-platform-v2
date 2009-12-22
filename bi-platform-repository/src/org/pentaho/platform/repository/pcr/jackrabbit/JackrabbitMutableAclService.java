@@ -28,10 +28,12 @@ import org.apache.jackrabbit.core.security.authorization.JackrabbitAccessControl
 import org.apache.jackrabbit.core.security.authorization.PrivilegeRegistry;
 import org.apache.jackrabbit.core.security.principal.AdminPrincipal;
 import org.pentaho.platform.api.repository.RepositoryFile;
+import org.pentaho.platform.repository.pcr.IPentahoMutableAclService;
 import org.pentaho.platform.repository.pcr.JcrRepositoryFileUtils;
 import org.pentaho.platform.repository.pcr.NodeIdStrategy;
 import org.pentaho.platform.repository.pcr.PentahoJcrConstants;
 import org.pentaho.platform.repository.pcr.UuidNodeIdStrategy;
+import org.pentaho.platform.repository.pcr.springsecurity.RepositoryFilePermission;
 import org.springframework.extensions.jcr.JcrCallback;
 import org.springframework.extensions.jcr.JcrTemplate;
 import org.springframework.security.acls.Acl;
@@ -64,7 +66,7 @@ import org.springframework.util.Assert;
  * 
  * @author mlowery
  */
-public class JackrabbitMutableAclService implements MutableAclService {
+public class JackrabbitMutableAclService implements IPentahoMutableAclService {
 
   // ~ Static fields/initializers ======================================================================================
 
@@ -83,6 +85,8 @@ public class JackrabbitMutableAclService implements MutableAclService {
   private Map<Permission, List<String>> permissionToPrivilegeNamesMap;
 
   private Map<String, List<Permission>> privilegeNameToPermissionsMap;
+
+  private IAclHelper aclHelper = new AclHelper();
 
   /**
    * The name of the authority which is granted to all authenticated users, regardless of tenant.
@@ -125,7 +129,7 @@ public class JackrabbitMutableAclService implements MutableAclService {
         if (node == null) {
           throw new NotFoundException(String.format("node with id [%s] not found", objectIdentity.getIdentifier()));
         }
-        
+
         JcrRepositoryFileUtils.checkoutNearestVersionableNodeIfNecessary(session, nodeIdStrategy, node);
 
         // TODO mlowery set owner to currently authenticated user
@@ -478,6 +482,83 @@ public class JackrabbitMutableAclService implements MutableAclService {
   private class NoOpAclAuthorizationStrategy implements AclAuthorizationStrategy {
     public void securityCheck(final Acl acl, final int changeType) {
     }
+  }
+
+  public static interface IAclHelper {
+    void addPermission(final ObjectIdentity oid, final Sid recipient, final Permission permission,
+        final boolean granting);
+
+    MutableAcl createAndInitializeAcl(final ObjectIdentity oid, final ObjectIdentity parentOid,
+        final boolean entriesInheriting, final Sid owner);
+
+    void setFullControl(final ObjectIdentity oid, final Sid sid, final Permission permission);
+  }
+
+  private class AclHelper implements IAclHelper {
+
+    public void addPermission(ObjectIdentity oid, Sid recipient, Permission permission, boolean granting) {
+      Assert.notNull(oid);
+      Assert.notNull(recipient);
+      Assert.notNull(permission);
+      MutableAcl acl = (MutableAcl) readAclById(oid);
+      Assert.notNull(acl);
+      acl.insertAce(acl.getEntries().length, permission, recipient, granting);
+      updateAcl(acl);
+      logger.debug("added ace: oid=" + oid + ", sid=" + recipient + ", permission=" + permission + ", granting="
+          + granting);
+    }
+
+    public MutableAcl createAndInitializeAcl(final ObjectIdentity oid, final ObjectIdentity parentOid,
+        final boolean entriesInheriting, final Sid owner) {
+      MutableAcl acl = createAcl(oid);
+      // link up parent if parent not null
+      if (parentOid != null) {
+        Acl newParent = readAclById(parentOid);
+        acl.setParent(newParent);
+      }
+      if (!entriesInheriting) {
+        acl.setEntriesInheriting(false);
+        // TODO mlowery fix this null call
+        setFullControl(oid, owner, null);
+      }
+      return updateAcl(acl);
+    }
+
+    public void setFullControl(final ObjectIdentity oid, final Sid sid, final Permission permission) {
+      // TODO mlowery don't call addPermission as this is a connect to jcr per addPermission call
+      // TODO mlowery don't import RepositoryFilePermission
+      addPermission(oid, sid, RepositoryFilePermission.APPEND, true);
+      addPermission(oid, sid, RepositoryFilePermission.DELETE, true);
+      addPermission(oid, sid, RepositoryFilePermission.DELETE_CHILD, true);
+      // TODO uncomment this when custom privileges are supported
+      //    internalAddPermission(file, sid, RepositoryFilePermission.EXECUTE);
+      addPermission(oid, sid, RepositoryFilePermission.READ, true);
+      addPermission(oid, sid, RepositoryFilePermission.READ_ACL, true);
+      // TODO uncomment this when custom privileges are supported
+      //    internalAddPermission(file, sid, RepositoryFilePermission.TAKE_OWNERSHIP);
+      addPermission(oid, sid, RepositoryFilePermission.WRITE, true);
+      addPermission(oid, sid, RepositoryFilePermission.WRITE_ACL, true);
+    }
+
+  }
+
+  public void addPermission(final ObjectIdentity oid, final Sid recipient, final Permission permission,
+      final boolean granting) {
+    aclHelper.addPermission(oid, recipient, permission, granting);
+  }
+
+  public MutableAcl createAndInitializeAcl(final ObjectIdentity oid, final ObjectIdentity parentOid,
+      final boolean entriesInheriting, final Sid owner) {
+    return aclHelper.createAndInitializeAcl(oid, parentOid, entriesInheriting, owner);
+  }
+
+  public void setFullControl(final ObjectIdentity oid, final Sid sid, final Permission permission) {
+    aclHelper.setFullControl(oid, sid, permission);
+  }
+
+  public void setAclHelper(final IAclHelper aclHelper) {
+    Assert.notNull(aclHelper);
+    this.aclHelper = aclHelper;
   }
 
 }

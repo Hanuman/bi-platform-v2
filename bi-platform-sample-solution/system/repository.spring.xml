@@ -102,7 +102,7 @@
     <property name="transactionManager" ref="jcrTransactionManager" />
     <property name="transactionAttributeSource">
       <value>
-        org.pentaho.platform.api.repository.IPentahoContentRepository.createUserHomeFolderIfNecessary=PROPAGATION_REQUIRED
+        org.pentaho.platform.api.repository.IPentahoContentRepository.getOrCreateUserHomeFolder=PROPAGATION_REQUIRED
         org.pentaho.platform.api.repository.IPentahoContentRepository.getFile=PROPAGATION_REQUIRED,readOnly
         org.pentaho.platform.api.repository.IPentahoContentRepository.getContentForRead=PROPAGATION_REQUIRED,readOnly
         org.pentaho.platform.api.repository.IPentahoContentRepository.getContentForExecute=PROPAGATION_REQUIRED,readOnly
@@ -144,20 +144,38 @@
     <constructor-arg value="Admin" />
   </bean>
 
+  <!-- The suffix appended to the tenantId to create a role granted to all authenticated users of a certain tenant. -->
+  <bean id="tenantAuthenticatedAuthorityNameSuffix" class="java.lang.String">
+    <constructor-arg value="_Authenticated" />
+  </bean>
+  
+    <!-- The suffix appended to the tenantId to create a role granted to all admin users of a certain tenant. -->
+  <bean id="tenantAdminAuthorityNameSuffix" class="java.lang.String">
+    <constructor-arg value="_Admin" />
+  </bean>
+
   <bean id="pentahoContentRepositoryTarget" class="org.pentaho.platform.repository.pcr.PentahoContentRepository">
     <constructor-arg ref="pentahoContentDao" />
     <constructor-arg ref="aclService" />
-    <constructor-arg ref="jcrTransactionTemplate" />
-    <constructor-arg ref="repositoryAdminUsername" />
-    <constructor-arg ref="repositoryAdminAuthorityName" />
-    <constructor-arg ref="commonAuthenticatedAuthorityName" />
+    <constructor-arg>
+      <bean class="org.pentaho.platform.repository.pcr.DefaultRepositoryAdminHelper">
+        <constructor-arg ref="pentahoContentDao" />
+        <constructor-arg ref="aclService" />
+        <constructor-arg>
+          <!-- The code sets the propagation behavior to PROPAGATION_REQUIRES_NEW. -->
+          <bean class="org.springframework.transaction.support.TransactionTemplate">
+            <constructor-arg ref="jcrTransactionManager" />
+          </bean> 
+        </constructor-arg>
+        <constructor-arg ref="repositoryAdminUsername" />
+        <constructor-arg ref="repositoryAdminAuthorityName" />
+        <constructor-arg ref="commonAuthenticatedAuthorityName" />
+        <constructor-arg ref="tenantAuthenticatedAuthorityNameSuffix" />
+        <constructor-arg ref="tenantAdminAuthorityNameSuffix" />
+      </bean>
+    </constructor-arg>
   </bean>
   
-  <!-- The code sets the propagation behavior to PROPAGATION_REQUIRES_NEW. -->
-  <bean id="jcrTransactionTemplate" class="org.springframework.transaction.support.TransactionTemplate">
-    <constructor-arg ref="jcrTransactionManager" />
-  </bean> 
-
   <!-- In create[File|Folder], the first parameter is the parentFolder. This is the object whose ACL is checked. -->
   <bean id="pentahoContentRepositoryMethodInterceptor" class="org.springframework.security.intercept.method.aopalliance.MethodSecurityInterceptor">
     <property name="validateConfigAttributes">
@@ -174,7 +192,7 @@
     </property>
     <property name="objectDefinitionSource">
       <value>
-        org.pentaho.platform.api.repository.IPentahoContentRepository.createUserHomeFolderIfNecessary=VOTE_ROLE_FILE_Authenticated
+        org.pentaho.platform.api.repository.IPentahoContentRepository.getOrCreateUserHomeFolder=VOTE_ROLE_FILE_Authenticated
         org.pentaho.platform.api.repository.IPentahoContentRepository.getFile=VOTE_ROLE_FILE_Authenticated
         org.pentaho.platform.api.repository.IPentahoContentRepository.getContentForRead=VOTE_ROLE_FILE_Authenticated
         org.pentaho.platform.api.repository.IPentahoContentRepository.getContentForExecute=VOTE_ROLE_FILE_Authenticated
@@ -216,7 +234,7 @@
     </property>
   </bean>
 
-  <bean id="credentialsStrategy" class="org.pentaho.platform.repository.pcr.sejcr.SpringSecurityCredentialsStrategy" />
+  <bean id="credentialsStrategy" class="org.pentaho.platform.repository.pcr.sejcr.PentahoSessionCredentialsStrategy" />
 
   <bean id="jcrTemplate" class="org.springframework.extensions.jcr.JcrTemplate">
     <property name="sessionFactory" ref="jcrSessionFactory" />

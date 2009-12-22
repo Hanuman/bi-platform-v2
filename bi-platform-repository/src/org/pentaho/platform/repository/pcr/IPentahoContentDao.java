@@ -1,9 +1,13 @@
-package org.pentaho.platform.api.repository;
+package org.pentaho.platform.repository.pcr;
 
 import java.util.List;
 
+import org.pentaho.platform.api.repository.IRepositoryFileContent;
+import org.pentaho.platform.api.repository.LockSummary;
+import org.pentaho.platform.api.repository.RepositoryFile;
+
 public interface IPentahoContentDao {
-  
+
   /**
    * Returns file at given absolute path.
    * 
@@ -11,7 +15,7 @@ public interface IPentahoContentDao {
    * @return file or {@code null} if file does not exist or access is denied
    */
   RepositoryFile getFile(final String absPath);
-  
+
   /**
    * Gets content for read.
    * 
@@ -21,9 +25,8 @@ public interface IPentahoContentDao {
    */
   <T extends IRepositoryFileContent> T getContent(final RepositoryFile file, final Class<T> contentClass);
 
-  
-//  void removeFile(final RepositoryFile file);
-  
+  //  void removeFile(final RepositoryFile file);
+
   /**
    * Creates a file.
    * 
@@ -32,8 +35,9 @@ public interface IPentahoContentDao {
    * @param content file content
    * @return new file with non-null id
    */
-  RepositoryFile createFile(final RepositoryFile parentFolder, final RepositoryFile file, final IRepositoryFileContent content);
-  
+  RepositoryFile createFile(final RepositoryFile parentFolder, final RepositoryFile file,
+      final IRepositoryFileContent content);
+
   /**
    * Creates a folder.
    * 
@@ -42,7 +46,7 @@ public interface IPentahoContentDao {
    * @return new file with non-null id
    */
   RepositoryFile createFolder(final RepositoryFile parentFolder, final RepositoryFile file);
-  
+
   /**
    * Returns the children of this folder.
    * 
@@ -50,22 +54,23 @@ public interface IPentahoContentDao {
    * @return list of children (never {@code null})
    */
   List<RepositoryFile> getChildren(final RepositoryFile folder);
-  
+
   /**
    * Updates a file and/or the content of a file.
    * 
    * @param file updated file
    * @param content updated content
+   * @return updated file (possible with new version number)
    */
-  void updateFile(final RepositoryFile file, final IRepositoryFileContent content);
-  
+  RepositoryFile updateFile(final RepositoryFile file, final IRepositoryFileContent content);
+
   /**
    * Deletes a file or folder.
    * 
    * @param file file to delete
    */
   void deleteFile(final RepositoryFile file);
-  
+
   /**
    * Locks a file.
    * 
@@ -73,14 +78,14 @@ public interface IPentahoContentDao {
    * @param lock message
    */
   void lockFile(final RepositoryFile file, final String message);
-  
+
   /**
    * Unlocks a file.
    * 
    * @param file file to unlock
    */
   void unlockFile(final RepositoryFile file);
-  
+
   /**
    * Returns a non-null lock summary instance if this file is locked.
    * 

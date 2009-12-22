@@ -13,7 +13,6 @@ import javax.jcr.lock.Lock;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.pentaho.platform.api.repository.IPentahoContentDao;
 import org.pentaho.platform.api.repository.IRepositoryFileContent;
 import org.pentaho.platform.api.repository.LockSummary;
 import org.pentaho.platform.api.repository.RepositoryFile;
@@ -99,21 +98,21 @@ public class JcrPentahoContentDao implements IPentahoContentDao, InitializingBea
     });
   }
 
-  private void internalUpdateFile(final RepositoryFile file, final IRepositoryFileContent content) {
+  private RepositoryFile internalUpdateFile(final RepositoryFile file, final IRepositoryFileContent content) {
     Assert.notNull(file);
     Assert.hasText(file.getName());
     Assert.isTrue(!file.isFolder());
     Assert.notNull(content);
     Assert.hasText(file.getContentType());
 
-    jcrTemplate.execute(new JcrCallback() {
+    return (RepositoryFile) jcrTemplate.execute(new JcrCallback() {
       public Object doInJcr(final Session session) throws RepositoryException, IOException {
         JcrRepositoryFileUtils.checkoutNearestVersionableFileIfNecessary(session, nodeIdStrategy, file);
         JcrRepositoryFileUtils.updateFileNode(session, nodeIdStrategy, file, content, findTransformer(file
             .getContentType()));
         session.save();
         JcrRepositoryFileUtils.checkinNearestVersionableFileIfNecessary(session, nodeIdStrategy, file);
-        return null;
+        return JcrRepositoryFileUtils.fileFromId(session, nodeIdStrategy, file.getId());
       }
     });
   }
@@ -222,10 +221,10 @@ public class JcrPentahoContentDao implements IPentahoContentDao, InitializingBea
   /**
    * {@inheritDoc}
    */
-  public void updateFile(final RepositoryFile file, final IRepositoryFileContent content) {
+  public RepositoryFile updateFile(final RepositoryFile file, final IRepositoryFileContent content) {
     Assert.notNull(file);
     Assert.isTrue(!file.isFolder());
-    internalUpdateFile(file, content);
+    return internalUpdateFile(file, content);
   }
 
   /**

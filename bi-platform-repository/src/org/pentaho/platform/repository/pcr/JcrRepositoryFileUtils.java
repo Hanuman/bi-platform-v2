@@ -398,4 +398,10 @@ public class JcrRepositoryFileUtils {
     }
   }
 
+  public static Object fileFromId(final Session session, final NodeIdStrategy nodeIdStrategy, final Serializable id)
+      throws RepositoryException, IOException {
+    Node fileNode = nodeIdStrategy.findNodeById(session, id);
+    return fromFileNode(session, nodeIdStrategy, fileNode);
+  }
+
 }

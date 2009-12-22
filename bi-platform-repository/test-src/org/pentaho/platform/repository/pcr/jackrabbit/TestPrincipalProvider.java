@@ -46,9 +46,9 @@ public class TestPrincipalProvider implements PrincipalProvider {
     principals.put("tiffany", new UserPrincipal("tiffany"));
     principals.put("pat", new UserPrincipal("pat"));
     principals.put("Authenticated", new SpringSecurityGrantedAuthorityPrincipal("Authenticated"));
-    principals.put("Acme_Authenticated", new SpringSecurityGrantedAuthorityPrincipal("Acme_Authenticated"));
-    principals.put("Acme_Admin", new SpringSecurityGrantedAuthorityPrincipal("Acme_Admin"));
-    principals.put("Duff_Authenticated", new SpringSecurityGrantedAuthorityPrincipal("Duff_Authenticated"));
+    principals.put("acme_Authenticated", new SpringSecurityGrantedAuthorityPrincipal("acme_Authenticated"));
+    principals.put("acme_Admin", new SpringSecurityGrantedAuthorityPrincipal("acme_Admin"));
+    principals.put("duff_Authenticated", new SpringSecurityGrantedAuthorityPrincipal("duff_Authenticated"));
   }
 
   public Principal getPrincipal(String principalName) {
@@ -105,10 +105,10 @@ public class TestPrincipalProvider implements PrincipalProvider {
     if (principal.getName().equals("joe") || principal.getName().equals("suzy")
         || principal.getName().equals("tiffany")) {
       principals.add(new SpringSecurityGrantedAuthorityPrincipal("Authenticated"));
-      principals.add(new SpringSecurityGrantedAuthorityPrincipal("Acme_Authenticated"));
+      principals.add(new SpringSecurityGrantedAuthorityPrincipal("acme_Authenticated"));
     } else if (principal.getName().equals("pat")) {
       principals.add(new SpringSecurityGrantedAuthorityPrincipal("Authenticated"));
-      principals.add(new SpringSecurityGrantedAuthorityPrincipal("Duff_Authenticated"));
+      principals.add(new SpringSecurityGrantedAuthorityPrincipal("duff_Authenticated"));
     }
     return new PrincipalIteratorAdapter(principals);
   }
