@@ -27,7 +27,7 @@
       var m = document.getElementsByTagName('meta'); 
       for(var i in m){ 
         if(m[i].name == "gwt:property") { 
-          return m[i].content.substring(m[i].content.indexOf('=')+1); 
+          return m[i].content.substring(m[i].content.indexOf('=')+1).replace('_', '-'); 
         } 
       } 
       // we didn't find it..
