@@ -215,7 +215,7 @@
     <property name="homeDir" value="/jackrabbit/repository" />
   </bean>
 
-  <bean id="jcrSessionFactory" class="org.pentaho.platform.repository.pcr.sejcr.CredentialsStrategyJackrabbitSessionFactory">
+  <bean id="jcrSessionFactory" class="org.pentaho.platform.repository.pcr.jcr.sejcr.CredentialsStrategyJackrabbitSessionFactory">
     <constructor-arg ref="jcrRepository" />
     <constructor-arg ref="credentialsStrategy" />
     <property name="namespaces">
@@ -225,16 +225,16 @@
     </property>
     <property name="nodeDefinitions">
       <list>
-        <value>classpath:/org/pentaho/platform/repository/pcr/jackrabbit/pentahoFile.cnd</value>
-        <value>classpath:/org/pentaho/platform/repository/pcr/jackrabbit/pentahoResource.cnd</value>
-        <value>classpath:/org/pentaho/platform/repository/pcr/jackrabbit/pentahoLockable.cnd</value>
-        <value>classpath:/org/pentaho/platform/repository/pcr/jackrabbit/pentahoInternalFolder.cnd</value>
-        <value>classpath:/org/pentaho/platform/repository/pcr/jackrabbit/pentahoLockTokenStorage.cnd</value>
+        <value>classpath:/org/pentaho/platform/repository/pcr/jcr/jackrabbit/pentahoFile.cnd</value>
+        <value>classpath:/org/pentaho/platform/repository/pcr/jcr/jackrabbit/pentahoResource.cnd</value>
+        <value>classpath:/org/pentaho/platform/repository/pcr/jcr/jackrabbit/pentahoLockable.cnd</value>
+        <value>classpath:/org/pentaho/platform/repository/pcr/jcr/jackrabbit/pentahoInternalFolder.cnd</value>
+        <value>classpath:/org/pentaho/platform/repository/pcr/jcr/jackrabbit/pentahoLockTokenStorage.cnd</value>
       </list>
     </property>
   </bean>
 
-  <bean id="credentialsStrategy" class="org.pentaho.platform.repository.pcr.sejcr.PentahoSessionCredentialsStrategy" />
+  <bean id="credentialsStrategy" class="org.pentaho.platform.repository.pcr.jcr.sejcr.PentahoSessionCredentialsStrategy" />
 
   <bean id="jcrTemplate" class="org.springframework.extensions.jcr.JcrTemplate">
     <property name="sessionFactory" ref="jcrSessionFactory" />
@@ -242,20 +242,20 @@
     <property name="exposeNativeSession" value="true" />
   </bean>
 
-  <bean id="pentahoContentDao" class="org.pentaho.platform.repository.pcr.JcrPentahoContentDao">
+  <bean id="pentahoContentDao" class="org.pentaho.platform.repository.pcr.jcr.JcrRepositoryFileDao">
     <constructor-arg ref="jcrTemplate" />
     <constructor-arg>
       <list>
-        <bean class="org.pentaho.platform.repository.pcr.transform.SimpleRepositoryFileContentTransformer" />
-        <bean id="runResultRepositoryFileContentTransformer" class="org.pentaho.platform.repository.pcr.transform.RunResultRepositoryFileContentTransformer">
+        <bean class="org.pentaho.platform.repository.pcr.jcr.transform.SimpleRepositoryFileContentTransformer" />
+        <bean id="runResultRepositoryFileContentTransformer" class="org.pentaho.platform.repository.pcr.jcr.transform.RunResultRepositoryFileContentTransformer">
           <constructor-arg>
-            <bean class="org.pentaho.platform.repository.pcr.transform.SimpleRepositoryFileContentTransformer" />
+            <bean class="org.pentaho.platform.repository.pcr.jcr.transform.SimpleRepositoryFileContentTransformer" />
           </constructor-arg>
         </bean>
       </list>
     </constructor-arg>
     <constructor-arg>
-      <bean class="org.pentaho.platform.repository.pcr.DefaultLockTokenHelper" />
+      <bean class="org.pentaho.platform.repository.pcr.jcr.DefaultLockTokenHelper" />
     </constructor-arg>
   </bean>
 
