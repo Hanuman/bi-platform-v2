@@ -21,30 +21,63 @@
  */
 package org.pentaho.platform.engine.core.system;
 
+import java.lang.reflect.Constructor;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.pentaho.platform.api.engine.IPentahoSession;
-import org.pentaho.platform.engine.core.messages.Messages;
 
 /**
  * Stores the IPentahoSession session object for the current thread so that a
  * web service bean can get to it without requiring it to be passed to its
- * methods
+ * methods.
+ * 
+ * <p>
+ * Configure using system property {@code pentaho.sessionHolder.strategy} or {@link #setStrategyName(String)}. Valid 
+ * values are: {@code MODE_INHERITABLETHREADLOCAL} and {@code MODE_GLOBAL}.
+ * </p>
+ * 
+ * <p>Partially inspired by {@code org.springframework.security.context.SecurityContextHolder}.</p>
+ * 
  * @author jamesdixon
- *
+ * @author mlowery (modifications to support global)
  */
 public class PentahoSessionHolder {
 
-  private static final ThreadLocal<IPentahoSession> perThreadSession = new InheritableThreadLocal<IPentahoSession>();
-  
-  private static Log logger = LogFactory.getLog(PentahoSessionHolder.class);
+  // ~ Static fields/initializers ======================================================================================
+
+  private static final Log logger = LogFactory.getLog(PentahoSessionHolder.class);
+
+  public static final String MODE_INHERITABLETHREADLOCAL = "MODE_INHERITABLETHREADLOCAL"; //$NON-NLS-1$
+
+  public static final String MODE_GLOBAL = "MODE_GLOBAL"; //$NON-NLS-1$
+
+  public static final String SYSTEM_PROPERTY = "pentaho.sessionHolder.strategy"; //$NON-NLS-1$
+
+  private static String strategyName = System.getProperty(SYSTEM_PROPERTY);
+
+  private static IPentahoSessionHolderStrategy strategy;
+
+  static {
+    initialize();
+  }
+
+  // ~ Instance fields =================================================================================================
+
+  // ~ Constructors ====================================================================================================
+
+  public PentahoSessionHolder() {
+    super();
+  }
+
+  // ~ Methods =========================================================================================================
 
   /**
    * Sets an IPentahoSession for the current thread
    * @param session
    */
   public static void setSession(IPentahoSession session) {
-    perThreadSession.set(session);
+    strategy.setSession(session);
   }
 
   /**
@@ -52,15 +85,7 @@ public class PentahoSessionHolder {
    * @return thread session
    */
   public static IPentahoSession getSession() {
-    IPentahoSession sess = perThreadSession.get();
-    if (sess == null) {
-      //In a perfect world, the platform should never be in a state where session is null, but we are not there yet.  Not all places
-      //that instance sessions use the PentahoSessionHolder yet, so we will not make a fuss here if session is null.  When PentahoSessionHolder
-      //is fully integrated with all sessions, then we should probably throw an exception here since in that case a null session means 
-      //the system is in an illegal state.
-      logger.debug(Messages.getInstance().getString("PentahoSessionHolder.WARN_THREAD_SESSION_NULL", Thread.currentThread().getName())); //$NON-NLS-1$
-    }
-    return sess;
+    return strategy.getSession();
   }
 
   /**
@@ -69,34 +94,35 @@ public class PentahoSessionHolder {
    * through between requests as threads are re-used by the server.
    */
   public static void removeSession() {
-    IPentahoSession sess = perThreadSession.get();
-    
-    if (sess != null) {
-      if(logger.isDebugEnabled()) {
-        logger.debug(Messages.getInstance().getString("PentahoSessionHolder.DEBUG_REMOVING_SESSION",//$NON-NLS-1$
-            Thread.currentThread().getName(), String.valueOf(Thread.currentThread().getId())));
-      }
-      if(logger.isTraceEnabled()) {
-          StackTraceElement[] elements = Thread.currentThread().getStackTrace();
-          logger.trace(Messages.getInstance().getString("PentahoSessionHolder.DEBUG_THREAD_STACK_TRACE"));//$NON-NLS-1$
-          for(int i=0; i<elements.length; i++) {
-            logger.trace(elements[i]);
-          }
-        }
-      
-            //If the session is a custom/stand-alone session, we need to remove references
-      //to it from other objects which may be holding on to it.  We do this to prevent
-      //memory leaks.  In the future, this should not be necessary since objects
-      //should not need to have setSesssion methods, but instead use PentahoSessionHolder.getSession()
-      if (sess instanceof StandaloneSession) {
-        if(logger.isDebugEnabled()) {        
-          logger.debug(Messages.getInstance().getString("PentahoSessionHolder.DEBUG_DESTROY_STANDALONE_SESSION",//$NON-NLS-1$
-              String.valueOf(sess.getId()), sess.getName(), String.valueOf(Thread.currentThread().getId())));          
-        }
-         ((StandaloneSession) sess).destroy();
-      }
+    strategy.removeSession();
+  }
 
-      perThreadSession.remove();
+  private static void initialize() {
+    if ((strategyName == null) || "".equals(strategyName)) { //$NON-NLS-1$
+      strategyName = MODE_INHERITABLETHREADLOCAL;
     }
+
+    if (strategyName.equals(MODE_INHERITABLETHREADLOCAL)) {
+      strategy = new InheritableThreadLocalPentahoSessionHolderStrategy();
+    } else if (strategyName.equals(MODE_GLOBAL)) {
+      strategy = new GlobalPentahoSessionHolderStrategy();
+    } else {
+      // Try to load a custom strategy
+      try {
+        Class clazz = Class.forName(strategyName);
+        Constructor customStrategy = clazz.getConstructor(new Class[] {});
+        strategy = (IPentahoSessionHolderStrategy) customStrategy.newInstance(new Object[] {});
+      } catch (Exception e) {
+        throw new RuntimeException(e);
+      }
+    }
+
+    logger.debug("PentahoSessionHolder initialized: strategy=" + strategyName);
+
+  }
+
+  public static void setStrategyName(final String strategyName) {
+    PentahoSessionHolder.strategyName = strategyName;
+    initialize();
   }
 }
