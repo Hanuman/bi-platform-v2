@@ -66,7 +66,7 @@
     <constructor-arg value="{internal}write" />
   </bean>
 
-  <bean id="aclService" class="org.pentaho.platform.repository.pcr.jackrabbit.JackrabbitMutableAclService">
+  <bean id="aclService" class="org.pentaho.platform.repository.pcr.jcr.jackrabbit.JackrabbitMutableAclService">
     <constructor-arg ref="jcrTemplate" />
     <constructor-arg ref="commonAuthenticatedAuthorityName" />
     <constructor-arg>
