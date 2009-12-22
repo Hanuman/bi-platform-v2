@@ -1,0 +1,9 @@
+/*
+Pentaho lockable mixin node type. Extends mix:lockable.
+*/
+
+<ns = 'http://www.pentaho.org/jcr/1.0'>
+[ns:pentahoLockable] > mix:lockable
+  mixin
+  - ns:lockMessage (string)
+  - ns:lockDate (date)
