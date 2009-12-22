@@ -74,8 +74,6 @@ public class SolutionRepositoryServiceImpl implements ISolutionRepositoryService
   private static final String RESPONSE_DOCUMENT_ENCODING = "UTF-8"; //$NON-NLS-1$
   private static final String RESPONSE_DOCUMENT_VERSION_NUM = "1.0"; //$NON-NLS-1$
 
-  private static final String REPOSITORY_SERVICE_FILEINFO_CACHE_REGION = "repository-service-fileinfo-cache";
-
   /**
    * contains instance of a sax parser factory. Use getSAXParserFactory() method to get a copy of the factory.
    */
@@ -97,9 +95,6 @@ public class SolutionRepositoryServiceImpl implements ISolutionRepositoryService
     if (!cacheManager.cacheEnabled(ISolutionRepository.REPOSITORY_SERVICE_CACHE_REGION)) {
       cacheManager.addCacheRegion(ISolutionRepository.REPOSITORY_SERVICE_CACHE_REGION);
     }    
-    if (!cacheManager.cacheEnabled(REPOSITORY_SERVICE_FILEINFO_CACHE_REGION)) {
-      cacheManager.addCacheRegion(REPOSITORY_SERVICE_FILEINFO_CACHE_REGION);
-    }
   }
   
   public SolutionRepositoryServiceImpl() {
@@ -228,8 +223,8 @@ public class SolutionRepositoryServiceImpl implements ISolutionRepositoryService
       Element child = null;
       final String key = file.getFullPath() + file.getLastModified() + LocaleHelper.getLocale();
       ICacheManager cacheManager = PentahoSystem.getCacheManager(null);
-      if (cacheManager != null && cacheManager.cacheEnabled(REPOSITORY_SERVICE_FILEINFO_CACHE_REGION)) {
-        child = (Element) cacheManager.getFromRegionCache(REPOSITORY_SERVICE_FILEINFO_CACHE_REGION, key);
+      if (cacheManager != null && cacheManager.cacheEnabled(ISolutionRepository.REPOSITORY_SERVICE_CACHE_REGION)) {
+        child = (Element) cacheManager.getFromRegionCache(ISolutionRepository.REPOSITORY_SERVICE_CACHE_REGION, key);
       }
       if (child == null) {
         child = parentNode instanceof Document ? ((Document) parentNode).createElement("file") : parentNode.getOwnerDocument().createElement("file"); //$NON-NLS-1$ //$NON-NLS-2$
@@ -251,8 +246,8 @@ public class SolutionRepositoryServiceImpl implements ISolutionRepositoryService
         child.setAttribute("name", name); //$NON-NLS-1$
         child.setAttribute("isDirectory", "true"); //$NON-NLS-1$ //$NON-NLS-2$
         child.setAttribute("lastModifiedDate", "" + file.getLastModified()); //$NON-NLS-1$ //$NON-NLS-2$
-        if (cacheManager != null && cacheManager.cacheEnabled(REPOSITORY_SERVICE_FILEINFO_CACHE_REGION)) {
-          cacheManager.putInRegionCache(REPOSITORY_SERVICE_FILEINFO_CACHE_REGION, key, child);
+        if (cacheManager != null && cacheManager.cacheEnabled(ISolutionRepository.REPOSITORY_SERVICE_CACHE_REGION)) {
+          cacheManager.putInRegionCache(ISolutionRepository.REPOSITORY_SERVICE_CACHE_REGION, key, child);
         }
       } else {
         Element newChild = parentNode instanceof Document ? ((Document) parentNode).createElement("file") : parentNode.getOwnerDocument().createElement("file"); //$NON-NLS-1$//$NON-NLS-2$
@@ -296,13 +291,13 @@ public class SolutionRepositoryServiceImpl implements ISolutionRepositoryService
           ICacheManager cacheManager = PentahoSystem.getCacheManager(null);
           Element child = null;
           final String key = file.getFullPath() + file.getLastModified() + LocaleHelper.getLocale();
-          if (cacheManager != null && cacheManager.cacheEnabled(REPOSITORY_SERVICE_FILEINFO_CACHE_REGION)) {
-            child = (Element) cacheManager.getFromRegionCache(REPOSITORY_SERVICE_FILEINFO_CACHE_REGION, key);
+          if (cacheManager != null && cacheManager.cacheEnabled(ISolutionRepository.REPOSITORY_SERVICE_CACHE_REGION)) {
+            child = (Element) cacheManager.getFromRegionCache(ISolutionRepository.REPOSITORY_SERVICE_CACHE_REGION, key);
           }
           if (child == null) {
             child = parentNode instanceof Document ? ((Document) parentNode).createElement("file") : parentNode.getOwnerDocument().createElement("file"); //$NON-NLS-1$ //$NON-NLS-2$
-            if (cacheManager != null && cacheManager.cacheEnabled(REPOSITORY_SERVICE_FILEINFO_CACHE_REGION)) {
-              cacheManager.putInRegionCache(REPOSITORY_SERVICE_FILEINFO_CACHE_REGION, key, child);
+            if (cacheManager != null && cacheManager.cacheEnabled(ISolutionRepository.REPOSITORY_SERVICE_CACHE_REGION)) {
+              cacheManager.putInRegionCache(ISolutionRepository.REPOSITORY_SERVICE_CACHE_REGION, key, child);
             }
           } else {
             Element newChild = parentNode instanceof Document ? ((Document) parentNode).createElement("file") : parentNode.getOwnerDocument().createElement("file"); //$NON-NLS-1$ //$NON-NLS-2$
