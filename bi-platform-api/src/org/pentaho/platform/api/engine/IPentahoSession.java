@@ -37,6 +37,8 @@ import java.util.Locale;
 public interface IPentahoSession extends ILogger, IAuditable {
 
   public static final String PENTAHO_SESSION_KEY = "pentaho-session"; //$NON-NLS-1$
+  
+  public static final String TENANT_ID_KEY = "org.pentaho.tenantId"; //$NON-NLS-1$
 
   /**
    * Gets the name for this session, for example if this is an authenticated
