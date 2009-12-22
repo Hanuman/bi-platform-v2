@@ -5,7 +5,7 @@ import java.util.Iterator;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.pentaho.platform.api.repository.RepositoryFile;
-import org.pentaho.platform.repository.pcr.IPentahoContentDao;
+import org.pentaho.platform.repository.pcr.IRepositoryFileDao;
 import org.springframework.context.MessageSource;
 import org.springframework.context.MessageSourceAware;
 import org.springframework.context.support.MessageSourceAccessor;
@@ -36,13 +36,13 @@ public class TraverseFolderAclEntryAfterInvocationProvider extends AbstractAclPr
 
   private String adminAuthority;
 
-  private IPentahoContentDao contentDao;
+  private IRepositoryFileDao contentDao;
 
   //~ Constructors ===================================================================================================
 
   public TraverseFolderAclEntryAfterInvocationProvider(final AclService aclService,
       final String processConfigAttribute, final Permission[] requirePermission, final String adminAuthority,
-      final IPentahoContentDao contentDao) {
+      final IRepositoryFileDao contentDao) {
     super(aclService, processConfigAttribute, requirePermission);
     Assert.hasText(adminAuthority);
     Assert.hasText(processConfigAttribute);
