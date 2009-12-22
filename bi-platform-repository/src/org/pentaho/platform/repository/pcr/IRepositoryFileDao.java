@@ -6,7 +6,12 @@ import org.pentaho.platform.api.repository.IRepositoryFileContent;
 import org.pentaho.platform.api.repository.LockSummary;
 import org.pentaho.platform.api.repository.RepositoryFile;
 
-public interface IPentahoContentDao {
+/**
+ * A data access object for reading and writing {@code RepositoryFile} instances.
+ * 
+ * @author mlowery
+ */
+public interface IRepositoryFileDao {
 
   /**
    * Returns file at given absolute path.

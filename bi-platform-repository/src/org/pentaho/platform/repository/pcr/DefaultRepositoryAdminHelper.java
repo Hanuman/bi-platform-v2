@@ -36,6 +36,7 @@ import org.springframework.util.Assert;
  * 
  * <ul>
  * <li>Runs as the repository admin.</li>
+ * <li>Wraps calls to {@code contentDao} and {@code mutableAclService} in transactions.</li>
  * <li>Uses programmatic transactions to keep the amount of declarative transaction XML to a minimum.</li>
  * </ul>
  * 
@@ -89,13 +90,13 @@ public class DefaultRepositoryAdminHelper implements IRepositoryAdminHelper {
 
   private TransactionTemplate txnTemplate;
 
-  private IPentahoContentDao contentDao;
+  private IRepositoryFileDao contentDao;
 
   private IPentahoMutableAclService mutableAclService;
 
   // ~ Constructors ====================================================================================================
 
-  public DefaultRepositoryAdminHelper(final IPentahoContentDao contentDao,
+  public DefaultRepositoryAdminHelper(final IRepositoryFileDao contentDao,
       final IPentahoMutableAclService mutableAclService, final TransactionTemplate txnTemplate,
       final String repositoryAdminUsername, final String repositoryAdminAuthorityName,
       final String commonAuthenticatedAuthorityName, final String tenantAuthenticatedAuthorityNameSuffix,

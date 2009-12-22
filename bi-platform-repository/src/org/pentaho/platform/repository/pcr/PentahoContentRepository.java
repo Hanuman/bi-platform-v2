@@ -19,7 +19,7 @@ import org.springframework.security.acls.sid.PrincipalSid;
 import org.springframework.util.Assert;
 
 /**
- * Implementation of {@link IPentahoContentRepository} using an {@link IPentahoContentDao} and Spring 
+ * Implementation of {@link IPentahoContentRepository} using an {@link IRepositoryFileDao} and Spring 
  * Security's {@link MutableAclService}.
  * 
  * @author mlowery
@@ -32,7 +32,7 @@ public class PentahoContentRepository implements IPentahoContentRepository {
 
   // ~ Instance fields =================================================================================================
 
-  private IPentahoContentDao contentDao;
+  private IRepositoryFileDao contentDao;
 
   private IPentahoMutableAclService mutableAclService;
 
@@ -42,7 +42,7 @@ public class PentahoContentRepository implements IPentahoContentRepository {
 
   // ~ Constructors ====================================================================================================
 
-  public PentahoContentRepository(final IPentahoContentDao contentDao,
+  public PentahoContentRepository(final IRepositoryFileDao contentDao,
       final IPentahoMutableAclService mutableAclService, final IRepositoryAdminHelper repositoryAdminHelper) {
     super();
     Assert.notNull(contentDao);
