@@ -27,6 +27,18 @@ Messages = function()
   Messages.messageBundle.push( dojo.i18n.getLocalization(packageName, fileName) );
 };
 
+
+/*private static*/
+Messages.entityDecoder=document.createElement('textarea');
+
+/*public static*/
+Messages.html_entity_decode = function(str)
+{
+    Messages.entityDecoder.innerHTML = str; 
+    var value = Messages.entityDecoder.value;
+    return value;
+}
+
 /**
  * Get the string from a message bundle referenced by <param>key</param>.
  * @param key String the key in the bundle which references the desired string
@@ -50,7 +62,7 @@ Messages = function()
   		break;
   	}
 	}
-	return msg;
+	return Messages.html_entity_decode(msg);
 };
 var cnt = 0;
 
