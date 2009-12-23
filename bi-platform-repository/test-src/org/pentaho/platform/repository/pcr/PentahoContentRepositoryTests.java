@@ -36,6 +36,7 @@ import org.pentaho.platform.repository.pcr.springsecurity.RepositoryFilePermissi
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.DataRetrievalFailureException;
 import org.springframework.extensions.jcr.JcrTemplate;
 import org.springframework.extensions.jcr.SessionFactory;
@@ -119,6 +120,16 @@ public class PentahoContentRepositoryTests implements ApplicationContextAware {
     loginAsRepositoryAdmin();
     SimpleJcrTestUtils.deleteItem(testJcrTemplate, repo.getPentahoRootFolderPath());
     logout();
+    
+    // null out fields to get back memory
+    repo = null;
+    testJcrTemplate = null;
+    repositoryAdminUsername = null;
+    commonAuthenticatedAuthorityName = null;
+    commonAuthenticatedAuthoritySid = null;
+    repositoryAdminAuthorityName = null;
+    tenantAdminAuthorityNameSuffix = null;
+    tenantAuthenticatedAuthorityNameSuffix = null;
   }
 
   @Test(expected = IllegalStateException.class)
@@ -221,6 +232,9 @@ public class PentahoContentRepositoryTests implements ApplicationContextAware {
   public void testStartupTwice() throws Exception {
     repo.startup();
     repo.startup();
+    login(USERNAME_SUZY, TENANT_ID_ACME);
+    assertNotNull(SimpleJcrTestUtils.getItem(testJcrTemplate, repo.getPentahoRootFolderPath() + "[1]"));
+    assertNull(SimpleJcrTestUtils.getItem(testJcrTemplate, repo.getPentahoRootFolderPath() + "[2]"));
   }
 
   @Test
@@ -454,6 +468,19 @@ public class PentahoContentRepositoryTests implements ApplicationContextAware {
     assertTrue(SimpleJcrTestUtils.getVersionCount(testJcrTemplate, parentOfFolderToDeletePath) > versionCount);
   }
 
+  @Test(expected=DataIntegrityViolationException.class)
+  public void testCreateDuplicateFolder() throws Exception {
+    repo.startup();
+    login(USERNAME_SUZY, TENANT_ID_ACME);
+    repo.getOrCreateUserHomeFolder();
+    RepositoryFile parentFolder = repo.getFile(repo.getUserHomeFolderPath());
+    RepositoryFile newFolder = new RepositoryFile.Builder("test").folder(true).build();
+    newFolder = repo.createFolder(parentFolder, newFolder);
+    assertNotNull(SimpleJcrTestUtils.getItem(testJcrTemplate, repo.getUserHomeFolderPath() + "/test"));
+    RepositoryFile anotherFolder = new RepositoryFile.Builder("test").folder(true).build();
+    newFolder = repo.createFolder(parentFolder, anotherFolder);
+  }
+  
   @Test
   public void testWriteToPublic() throws Exception {
     repo.startup();

@@ -30,7 +30,7 @@ public class RepositoryFile implements Comparable<RepositoryFile> {
 
   // ~ Static fields/initializers ======================================================================================
 
-  public static final String SEPARATOR = "/";
+  public static final String SEPARATOR = "/"; //$NON-NLS-1$
 
   // ~ Instance fields =================================================================================================
 

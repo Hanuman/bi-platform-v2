@@ -12,6 +12,10 @@
       </layout>
    </appender>
 
+   <category name="org.apache.jackrabbit">
+     <priority value="INFO" />
+   </category>
+
    <root>
       <priority value="DEBUG" />
       <appender-ref ref="PENTAHOCONSOLE"/>
