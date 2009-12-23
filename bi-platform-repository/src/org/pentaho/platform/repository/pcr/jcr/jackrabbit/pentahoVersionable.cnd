@@ -1,0 +1,10 @@
+/*
+Pentaho mixin versionable node type. Extends mix:versionable. These properties are saved within the versioned file, 
+which when checked in, creates a new nt:version node.
+*/
+
+<ns = 'http://www.pentaho.org/jcr/1.0'>
+[ns:pentahoVersionable] > mix:versionable
+  mixin
+  - ns:versionAuthor (string)
+  - ns:versionMessage (string)

@@ -56,7 +56,8 @@ public class DefaultLockTokenHelper implements ILockTokenHelper {
     newLockTokenNode.setProperty(JcrRepositoryFileUtils
         .addPentahoPrefix(session, PentahoJcrConstants.PENTAHO_LOCKTOKEN), lock.getLockToken());
     session.save();
-    JcrRepositoryFileUtils.checkinNearestVersionableNodeIfNecessary(session, nodeIdStrategy, lockTokensNode);
+    JcrRepositoryFileUtils.checkinNearestVersionableNodeIfNecessary(session, nodeIdStrategy, lockTokensNode,
+        "[system] added lock token");
   }
 
   public List<String> getLockTokens(final Session session, final NodeIdStrategy nodeIdStrategy)
@@ -83,9 +84,10 @@ public class DefaultLockTokenHelper implements ILockTokenHelper {
       }
     }
     session.save();
-    JcrRepositoryFileUtils.checkinNearestVersionableNodeIfNecessary(session, nodeIdStrategy, lockTokensNode);
+    JcrRepositoryFileUtils.checkinNearestVersionableNodeIfNecessary(session, nodeIdStrategy, lockTokensNode,
+        "[system] removed lock token");
   }
-  
+
   private String internalGetTenantId() {
     IPentahoSession pentahoSession = PentahoSessionHolder.getSession();
     Assert.state(pentahoSession != null, "this method cannot be called with a null IPentahoSession");
@@ -112,7 +114,8 @@ public class DefaultLockTokenHelper implements ILockTokenHelper {
       Node lockTokensNode = userHomeFolderNode.addNode(FOLDER_NAME_LOCK_TOKENS, JcrRepositoryFileUtils
           .addPentahoPrefix(session, PentahoJcrConstants.PENTAHO_INTERNALFOLDER));
       session.save();
-      JcrRepositoryFileUtils.checkinNearestVersionableNodeIfNecessary(session, nodeIdStrategy, userHomeFolderNode);
+      JcrRepositoryFileUtils.checkinNearestVersionableNodeIfNecessary(session, nodeIdStrategy, userHomeFolderNode,
+          "[system] created .lockTokens folder");
       return lockTokensNode;
     }
   }

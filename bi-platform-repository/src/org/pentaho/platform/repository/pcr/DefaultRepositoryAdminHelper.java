@@ -35,7 +35,7 @@ import org.springframework.util.Assert;
  * Default {@link IRepositoryAdminHelper} implementation.
  * 
  * <ul>
- * <li>Runs as the repository admin.</li>
+ * <li>Runs as the repository admin. (Actually method is called as a regular user and the context is switched.)</li>
  * <li>Wraps calls to {@code contentDao} and {@code mutableAclService} in transactions.</li>
  * <li>Uses programmatic transactions to keep the amount of declarative transaction XML to a minimum.</li>
  * </ul>
@@ -132,7 +132,8 @@ public class DefaultRepositoryAdminHelper implements IRepositoryAdminHelper {
           if (rootFolder == null) {
             // because this is running as the repo admin, the owner of this folder is the repo admin who also has full
             // control (no need to do a setOwner call)
-            rootFolder = internalCreateFolder(null, new RepositoryFile.Builder(FOLDER_ROOT).folder(true).build(), false);
+            rootFolder = internalCreateFolder(null, new RepositoryFile.Builder(FOLDER_ROOT).folder(true).build(),
+                false, "[system] create pentaho root folder");
             // allow all authenticated users to see the contents of this folder (and its ACL)
             internalAddPermission(rootFolder, new GrantedAuthoritySid(commonAuthenticatedAuthorityName),
                 RepositoryFilePermission.READ);
@@ -163,7 +164,7 @@ public class DefaultRepositoryAdminHelper implements IRepositoryAdminHelper {
           RepositoryFile tenantRootFolder = contentDao.getFile(getTenantRootFolderPath(tenantId));
           if (tenantRootFolder == null) {
             tenantRootFolder = internalCreateFolder(rootFolder, new RepositoryFile.Builder(tenantId).folder(true)
-                .build(), false);
+                .build(), false, "[system] created tenant root folder");
             Sid ownerSid = new GrantedAuthoritySid(tenantAdminAuthorityName);
             internalSetOwner(tenantRootFolder, ownerSid);
             internalSetFullControl(tenantRootFolder, ownerSid);
@@ -194,7 +195,7 @@ public class DefaultRepositoryAdminHelper implements IRepositoryAdminHelper {
           if (contentDao.getFile(getTenantPublicFolderPath(tenantId)) == null) {
             // public folder is versioned
             RepositoryFile tenantPublicFolder = internalCreateFolder(tenantRootFolder, new RepositoryFile.Builder(
-                FOLDER_PUBLIC).folder(true).versioned(true).build(), true);
+                FOLDER_PUBLIC).folder(true).versioned(true).build(), true, "[system] created tenant public folder");
             Sid ownerSid = new GrantedAuthoritySid(tenantAdminAuthorityName);
             internalSetOwner(tenantPublicFolder, ownerSid);
             internalAddPermission(tenantRootFolder, new GrantedAuthoritySid(tenantAuthenticatedAuthorityName),
@@ -216,7 +217,7 @@ public class DefaultRepositoryAdminHelper implements IRepositoryAdminHelper {
                 RepositoryFilePermission.WRITE_ACL);
             // inherits the ACEs from parent ACL
             RepositoryFile tenantHomeFolder = internalCreateFolder(tenantRootFolder, new RepositoryFile.Builder(
-                FOLDER_HOME).folder(true).build(), true);
+                FOLDER_HOME).folder(true).build(), true, "[system] created tenant home folder");
             internalSetOwner(tenantHomeFolder, ownerSid);
           }
         }
@@ -239,7 +240,7 @@ public class DefaultRepositoryAdminHelper implements IRepositoryAdminHelper {
             RepositoryFile tenantHomeFolder = contentDao.getFile(getTenantHomeFolderPath(tenantId));
             // user home folder is versioned
             userHomeFolder = internalCreateFolder(tenantHomeFolder, new RepositoryFile.Builder(username).folder(true)
-                .versioned(true).build(), false);
+                .versioned(true).build(), false, "[system] created user home folder");
             Sid ownerSid = new PrincipalSid(username);
             internalSetOwner(userHomeFolder, ownerSid);
             internalSetFullControl(userHomeFolder, ownerSid);
@@ -277,10 +278,10 @@ public class DefaultRepositoryAdminHelper implements IRepositoryAdminHelper {
   }
 
   private RepositoryFile internalCreateFolder(final RepositoryFile parentFolder, final RepositoryFile file,
-      final boolean inheritAces) {
+      final boolean inheritAces, final String versionMessage) {
     Assert.notNull(file);
 
-    RepositoryFile newFile = contentDao.createFolder(parentFolder, file);
+    RepositoryFile newFile = contentDao.createFolder(parentFolder, file, versionMessage);
     internalCreateAcl(newFile, inheritAces);
 
     return newFile;

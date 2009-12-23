@@ -9,6 +9,7 @@ import org.pentaho.platform.api.repository.IPentahoContentRepository;
 import org.pentaho.platform.api.repository.IRepositoryFileContent;
 import org.pentaho.platform.api.repository.LockSummary;
 import org.pentaho.platform.api.repository.RepositoryFile;
+import org.pentaho.platform.api.repository.VersionSummary;
 import org.pentaho.platform.engine.core.system.PentahoSessionHolder;
 import org.springframework.security.acls.Acl;
 import org.springframework.security.acls.MutableAcl;
@@ -98,6 +99,11 @@ public class PentahoContentRepository implements IPentahoContentRepository {
    */
   public synchronized RepositoryFile createFile(final RepositoryFile parentFolder, final RepositoryFile file,
       final IRepositoryFileContent content) {
+    return createFile(parentFolder, file, content, null);
+  }
+
+  public synchronized RepositoryFile createFile(final RepositoryFile parentFolder, final RepositoryFile file,
+      final IRepositoryFileContent content, final String versionMessage) {
     assertStartedUp();
     Assert.notNull(file);
     Assert.isTrue(!file.isFolder());
@@ -105,20 +111,29 @@ public class PentahoContentRepository implements IPentahoContentRepository {
     Assert.notNull(content);
     // external callers never allowed to create files at repo root
     Assert.notNull(parentFolder);
-    return internalCreateFile(parentFolder, file, content, true);
+    return internalCreateFile(parentFolder, file, content, versionMessage, true);
   }
 
   /**
    * {@inheritDoc}
    */
   public synchronized RepositoryFile createFolder(final RepositoryFile parentFolder, final RepositoryFile file) {
+    return createFolder(parentFolder, file, null);
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  public synchronized RepositoryFile createFolder(final RepositoryFile parentFolder, final RepositoryFile file,
+      final String versionMessage) {
     assertStartedUp();
     Assert.notNull(file);
     Assert.isTrue(file.isFolder());
     Assert.hasText(file.getName());
     // external callers never allowed to create folders at repo root
     Assert.notNull(parentFolder);
-    return internalCreateFolder(parentFolder, file, true);
+    return internalCreateFolder(parentFolder, file, versionMessage, true);
+
   }
 
   /**
@@ -128,6 +143,8 @@ public class PentahoContentRepository implements IPentahoContentRepository {
    * Delegates to {@link #getStreamForRead(RepositoryFile)} but assumes that some external system (e.g. Spring Security)
    * is protecting this method with different authorization rules than {@link #getStreamForRead(RepositoryFile)}.
    * </p>
+   * 
+   * TODO mlowery figure this delegation out
    * 
    * @see #getContentForRead(RepositoryFile, Class)
    */
@@ -162,6 +179,14 @@ public class PentahoContentRepository implements IPentahoContentRepository {
    * {@inheritDoc}
    */
   public synchronized RepositoryFile updateFile(RepositoryFile file, IRepositoryFileContent content) {
+    return updateFile(file, content, null);
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  public synchronized RepositoryFile updateFile(final RepositoryFile file, final IRepositoryFileContent content,
+      final String versionMessage) {
     assertStartedUp();
     Assert.notNull(file);
     Assert.isTrue(!file.isFolder());
@@ -171,18 +196,25 @@ public class PentahoContentRepository implements IPentahoContentRepository {
       Assert.hasText(file.getContentType());
     }
 
-    return internalUpdateFile(file, content);
+    return internalUpdateFile(file, content, versionMessage);
   }
 
   /**
    * {@inheritDoc}
    */
-  public synchronized void deleteFile(RepositoryFile file) {
+  public synchronized void deleteFile(final RepositoryFile file) {
+    this.deleteFile(file, null);
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  public synchronized void deleteFile(final RepositoryFile file, final String versionMessage) {
     assertStartedUp();
     Assert.notNull(file);
     Assert.notNull(file.getId());
     // acl deleted when file node is deleted
-    contentDao.deleteFile(file);
+    contentDao.deleteFile(file, versionMessage);
   }
 
   /**
@@ -221,6 +253,12 @@ public class PentahoContentRepository implements IPentahoContentRepository {
     Assert.notNull(file.getId());
     Assert.isTrue(!file.isFolder());
     contentDao.unlockFile(file);
+  }
+
+  public List<VersionSummary> getVersionSummaries(final RepositoryFile file) {
+    Assert.notNull(file);
+    Assert.notNull(file.getId());
+    return contentDao.getVersionSummaries(file);
   }
 
   public String getPentahoRootFolderPath() {
@@ -290,31 +328,32 @@ public class PentahoContentRepository implements IPentahoContentRepository {
   }
 
   private RepositoryFile internalCreateFile(final RepositoryFile parentFolder, final RepositoryFile file,
-      final IRepositoryFileContent content, final boolean inheritAces) {
+      final IRepositoryFileContent content, final String versionMessage, final boolean inheritAces) {
     Assert.notNull(file);
     Assert.notNull(content);
 
-    RepositoryFile newFile = contentDao.createFile(parentFolder, file, content);
+    RepositoryFile newFile = contentDao.createFile(parentFolder, file, content, versionMessage);
     internalCreateAcl(newFile, inheritAces);
 
     return newFile;
   }
 
   private RepositoryFile internalCreateFolder(final RepositoryFile parentFolder, final RepositoryFile file,
-      final boolean inheritAces) {
+      final String versionMessage, final boolean inheritAces) {
     Assert.notNull(file);
 
-    RepositoryFile newFile = contentDao.createFolder(parentFolder, file);
+    RepositoryFile newFile = contentDao.createFolder(parentFolder, file, versionMessage);
     internalCreateAcl(newFile, inheritAces);
 
     return newFile;
   }
 
-  private RepositoryFile internalUpdateFile(final RepositoryFile file, final IRepositoryFileContent content) {
+  private RepositoryFile internalUpdateFile(final RepositoryFile file, final IRepositoryFileContent content,
+      final String versionMessage) {
     Assert.notNull(file);
     Assert.notNull(content);
 
-    return contentDao.updateFile(file, content);
+    return contentDao.updateFile(file, content, versionMessage);
   }
 
   private MutableAcl internalCreateAcl(final RepositoryFile file, final boolean entriesInheriting) {

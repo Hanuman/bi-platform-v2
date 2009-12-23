@@ -15,6 +15,7 @@ import org.apache.commons.logging.LogFactory;
 import org.pentaho.platform.api.repository.IRepositoryFileContent;
 import org.pentaho.platform.api.repository.LockSummary;
 import org.pentaho.platform.api.repository.RepositoryFile;
+import org.pentaho.platform.api.repository.VersionSummary;
 import org.pentaho.platform.repository.pcr.IRepositoryFileDao;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.extensions.jcr.JcrCallback;
@@ -55,7 +56,8 @@ public class JcrRepositoryFileDao implements IRepositoryFileDao, InitializingBea
 
   // ~ Methods =========================================================================================================
 
-  private RepositoryFile internalCreateFolder(final RepositoryFile parentFolder, final RepositoryFile file) {
+  private RepositoryFile internalCreateFolder(final RepositoryFile parentFolder, final RepositoryFile file,
+      final String versionMessage) {
     Assert.notNull(file);
     Assert.hasText(file.getName());
     Assert.isTrue(!file.getName().contains(RepositoryFile.SEPARATOR));
@@ -69,14 +71,15 @@ public class JcrRepositoryFileDao implements IRepositoryFileDao, InitializingBea
         JcrRepositoryFileUtils.checkoutNearestVersionableFileIfNecessary(session, nodeIdStrategy, parentFolder);
         Node folderNode = JcrRepositoryFileUtils.createFolderNode(session, nodeIdStrategy, parentFolder, file);
         session.save();
-        JcrRepositoryFileUtils.checkinNearestVersionableFileIfNecessary(session, nodeIdStrategy, parentFolder);
+        JcrRepositoryFileUtils.checkinNearestVersionableFileIfNecessary(session, nodeIdStrategy, parentFolder,
+            versionMessage);
         return JcrRepositoryFileUtils.fromFileNode(session, nodeIdStrategy, folderNode);
       }
     });
   }
 
   private RepositoryFile internalCreateFile(final RepositoryFile parentFolder, final RepositoryFile file,
-      final IRepositoryFileContent content) {
+      final IRepositoryFileContent content, final String versionMessage) {
     Assert.notNull(file);
     Assert.hasText(file.getName());
     Assert.isTrue(!file.isFolder());
@@ -91,13 +94,15 @@ public class JcrRepositoryFileDao implements IRepositoryFileDao, InitializingBea
         Node fileNode = JcrRepositoryFileUtils.createFileNode(session, nodeIdStrategy, parentFolder, file, content,
             findTransformer(content.getContentType()));
         session.save();
-        JcrRepositoryFileUtils.checkinNearestVersionableFileIfNecessary(session, nodeIdStrategy, parentFolder);
+        JcrRepositoryFileUtils.checkinNearestVersionableFileIfNecessary(session, nodeIdStrategy, parentFolder,
+            versionMessage);
         return JcrRepositoryFileUtils.fromFileNode(session, nodeIdStrategy, fileNode);
       }
     });
   }
 
-  private RepositoryFile internalUpdateFile(final RepositoryFile file, final IRepositoryFileContent content) {
+  private RepositoryFile internalUpdateFile(final RepositoryFile file, final IRepositoryFileContent content,
+      final String versionMessage) {
     Assert.notNull(file);
     Assert.hasText(file.getName());
     Assert.isTrue(!file.isFolder());
@@ -110,7 +115,7 @@ public class JcrRepositoryFileDao implements IRepositoryFileDao, InitializingBea
         JcrRepositoryFileUtils.updateFileNode(session, nodeIdStrategy, file, content, findTransformer(file
             .getContentType()));
         session.save();
-        JcrRepositoryFileUtils.checkinNearestVersionableFileIfNecessary(session, nodeIdStrategy, file);
+        JcrRepositoryFileUtils.checkinNearestVersionableFileIfNecessary(session, nodeIdStrategy, file, versionMessage);
         return JcrRepositoryFileUtils.fileFromId(session, nodeIdStrategy, file.getId());
       }
     });
@@ -129,30 +134,20 @@ public class JcrRepositoryFileDao implements IRepositoryFileDao, InitializingBea
    * {@inheritDoc}
    */
   public RepositoryFile createFile(final RepositoryFile parentFolder, final RepositoryFile file,
-      final IRepositoryFileContent content) {
+      final IRepositoryFileContent content, final String versionMessage) {
     Assert.notNull(file);
     Assert.isTrue(!file.isFolder());
-    return internalCreateFile(parentFolder, file, content);
+    return internalCreateFile(parentFolder, file, content, versionMessage);
   }
 
   /**
    * {@inheritDoc}
    */
-  public RepositoryFile createFolder(final RepositoryFile parentFolder, final RepositoryFile file) {
+  public RepositoryFile createFolder(final RepositoryFile parentFolder, final RepositoryFile file,
+      final String versionMessage) {
     Assert.notNull(file);
     Assert.isTrue(file.isFolder());
-    return internalCreateFolder(parentFolder, file);
-  }
-
-  public void removeFile(final RepositoryFile file) {
-    Assert.notNull(file);
-    jcrTemplate.execute(new JcrCallback() {
-      public Object doInJcr(final Session session) throws RepositoryException {
-        Node fileNode = nodeIdStrategy.findNodeById(session, file.getId());
-        fileNode.remove();
-        return null;
-      }
-    });
+    return internalCreateFolder(parentFolder, file, versionMessage);
   }
 
   public void afterPropertiesSet() throws Exception {
@@ -220,16 +215,17 @@ public class JcrRepositoryFileDao implements IRepositoryFileDao, InitializingBea
   /**
    * {@inheritDoc}
    */
-  public RepositoryFile updateFile(final RepositoryFile file, final IRepositoryFileContent content) {
+  public RepositoryFile updateFile(final RepositoryFile file, final IRepositoryFileContent content,
+      final String versionMessage) {
     Assert.notNull(file);
     Assert.isTrue(!file.isFolder());
-    return internalUpdateFile(file, content);
+    return internalUpdateFile(file, content, versionMessage);
   }
 
   /**
    * {@inheritDoc}
    */
-  public void deleteFile(final RepositoryFile file) {
+  public void deleteFile(final RepositoryFile file, final String versionMessage) {
     Assert.notNull(file);
     Assert.notNull(file.getId());
     Assert.notNull(file.getParentId());
@@ -239,12 +235,16 @@ public class JcrRepositoryFileDao implements IRepositoryFileDao, InitializingBea
         JcrRepositoryFileUtils.checkoutNearestVersionableFileIfNecessary(session, nodeIdStrategy, parentFolder);
         JcrRepositoryFileUtils.deleteFile(session, nodeIdStrategy, file, lockTokenHelper);
         session.save();
-        JcrRepositoryFileUtils.checkinNearestVersionableFileIfNecessary(session, nodeIdStrategy, parentFolder);
+        JcrRepositoryFileUtils.checkinNearestVersionableFileIfNecessary(session, nodeIdStrategy, parentFolder,
+            versionMessage);
         return null;
       }
     });
   }
 
+  /**
+   * {@inheritDoc}
+   */
   public LockSummary getLockSummary(final RepositoryFile file) {
     Assert.notNull(file);
     Assert.notNull(file.getId());
@@ -256,6 +256,9 @@ public class JcrRepositoryFileDao implements IRepositoryFileDao, InitializingBea
     });
   }
 
+  /**
+   * {@inheritDoc}
+   */
   public void lockFile(final RepositoryFile file, final String message) {
     Assert.notNull(file);
     Assert.notNull(file.getId());
@@ -269,6 +272,9 @@ public class JcrRepositoryFileDao implements IRepositoryFileDao, InitializingBea
     });
   }
 
+  /**
+   * {@inheritDoc}
+   */
   public void unlockFile(final RepositoryFile file) {
     Assert.notNull(file);
     Assert.notNull(file.getId());
@@ -277,6 +283,19 @@ public class JcrRepositoryFileDao implements IRepositoryFileDao, InitializingBea
       public Object doInJcr(final Session session) throws RepositoryException, IOException {
         JcrRepositoryFileUtils.unlockFile(session, nodeIdStrategy, file, lockTokenHelper);
         return null;
+      }
+    });
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  public List<VersionSummary> getVersionSummaries(final RepositoryFile file) {
+    Assert.notNull(file);
+    Assert.notNull(file.getId());
+    return (List<VersionSummary>) jcrTemplate.execute(new JcrCallback() {
+      public Object doInJcr(final Session session) throws RepositoryException, IOException {
+        return JcrRepositoryFileUtils.getVersionSummaries(session, nodeIdStrategy, file);
       }
     });
   }

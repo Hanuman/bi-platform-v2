@@ -83,4 +83,10 @@ public interface PentahoJcrConstants {
   String PENTAHO_LOCKTOKEN = "lockToken";
 
   String PENTAHO_LOCKTOKENSTORAGE = "pentahoLockTokenStorage";
+
+  String PENTAHO_VERSIONAUTHOR = "versionAuthor";
+  
+  String PENTAHO_VERSIONMESSAGE = "versionMessage";
+
+  String PENTAHO_MIXIN_VERSIONABLE = "pentahoVersionable";
 }

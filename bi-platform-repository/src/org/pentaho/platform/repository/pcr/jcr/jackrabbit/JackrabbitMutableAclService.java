@@ -149,7 +149,7 @@ public class JackrabbitMutableAclService implements IPentahoMutableAclService {
         }
 
         session.save();
-        JcrRepositoryFileUtils.checkinNearestVersionableNodeIfNecessary(session, nodeIdStrategy, node);
+        JcrRepositoryFileUtils.checkinNearestVersionableNodeIfNecessary(session, nodeIdStrategy, node, "[system] created ACL");
 
         Acl acl = toAcl(jrSession, objectIdentity);
         return acl;
@@ -191,7 +191,7 @@ public class JackrabbitMutableAclService implements IPentahoMutableAclService {
         AccessControlPolicy acPolicy = getAccessControlPolicy(acMgr, absPath);
         acMgr.removePolicy(absPath, acPolicy);
         jrSession.save();
-        JcrRepositoryFileUtils.checkinNearestVersionableNodeIfNecessary(session, nodeIdStrategy, node);
+        JcrRepositoryFileUtils.checkinNearestVersionableNodeIfNecessary(session, nodeIdStrategy, node, "[system] deleted ACL");
         return null;
       }
     });
@@ -242,7 +242,7 @@ public class JackrabbitMutableAclService implements IPentahoMutableAclService {
         }
         acMgr.setPolicy(absPath, acList);
         session.save();
-        JcrRepositoryFileUtils.checkinNearestVersionableNodeIfNecessary(session, nodeIdStrategy, node);
+        JcrRepositoryFileUtils.checkinNearestVersionableNodeIfNecessary(session, nodeIdStrategy, node, "[system] updated ACL");
         Acl readAcl = readAclById(acl.getObjectIdentity());
         Assert.isInstanceOf(MutableAcl.class, readAcl, "MutableAcl should be been returned");
 

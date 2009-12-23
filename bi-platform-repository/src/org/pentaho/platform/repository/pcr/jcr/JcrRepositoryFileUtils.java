@@ -3,6 +3,7 @@ package org.pentaho.platform.repository.pcr.jcr;
 import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
@@ -15,10 +16,13 @@ import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.Value;
 import javax.jcr.lock.Lock;
+import javax.jcr.version.Version;
+import javax.jcr.version.VersionHistory;
 
 import org.pentaho.platform.api.repository.IRepositoryFileContent;
 import org.pentaho.platform.api.repository.LockSummary;
 import org.pentaho.platform.api.repository.RepositoryFile;
+import org.pentaho.platform.api.repository.VersionSummary;
 import org.pentaho.platform.repository.pcr.jcr.JcrRepositoryFileDao.ILockTokenHelper;
 import org.pentaho.platform.repository.pcr.jcr.JcrRepositoryFileDao.Transformer;
 import org.springframework.util.Assert;
@@ -91,7 +95,7 @@ public class JcrRepositoryFileUtils {
 
     if (folder.isVersioned()) {
       //      folderNode.setProperty(addPentahoPrefix(session, PentahoJcrConstants.PENTAHO_VERSIONED), true);
-      folderNode.addMixin(PentahoJcrConstants.MIX_VERSIONABLE);
+      folderNode.addMixin(addPentahoPrefix(session, PentahoJcrConstants.PENTAHO_MIXIN_VERSIONABLE));
     }
 
     nodeIdStrategy.setId(folderNode, null);
@@ -127,7 +131,7 @@ public class JcrRepositoryFileUtils {
     resourceNode.addMixin(addPentahoPrefix(session, PentahoJcrConstants.PENTAHO_MIXIN_PENTAHORESOURCE));
     if (file.isVersioned()) {
       //      fileNode.setProperty(addPentahoPrefix(session, PentahoJcrConstants.PENTAHO_VERSIONED), true);
-      fileNode.addMixin(PentahoJcrConstants.MIX_VERSIONABLE);
+      fileNode.addMixin(addPentahoPrefix(session, PentahoJcrConstants.PENTAHO_MIXIN_VERSIONABLE));
     }
 
     transformer.createContentNode(session, nodeIdStrategy, content, resourceNode);
@@ -226,7 +230,7 @@ public class JcrRepositoryFileUtils {
     Assert.notNull(node);
     Value[] mixinTypeNames = node.getProperty(PentahoJcrConstants.JCR_MIXINTYPES).getValues();
     for (Value v : mixinTypeNames) {
-      if (PentahoJcrConstants.MIX_VERSIONABLE.equals(v.getString())) {
+      if (addPentahoPrefix(session, PentahoJcrConstants.PENTAHO_MIXIN_VERSIONABLE).equals(v.getString())) {
         return true;
       }
     }
@@ -281,7 +285,7 @@ public class JcrRepositoryFileUtils {
       final NodeIdStrategy nodeIdStrategy, final Node node) throws RepositoryException {
     Assert.notNull(node);
 
-    Node versionableNode = findNearestVersionableNode(node);
+    Node versionableNode = findNearestVersionableNode(session, node);
 
     if (versionableNode != null) {
       versionableNode.checkout();
@@ -292,12 +296,13 @@ public class JcrRepositoryFileUtils {
    * Conditionally checks in node representing file if node is versionable.
    */
   public static void checkinNearestVersionableFileIfNecessary(final Session session,
-      final NodeIdStrategy nodeIdStrategy, final RepositoryFile file) throws RepositoryException {
+      final NodeIdStrategy nodeIdStrategy, final RepositoryFile file, final String versionMessage)
+      throws RepositoryException {
     // file could be null meaning the caller is using null as the parent folder; that's OK; in this case the node in
     // question would be the repository root node and that is never versioned
     if (file != null) {
       Node node = nodeIdStrategy.findNodeById(session, file.getId());
-      checkinNearestVersionableNodeIfNecessary(session, nodeIdStrategy, node);
+      checkinNearestVersionableNodeIfNecessary(session, nodeIdStrategy, node, versionMessage);
     }
   }
 
@@ -305,22 +310,28 @@ public class JcrRepositoryFileUtils {
    * Conditionally checks in node if node is versionable.
    */
   public static void checkinNearestVersionableNodeIfNecessary(final Session session,
-      final NodeIdStrategy nodeIdStrategy, final Node node) throws RepositoryException {
+      final NodeIdStrategy nodeIdStrategy, final Node node, final String versionMessage) throws RepositoryException {
     Assert.notNull(node);
 
-    Node versionableNode = findNearestVersionableNode(node);
+    Node versionableNode = findNearestVersionableNode(session, node);
 
     if (versionableNode != null) {
+      versionableNode.setProperty(addPentahoPrefix(session, PentahoJcrConstants.PENTAHO_VERSIONAUTHOR), "MANHANDS");
+      if (versionMessage != null) {
+        versionableNode.setProperty(addPentahoPrefix(session, PentahoJcrConstants.PENTAHO_VERSIONMESSAGE),
+            versionMessage);
+      }
+      session.save(); // required before checkin since we set some properties
       versionableNode.checkin();
     }
   }
 
   /**
-   * Returns the nearest versionable node (possibly the node itself) or null if the root is reached.
+   * Returns the nearest versionable node (possibly the node itself) or {@code null} if the root is reached.
    */
-  private static Node findNearestVersionableNode(final Node node) throws RepositoryException {
+  private static Node findNearestVersionableNode(final Session session, final Node node) throws RepositoryException {
     Node currentNode = node;
-    while (!currentNode.isNodeType(PentahoJcrConstants.MIX_VERSIONABLE)) {
+    while (!currentNode.isNodeType(addPentahoPrefix(session, PentahoJcrConstants.PENTAHO_MIXIN_VERSIONABLE))) {
       try {
         currentNode = currentNode.getParent();
       } catch (ItemNotFoundException e) {
@@ -331,8 +342,8 @@ public class JcrRepositoryFileUtils {
     return currentNode;
   }
 
-  public static void deleteFile(final Session session, final NodeIdStrategy nodeIdStrategy, final RepositoryFile file, final ILockTokenHelper lockTokenHelper)
-      throws RepositoryException, IOException {
+  public static void deleteFile(final Session session, final NodeIdStrategy nodeIdStrategy, final RepositoryFile file,
+      final ILockTokenHelper lockTokenHelper) throws RepositoryException, IOException {
     Node fileNode = nodeIdStrategy.findNodeById(session, file.getId());
     // guard against using a file retrieved from a more lenient session inside a more strict session
     Assert.notNull(fileNode);
@@ -367,7 +378,8 @@ public class JcrRepositoryFileUtils {
     }
     fileNode.setProperty(addPentahoPrefix(session, PentahoJcrConstants.PENTAHO_LOCKDATE), Calendar.getInstance());
     session.save();
-    checkinNearestVersionableNodeIfNecessary(session, nodeIdStrategy, fileNode);
+    checkinNearestVersionableNodeIfNecessary(session, nodeIdStrategy, fileNode, "[system] locked file with id="
+        + nodeIdStrategy.getId(fileNode));
   }
 
   public static void unlockFile(final Session session, final NodeIdStrategy nodeIdStrategy, final RepositoryFile file,
@@ -388,7 +400,8 @@ public class JcrRepositoryFileUtils {
     }
     fileNode.getProperty(addPentahoPrefix(session, PentahoJcrConstants.PENTAHO_LOCKDATE)).remove();
     session.save();
-    checkinNearestVersionableNodeIfNecessary(session, nodeIdStrategy, fileNode);
+    checkinNearestVersionableNodeIfNecessary(session, nodeIdStrategy, fileNode, "[system] unlocked file with id="
+        + nodeIdStrategy.getId(fileNode));
   }
 
   public static LockSummary getLockSummary(final Session session, final NodeIdStrategy nodeIdStrategy,
@@ -397,7 +410,7 @@ public class JcrRepositoryFileUtils {
     if (fileNode.isLocked()) {
       Assert.isTrue(fileNode.isNodeType(addPentahoPrefix(session, PentahoJcrConstants.PENTAHO_MIXIN_LOCKABLE)));
       Lock lock = fileNode.getLock();
-      return new LockSummary(lock.getLockOwner(), fileNode.getProperty(
+      return new LockSummary(lock.getNode().getUUID(), lock.getLockOwner(), fileNode.getProperty(
           addPentahoPrefix(session, PentahoJcrConstants.PENTAHO_LOCKDATE)).getDate().getTime(), fileNode.getProperty(
           addPentahoPrefix(session, PentahoJcrConstants.PENTAHO_LOCKMESSAGE)).getString());
     } else {
@@ -409,6 +422,31 @@ public class JcrRepositoryFileUtils {
       throws RepositoryException, IOException {
     Node fileNode = nodeIdStrategy.findNodeById(session, id);
     return fromFileNode(session, nodeIdStrategy, fileNode);
+  }
+
+  public static Object getVersionSummaries(final Session session, final NodeIdStrategy nodeIdStrategy,
+      final RepositoryFile file) throws RepositoryException, IOException {
+    Node fileNode = nodeIdStrategy.findNodeById(session, file.getId());
+    VersionHistory versionHistory = fileNode.getVersionHistory();
+    Version version = versionHistory.getRootVersion();
+    Version[] successors = version.getSuccessors();
+    List<VersionSummary> versionSummaries = new ArrayList<VersionSummary>();
+    while (successors != null && successors.length > 0) {
+      version = successors[0]; // branching not supported
+      List<String> labels = Arrays.asList(version.getVersionHistory().getVersionLabels());
+      // get custom Pentaho properties (i.e. author and message)
+      String author = version.getProperty(addPentahoPrefix(session, PentahoJcrConstants.PENTAHO_VERSIONAUTHOR))
+          .getString();
+      String message = null;
+      if (version.hasProperty(addPentahoPrefix(session, PentahoJcrConstants.PENTAHO_VERSIONMESSAGE))) {
+        message = version.getProperty(addPentahoPrefix(session, PentahoJcrConstants.PENTAHO_VERSIONMESSAGE))
+            .getString();
+      }
+      versionSummaries.add(new VersionSummary(version.getName(), version.getVersionHistory().getVersionableUUID(),
+          version.getCreated().getTime(), author, message, labels));
+      successors = version.getSuccessors();
+    }
+    return versionSummaries;
   }
 
 }

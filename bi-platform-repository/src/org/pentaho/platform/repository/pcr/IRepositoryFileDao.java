@@ -5,6 +5,7 @@ import java.util.List;
 import org.pentaho.platform.api.repository.IRepositoryFileContent;
 import org.pentaho.platform.api.repository.LockSummary;
 import org.pentaho.platform.api.repository.RepositoryFile;
+import org.pentaho.platform.api.repository.VersionSummary;
 
 /**
  * A data access object for reading and writing {@code RepositoryFile} instances.
@@ -38,19 +39,21 @@ public interface IRepositoryFileDao {
    * @param parentFolder parent folder (may be {@code null})
    * @param file file to create
    * @param content file content
+   * @param versionMessage optional version comment
    * @return new file with non-null id
    */
   RepositoryFile createFile(final RepositoryFile parentFolder, final RepositoryFile file,
-      final IRepositoryFileContent content);
+      final IRepositoryFileContent content, final String versionMessage);
 
   /**
    * Creates a folder.
    * 
    * @param parentFolder parent folder (may be {@code null})
    * @param file file to create
+   * @param versionMessage optional version comment
    * @return new file with non-null id
    */
-  RepositoryFile createFolder(final RepositoryFile parentFolder, final RepositoryFile file);
+  RepositoryFile createFolder(final RepositoryFile parentFolder, final RepositoryFile file, final String versionMessage);
 
   /**
    * Returns the children of this folder.
@@ -65,16 +68,18 @@ public interface IRepositoryFileDao {
    * 
    * @param file updated file
    * @param content updated content
+   * @param versionMessage optional version comment
    * @return updated file (possible with new version number)
    */
-  RepositoryFile updateFile(final RepositoryFile file, final IRepositoryFileContent content);
+  RepositoryFile updateFile(final RepositoryFile file, final IRepositoryFileContent content, final String versionMessage);
 
   /**
    * Deletes a file or folder.
    * 
    * @param file file to delete
+   * @param versionMessage optional version comment
    */
-  void deleteFile(final RepositoryFile file);
+  void deleteFile(final RepositoryFile file, final String versionMessage);
 
   /**
    * Locks a file.
@@ -98,4 +103,13 @@ public interface IRepositoryFileDao {
    * @return lock summary or {@code null} if file is not locked
    */
   LockSummary getLockSummary(final RepositoryFile file);
+
+  /**
+   * Returns a list of version summary instances. The first version in the list is the root version. The last version
+   * in the list is the base version. Branching and merging are not supported so this is a simple list.
+   * 
+   * @param file file whose versions to get
+   * @return list of version summaries (never {@code null})
+   */
+  List<VersionSummary> getVersionSummaries(final RepositoryFile file);
 }

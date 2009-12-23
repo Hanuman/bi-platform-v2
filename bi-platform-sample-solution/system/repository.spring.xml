@@ -115,6 +115,7 @@
         org.pentaho.platform.api.repository.IPentahoContentRepository.lockFile=PROPAGATION_REQUIRED
         org.pentaho.platform.api.repository.IPentahoContentRepository.unlockFile=PROPAGATION_REQUIRED
         org.pentaho.platform.api.repository.IPentahoContentRepository.getLockSummary=PROPAGATION_REQUIRED,readOnly
+        org.pentaho.platform.api.repository.IPentahoContentRepository.getVersionSummaries=PROPAGATION_REQUIRED,readOnly
         </value>
     </property>
   </bean>
@@ -210,6 +211,7 @@
         org.pentaho.platform.api.repository.IPentahoContentRepository.getTenantHomeFolderPath=VOTE_ROLE_FILE_Authenticated
         org.pentaho.platform.api.repository.IPentahoContentRepository.getTenantPublicFolderPath=VOTE_ROLE_FILE_Authenticated
         org.pentaho.platform.api.repository.IPentahoContentRepository.getUserHomeFolderPath=VOTE_ROLE_FILE_Authenticated
+        org.pentaho.platform.api.repository.IPentahoContentRepository.getVersionSummaries=VOTE_ROLE_FILE_Authenticated
       </value>
     </property>
   </bean>
@@ -235,6 +237,7 @@
         <value>classpath:/org/pentaho/platform/repository/pcr/jcr/jackrabbit/pentahoLockable.cnd</value>
         <value>classpath:/org/pentaho/platform/repository/pcr/jcr/jackrabbit/pentahoInternalFolder.cnd</value>
         <value>classpath:/org/pentaho/platform/repository/pcr/jcr/jackrabbit/pentahoLockTokenStorage.cnd</value>
+        <value>classpath:/org/pentaho/platform/repository/pcr/jcr/jackrabbit/pentahoVersionable.cnd</value>
       </list>
     </property>
   </bean>
