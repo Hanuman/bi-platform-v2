@@ -161,4 +161,14 @@ public class SimpleJcrTestUtils {
     });
   }
 
+  public static boolean isCheckedOut(final JcrTemplate jcrTemplate, final String absPath) {
+    return (Boolean) jcrTemplate.execute(new JcrCallback() {
+      public Object doInJcr(final Session session) throws RepositoryException {
+        Item item = session.getItem(absPath);
+        Assert.isTrue(item.isNode());
+        return ((Node) item).isCheckedOut();
+      }
+    });
+  }
+
 }

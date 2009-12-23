@@ -1,6 +1,6 @@
 package org.pentaho.platform.repository.pcr;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.*;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
@@ -448,6 +448,28 @@ public class PentahoContentRepositoryTests implements ApplicationContextAware {
     assertEquals(expectedModDataString, IOUtils.toString(modContentFromRepo.getData(), expectedEncoding));
 
     assertEquals(modExpectedRunArguments, modContentFromRepo.getArguments());
+  }
+  
+  /**
+   * Create the same folder twice inside a versioned parent folder. Second time through, we should fail and 
+   */
+  @Test
+  public void testTransactionRollback() throws Exception {
+    repo.startup();
+    login(USERNAME_SUZY, TENANT_ID_ACME);
+    repo.getOrCreateUserHomeFolder();
+    RepositoryFile parentFolder = repo.getFile(repo.getUserHomeFolderPath());
+    assertTrue(parentFolder.isVersioned());
+    RepositoryFile newFolder = new RepositoryFile.Builder("test").folder(true).build();
+    newFolder = repo.createFolder(parentFolder, newFolder);
+    assertNotNull(SimpleJcrTestUtils.getItem(testJcrTemplate, repo.getUserHomeFolderPath() + "/test"));
+    RepositoryFile anotherFolder = new RepositoryFile.Builder("test").folder(true).build();
+    try {
+      repo.createFolder(parentFolder, anotherFolder);
+      fail("expected DataIntegrityViolationException");
+    } catch (DataIntegrityViolationException e) {
+    }
+    assertFalse(SimpleJcrTestUtils.isCheckedOut(testJcrTemplate, repo.getUserHomeFolderPath()));
   }
 
   @Test
