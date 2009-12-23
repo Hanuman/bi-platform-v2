@@ -145,4 +145,30 @@ public interface IPentahoContentRepository {
 
   Acl getAcl(final RepositoryFile file);
 
+  // ~ Path methods ====================================================================================================
+  
+  /**
+   * Returns the absolute path to the pentaho root folder.
+   */
+  String getPentahoRootFolderPath();
+
+  /**
+   * Returns the absolute path to the tenant root folder.
+   */
+  String getTenantRootFolderPath();
+
+  /**
+   * Returns the absolute path to the tenant home folder.
+   */
+  String getTenantHomeFolderPath();
+
+  /**
+   * Returns the absolute path to the tenant public folder.
+   */
+  String getTenantPublicFolderPath();
+
+  /**
+   * Returns the absolute path to the current user's home folder.
+   */
+  String getUserHomeFolderPath();
 }

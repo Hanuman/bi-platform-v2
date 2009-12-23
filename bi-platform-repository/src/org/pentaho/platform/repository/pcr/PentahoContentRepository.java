@@ -223,6 +223,26 @@ public class PentahoContentRepository implements IPentahoContentRepository {
     contentDao.unlockFile(file);
   }
 
+  public String getPentahoRootFolderPath() {
+    return repositoryAdminHelper.getPentahoRootFolderPath();
+  }
+
+  public String getTenantHomeFolderPath() {
+    return repositoryAdminHelper.getTenantHomeFolderPath(internalGetTenantId());
+  }
+
+  public String getTenantPublicFolderPath() {
+    return repositoryAdminHelper.getTenantPublicFolderPath(internalGetTenantId());
+  }
+
+  public String getTenantRootFolderPath() {
+    return repositoryAdminHelper.getTenantRootFolderPath(internalGetTenantId());
+  }
+
+  public String getUserHomeFolderPath() {
+    return repositoryAdminHelper.getUserHomeFolderPath(internalGetUsername(), internalGetTenantId());
+  }
+
   public static interface IRepositoryAdminHelper {
     String getPentahoRootFolderPath();
 
@@ -251,7 +271,7 @@ public class PentahoContentRepository implements IPentahoContentRepository {
     Assert.state(pentahoSession != null);
     return pentahoSession.getName();
   }
-  
+
   /**
    * Returns the tenant ID of the current user.
    */
