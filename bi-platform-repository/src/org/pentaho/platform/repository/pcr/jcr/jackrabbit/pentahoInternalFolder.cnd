@@ -4,4 +4,5 @@ Pentaho "internal" folder. Like an nt:folder except that nodes of this node type
 
 <ns = 'http://www.pentaho.org/jcr/1.0'>
 [ns:pentahoInternalFolder] > nt:hierarchyNode
+  // allow any child nodes
   + *

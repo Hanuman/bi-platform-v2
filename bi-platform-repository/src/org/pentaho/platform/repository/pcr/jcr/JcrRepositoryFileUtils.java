@@ -331,11 +331,18 @@ public class JcrRepositoryFileUtils {
     return currentNode;
   }
 
-  public static void deleteFile(final Session session, final NodeIdStrategy nodeIdStrategy, final RepositoryFile file)
+  public static void deleteFile(final Session session, final NodeIdStrategy nodeIdStrategy, final RepositoryFile file, final ILockTokenHelper lockTokenHelper)
       throws RepositoryException, IOException {
     Node fileNode = nodeIdStrategy.findNodeById(session, file.getId());
     // guard against using a file retrieved from a more lenient session inside a more strict session
     Assert.notNull(fileNode);
+    // technically, the node can be locked when it is deleted; however, we want to avoid an orphaned lock token; delete
+    // it first
+    if (fileNode.isLocked()) {
+      Lock lock = fileNode.getLock();
+      // don't need lock token anymore
+      lockTokenHelper.removeLockToken(session, nodeIdStrategy, lock);
+    }
     fileNode.remove();
   }
 

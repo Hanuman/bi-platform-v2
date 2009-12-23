@@ -78,7 +78,7 @@ public class DefaultLockTokenHelper implements ILockTokenHelper {
     JcrRepositoryFileUtils.checkoutNearestVersionableNodeIfNecessary(session, nodeIdStrategy, lockTokensNode);
     while (nodes.hasNext()) {
       Node node = nodes.nextNode();
-      if (node.getName().equals(lock.getLockToken())) {
+      if (node.getName().equals(lock.getNode().getUUID())) {
         node.remove();
       }
     }

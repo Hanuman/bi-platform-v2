@@ -1,10 +1,12 @@
 /*
-Pentaho lock token storage node type. See
+Pentaho lock token storage node type. See section 8.4.7 of JSR-170 specification: "the user must additionally ensure 
+that a reference to the lock token is preserved separately so that it can later be attached to another session."
 */
 
 <ns = 'http://www.pentaho.org/jcr/1.0'>
 [ns:pentahoLockTokenStorage]
-  // reference to locked node is not strictly needed; only stored here in case admin needs to clear the lock
+  // reference to locked node is not strictly needed; only stored here in case admin needs to find the locked node to 
+  // clear its lock
   - ns:lockedNodeRef (reference)
   // lock token string; this is added to session via session.addLockToken()
   - ns:lockToken (string)

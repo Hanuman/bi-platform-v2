@@ -536,6 +536,37 @@ public class PentahoContentRepositoryTests implements ApplicationContextAware {
 
     assertFalse(SimpleJcrTestUtils.isLocked(testJcrTemplate, filePath));
     assertNull(repo.getLockSummary(newFile));
+    
+    // make sure lock token node has been removed
+    assertNull(SimpleJcrTestUtils.getItem(testJcrTemplate, repo.getUserHomeFolderPath() + "/.lockTokens/" + newFile.getId()));
+
+  }
+  
+  @Test
+  public void testDeleteLockedFile() throws Exception {
+    repo.startup();
+    login(USERNAME_SUZY, TENANT_ID_ACME);
+    repo.getOrCreateUserHomeFolder();
+    final String parentFolderPath = repo.getTenantPublicFolderPath();
+    RepositoryFile parentFolder = repo.getFile(parentFolderPath);
+    final String dataString = "Hello World!";
+    final String encoding = "UTF-8";
+    byte[] data = dataString.getBytes(encoding);
+    ByteArrayInputStream dataStream = new ByteArrayInputStream(data);
+    final String mimeType = "text/plain";
+    final String fileName = "helloworld.xaction";
+
+    final SimpleRepositoryFileContent content = new SimpleRepositoryFileContent(dataStream, encoding, mimeType);
+    RepositoryFile newFile = repo.createFile(parentFolder, new RepositoryFile.Builder(fileName).build(), content);
+    final String filePath = parentFolderPath + RepositoryFile.SEPARATOR + fileName;
+    assertNull(repo.getLockSummary(newFile));
+    final String lockMessage = "test by Mat";
+    repo.lockFile(newFile, lockMessage);
+
+    repo.deleteFile(newFile);
+    
+    // make sure lock token node has been removed
+    assertNull(SimpleJcrTestUtils.getItem(testJcrTemplate, repo.getUserHomeFolderPath() + "/.lockTokens/" + newFile.getId()));
   }
 
   private RepositoryFile createRunResultFile(final String parentFolderPath, final String expectedName,

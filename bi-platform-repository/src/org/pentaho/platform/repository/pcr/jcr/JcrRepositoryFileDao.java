@@ -237,7 +237,7 @@ public class JcrRepositoryFileDao implements IRepositoryFileDao, InitializingBea
       public Object doInJcr(final Session session) throws RepositoryException, IOException {
         RepositoryFile parentFolder = JcrRepositoryFileUtils.getFileById(session, nodeIdStrategy, file.getParentId());
         JcrRepositoryFileUtils.checkoutNearestVersionableFileIfNecessary(session, nodeIdStrategy, parentFolder);
-        JcrRepositoryFileUtils.deleteFile(session, nodeIdStrategy, file);
+        JcrRepositoryFileUtils.deleteFile(session, nodeIdStrategy, file, lockTokenHelper);
         session.save();
         JcrRepositoryFileUtils.checkinNearestVersionableFileIfNecessary(session, nodeIdStrategy, parentFolder);
         return null;
