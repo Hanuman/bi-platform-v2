@@ -14,6 +14,12 @@
  * @author James Dixon, Steven Barkdull
  */
  
+ var pathArray = window.location.pathname.split( '/' );
+ var webAppPath = "/" + pathArray[1];
+
+ document.write("<script type='text/javascript' src='/js/webcontext.js'></script>");
+ document.write("<script type='text/javascript' src='" + webAppPath + "/js/webcontext.js'></script>");
+ 
 /**
  * This class provides a mechanism for calling a Pentaho WebService using AJAX techniques.
  * This is a stateless, static class, you should never call the ctor
@@ -22,14 +28,14 @@ WebServiceProxy = function()
 {
 	throw new Error( Messages.getString("CTOR_CALL_UNNEEDED") );
 }
-/*static*/WebServiceProxy.ADHOC_WEBSERVICE_URL = "../AdhocWebService";
+/*static*/WebServiceProxy.ADHOC_WEBSERVICE_URL = WEB_CONTEXT_BASE + "AdhocWebService";
 
 /*static*/WebServiceProxy.msgCtrl = new MessageCtrl();
 
 /**
  * Make a call to the WebService
  * 
- * @param String url base URL to the web service (eg "../AdhocWebService")
+ * @param String url base URL to the web service (eg "AdhocWebService")
  * @param component String referring to the string selector in the adhoc web service
  * that determines which "service" will be called.
  * @parm params Object containing properties, these properties and their values
