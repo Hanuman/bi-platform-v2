@@ -130,9 +130,9 @@ public class PentahoContentRepositoryTests implements ApplicationContextAware {
   @Test
   public void testStartup() throws Exception {
     repo.startup();
-    final String rootFolderPath = repo.getPentahoRootFolderPath();
     loginAsRepositoryAdmin();
     // make sure pentaho root folder exists
+    final String rootFolderPath = repo.getPentahoRootFolderPath();
     assertNotNull(SimpleJcrTestUtils.getItem(testJcrTemplate, rootFolderPath));
     // make sure ACEs exist
     assertLocalAceExists(repo.getFile(rootFolderPath), commonAuthenticatedAuthoritySid, RepositoryFilePermission.READ);

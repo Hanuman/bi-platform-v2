@@ -205,6 +205,11 @@
         org.pentaho.platform.api.repository.IPentahoContentRepository.lockFile=VOTE_ROLE_FILE_Authenticated
         org.pentaho.platform.api.repository.IPentahoContentRepository.unlockFile=VOTE_ROLE_FILE_Authenticated
         org.pentaho.platform.api.repository.IPentahoContentRepository.getLockSummary=VOTE_ROLE_FILE_Authenticated
+        org.pentaho.platform.api.repository.IPentahoContentRepository.getPentahoRootFolderPath=VOTE_ROLE_FILE_Authenticated
+        org.pentaho.platform.api.repository.IPentahoContentRepository.getTenantRootFolderPath=VOTE_ROLE_FILE_Authenticated
+        org.pentaho.platform.api.repository.IPentahoContentRepository.getTenantHomeFolderPath=VOTE_ROLE_FILE_Authenticated
+        org.pentaho.platform.api.repository.IPentahoContentRepository.getTenantPublicFolderPath=VOTE_ROLE_FILE_Authenticated
+        org.pentaho.platform.api.repository.IPentahoContentRepository.getUserHomeFolderPath=VOTE_ROLE_FILE_Authenticated
       </value>
     </property>
   </bean>
