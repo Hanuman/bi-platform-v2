@@ -13,7 +13,9 @@ import javax.jcr.RepositoryException;
 import javax.jcr.observation.Event;
 import javax.jcr.observation.EventIterator;
 import javax.jcr.observation.EventListener;
+import javax.jcr.version.VersionHistory;
 
+import org.apache.jackrabbit.JcrConstants;
 import org.apache.jackrabbit.api.jsr283.security.AccessControlEntry;
 import org.apache.jackrabbit.core.NodeImpl;
 import org.apache.jackrabbit.core.PropertyImpl;
@@ -24,11 +26,9 @@ import org.apache.jackrabbit.core.security.authorization.AccessControlConstants;
 import org.apache.jackrabbit.core.security.authorization.AccessControlEntryImpl;
 import org.apache.jackrabbit.core.security.authorization.CompiledPermissions;
 import org.apache.jackrabbit.core.security.authorization.Permission;
-import org.apache.jackrabbit.core.security.authorization.AbstractCompiledPermissions.Result;
 import org.apache.jackrabbit.core.security.principal.EveryonePrincipal;
 import org.apache.jackrabbit.spi.Path;
 import org.apache.jackrabbit.util.Text;
-import org.pentaho.platform.api.repository.RepositoryFile;
 import org.pentaho.platform.repository.pcr.jcr.PentahoJcrConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -140,17 +140,9 @@ public class PentahoAccessControlProvider extends AbstractPentahoAccessControlPr
       String jcrPath = resolver.getJCRPath(absPath);
       log.debug("building result for jcrPath=" + jcrPath);
 
-      // TODO add execute through folder (traverse) checking
-
       NodeImpl nearestPersistedNode = findNearestPersistedNode(absPath);
-      NodeImpl folderOrFileOrLinkedFileOrRootNode = nearestPersistedNode;
 
-      // now we have a node; it may not be a folder, file, or linkedFile node so find the nearest enclosing folder,
-      // file, or linkedFile node; that will be the ACL that we start with; also, stop if we hit the root node
-      while (!isFolderOrFileOrLinkedFileNode(folderOrFileOrLinkedFileOrRootNode)
-          && !isRootNode(folderOrFileOrLinkedFileOrRootNode)) {
-        folderOrFileOrLinkedFileOrRootNode = (NodeImpl) folderOrFileOrLinkedFileOrRootNode.getParent();
-      }
+      NodeImpl folderOrFileOrLinkedFileOrRootNode = findFolderOrFileOrLinkedFileOrRootNode(nearestPersistedNode);
 
       // if we hit the root node without finding a folder, file, or linkedFile, that is a problem as the 
       // PentahoContentRepository should have written /pentaho node at a minimum
@@ -210,13 +202,36 @@ public class PentahoAccessControlProvider extends AbstractPentahoAccessControlPr
       //        allows |= Permission.READ_AC;
       //      }
       //      
-      
+
       // third arg is for when callers call Result.getPrivileges() as is done in AbstractCompiledPermissions.getPrivileges()
       return new Result(allows, 0, allows, 0);
     }
 
     private boolean isRootNode(final NodeImpl node) throws RepositoryException {
       return node.getId().equals(((NodeImpl) systemSession.getRootNode()).getNodeId());
+    }
+
+    private boolean isVersionHistory(final NodeImpl node) throws RepositoryException {
+      return node.isNodeType(JcrConstants.NT_VERSIONHISTORY);
+    }
+
+    private NodeImpl findFolderOrFileOrLinkedFileOrRootNode(final NodeImpl node) throws RepositoryException {
+      // now we have a node; it may not be a folder, file, or linkedFile node so find the nearest enclosing folder,
+      // file, or linkedFile node; that will be the ACL that we start with; also, stop if we hit the root node;
+      // also, if incoming path involves version history, find the versionHistory node then find the file or linked
+      // file or folder that it is associated with and use that node's ACL
+      NodeImpl currentNode = node;
+      while (!isVersionHistory(currentNode) && !isFolderOrFileOrLinkedFileNode(currentNode) && !isRootNode(currentNode)) {
+        currentNode = (NodeImpl) currentNode.getParent();
+      }
+
+      if (isVersionHistory(currentNode)) {
+        log.debug("dealing with version history node; going to use versionable node that it refers to");
+        VersionHistory versionHistory = (VersionHistory) currentNode;
+        return (NodeImpl) systemSession.getNodeByUUID(versionHistory.getVersionableUUID());
+      } else {
+        return currentNode;
+      }
     }
 
     //    private boolean isFolderOrFileOrLinkedFileOrMetadata(final String origItemAbsPath, final NodeImpl folderOrFileOrLinkedFileOrRootNode) throws RepositoryException {
@@ -295,7 +310,7 @@ public class PentahoAccessControlProvider extends AbstractPentahoAccessControlPr
       }
       return super.grants(absPath, permissions);
     }
-    
+
     //--------------------------------------------------< EventListener >---
     /**
      * @see EventListener#onEvent(EventIterator)

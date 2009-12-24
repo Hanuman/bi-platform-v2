@@ -89,4 +89,6 @@ public interface PentahoJcrConstants {
   String PENTAHO_VERSIONMESSAGE = "versionMessage";
 
   String PENTAHO_MIXIN_VERSIONABLE = "pentahoVersionable";
+
+  String JCR_FROZENNODE = "jcr:frozenNode";
 }

@@ -19,6 +19,7 @@ import javax.jcr.lock.Lock;
 import javax.jcr.version.Version;
 import javax.jcr.version.VersionHistory;
 
+import org.apache.jackrabbit.JcrConstants;
 import org.pentaho.platform.api.repository.IRepositoryFileContent;
 import org.pentaho.platform.api.repository.LockSummary;
 import org.pentaho.platform.api.repository.RepositoryFile;
@@ -296,13 +297,13 @@ public class JcrRepositoryFileUtils {
    * Conditionally checks in node representing file if node is versionable.
    */
   public static void checkinNearestVersionableFileIfNecessary(final Session session,
-      final NodeIdStrategy nodeIdStrategy, final RepositoryFile file, final String versionMessage)
+      final NodeIdStrategy nodeIdStrategy, final RepositoryFile file, final String... versionMessageAndLabel)
       throws RepositoryException {
     // file could be null meaning the caller is using null as the parent folder; that's OK; in this case the node in
     // question would be the repository root node and that is never versioned
     if (file != null) {
       Node node = nodeIdStrategy.findNodeById(session, file.getId());
-      checkinNearestVersionableNodeIfNecessary(session, nodeIdStrategy, node, versionMessage);
+      checkinNearestVersionableNodeIfNecessary(session, nodeIdStrategy, node, versionMessageAndLabel);
     }
   }
 
@@ -310,19 +311,24 @@ public class JcrRepositoryFileUtils {
    * Conditionally checks in node if node is versionable.
    */
   public static void checkinNearestVersionableNodeIfNecessary(final Session session,
-      final NodeIdStrategy nodeIdStrategy, final Node node, final String versionMessage) throws RepositoryException {
+      final NodeIdStrategy nodeIdStrategy, final Node node, final String... versionMessageAndLabel)
+      throws RepositoryException {
     Assert.notNull(node);
 
     Node versionableNode = findNearestVersionableNode(session, node);
 
     if (versionableNode != null) {
+      // TODO mlowery fix this constant
       versionableNode.setProperty(addPentahoPrefix(session, PentahoJcrConstants.PENTAHO_VERSIONAUTHOR), "MANHANDS");
-      if (versionMessage != null) {
+      if (versionMessageAndLabel.length > 0 && StringUtils.hasText(versionMessageAndLabel[0])) {
         versionableNode.setProperty(addPentahoPrefix(session, PentahoJcrConstants.PENTAHO_VERSIONMESSAGE),
-            versionMessage);
+            versionMessageAndLabel[0]);
       }
-      session.save(); // required before checkin since we set some properties
-      versionableNode.checkin();
+      session.save(); // required before checkin since we set some properties above
+      Version newVersion = versionableNode.checkin();
+      if (versionMessageAndLabel.length > 1 && StringUtils.hasText(versionMessageAndLabel[1])) {
+        versionableNode.getVersionHistory().addVersionLabel(newVersion.getName(), versionMessageAndLabel[1], true);
+      }
     }
   }
 
@@ -433,20 +439,31 @@ public class JcrRepositoryFileUtils {
     List<VersionSummary> versionSummaries = new ArrayList<VersionSummary>();
     while (successors != null && successors.length > 0) {
       version = successors[0]; // branching not supported
-      List<String> labels = Arrays.asList(version.getVersionHistory().getVersionLabels());
+      List<String> labels = Arrays.asList(versionHistory.getVersionLabels(version));
       // get custom Pentaho properties (i.e. author and message)
-      String author = version.getProperty(addPentahoPrefix(session, PentahoJcrConstants.PENTAHO_VERSIONAUTHOR))
+      Node nodeAtVersion = getNodeAtVersion(version);
+      String author = nodeAtVersion.getProperty(addPentahoPrefix(session, PentahoJcrConstants.PENTAHO_VERSIONAUTHOR))
           .getString();
       String message = null;
-      if (version.hasProperty(addPentahoPrefix(session, PentahoJcrConstants.PENTAHO_VERSIONMESSAGE))) {
-        message = version.getProperty(addPentahoPrefix(session, PentahoJcrConstants.PENTAHO_VERSIONMESSAGE))
+      if (nodeAtVersion.hasProperty(addPentahoPrefix(session, PentahoJcrConstants.PENTAHO_VERSIONMESSAGE))) {
+        message = nodeAtVersion.getProperty(addPentahoPrefix(session, PentahoJcrConstants.PENTAHO_VERSIONMESSAGE))
             .getString();
       }
-      versionSummaries.add(new VersionSummary(version.getName(), version.getVersionHistory().getVersionableUUID(),
-          version.getCreated().getTime(), author, message, labels));
+      versionSummaries.add(new VersionSummary(version.getName(), versionHistory.getVersionableUUID(), version
+          .getCreated().getTime(), author, message, labels));
       successors = version.getSuccessors();
     }
     return versionSummaries;
+  }
+
+  /**
+   * Returns the node as it was at the given version.
+   * 
+   * @param version version to get
+   * @return node at version
+   */
+  private static Node getNodeAtVersion(final Version version) throws RepositoryException {
+    return version.getNode(PentahoJcrConstants.JCR_FROZENNODE);
   }
 
 }

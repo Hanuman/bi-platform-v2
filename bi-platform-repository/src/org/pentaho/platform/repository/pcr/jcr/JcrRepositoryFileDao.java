@@ -57,7 +57,7 @@ public class JcrRepositoryFileDao implements IRepositoryFileDao, InitializingBea
   // ~ Methods =========================================================================================================
 
   private RepositoryFile internalCreateFolder(final RepositoryFile parentFolder, final RepositoryFile file,
-      final String versionMessage) {
+      final String... versionMessageAndLabel) {
     Assert.notNull(file);
     Assert.hasText(file.getName());
     Assert.isTrue(!file.getName().contains(RepositoryFile.SEPARATOR));
@@ -72,14 +72,14 @@ public class JcrRepositoryFileDao implements IRepositoryFileDao, InitializingBea
         Node folderNode = JcrRepositoryFileUtils.createFolderNode(session, nodeIdStrategy, parentFolder, file);
         session.save();
         JcrRepositoryFileUtils.checkinNearestVersionableFileIfNecessary(session, nodeIdStrategy, parentFolder,
-            versionMessage);
+            versionMessageAndLabel);
         return JcrRepositoryFileUtils.fromFileNode(session, nodeIdStrategy, folderNode);
       }
     });
   }
 
   private RepositoryFile internalCreateFile(final RepositoryFile parentFolder, final RepositoryFile file,
-      final IRepositoryFileContent content, final String versionMessage) {
+      final IRepositoryFileContent content, final String... versionMessageAndLabel) {
     Assert.notNull(file);
     Assert.hasText(file.getName());
     Assert.isTrue(!file.isFolder());
@@ -95,14 +95,14 @@ public class JcrRepositoryFileDao implements IRepositoryFileDao, InitializingBea
             findTransformer(content.getContentType()));
         session.save();
         JcrRepositoryFileUtils.checkinNearestVersionableFileIfNecessary(session, nodeIdStrategy, parentFolder,
-            versionMessage);
+            versionMessageAndLabel);
         return JcrRepositoryFileUtils.fromFileNode(session, nodeIdStrategy, fileNode);
       }
     });
   }
 
   private RepositoryFile internalUpdateFile(final RepositoryFile file, final IRepositoryFileContent content,
-      final String versionMessage) {
+      final String... versionMessageAndLabel) {
     Assert.notNull(file);
     Assert.hasText(file.getName());
     Assert.isTrue(!file.isFolder());
@@ -115,7 +115,8 @@ public class JcrRepositoryFileDao implements IRepositoryFileDao, InitializingBea
         JcrRepositoryFileUtils.updateFileNode(session, nodeIdStrategy, file, content, findTransformer(file
             .getContentType()));
         session.save();
-        JcrRepositoryFileUtils.checkinNearestVersionableFileIfNecessary(session, nodeIdStrategy, file, versionMessage);
+        JcrRepositoryFileUtils.checkinNearestVersionableFileIfNecessary(session, nodeIdStrategy, file,
+            versionMessageAndLabel);
         return JcrRepositoryFileUtils.fileFromId(session, nodeIdStrategy, file.getId());
       }
     });
@@ -134,20 +135,20 @@ public class JcrRepositoryFileDao implements IRepositoryFileDao, InitializingBea
    * {@inheritDoc}
    */
   public RepositoryFile createFile(final RepositoryFile parentFolder, final RepositoryFile file,
-      final IRepositoryFileContent content, final String versionMessage) {
+      final IRepositoryFileContent content, final String... versionMessageAndLabel) {
     Assert.notNull(file);
     Assert.isTrue(!file.isFolder());
-    return internalCreateFile(parentFolder, file, content, versionMessage);
+    return internalCreateFile(parentFolder, file, content, versionMessageAndLabel);
   }
 
   /**
    * {@inheritDoc}
    */
   public RepositoryFile createFolder(final RepositoryFile parentFolder, final RepositoryFile file,
-      final String versionMessage) {
+      final String... versionMessageAndLabel) {
     Assert.notNull(file);
     Assert.isTrue(file.isFolder());
-    return internalCreateFolder(parentFolder, file, versionMessage);
+    return internalCreateFolder(parentFolder, file, versionMessageAndLabel);
   }
 
   public void afterPropertiesSet() throws Exception {
@@ -216,16 +217,16 @@ public class JcrRepositoryFileDao implements IRepositoryFileDao, InitializingBea
    * {@inheritDoc}
    */
   public RepositoryFile updateFile(final RepositoryFile file, final IRepositoryFileContent content,
-      final String versionMessage) {
+      final String... versionMessageAndLabel) {
     Assert.notNull(file);
     Assert.isTrue(!file.isFolder());
-    return internalUpdateFile(file, content, versionMessage);
+    return internalUpdateFile(file, content, versionMessageAndLabel);
   }
 
   /**
    * {@inheritDoc}
    */
-  public void deleteFile(final RepositoryFile file, final String versionMessage) {
+  public void deleteFile(final RepositoryFile file, final String... versionMessageAndLabel) {
     Assert.notNull(file);
     Assert.notNull(file.getId());
     Assert.notNull(file.getParentId());
@@ -236,7 +237,7 @@ public class JcrRepositoryFileDao implements IRepositoryFileDao, InitializingBea
         JcrRepositoryFileUtils.deleteFile(session, nodeIdStrategy, file, lockTokenHelper);
         session.save();
         JcrRepositoryFileUtils.checkinNearestVersionableFileIfNecessary(session, nodeIdStrategy, parentFolder,
-            versionMessage);
+            versionMessageAndLabel);
         return null;
       }
     });

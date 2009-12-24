@@ -39,21 +39,22 @@ public interface IRepositoryFileDao {
    * @param parentFolder parent folder (may be {@code null})
    * @param file file to create
    * @param content file content
-   * @param versionMessage optional version comment
+   * @param versionMessageAndLabel optional version comment [0] and label [1] to be applied to parentFolder
    * @return new file with non-null id
    */
   RepositoryFile createFile(final RepositoryFile parentFolder, final RepositoryFile file,
-      final IRepositoryFileContent content, final String versionMessage);
+      final IRepositoryFileContent content, final String... versionMessageAndLabel);
 
   /**
    * Creates a folder.
    * 
    * @param parentFolder parent folder (may be {@code null})
    * @param file file to create
-   * @param versionMessage optional version comment
+   * @param versionMessageAndLabel optional version comment [0] and label [1] to be applied to parentFolder
    * @return new file with non-null id
    */
-  RepositoryFile createFolder(final RepositoryFile parentFolder, final RepositoryFile file, final String versionMessage);
+  RepositoryFile createFolder(final RepositoryFile parentFolder, final RepositoryFile file,
+      final String... versionMessageAndLabel);
 
   /**
    * Returns the children of this folder.
@@ -68,18 +69,19 @@ public interface IRepositoryFileDao {
    * 
    * @param file updated file
    * @param content updated content
-   * @param versionMessage optional version comment
+   * @param versionMessageAndLabel optional version comment [0] and label [1]
    * @return updated file (possible with new version number)
    */
-  RepositoryFile updateFile(final RepositoryFile file, final IRepositoryFileContent content, final String versionMessage);
+  RepositoryFile updateFile(final RepositoryFile file, final IRepositoryFileContent content,
+      final String... versionMessageAndLabel);
 
   /**
    * Deletes a file or folder.
    * 
    * @param file file to delete
-   * @param versionMessage optional version comment
+   * @param versionMessageAndLabel optional version comment [0] and label [1]
    */
-  void deleteFile(final RepositoryFile file, final String versionMessage);
+  void deleteFile(final RepositoryFile file, final String... versionMessageAndLabel);
 
   /**
    * Locks a file.

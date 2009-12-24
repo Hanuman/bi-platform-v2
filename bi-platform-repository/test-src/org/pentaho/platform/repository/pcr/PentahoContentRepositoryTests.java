@@ -1,14 +1,16 @@
 package org.pentaho.platform.repository.pcr;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import java.io.ByteArrayInputStream;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
@@ -28,6 +30,7 @@ import org.pentaho.platform.api.engine.IPentahoSession;
 import org.pentaho.platform.api.repository.IPentahoContentRepository;
 import org.pentaho.platform.api.repository.IRepositoryFileContent;
 import org.pentaho.platform.api.repository.RepositoryFile;
+import org.pentaho.platform.api.repository.VersionSummary;
 import org.pentaho.platform.engine.core.system.PentahoSessionHolder;
 import org.pentaho.platform.engine.core.system.StandaloneSession;
 import org.pentaho.platform.engine.security.SecurityHelper;
@@ -120,7 +123,7 @@ public class PentahoContentRepositoryTests implements ApplicationContextAware {
     loginAsRepositoryAdmin();
     SimpleJcrTestUtils.deleteItem(testJcrTemplate, repo.getPentahoRootFolderPath());
     logout();
-    
+
     // null out fields to get back memory
     repo = null;
     testJcrTemplate = null;
@@ -442,14 +445,15 @@ public class PentahoContentRepositoryTests implements ApplicationContextAware {
 
     repo.updateFile(newFile, modContent);
 
-    RunResultRepositoryFileContent modContentFromRepo = repo.getContentForRead(repo
-        .getFile(repo.getUserHomeFolderPath() + "/helloworld.xaction"), RunResultRepositoryFileContent.class);
+    RunResultRepositoryFileContent modContentFromRepo = repo.getContentForRead(repo.getFile(repo
+        .getUserHomeFolderPath()
+        + "/helloworld.xaction"), RunResultRepositoryFileContent.class);
 
     assertEquals(expectedModDataString, IOUtils.toString(modContentFromRepo.getData(), expectedEncoding));
 
     assertEquals(modExpectedRunArguments, modContentFromRepo.getArguments());
   }
-  
+
   /**
    * Create the same folder twice inside a versioned parent folder. Second time through, we should fail and 
    */
@@ -490,7 +494,7 @@ public class PentahoContentRepositoryTests implements ApplicationContextAware {
     assertTrue(SimpleJcrTestUtils.getVersionCount(testJcrTemplate, parentOfFolderToDeletePath) > versionCount);
   }
 
-  @Test(expected=DataIntegrityViolationException.class)
+  @Test(expected = DataIntegrityViolationException.class)
   public void testCreateDuplicateFolder() throws Exception {
     repo.startup();
     login(USERNAME_SUZY, TENANT_ID_ACME);
@@ -502,7 +506,7 @@ public class PentahoContentRepositoryTests implements ApplicationContextAware {
     RepositoryFile anotherFolder = new RepositoryFile.Builder("test").folder(true).build();
     newFolder = repo.createFolder(parentFolder, anotherFolder);
   }
-  
+
   @Test
   public void testWriteToPublic() throws Exception {
     repo.startup();
@@ -585,12 +589,13 @@ public class PentahoContentRepositoryTests implements ApplicationContextAware {
 
     assertFalse(SimpleJcrTestUtils.isLocked(testJcrTemplate, filePath));
     assertNull(repo.getLockSummary(newFile));
-    
+
     // make sure lock token node has been removed
-    assertNull(SimpleJcrTestUtils.getItem(testJcrTemplate, repo.getUserHomeFolderPath() + "/.lockTokens/" + newFile.getId()));
+    assertNull(SimpleJcrTestUtils.getItem(testJcrTemplate, repo.getUserHomeFolderPath() + "/.lockTokens/"
+        + newFile.getId()));
 
   }
-  
+
   @Test
   public void testDeleteLockedFile() throws Exception {
     repo.startup();
@@ -613,9 +618,40 @@ public class PentahoContentRepositoryTests implements ApplicationContextAware {
     repo.lockFile(newFile, lockMessage);
 
     repo.deleteFile(newFile);
-    
+
     // make sure lock token node has been removed
-    assertNull(SimpleJcrTestUtils.getItem(testJcrTemplate, repo.getUserHomeFolderPath() + "/.lockTokens/" + newFile.getId()));
+    assertNull(SimpleJcrTestUtils.getItem(testJcrTemplate, repo.getUserHomeFolderPath() + "/.lockTokens/"
+        + newFile.getId()));
+  }
+
+  @Test
+  public void testGetVersionSummaries() throws Exception {
+    repo.startup();
+    login(USERNAME_SUZY, TENANT_ID_ACME);
+    repo.getOrCreateUserHomeFolder();
+    final String parentFolderPath = repo.getTenantPublicFolderPath();
+    RepositoryFile parentFolder = repo.getFile(parentFolderPath);
+    final String dataString = "Hello World!";
+    final String encoding = "UTF-8";
+    byte[] data = dataString.getBytes(encoding);
+    ByteArrayInputStream dataStream = new ByteArrayInputStream(data);
+    final String mimeType = "text/plain";
+    final String fileName = "helloworld.xaction";
+    final SimpleRepositoryFileContent content = new SimpleRepositoryFileContent(dataStream, encoding, mimeType);
+    RepositoryFile newFile = repo.createFile(parentFolder,
+        new RepositoryFile.Builder(fileName).versioned(true).build(), content, "created helloworld.xaction",
+        "added file", "label 0");
+    repo.updateFile(newFile, content, "update 1", "label1");
+    repo.updateFile(newFile, content, "update 2", "label2");
+    RepositoryFile updatedFile = repo.updateFile(newFile, content, "update 3", "label3");
+    List<VersionSummary> versionSummaries = repo.getVersionSummaries(updatedFile);
+    assertNotNull(versionSummaries);
+    assertTrue(versionSummaries.size() >= 3);
+    assertEquals("update 3", versionSummaries.get(versionSummaries.size() - 1).getMessage());
+    assertEquals(Arrays.asList(new String[] { "label3" }), versionSummaries.get(versionSummaries.size() - 1)
+        .getLabels());
+    System.out.println(versionSummaries);
+    System.out.println(versionSummaries.size());
   }
 
   private RepositoryFile createRunResultFile(final String parentFolderPath, final String expectedName,

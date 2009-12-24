@@ -76,32 +76,22 @@ public interface IPentahoContentRepository {
    * @param parentFolder parent folder (may be {@code null})
    * @param file file to create
    * @param content file content
-   * @param optional version comment
+   * @param versionMessageAndLabel optional version comment [0] and label [1] to be applied to parentFolder
    * @return file that is equal to given file except with id populated
    */
   RepositoryFile createFile(final RepositoryFile parentFolder, final RepositoryFile file,
-      final IRepositoryFileContent content, final String versionMessage);
+      final IRepositoryFileContent content, final String... versionMessageAndLabel);
 
-  /**
-   * @see #createFile(RepositoryFile, RepositoryFile, IRepositoryFileContent, String)
-   */
-  RepositoryFile createFile(final RepositoryFile parentFolder, final RepositoryFile file,
-      final IRepositoryFileContent content);
-  
   /**
    * Creates a folder.
    * 
    * @param parentFolder parent folder (may be {@code null})
    * @param file file to create
-   * @param optional version comment
+   * @param versionMessageAndLabel optional version comment [0] and label [1] to be applied to parentFolder
    * @return file that is equal to given file except with id populated
    */
-  RepositoryFile createFolder(final RepositoryFile parentFolder, final RepositoryFile file, final String versionMessage);
-  
-  /**
-   * @see #createFolder(RepositoryFile, RepositoryFile, String)
-   */
-  RepositoryFile createFolder(final RepositoryFile parentFolder, final RepositoryFile file);
+  RepositoryFile createFolder(final RepositoryFile parentFolder, final RepositoryFile file,
+      final String... versionMessageAndLabel);
 
   /**
    * Returns the children of this folder.
@@ -116,28 +106,19 @@ public interface IPentahoContentRepository {
    * 
    * @param file updated file (not a folder)
    * @param content updated content
-   * @param optional version comment
+   * @param versionMessageAndLabel optional version comment [0] and label [1]
    * @return updated file (possible with new version number)
    */
-  RepositoryFile updateFile(final RepositoryFile file, final IRepositoryFileContent content, final String versionMessage);
+  RepositoryFile updateFile(final RepositoryFile file, final IRepositoryFileContent content,
+      final String... versionMessageAndLabel);
 
-  /**
-   * @see #updateFile(RepositoryFile, IRepositoryFileContent, String)
-   */
-  RepositoryFile updateFile(final RepositoryFile file, final IRepositoryFileContent content);
-  
   /**
    * Deletes a file or folder.
    * 
    * @param file file to delete
-   * @param versionMessage optional version comment
+   * @param versionMessageAndLabel optional version comment [0] and label [1]
    */
-  void deleteFile(final RepositoryFile file, final String versionMessage);
-  
-  /**
-   * @see #deleteFile(RepositoryFile, String)
-   */
-  void deleteFile(final RepositoryFile file);
+  void deleteFile(final RepositoryFile file, final String... versionMessageAndLabel);
 
   // ~ Lock methods ====================================================================================================
 
@@ -169,7 +150,7 @@ public interface IPentahoContentRepository {
   Acl getAcl(final RepositoryFile file);
 
   // ~ Path methods ====================================================================================================
-  
+
   /**
    * Returns the absolute path to the pentaho root folder.
    */
@@ -195,7 +176,7 @@ public interface IPentahoContentRepository {
    */
   String getUserHomeFolderPath();
 
- // ~ Version methods ==================================================================================================
+  // ~ Version methods ==================================================================================================
 
   /**
    * Returns a list of version summary instances. The first version in the list is the root version. The last version
