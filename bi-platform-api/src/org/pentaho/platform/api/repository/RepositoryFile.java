@@ -12,18 +12,6 @@ import org.apache.commons.lang.builder.ToStringBuilder;
  * This class should use only GWT-emulated types.
  * </p>
  * 
- * <p>
- * If a user has traversal rights to the folder containing this file, then the user should be able to get this file
- * regardless of the user's permissions on this file. (The permission should be checked when the user attempts to get 
- * the {@link IRepositoryFileContent} associated with this file.)
- * </p>
- * 
- * <p>
- * For this reason, <strong>never</strong> create a field of this class that is of type {@link IRepositoryFileContent} 
- * since instances of this class are not subject to access control. Instead, require the user to go back to the service 
- * that issued this {@link RepositoryFile} instance.  
- * </p>
- * 
  * @author mlowery
  */
 public class RepositoryFile implements Comparable<RepositoryFile> {
@@ -65,6 +53,11 @@ public class RepositoryFile implements Comparable<RepositoryFile> {
   private boolean hidden;
 
   private boolean versioned;
+  
+  /**
+   * The version name or number. Read-only.
+   */
+  private Serializable versionId;
 
   // ~ Constructors ====================================================================================================
 
@@ -132,6 +125,10 @@ public class RepositoryFile implements Comparable<RepositoryFile> {
     return versioned;
   }
 
+  public Serializable getVersionId() {
+    return versionId;
+  }
+
   @Override
   public String toString() {
     return ToStringBuilder.reflectionToString(this);
@@ -157,6 +154,8 @@ public class RepositoryFile implements Comparable<RepositoryFile> {
     private boolean hidden;
 
     private boolean versioned;
+    
+    private Serializable versionId;
 
     public Builder(final String name) {
       assertHasText(name);
@@ -174,7 +173,7 @@ public class RepositoryFile implements Comparable<RepositoryFile> {
     public Builder(final RepositoryFile other) {
       this(other.name, other.id, other.parentId);
       this.absolutePath(other.absolutePath).createdDate(other.createdDate).folder(other.folder).lastModificationDate(
-          other.lastModifiedDate).contentType(other.contentType);
+          other.lastModifiedDate).contentType(other.contentType).versioned(other.versioned).hidden(other.hidden).versionId(other.versionId);
     }
 
     public RepositoryFile build() {
@@ -186,6 +185,7 @@ public class RepositoryFile implements Comparable<RepositoryFile> {
       result.absolutePath = this.absolutePath;
       result.hidden = this.hidden;
       result.versioned = this.versioned;
+      result.versionId = this.versionId;
       return result;
     }
 
@@ -221,6 +221,11 @@ public class RepositoryFile implements Comparable<RepositoryFile> {
 
     public Builder versioned(final boolean versioned) {
       this.versioned = versioned;
+      return this;
+    }
+    
+    public Builder versionId(final Serializable versionId) {
+      this.versionId = versionId;
       return this;
     }
 
@@ -270,6 +275,7 @@ public class RepositoryFile implements Comparable<RepositoryFile> {
     final int prime = 31;
     int result = 1;
     result = prime * result + ((id == null) ? 0 : id.hashCode());
+    result = prime * result + ((versionId == null) ? 0 : versionId.hashCode());
     return result;
   }
 
@@ -286,6 +292,11 @@ public class RepositoryFile implements Comparable<RepositoryFile> {
       if (other.id != null)
         return false;
     } else if (!id.equals(other.id))
+      return false;
+    if (versionId == null) {
+      if (other.versionId != null)
+        return false;
+    } else if (!versionId.equals(other.versionId))
       return false;
     return true;
   }

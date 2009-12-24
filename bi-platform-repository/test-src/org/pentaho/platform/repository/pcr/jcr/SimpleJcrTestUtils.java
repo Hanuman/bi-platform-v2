@@ -130,7 +130,7 @@ public class SimpleJcrTestUtils {
     });
 
   }
-  
+
   public static boolean isLocked(final JcrTemplate jcrTemplate, final String absPath) {
     return (Boolean) jcrTemplate.execute(new JcrCallback() {
       public Object doInJcr(final Session session) throws RepositoryException {
@@ -140,7 +140,7 @@ public class SimpleJcrTestUtils {
       }
     });
   }
-  
+
   public static String getString(final JcrTemplate jcrTemplate, final String absPath) {
     return (String) jcrTemplate.execute(new JcrCallback() {
       public Object doInJcr(final Session session) throws RepositoryException {
@@ -150,7 +150,7 @@ public class SimpleJcrTestUtils {
       }
     });
   }
-  
+
   public static Date getDate(final JcrTemplate jcrTemplate, final String absPath) {
     return (Date) jcrTemplate.execute(new JcrCallback() {
       public Object doInJcr(final Session session) throws RepositoryException {
@@ -167,6 +167,17 @@ public class SimpleJcrTestUtils {
         Item item = session.getItem(absPath);
         Assert.isTrue(item.isNode());
         return ((Node) item).isCheckedOut();
+      }
+    });
+  }
+
+  public static String getVersionHistoryNodePath(final JcrTemplate jcrTemplate, final String absPath) {
+    return (String) jcrTemplate.execute(new JcrCallback() {
+      public Object doInJcr(final Session session) throws RepositoryException {
+        Item item = session.getItem(absPath);
+        Assert.isTrue(item.isNode());
+        Node node = ((Node) item);
+        return node.getVersionHistory().getPath();
       }
     });
   }

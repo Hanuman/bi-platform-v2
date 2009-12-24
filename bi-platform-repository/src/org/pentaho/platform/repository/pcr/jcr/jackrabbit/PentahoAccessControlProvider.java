@@ -104,51 +104,59 @@ public class PentahoAccessControlProvider extends AbstractPentahoAccessControlPr
       }
     }
 
-    private boolean isFolderOrFileOrLinkedFileNode(final Node node) throws RepositoryException {
-      String nodeTypeName = node.getProperty(PentahoJcrConstants.JCR_PRIMARYTYPE).getString();
-      return PentahoJcrConstants.NT_FOLDER.equals(nodeTypeName) || PentahoJcrConstants.NT_FILE.equals(nodeTypeName)
-          || PentahoJcrConstants.NT_LINKEDFILE.equals(nodeTypeName);
-    }
-
-    private NodeImpl findNearestPersistedNode(final Path absPath) throws RepositoryException {
-      NodeImpl nearestPersistedNode = null;
-      String jcrPath = resolver.getJCRPath(absPath);
-
-      // set node to node at jcrPath or if not yet persisted, set node to nearest persisted node
-      if (systemSession.nodeExists(jcrPath)) {
-        nearestPersistedNode = (NodeImpl) systemSession.getNode(jcrPath);
-      } else {
-        // path points non-existing node or property; find the nearest persisted node
-        String parentPath = Text.getRelativeParent(jcrPath, 1);
-        while (parentPath.length() > 0) {
-          if (systemSession.nodeExists(parentPath)) {
-            nearestPersistedNode = (NodeImpl) systemSession.getNode(parentPath);
-            break;
-          }
-          parentPath = Text.getRelativeParent(parentPath, 1);
-        }
-      }
-      return nearestPersistedNode;
-    }
-
     //------------------------------------< AbstractCompiledPermissions >---
+
     /**
-     * @see AbstractCompiledPermissions#buildResult(Path)
+     * <p>
+     * This algorithm is content-aware. In other words, it has knowledge of the types of nodes going into the 
+     * repository. It understands nodes of type nt:folder, nt:file, and nt:linkedFile. It enforces access control by 
+     * finding the nearest enclosing persisted nt:folder and uses the ACL for that node as the starting point. Why is it 
+     * just a starting point and not the end? Because the nearest enclosing persisted node might not have any ACEs of 
+     * its own, forcing us to traverse the tree heading for the root until we either hit the root or hit an nt:folder
+     * that has a non-empty ACL. This is the ACL (and only this ACL) that is consulted to build the {@code Result}.
+     * </p>
+     * 
+     * <p>Special behavior when dealing with version storage</p>
+     * <p>
+     * Sometimes the {@code absPath} starts with {@code /jcr:system/jcr:versionStorage}. In this case
+     * a caller is attempting to do something involving versioning (e.g. applying a label to a version). Nodes in this
+     * are not part of the nt:folder structure discussed above. In other words, we will never find an enclosing 
+     * persisted folder. We will always hit the root--which has its own ACL which we do not want to use as it allows 
+     * Permission.READ for all. So what do we do?
+     * </p> 
+     * 
+     * <p>
+     * We first see if
+     * a persistent version history node is part of the {@code absPath}. If the version history is persistent, then we
+     * find the node with which the version history is associated and use its ACL to build the result. Sometimes the
+     * version history node is not yet persistent. This happens because the user hasn't committed the transaction in 
+     * which a {@code checkin} takes place. In this case, we give READ and VERSION_MNGMT in the result. Why? Because the user
+     * has already successfully checked in--and the Permission.VERSION_MNGMT was already checked on that node--why 
+     * should we stop them now? What about the justification for providing read access? Well, if the caller is asking
+     * to read a node that has not yet been persisted, then that node was created in the that user's session to begin
+     * with.
+     * </p>
      */
     protected Result buildResult(Path absPath) throws RepositoryException {
-
       String jcrPath = resolver.getJCRPath(absPath);
       log.debug("building result for jcrPath=" + jcrPath);
 
       NodeImpl nearestPersistedNode = findNearestPersistedNode(absPath);
 
-      NodeImpl folderOrFileOrLinkedFileOrRootNode = findFolderOrFileOrLinkedFileOrRootNode(nearestPersistedNode);
+      NodeImpl folderOrFileOrLinkedFileOrRootNode = null;
 
-      // if we hit the root node without finding a folder, file, or linkedFile, that is a problem as the 
-      // PentahoContentRepository should have written /pentaho node at a minimum
-      //      if (folderOrFileOrLinkedFileNode.getId().equals(((NodeImpl) sessionImpl.getRootNode()).getNodeId())) {
-      //        throw new RepositoryException("could not find enclosing folder or file or linkedFile");
-      //      }
+      if (jcrPath.startsWith("/jcr:system/jcr:versionStorage")) {
+        VersionHistory versionHistory = findVersionHistoryNode(nearestPersistedNode);
+        if (versionHistory == null) {
+          int allows = Permission.READ | Permission.VERSION_MNGMT;
+          return new Result(allows, 0, allows, 0);
+        } else {
+          folderOrFileOrLinkedFileOrRootNode = (NodeImpl) systemSession.getNodeByUUID(versionHistory
+              .getVersionableUUID());
+        }
+      } else {
+        folderOrFileOrLinkedFileOrRootNode = findFolderOrFileOrLinkedFileOrRootNode(nearestPersistedNode);
+      }
 
       if (folderOrFileOrLinkedFileOrRootNode == null) {
         // should never get here
@@ -193,18 +201,35 @@ public class PentahoAccessControlProvider extends AbstractPentahoAccessControlPr
         }
       }
 
-      //      // now we have the allows bits as they are defined on the enclosing folder, or file, or linkedFile (or one of its ancestors); since we want any user
-      //      // to be able to read the metadata of the folder, or file, or linkedFile node, without necessarily being able to read the children files (in the case of a folder) or content (in the case of a file or linkedFile), add in the read permission if 
-      //      // absPath points to the metadata
-      ////      int readAndReadAc = Permission.READ & Permission.READ_AC;
-      //      if (isFolderOrFileOrLinkedFileOrMetadata(resolver.getJCRPath(absPath), folderOrFileOrLinkedFileOrRootNode)) {
-      //        allows |= Permission.READ;
-      //        allows |= Permission.READ_AC;
-      //      }
-      //      
-
       // third arg is for when callers call Result.getPrivileges() as is done in AbstractCompiledPermissions.getPrivileges()
       return new Result(allows, 0, allows, 0);
+    }
+
+    private boolean isFolderOrFileOrLinkedFileNode(final Node node) throws RepositoryException {
+      String nodeTypeName = node.getProperty(PentahoJcrConstants.JCR_PRIMARYTYPE).getString();
+      return PentahoJcrConstants.NT_FOLDER.equals(nodeTypeName) || PentahoJcrConstants.NT_FILE.equals(nodeTypeName)
+          || PentahoJcrConstants.NT_LINKEDFILE.equals(nodeTypeName);
+    }
+
+    private NodeImpl findNearestPersistedNode(final Path absPath) throws RepositoryException {
+      NodeImpl nearestPersistedNode = null;
+      String jcrPath = resolver.getJCRPath(absPath);
+
+      // set node to node at jcrPath or if not yet persisted, set node to nearest persisted node
+      if (systemSession.nodeExists(jcrPath)) {
+        nearestPersistedNode = (NodeImpl) systemSession.getNode(jcrPath);
+      } else {
+        // path points non-existing node or property; find the nearest persisted node
+        String parentPath = Text.getRelativeParent(jcrPath, 1);
+        while (parentPath.length() > 0) {
+          if (systemSession.nodeExists(parentPath)) {
+            nearestPersistedNode = (NodeImpl) systemSession.getNode(parentPath);
+            break;
+          }
+          parentPath = Text.getRelativeParent(parentPath, 1);
+        }
+      }
+      return nearestPersistedNode;
     }
 
     private boolean isRootNode(final NodeImpl node) throws RepositoryException {
@@ -215,75 +240,30 @@ public class PentahoAccessControlProvider extends AbstractPentahoAccessControlPr
       return node.isNodeType(JcrConstants.NT_VERSIONHISTORY);
     }
 
+    private VersionHistory findVersionHistoryNode(final NodeImpl node) throws RepositoryException {
+      // also, if incoming path involves version history, find the versionHistory node then find the file or linked
+      // file or folder that it is associated with and use that node's ACL
+      NodeImpl currentNode = node;
+      while (!isVersionHistory(currentNode) && !isRootNode(currentNode)) {
+        currentNode = (NodeImpl) currentNode.getParent();
+      }
+      if (isRootNode(currentNode)) {
+        return null;
+      } else {
+        return (VersionHistory) currentNode;
+      }
+    }
+
     private NodeImpl findFolderOrFileOrLinkedFileOrRootNode(final NodeImpl node) throws RepositoryException {
       // now we have a node; it may not be a folder, file, or linkedFile node so find the nearest enclosing folder,
       // file, or linkedFile node; that will be the ACL that we start with; also, stop if we hit the root node;
-      // also, if incoming path involves version history, find the versionHistory node then find the file or linked
-      // file or folder that it is associated with and use that node's ACL
       NodeImpl currentNode = node;
       while (!isVersionHistory(currentNode) && !isFolderOrFileOrLinkedFileNode(currentNode) && !isRootNode(currentNode)) {
         currentNode = (NodeImpl) currentNode.getParent();
       }
 
-      if (isVersionHistory(currentNode)) {
-        log.debug("dealing with version history node; going to use versionable node that it refers to");
-        VersionHistory versionHistory = (VersionHistory) currentNode;
-        return (NodeImpl) systemSession.getNodeByUUID(versionHistory.getVersionableUUID());
-      } else {
-        return currentNode;
-      }
+      return currentNode;
     }
-
-    //    private boolean isFolderOrFileOrLinkedFileOrMetadata(final String origItemAbsPath, final NodeImpl folderOrFileOrLinkedFileOrRootNode) throws RepositoryException {
-    //      // root node doesn't get extra read perms; its acl is returned verbatim
-    //      if (isRootNode(folderOrFileOrLinkedFileOrRootNode)) {
-    //        return false;
-    //      }
-    //      
-    //      String absPathToNearestFolderOrFileOrLinkedFile = folderOrFileOrLinkedFileOrRootNode.getPath();
-    //      Assert.isTrue(origItemAbsPath.startsWith(absPathToNearestFolderOrFileOrLinkedFile));
-    //
-    //      String relativePath = origItemAbsPath.substring(absPathToNearestFolderOrFileOrLinkedFile.length());
-    //      
-    //      if (relativePath.startsWith(RepositoryFile.SEPARATOR)) {
-    //        relativePath = relativePath.substring(1);
-    //      }
-    //      
-    //      int firstSeparatorIndex = relativePath.indexOf(RepositoryFile.SEPARATOR);
-    //      String firstItemNameInRelativePath = null;
-    //      if (firstSeparatorIndex == -1) {
-    //        firstItemNameInRelativePath = relativePath;
-    //      } else {
-    //        firstItemNameInRelativePath = relativePath.substring(0, firstSeparatorIndex);
-    //      }
-    //      
-    //      if (firstItemNameInRelativePath.equals("jcr:content")) {
-    //        // dealing with a file object and the access query is about the jcr:content; never add read perms when the containing file doesn't allow it
-    //        return false;
-    //      } else if (firstItemNameInRelativePath.contains(":")) {
-    //        // dealing with a folder object and the access query is about a child file or folder; always allow read
-    //        return true;
-    //      } else if (firstItemNameInRelativePath.equals("")) {
-    //        // this is a folder or file or linked file itself; always allow read
-    //        return true;
-    //      }
-    //      
-    //      // grant read access to the file itself (otherwise we couldn't read the metadata)
-    ////      if (isFolderOrFileOrLinkedFileNode(folderOrFileOrLinkedFileOrRootNode)) {
-    ////        return true;
-    ////      }
-    ////      // acl's are metadata which are readable by all
-    ////      if (isAcItem(absPath)) {
-    ////        return true;
-    ////      }
-    ////      if (isFolderMetadata(node)) {
-    ////        return true;
-    ////      }
-    ////      if (isFileOrLinkedFileMetadata(node)) {
-    ////        return true;
-    ////      }
-    //      return false;
-    //    }
 
     //--------------------------------------------< CompiledPermissions >---
     /**

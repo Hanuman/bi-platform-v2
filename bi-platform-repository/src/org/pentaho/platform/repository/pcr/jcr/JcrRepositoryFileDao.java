@@ -56,12 +56,12 @@ public class JcrRepositoryFileDao implements IRepositoryFileDao, InitializingBea
 
   // ~ Methods =========================================================================================================
 
-  private RepositoryFile internalCreateFolder(final RepositoryFile parentFolder, final RepositoryFile file,
+  private RepositoryFile internalCreateFolder(final RepositoryFile parentFolder, final RepositoryFile folder,
       final String... versionMessageAndLabel) {
-    Assert.notNull(file);
-    Assert.hasText(file.getName());
-    Assert.isTrue(!file.getName().contains(RepositoryFile.SEPARATOR));
-    Assert.isTrue(file.isFolder());
+    Assert.notNull(folder);
+    Assert.hasText(folder.getName());
+    Assert.isTrue(!folder.getName().contains(RepositoryFile.SEPARATOR));
+    Assert.isTrue(folder.isFolder());
     if (parentFolder != null) {
       Assert.hasText(parentFolder.getName());
     }
@@ -69,11 +69,16 @@ public class JcrRepositoryFileDao implements IRepositoryFileDao, InitializingBea
     return (RepositoryFile) jcrTemplate.execute(new JcrCallback() {
       public Object doInJcr(final Session session) throws RepositoryException, IOException {
         JcrRepositoryFileUtils.checkoutNearestVersionableFileIfNecessary(session, nodeIdStrategy, parentFolder);
-        Node folderNode = JcrRepositoryFileUtils.createFolderNode(session, nodeIdStrategy, parentFolder, file);
+        Node folderNode = JcrRepositoryFileUtils.createFolderNode(session, nodeIdStrategy, parentFolder, folder);
         session.save();
+        if (folder.isVersioned()) {
+          JcrRepositoryFileUtils.checkinNearestVersionableNodeIfNecessary(session, nodeIdStrategy, folderNode,
+              versionMessageAndLabel);
+        }
         JcrRepositoryFileUtils.checkinNearestVersionableFileIfNecessary(session, nodeIdStrategy, parentFolder,
-            versionMessageAndLabel);
-        return JcrRepositoryFileUtils.fromFileNode(session, nodeIdStrategy, folderNode);
+            "[system] added child folder '" + folder.getName() + "' to "
+                + (parentFolder == null ? "/" : parentFolder.getAbsolutePath()));
+        return JcrRepositoryFileUtils.nodeToFile(session, nodeIdStrategy, folderNode);
       }
     });
   }
@@ -94,9 +99,14 @@ public class JcrRepositoryFileDao implements IRepositoryFileDao, InitializingBea
         Node fileNode = JcrRepositoryFileUtils.createFileNode(session, nodeIdStrategy, parentFolder, file, content,
             findTransformer(content.getContentType()));
         session.save();
+        if (file.isVersioned()) {
+          JcrRepositoryFileUtils.checkinNearestVersionableNodeIfNecessary(session, nodeIdStrategy, fileNode,
+              versionMessageAndLabel);
+        }
         JcrRepositoryFileUtils.checkinNearestVersionableFileIfNecessary(session, nodeIdStrategy, parentFolder,
-            versionMessageAndLabel);
-        return JcrRepositoryFileUtils.fromFileNode(session, nodeIdStrategy, fileNode);
+            "[system] added child file '" + file.getName() + "' to "
+                + (parentFolder == null ? "/" : parentFolder.getAbsolutePath()));
+        return JcrRepositoryFileUtils.nodeToFile(session, nodeIdStrategy, fileNode);
       }
     });
   }
@@ -117,7 +127,7 @@ public class JcrRepositoryFileDao implements IRepositoryFileDao, InitializingBea
         session.save();
         JcrRepositoryFileUtils.checkinNearestVersionableFileIfNecessary(session, nodeIdStrategy, file,
             versionMessageAndLabel);
-        return JcrRepositoryFileUtils.fileFromId(session, nodeIdStrategy, file.getId());
+        return JcrRepositoryFileUtils.nodeIdToFile(session, nodeIdStrategy, file.getId());
       }
     });
   }
@@ -144,11 +154,11 @@ public class JcrRepositoryFileDao implements IRepositoryFileDao, InitializingBea
   /**
    * {@inheritDoc}
    */
-  public RepositoryFile createFolder(final RepositoryFile parentFolder, final RepositoryFile file,
+  public RepositoryFile createFolder(final RepositoryFile parentFolder, final RepositoryFile folder,
       final String... versionMessageAndLabel) {
-    Assert.notNull(file);
-    Assert.isTrue(file.isFolder());
-    return internalCreateFolder(parentFolder, file, versionMessageAndLabel);
+    Assert.notNull(folder);
+    Assert.isTrue(folder.isFolder());
+    return internalCreateFolder(parentFolder, folder, versionMessageAndLabel);
   }
 
   public void afterPropertiesSet() throws Exception {
@@ -176,7 +186,7 @@ public class JcrRepositoryFileDao implements IRepositoryFileDao, InitializingBea
         } catch (PathNotFoundException e) {
           fileNode = null;
         }
-        return fileNode != null ? JcrRepositoryFileUtils.fromFileNode(session, nodeIdStrategy, (Node) fileNode) : null;
+        return fileNode != null ? JcrRepositoryFileUtils.nodeToFile(session, nodeIdStrategy, (Node) fileNode) : null;
       }
     });
 

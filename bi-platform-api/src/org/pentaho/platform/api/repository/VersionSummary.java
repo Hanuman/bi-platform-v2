@@ -38,7 +38,7 @@ public class VersionSummary {
   private String author;
 
   /**
-   * The ID of this version. (A version number.)
+   * The ID of this version, such as a version number like 1.3.
    */
   private Serializable id;
 

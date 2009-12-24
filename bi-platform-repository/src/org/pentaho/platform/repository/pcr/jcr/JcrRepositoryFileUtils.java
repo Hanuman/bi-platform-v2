@@ -19,7 +19,6 @@ import javax.jcr.lock.Lock;
 import javax.jcr.version.Version;
 import javax.jcr.version.VersionHistory;
 
-import org.apache.jackrabbit.JcrConstants;
 import org.pentaho.platform.api.repository.IRepositoryFileContent;
 import org.pentaho.platform.api.repository.LockSummary;
 import org.pentaho.platform.api.repository.RepositoryFile;
@@ -34,10 +33,10 @@ public class JcrRepositoryFileUtils {
       final Serializable id) throws RepositoryException, IOException {
     Node fileNode = nodeIdStrategy.findNodeById(session, id);
     Assert.notNull(fileNode);
-    return fromFileNode(session, nodeIdStrategy, fileNode);
+    return nodeToFile(session, nodeIdStrategy, fileNode);
   }
 
-  public static RepositoryFile fromFileNode(final Session session, final NodeIdStrategy nodeIdStrategy, final Node node)
+  public static RepositoryFile nodeToFile(final Session session, final NodeIdStrategy nodeIdStrategy, final Node node)
       throws RepositoryException, IOException {
     Assert.isTrue(isSupportedNodeType(node));
 
@@ -46,6 +45,7 @@ public class JcrRepositoryFileUtils {
     String contentType = null;
     boolean folder = false;
     boolean versioned = false;
+    Serializable versionId = null;
 
     if (isFolder(node)) {
       folder = true;
@@ -71,11 +71,14 @@ public class JcrRepositoryFileUtils {
     }
 
     versioned = isVersioned(session, node);
+    if (versioned) {
+      versionId = node.getBaseVersion().getName();
+    }
 
     RepositoryFile file = new RepositoryFile.Builder(node.getName(), nodeIdStrategy.getId(node), !node.getParent()
         .isSame(session.getRootNode()) ? nodeIdStrategy.getId(node.getParent()) : null).createdDate(created)
         .lastModificationDate(lastModified).contentType(contentType).folder(folder).versioned(versioned).absolutePath(
-            node.getPath()).build();
+            node.getPath()).versionId(versionId).build();
 
     return file;
   }
@@ -193,7 +196,7 @@ public class JcrRepositoryFileUtils {
     while (nodeIterator.hasNext()) {
       Node node = nodeIterator.nextNode();
       if (isFolder(node) || isFileOrLinkedFile(node)) {
-        children.add(fromFileNode(session, nodeIdStrategy, node));
+        children.add(nodeToFile(session, nodeIdStrategy, node));
       }
     }
     Collections.sort(children);
@@ -327,7 +330,7 @@ public class JcrRepositoryFileUtils {
       session.save(); // required before checkin since we set some properties above
       Version newVersion = versionableNode.checkin();
       if (versionMessageAndLabel.length > 1 && StringUtils.hasText(versionMessageAndLabel[1])) {
-        versionableNode.getVersionHistory().addVersionLabel(newVersion.getName(), versionMessageAndLabel[1], true);
+        newVersion.getContainingHistory().addVersionLabel(newVersion.getName(), versionMessageAndLabel[1], true);
       }
     }
   }
@@ -424,16 +427,20 @@ public class JcrRepositoryFileUtils {
     }
   }
 
-  public static Object fileFromId(final Session session, final NodeIdStrategy nodeIdStrategy, final Serializable id)
+  public static Object nodeIdToFile(final Session session, final NodeIdStrategy nodeIdStrategy, final Serializable id)
       throws RepositoryException, IOException {
     Node fileNode = nodeIdStrategy.findNodeById(session, id);
-    return fromFileNode(session, nodeIdStrategy, fileNode);
+    return nodeToFile(session, nodeIdStrategy, fileNode);
   }
 
   public static Object getVersionSummaries(final Session session, final NodeIdStrategy nodeIdStrategy,
       final RepositoryFile file) throws RepositoryException, IOException {
     Node fileNode = nodeIdStrategy.findNodeById(session, file.getId());
     VersionHistory versionHistory = fileNode.getVersionHistory();
+    // get root version but don't include it in version summaries; from JSR-170 specification section 8.2.5:
+    // [root version] is a dummy version that serves as the starting point of the version graph. Like all version nodes, 
+    // it has a subnode called jcr:frozenNode. But, in this case that frozen node does not contain any state information 
+    //about N
     Version version = versionHistory.getRootVersion();
     Version[] successors = version.getSuccessors();
     List<VersionSummary> versionSummaries = new ArrayList<VersionSummary>();
@@ -458,7 +465,7 @@ public class JcrRepositoryFileUtils {
 
   /**
    * Returns the node as it was at the given version.
-   * 
+   
    * @param version version to get
    * @return node at version
    */

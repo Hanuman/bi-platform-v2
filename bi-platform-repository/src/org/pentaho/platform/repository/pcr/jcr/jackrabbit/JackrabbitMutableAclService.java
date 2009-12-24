@@ -293,7 +293,7 @@ public class JackrabbitMutableAclService implements IPentahoMutableAclService {
         if (node == null) {
           throw new NotFoundException(String.format("node with id [%s] not found", parentIdentity.getIdentifier()));
         }
-        RepositoryFile file = JcrRepositoryFileUtils.fromFileNode(session, nodeIdStrategy, node);
+        RepositoryFile file = JcrRepositoryFileUtils.nodeToFile(session, nodeIdStrategy, node);
         if (file.isFolder() && !JcrRepositoryFileUtils.getChildren(session, nodeIdStrategy, file).isEmpty()) {
           List<RepositoryFile> children = JcrRepositoryFileUtils.getChildren(session, nodeIdStrategy, file);
           ObjectIdentity[] oids = new ObjectIdentity[children.size()];

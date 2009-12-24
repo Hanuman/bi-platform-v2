@@ -528,6 +528,8 @@ public class PentahoContentRepositoryTests implements ApplicationContextAware {
     RepositoryFile parentFolder = repo.getFile(repo.getUserHomeFolderPath());
     RepositoryFile newFolder = new RepositoryFile.Builder("test").folder(true).versioned(true).build();
     newFolder = repo.createFolder(parentFolder, newFolder);
+    assertTrue(newFolder.isVersioned());
+    assertNotNull(newFolder.getVersionId());
   }
 
   @Test
@@ -549,6 +551,7 @@ public class PentahoContentRepositoryTests implements ApplicationContextAware {
     RepositoryFile newFile = repo.createFile(parentFolder,
         new RepositoryFile.Builder(fileName).versioned(true).build(), content);
     assertTrue(newFile.isVersioned());
+    assertNotNull(newFile.getVersionId());
     final String filePath = parentFolderPath + RepositoryFile.SEPARATOR + fileName;
     int versionCount = SimpleJcrTestUtils.getVersionCount(testJcrTemplate, filePath);
     assertTrue(versionCount > 0);
@@ -640,7 +643,7 @@ public class PentahoContentRepositoryTests implements ApplicationContextAware {
     final SimpleRepositoryFileContent content = new SimpleRepositoryFileContent(dataStream, encoding, mimeType);
     RepositoryFile newFile = repo.createFile(parentFolder,
         new RepositoryFile.Builder(fileName).versioned(true).build(), content, "created helloworld.xaction",
-        "added file", "label 0");
+        "new version", "label 0");
     repo.updateFile(newFile, content, "update 1", "label1");
     repo.updateFile(newFile, content, "update 2", "label2");
     RepositoryFile updatedFile = repo.updateFile(newFile, content, "update 3", "label3");
@@ -652,6 +655,19 @@ public class PentahoContentRepositoryTests implements ApplicationContextAware {
         .getLabels());
     System.out.println(versionSummaries);
     System.out.println(versionSummaries.size());
+  }
+  
+  @Test
+  public void testCircumventApiToGetVersionHistoryNodeAccessDenied() throws Exception {
+    repo.startup();
+    login(USERNAME_SUZY, TENANT_ID_ACME);
+    repo.getOrCreateUserHomeFolder();
+    RepositoryFile parentFolder = repo.getFile(repo.getUserHomeFolderPath());
+    RepositoryFile newFolder = new RepositoryFile.Builder("test").folder(true).versioned(true).build();
+    newFolder = repo.createFolder(parentFolder, newFolder);
+    String versionHistoryAbsPath = SimpleJcrTestUtils.getVersionHistoryNodePath(testJcrTemplate, newFolder.getAbsolutePath());
+    login(USERNAME_TIFFANY, TENANT_ID_ACME);
+    assertNull(SimpleJcrTestUtils.getItem(testJcrTemplate, versionHistoryAbsPath));
   }
 
   private RepositoryFile createRunResultFile(final String parentFolderPath, final String expectedName,
