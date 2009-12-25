@@ -7,7 +7,6 @@ import org.apache.commons.logging.LogFactory;
 import org.pentaho.platform.api.engine.IPentahoSession;
 import org.pentaho.platform.api.repository.IPentahoContentRepository;
 import org.pentaho.platform.api.repository.IRepositoryFileContent;
-import org.pentaho.platform.api.repository.LockSummary;
 import org.pentaho.platform.api.repository.RepositoryFile;
 import org.pentaho.platform.api.repository.VersionSummary;
 import org.pentaho.platform.engine.core.system.PentahoSessionHolder;
