@@ -3,7 +3,6 @@ package org.pentaho.platform.repository.pcr;
 import java.util.List;
 
 import org.pentaho.platform.api.repository.IRepositoryFileContent;
-import org.pentaho.platform.api.repository.LockSummary;
 import org.pentaho.platform.api.repository.RepositoryFile;
 import org.pentaho.platform.api.repository.VersionSummary;
 

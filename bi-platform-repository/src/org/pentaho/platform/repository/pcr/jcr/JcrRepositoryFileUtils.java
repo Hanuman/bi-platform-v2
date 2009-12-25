@@ -20,7 +20,6 @@ import javax.jcr.version.Version;
 import javax.jcr.version.VersionHistory;
 
 import org.pentaho.platform.api.repository.IRepositoryFileContent;
-import org.pentaho.platform.api.repository.LockSummary;
 import org.pentaho.platform.api.repository.RepositoryFile;
 import org.pentaho.platform.api.repository.VersionSummary;
 import org.pentaho.platform.repository.pcr.jcr.JcrRepositoryFileDao.ILockTokenHelper;

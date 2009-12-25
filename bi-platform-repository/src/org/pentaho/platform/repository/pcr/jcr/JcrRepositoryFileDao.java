@@ -13,7 +13,6 @@ import javax.jcr.lock.Lock;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.pentaho.platform.api.repository.IRepositoryFileContent;
-import org.pentaho.platform.api.repository.LockSummary;
 import org.pentaho.platform.api.repository.RepositoryFile;
 import org.pentaho.platform.api.repository.VersionSummary;
 import org.pentaho.platform.repository.pcr.IRepositoryFileDao;
