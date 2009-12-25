@@ -15,38 +15,40 @@ import org.springframework.util.StringUtils;
 
 public class SimpleRepositoryFileContentTransformer implements Transformer<SimpleRepositoryFileContent> {
 
-  public SimpleRepositoryFileContent fromContentNode(Session session, NodeIdStrategy nodeIdStrategy, Node resourceNode)
-      throws RepositoryException, IOException {
+  public SimpleRepositoryFileContent fromContentNode(Session session, final PentahoJcrConstants pentahoJcrConstants,
+      NodeIdStrategy nodeIdStrategy, Node resourceNode) throws RepositoryException, IOException {
     String encoding = null;
-    if (resourceNode.hasProperty(PentahoJcrConstants.JCR_ENCODING)) {
-      encoding = resourceNode.getProperty(PentahoJcrConstants.JCR_ENCODING).getString();
+    if (resourceNode.hasProperty(pentahoJcrConstants.getJCR_ENCODING())) {
+      encoding = resourceNode.getProperty(pentahoJcrConstants.getJCR_ENCODING()).getString();
     }
-    InputStream data = resourceNode.getProperty(PentahoJcrConstants.JCR_DATA).getStream();
-    String mimeType = resourceNode.getProperty(PentahoJcrConstants.JCR_MIMETYPE).getString();
+    InputStream data = resourceNode.getProperty(pentahoJcrConstants.getJCR_DATA()).getStream();
+    String mimeType = resourceNode.getProperty(pentahoJcrConstants.getJCR_MIMETYPE()).getString();
     return new SimpleRepositoryFileContent(data, encoding, mimeType);
 
   }
 
-  public void createContentNode(Session session, NodeIdStrategy nodeIdStrategy, SimpleRepositoryFileContent content,
-      Node resourceNode) throws RepositoryException, IOException {
+  public void createContentNode(Session session, final PentahoJcrConstants pentahoJcrConstants,
+      NodeIdStrategy nodeIdStrategy, SimpleRepositoryFileContent content, Node resourceNode)
+      throws RepositoryException, IOException {
     if (StringUtils.hasText(content.getEncoding())) {
-      resourceNode.setProperty(PentahoJcrConstants.JCR_ENCODING, content.getEncoding());
+      resourceNode.setProperty(pentahoJcrConstants.getJCR_ENCODING(), content.getEncoding());
     }
-    resourceNode.setProperty(PentahoJcrConstants.JCR_DATA, content.getData());
-    resourceNode.setProperty(PentahoJcrConstants.JCR_MIMETYPE, content.getMimeType());
+    resourceNode.setProperty(pentahoJcrConstants.getJCR_DATA(), content.getData());
+    resourceNode.setProperty(pentahoJcrConstants.getJCR_MIMETYPE(), content.getMimeType());
   }
 
   public boolean supports(final String contentType) {
     return SimpleRepositoryFileContent.CONTENT_TYPE.equals(contentType);
   }
 
-  public void updateContentNode(Session session, NodeIdStrategy nodeIdStrategy, SimpleRepositoryFileContent content,
-      Node resourceNode) throws RepositoryException, IOException {
+  public void updateContentNode(Session session, final PentahoJcrConstants pentahoJcrConstants,
+      NodeIdStrategy nodeIdStrategy, SimpleRepositoryFileContent content, Node resourceNode)
+      throws RepositoryException, IOException {
     if (StringUtils.hasText(content.getEncoding())) {
-      resourceNode.setProperty(PentahoJcrConstants.JCR_ENCODING, content.getEncoding());
+      resourceNode.setProperty(pentahoJcrConstants.getJCR_ENCODING(), content.getEncoding());
     }
-    resourceNode.setProperty(PentahoJcrConstants.JCR_DATA, content.getData());
-    resourceNode.setProperty(PentahoJcrConstants.JCR_MIMETYPE, content.getMimeType());
+    resourceNode.setProperty(pentahoJcrConstants.getJCR_DATA(), content.getData());
+    resourceNode.setProperty(pentahoJcrConstants.getJCR_MIMETYPE(), content.getMimeType());
   }
 
 }

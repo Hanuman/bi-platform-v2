@@ -2,22 +2,15 @@
 Pentaho file mixin node type.  (To be applied to nt:file or nt:linkedfile nodes.)
 */
 
-// The namespace declaration
-<ns = 'http://www.pentaho.org/jcr/1.0'>
+<jcr='http://www.jcp.org/jcr/1.0'>
+<nt='http://www.jcp.org/jcr/nt/1.0'>
+<mix='http://www.jcp.org/jcr/mix/1.0'>
+<pho='http://www.pentaho.org/jcr/1.0'>
+<pho_nt='http://www.pentaho.org/jcr/nt/1.0'>
+<pho_mix='http://www.pentaho.org/jcr/mix/1.0'>
 
-// Node type name
-[ns:pentahoFile]
-
-// This is a mixin node type
-mixin
-
-// Nodes of this node type have a property called 'ns:contentType' of type STRING
-// contentType is distinct from mime type; two files can have the same mime type (e.g. text/xml) but be of two different
-// contentTypes--xaction vs. xdash
-- ns:contentType (string)
-
-// and it is...
-mandatory
-
-// It has an on-parent-version setting of...
-copy
+[pho_mix:pentahoFile]
+  mixin
+  - pho:contentType (string)
+  mandatory
+  copy

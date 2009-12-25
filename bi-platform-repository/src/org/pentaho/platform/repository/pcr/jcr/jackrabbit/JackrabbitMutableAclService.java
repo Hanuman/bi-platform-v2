@@ -124,13 +124,14 @@ public class JackrabbitMutableAclService implements IPentahoMutableAclService {
   public MutableAcl createAcl(final ObjectIdentity objectIdentity) throws AlreadyExistsException {
     return (MutableAcl) jcrTemplate.execute(new JcrCallback() {
       public Object doInJcr(final Session session) throws RepositoryException, IOException {
-
+        PentahoJcrConstants pentahoJcrConstants = new PentahoJcrConstants(session);
         Node node = nodeIdStrategy.findNodeById(session, objectIdentity.getIdentifier());
         if (node == null) {
           throw new NotFoundException(String.format("node with id [%s] not found", objectIdentity.getIdentifier()));
         }
 
-        JcrRepositoryFileUtils.checkoutNearestVersionableNodeIfNecessary(session, nodeIdStrategy, node);
+        JcrRepositoryFileUtils.checkoutNearestVersionableNodeIfNecessary(session, pentahoJcrConstants, nodeIdStrategy,
+            node);
 
         // TODO mlowery set owner to currently authenticated user
         Assert.isInstanceOf(SessionImpl.class, session);
@@ -149,9 +150,10 @@ public class JackrabbitMutableAclService implements IPentahoMutableAclService {
         }
 
         session.save();
-        JcrRepositoryFileUtils.checkinNearestVersionableNodeIfNecessary(session, nodeIdStrategy, node, "[system] created ACL");
+        JcrRepositoryFileUtils.checkinNearestVersionableNodeIfNecessary(session, pentahoJcrConstants, nodeIdStrategy,
+            node, "[system] created ACL");
 
-        Acl acl = toAcl(jrSession, objectIdentity);
+        Acl acl = toAcl(jrSession, pentahoJcrConstants, objectIdentity);
         return acl;
       }
     });
@@ -161,6 +163,7 @@ public class JackrabbitMutableAclService implements IPentahoMutableAclService {
       throws ChildrenExistException {
     jcrTemplate.execute(new JcrCallback() {
       public Object doInJcr(final Session session) throws RepositoryException, IOException {
+        PentahoJcrConstants pentahoJcrConstants = new PentahoJcrConstants(session);
         Assert.isTrue(session instanceof SessionImpl);
         SessionImpl jrSession = (SessionImpl) session;
         Node node = nodeIdStrategy.findNodeById(session, objectIdentity.getIdentifier());
@@ -168,7 +171,8 @@ public class JackrabbitMutableAclService implements IPentahoMutableAclService {
           throw new NotFoundException(String.format("node with id [%s] not found", objectIdentity.getIdentifier()));
         }
 
-        JcrRepositoryFileUtils.checkoutNearestVersionableNodeIfNecessary(session, nodeIdStrategy, node);
+        JcrRepositoryFileUtils.checkoutNearestVersionableNodeIfNecessary(session, pentahoJcrConstants, nodeIdStrategy,
+            node);
 
         if (deleteChildren) {
           ObjectIdentity[] children = findChildren(objectIdentity);
@@ -191,7 +195,8 @@ public class JackrabbitMutableAclService implements IPentahoMutableAclService {
         AccessControlPolicy acPolicy = getAccessControlPolicy(acMgr, absPath);
         acMgr.removePolicy(absPath, acPolicy);
         jrSession.save();
-        JcrRepositoryFileUtils.checkinNearestVersionableNodeIfNecessary(session, nodeIdStrategy, node, "[system] deleted ACL");
+        JcrRepositoryFileUtils.checkinNearestVersionableNodeIfNecessary(session, pentahoJcrConstants, nodeIdStrategy,
+            node, "[system] deleted ACL");
         return null;
       }
     });
@@ -204,6 +209,7 @@ public class JackrabbitMutableAclService implements IPentahoMutableAclService {
   public MutableAcl updateAcl(final MutableAcl acl) throws NotFoundException {
     return (MutableAcl) jcrTemplate.execute(new JcrCallback() {
       public Object doInJcr(final Session session) throws RepositoryException, IOException {
+        PentahoJcrConstants pentahoJcrConstants = new PentahoJcrConstants(session);
         Assert.isTrue(session instanceof SessionImpl);
         SessionImpl jrSession = (SessionImpl) session;
         Node node = nodeIdStrategy.findNodeById(session, acl.getObjectIdentity().getIdentifier());
@@ -212,7 +218,8 @@ public class JackrabbitMutableAclService implements IPentahoMutableAclService {
               .getIdentifier()));
         }
 
-        JcrRepositoryFileUtils.checkoutNearestVersionableNodeIfNecessary(session, nodeIdStrategy, node);
+        JcrRepositoryFileUtils.checkoutNearestVersionableNodeIfNecessary(session, pentahoJcrConstants, nodeIdStrategy,
+            node);
 
         String absPath = node.getPath();
         AccessControlManager acMgr = jrSession.getAccessControlManager();
@@ -242,7 +249,8 @@ public class JackrabbitMutableAclService implements IPentahoMutableAclService {
         }
         acMgr.setPolicy(absPath, acList);
         session.save();
-        JcrRepositoryFileUtils.checkinNearestVersionableNodeIfNecessary(session, nodeIdStrategy, node, "[system] updated ACL");
+        JcrRepositoryFileUtils.checkinNearestVersionableNodeIfNecessary(session, pentahoJcrConstants, nodeIdStrategy,
+            node, "[system] updated ACL");
         Acl readAcl = readAclById(acl.getObjectIdentity());
         Assert.isInstanceOf(MutableAcl.class, readAcl, "MutableAcl should be been returned");
 
@@ -287,15 +295,18 @@ public class JackrabbitMutableAclService implements IPentahoMutableAclService {
   public ObjectIdentity[] findChildren(final ObjectIdentity parentIdentity) {
     return (ObjectIdentity[]) jcrTemplate.execute(new JcrCallback() {
       public Object doInJcr(final Session session) throws RepositoryException, IOException {
+        PentahoJcrConstants pentahoJcrConstants = new PentahoJcrConstants(session);
         Assert.isTrue(session instanceof SessionImpl);
         SessionImpl jrSession = (SessionImpl) session;
         Node node = nodeIdStrategy.findNodeById(jrSession, parentIdentity.getIdentifier());
         if (node == null) {
           throw new NotFoundException(String.format("node with id [%s] not found", parentIdentity.getIdentifier()));
         }
-        RepositoryFile file = JcrRepositoryFileUtils.nodeToFile(session, nodeIdStrategy, node);
-        if (file.isFolder() && !JcrRepositoryFileUtils.getChildren(session, nodeIdStrategy, file).isEmpty()) {
-          List<RepositoryFile> children = JcrRepositoryFileUtils.getChildren(session, nodeIdStrategy, file);
+        RepositoryFile file = JcrRepositoryFileUtils.nodeToFile(session, pentahoJcrConstants, nodeIdStrategy, node);
+        if (file.isFolder()
+            && !JcrRepositoryFileUtils.getChildren(session, pentahoJcrConstants, nodeIdStrategy, file).isEmpty()) {
+          List<RepositoryFile> children = JcrRepositoryFileUtils.getChildren(session, pentahoJcrConstants,
+              nodeIdStrategy, file);
           ObjectIdentity[] oids = new ObjectIdentity[children.size()];
           for (int i = 0; i < oids.length; i++) {
             oids[i] = new ObjectIdentityImpl(RepositoryFile.class, children.get(i).getId());
@@ -328,12 +339,13 @@ public class JackrabbitMutableAclService implements IPentahoMutableAclService {
       throws NotFoundException {
     return (Map<ObjectIdentity, Acl>) jcrTemplate.execute(new JcrCallback() {
       public Object doInJcr(final Session session) throws RepositoryException, IOException {
+        PentahoJcrConstants pentahoJcrConstants = new PentahoJcrConstants(session);
         Map<ObjectIdentity, Acl> map = new HashMap<ObjectIdentity, Acl>();
         Assert.isTrue(session instanceof SessionImpl);
         SessionImpl jrSession = (SessionImpl) session;
 
         for (int i = 0; i < objects.length; i++) {
-          map.put(objects[i], toAcl(jrSession, objects[i]));
+          map.put(objects[i], toAcl(jrSession, pentahoJcrConstants, objects[i]));
         }
 
         return map;
@@ -342,22 +354,24 @@ public class JackrabbitMutableAclService implements IPentahoMutableAclService {
 
   }
 
-  private boolean isReferenceable(final Node node) throws RepositoryException {
-    Value[] mixinTypeNames = node.getProperty(PentahoJcrConstants.JCR_MIXINTYPES).getValues();
+  private boolean isReferenceable(final PentahoJcrConstants pentahoJcrConstants, final Node node)
+      throws RepositoryException {
+    Value[] mixinTypeNames = node.getProperty(pentahoJcrConstants.getJCR_MIXINTYPES()).getValues();
     for (Value v : mixinTypeNames) {
-      if (PentahoJcrConstants.MIX_REFERENCEABLE.equals(v.getString())) {
+      if (pentahoJcrConstants.getMIX_REFERENCEABLE().equals(v.getString())) {
         return true;
       }
     }
     return false;
   }
 
-  private Acl toAcl(final SessionImpl session, final ObjectIdentity objectIdentity) throws RepositoryException {
-    return toAcl(session, objectIdentity, true);
+  private Acl toAcl(final SessionImpl session, final PentahoJcrConstants pentahoJcrConstants,
+      final ObjectIdentity objectIdentity) throws RepositoryException {
+    return toAcl(session, pentahoJcrConstants, objectIdentity, true);
   }
 
-  private Acl toAcl(final SessionImpl jrSession, final ObjectIdentity objectIdentity, final boolean fetchParent)
-      throws RepositoryException {
+  private Acl toAcl(final SessionImpl jrSession, final PentahoJcrConstants pentahoJcrConstants,
+      final ObjectIdentity objectIdentity, final boolean fetchParent) throws RepositoryException {
     try {
       Node node = nodeIdStrategy.findNodeById(jrSession, objectIdentity.getIdentifier());
       if (node == null) {
@@ -371,9 +385,9 @@ public class JackrabbitMutableAclService implements IPentahoMutableAclService {
       if (fetchParent) {
         Node parentNode = node.getParent();
         // all Pentaho nodes are referenceable; if we hit one that is not, that is the root
-        if (isReferenceable(parentNode)) {
-          parentAcl = toAcl(jrSession, new ObjectIdentityImpl(objectIdentity.getClass(), nodeIdStrategy
-              .getId(parentNode)), false);
+        if (isReferenceable(pentahoJcrConstants, parentNode)) {
+          parentAcl = toAcl(jrSession, pentahoJcrConstants, new ObjectIdentityImpl(objectIdentity.getClass(),
+              nodeIdStrategy.getId(parentNode)), false);
         }
       }
 

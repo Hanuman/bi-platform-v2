@@ -68,17 +68,20 @@ public class JcrRepositoryFileDao implements IRepositoryFileDao, InitializingBea
 
     return (RepositoryFile) jcrTemplate.execute(new JcrCallback() {
       public Object doInJcr(final Session session) throws RepositoryException, IOException {
-        JcrRepositoryFileUtils.checkoutNearestVersionableFileIfNecessary(session, nodeIdStrategy, parentFolder);
-        Node folderNode = JcrRepositoryFileUtils.createFolderNode(session, nodeIdStrategy, parentFolder, folder);
+        PentahoJcrConstants pentahoJcrConstants = new PentahoJcrConstants(session);
+        JcrRepositoryFileUtils.checkoutNearestVersionableFileIfNecessary(session, pentahoJcrConstants, nodeIdStrategy,
+            parentFolder);
+        Node folderNode = JcrRepositoryFileUtils.createFolderNode(session, pentahoJcrConstants, nodeIdStrategy,
+            parentFolder, folder);
         session.save();
         if (folder.isVersioned()) {
-          JcrRepositoryFileUtils.checkinNearestVersionableNodeIfNecessary(session, nodeIdStrategy, folderNode,
-              versionMessageAndLabel);
+          JcrRepositoryFileUtils.checkinNearestVersionableNodeIfNecessary(session, pentahoJcrConstants, nodeIdStrategy,
+              folderNode, versionMessageAndLabel);
         }
-        JcrRepositoryFileUtils.checkinNearestVersionableFileIfNecessary(session, nodeIdStrategy, parentFolder,
-            "[system] added child folder '" + folder.getName() + "' to "
+        JcrRepositoryFileUtils.checkinNearestVersionableFileIfNecessary(session, pentahoJcrConstants, nodeIdStrategy,
+            parentFolder, "[system] added child folder '" + folder.getName() + "' to "
                 + (parentFolder == null ? "/" : parentFolder.getAbsolutePath()));
-        return JcrRepositoryFileUtils.nodeToFile(session, nodeIdStrategy, folderNode);
+        return JcrRepositoryFileUtils.nodeToFile(session, pentahoJcrConstants, nodeIdStrategy, folderNode);
       }
     });
   }
@@ -95,18 +98,20 @@ public class JcrRepositoryFileDao implements IRepositoryFileDao, InitializingBea
 
     return (RepositoryFile) jcrTemplate.execute(new JcrCallback() {
       public Object doInJcr(final Session session) throws RepositoryException, IOException {
-        JcrRepositoryFileUtils.checkoutNearestVersionableFileIfNecessary(session, nodeIdStrategy, parentFolder);
-        Node fileNode = JcrRepositoryFileUtils.createFileNode(session, nodeIdStrategy, parentFolder, file, content,
-            findTransformer(content.getContentType()));
+        PentahoJcrConstants pentahoJcrConstants = new PentahoJcrConstants(session);
+        JcrRepositoryFileUtils.checkoutNearestVersionableFileIfNecessary(session, pentahoJcrConstants, nodeIdStrategy,
+            parentFolder);
+        Node fileNode = JcrRepositoryFileUtils.createFileNode(session, pentahoJcrConstants, nodeIdStrategy,
+            parentFolder, file, content, findTransformer(content.getContentType()));
         session.save();
         if (file.isVersioned()) {
-          JcrRepositoryFileUtils.checkinNearestVersionableNodeIfNecessary(session, nodeIdStrategy, fileNode,
-              versionMessageAndLabel);
+          JcrRepositoryFileUtils.checkinNearestVersionableNodeIfNecessary(session, pentahoJcrConstants, nodeIdStrategy,
+              fileNode, versionMessageAndLabel);
         }
-        JcrRepositoryFileUtils.checkinNearestVersionableFileIfNecessary(session, nodeIdStrategy, parentFolder,
-            "[system] added child file '" + file.getName() + "' to "
+        JcrRepositoryFileUtils.checkinNearestVersionableFileIfNecessary(session, pentahoJcrConstants, nodeIdStrategy,
+            parentFolder, "[system] added child file '" + file.getName() + "' to "
                 + (parentFolder == null ? "/" : parentFolder.getAbsolutePath()));
-        return JcrRepositoryFileUtils.nodeToFile(session, nodeIdStrategy, fileNode);
+        return JcrRepositoryFileUtils.nodeToFile(session, pentahoJcrConstants, nodeIdStrategy, fileNode);
       }
     });
   }
@@ -121,13 +126,15 @@ public class JcrRepositoryFileDao implements IRepositoryFileDao, InitializingBea
 
     return (RepositoryFile) jcrTemplate.execute(new JcrCallback() {
       public Object doInJcr(final Session session) throws RepositoryException, IOException {
-        JcrRepositoryFileUtils.checkoutNearestVersionableFileIfNecessary(session, nodeIdStrategy, file);
-        JcrRepositoryFileUtils.updateFileNode(session, nodeIdStrategy, file, content, findTransformer(file
-            .getContentType()));
+        PentahoJcrConstants pentahoJcrConstants = new PentahoJcrConstants(session);
+        JcrRepositoryFileUtils.checkoutNearestVersionableFileIfNecessary(session, pentahoJcrConstants, nodeIdStrategy,
+            file);
+        JcrRepositoryFileUtils.updateFileNode(session, pentahoJcrConstants, nodeIdStrategy, file, content,
+            findTransformer(file.getContentType()));
         session.save();
-        JcrRepositoryFileUtils.checkinNearestVersionableFileIfNecessary(session, nodeIdStrategy, file,
-            versionMessageAndLabel);
-        return JcrRepositoryFileUtils.nodeIdToFile(session, nodeIdStrategy, file.getId());
+        JcrRepositoryFileUtils.checkinNearestVersionableFileIfNecessary(session, pentahoJcrConstants, nodeIdStrategy,
+            file, versionMessageAndLabel);
+        return JcrRepositoryFileUtils.nodeIdToFile(session, pentahoJcrConstants, nodeIdStrategy, file.getId());
       }
     });
   }
@@ -178,6 +185,7 @@ public class JcrRepositoryFileDao implements IRepositoryFileDao, InitializingBea
     Assert.isTrue(absPath.startsWith(RepositoryFile.SEPARATOR));
     return (RepositoryFile) jcrTemplate.execute(new JcrCallback() {
       public Object doInJcr(final Session session) throws RepositoryException, IOException {
+        PentahoJcrConstants pentahoJcrConstants = new PentahoJcrConstants(session);
         Item fileNode;
         try {
           fileNode = session.getItem(absPath);
@@ -186,7 +194,8 @@ public class JcrRepositoryFileDao implements IRepositoryFileDao, InitializingBea
         } catch (PathNotFoundException e) {
           fileNode = null;
         }
-        return fileNode != null ? JcrRepositoryFileUtils.nodeToFile(session, nodeIdStrategy, (Node) fileNode) : null;
+        return fileNode != null ? JcrRepositoryFileUtils.nodeToFile(session, pentahoJcrConstants, nodeIdStrategy,
+            (Node) fileNode) : null;
       }
     });
 
@@ -202,7 +211,9 @@ public class JcrRepositoryFileDao implements IRepositoryFileDao, InitializingBea
     Assert.isTrue(!file.isFolder());
     return (T) jcrTemplate.execute(new JcrCallback() {
       public Object doInJcr(final Session session) throws RepositoryException, IOException {
-        return JcrRepositoryFileUtils.getContent(session, nodeIdStrategy, file, findTransformer(file.getContentType()));
+        PentahoJcrConstants pentahoJcrConstants = new PentahoJcrConstants(session);
+        return JcrRepositoryFileUtils.getContent(session, pentahoJcrConstants, nodeIdStrategy, file,
+            findTransformer(file.getContentType()));
       }
     });
 
@@ -218,7 +229,8 @@ public class JcrRepositoryFileDao implements IRepositoryFileDao, InitializingBea
     Assert.notNull(folder.isFolder());
     return (List<RepositoryFile>) jcrTemplate.execute(new JcrCallback() {
       public Object doInJcr(final Session session) throws RepositoryException, IOException {
-        return JcrRepositoryFileUtils.getChildren(session, nodeIdStrategy, folder);
+        PentahoJcrConstants pentahoJcrConstants = new PentahoJcrConstants(session);
+        return JcrRepositoryFileUtils.getChildren(session, pentahoJcrConstants, nodeIdStrategy, folder);
       }
     });
   }
@@ -242,12 +254,15 @@ public class JcrRepositoryFileDao implements IRepositoryFileDao, InitializingBea
     Assert.notNull(file.getParentId());
     jcrTemplate.execute(new JcrCallback() {
       public Object doInJcr(final Session session) throws RepositoryException, IOException {
-        RepositoryFile parentFolder = JcrRepositoryFileUtils.getFileById(session, nodeIdStrategy, file.getParentId());
-        JcrRepositoryFileUtils.checkoutNearestVersionableFileIfNecessary(session, nodeIdStrategy, parentFolder);
-        JcrRepositoryFileUtils.deleteFile(session, nodeIdStrategy, file, lockTokenHelper);
+        PentahoJcrConstants pentahoJcrConstants = new PentahoJcrConstants(session);
+        RepositoryFile parentFolder = JcrRepositoryFileUtils.getFileById(session, pentahoJcrConstants, nodeIdStrategy,
+            file.getParentId());
+        JcrRepositoryFileUtils.checkoutNearestVersionableFileIfNecessary(session, pentahoJcrConstants, nodeIdStrategy,
+            parentFolder);
+        JcrRepositoryFileUtils.deleteFile(session, pentahoJcrConstants, nodeIdStrategy, file, lockTokenHelper);
         session.save();
-        JcrRepositoryFileUtils.checkinNearestVersionableFileIfNecessary(session, nodeIdStrategy, parentFolder,
-            versionMessageAndLabel);
+        JcrRepositoryFileUtils.checkinNearestVersionableFileIfNecessary(session, pentahoJcrConstants, nodeIdStrategy,
+            parentFolder, versionMessageAndLabel);
         return null;
       }
     });
@@ -262,7 +277,8 @@ public class JcrRepositoryFileDao implements IRepositoryFileDao, InitializingBea
     Assert.isTrue(!file.isFolder());
     return (LockSummary) jcrTemplate.execute(new JcrCallback() {
       public Object doInJcr(final Session session) throws RepositoryException, IOException {
-        return JcrRepositoryFileUtils.getLockSummary(session, nodeIdStrategy, file);
+        PentahoJcrConstants pentahoJcrConstants = new PentahoJcrConstants(session);
+        return JcrRepositoryFileUtils.getLockSummary(session, pentahoJcrConstants, nodeIdStrategy, file);
       }
     });
   }
@@ -276,8 +292,8 @@ public class JcrRepositoryFileDao implements IRepositoryFileDao, InitializingBea
     Assert.isTrue(!file.isFolder());
     jcrTemplate.execute(new JcrCallback() {
       public Object doInJcr(final Session session) throws RepositoryException, IOException {
-
-        JcrRepositoryFileUtils.lockFile(session, nodeIdStrategy, file, message, lockTokenHelper);
+        PentahoJcrConstants pentahoJcrConstants = new PentahoJcrConstants(session);
+        JcrRepositoryFileUtils.lockFile(session, pentahoJcrConstants, nodeIdStrategy, file, message, lockTokenHelper);
         return null;
       }
     });
@@ -292,7 +308,8 @@ public class JcrRepositoryFileDao implements IRepositoryFileDao, InitializingBea
     Assert.isTrue(!file.isFolder());
     jcrTemplate.execute(new JcrCallback() {
       public Object doInJcr(final Session session) throws RepositoryException, IOException {
-        JcrRepositoryFileUtils.unlockFile(session, nodeIdStrategy, file, lockTokenHelper);
+        PentahoJcrConstants pentahoJcrConstants = new PentahoJcrConstants(session);
+        JcrRepositoryFileUtils.unlockFile(session, pentahoJcrConstants, nodeIdStrategy, file, lockTokenHelper);
         return null;
       }
     });
@@ -306,7 +323,8 @@ public class JcrRepositoryFileDao implements IRepositoryFileDao, InitializingBea
     Assert.notNull(file.getId());
     return (List<VersionSummary>) jcrTemplate.execute(new JcrCallback() {
       public Object doInJcr(final Session session) throws RepositoryException, IOException {
-        return JcrRepositoryFileUtils.getVersionSummaries(session, nodeIdStrategy, file);
+        PentahoJcrConstants pentahoJcrConstants = new PentahoJcrConstants(session);
+        return JcrRepositoryFileUtils.getVersionSummaries(session, pentahoJcrConstants, nodeIdStrategy, file);
       }
     });
   }
@@ -331,19 +349,21 @@ public class JcrRepositoryFileDao implements IRepositoryFileDao, InitializingBea
      * Transforms a JCR node subtree into an {@link IRepositoryFileContent}.
      * 
      * @param session JCR session
+     * @param pentahoJcrConstants constants
      * @param nodeIdStrategy node id strategy to use
      * @param resourceNode root of JCR subtree containing the data that goes into the {@link IRepositoryFileContent}
      * @return an {@link IRepositoryFileContent} instance
      * @throws RepositoryException if anything goes wrong
      * @throws IOException if anything goes wrong
      */
-    T fromContentNode(final Session session, final NodeIdStrategy nodeIdStrategy, final Node resourceNode)
-        throws RepositoryException, IOException;
+    T fromContentNode(final Session session, final PentahoJcrConstants pentahoJcrConstants,
+        final NodeIdStrategy nodeIdStrategy, final Node resourceNode) throws RepositoryException, IOException;
 
     /**
      * Creates a JCR node subtree representing the given {@code content}.
      * 
      * @param session JCR session
+     * @param pentahoJcrConstants constants
      * @param nodeIdStrategy node id strategy to use
      * @param content content to create
      * @param resourceNode root of JCR subtree containing the data that goes into the {@link IRepositoryFileContent}
@@ -351,13 +371,15 @@ public class JcrRepositoryFileDao implements IRepositoryFileDao, InitializingBea
      * @throws RepositoryException if anything goes wrong
      * @throws IOException if anything goes wrong
      */
-    void createContentNode(final Session session, final NodeIdStrategy nodeIdStrategy, final T content,
-        final Node resourceNode) throws RepositoryException, IOException;
+    void createContentNode(final Session session, final PentahoJcrConstants pentahoJcrConstants,
+        final NodeIdStrategy nodeIdStrategy, final T content, final Node resourceNode) throws RepositoryException,
+        IOException;
 
     /**
      * Updates a JCR node subtree representing the given {@code content}.
      * 
      * @param session JCR session
+     * @param pentahoJcrConstants constants
      * @param nodeIdStrategy node id strategy to use
      * @param content content to update
      * @param resourceNode root of JCR subtree containing the data that goes into the {@link IRepositoryFileContent}
@@ -365,8 +387,9 @@ public class JcrRepositoryFileDao implements IRepositoryFileDao, InitializingBea
      * @throws RepositoryException if anything goes wrong
      * @throws IOException if anything goes wrong
      */
-    void updateContentNode(final Session session, final NodeIdStrategy nodeIdStrategy, final T content,
-        final Node resourceNode) throws RepositoryException, IOException;
+    void updateContentNode(final Session session, final PentahoJcrConstants pentahoJcrConstants,
+        final NodeIdStrategy nodeIdStrategy, final T content, final Node resourceNode) throws RepositoryException,
+        IOException;
 
   }
 
@@ -383,28 +406,32 @@ public class JcrRepositoryFileDao implements IRepositoryFileDao, InitializingBea
      * Stores a lock token associated with the session's user.
      * 
      * @param session session whose userID will be used
+     * @param pentahoJcrConstants constants
      * @param lock recently created lock; can get the locked node and lock token from this object
      */
-    void addLockToken(final Session session, final NodeIdStrategy nodeIdStrategy, final Lock lock)
-        throws RepositoryException;
+    void addLockToken(final Session session, final PentahoJcrConstants pentahoJcrConstants,
+        final NodeIdStrategy nodeIdStrategy, final Lock lock) throws RepositoryException;
 
     /**
      * Returns all lock tokens belonging to the session's user. Lock tokens can then be added to the session by calling
      * {@code Session.addLockToken(token)}.
      * 
      * @param session session whose userID will be used
+     * @param pentahoJcrConstants constants
      * @return list of tokens
      */
-    List<String> getLockTokens(final Session session, final NodeIdStrategy nodeIdStrategy) throws RepositoryException;
+    List<String> getLockTokens(final Session session, final PentahoJcrConstants pentahoJcrConstants,
+        final NodeIdStrategy nodeIdStrategy) throws RepositoryException;
 
     /**
      * Removes a lock token
      * 
      * @param session session whose userID will be used
+     * @param pentahoJcrConstants constants
      * @param lock lock whose token is to be removed; can get the locked node and lock token from this object
      */
-    void removeLockToken(final Session session, final NodeIdStrategy nodeIdStrategy, final Lock lock)
-        throws RepositoryException;
+    void removeLockToken(final Session session, final PentahoJcrConstants pentahoJcrConstants,
+        final NodeIdStrategy nodeIdStrategy, final Lock lock) throws RepositoryException;
   }
 
 }

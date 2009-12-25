@@ -29,7 +29,6 @@ import org.apache.jackrabbit.core.security.authorization.Permission;
 import org.apache.jackrabbit.core.security.principal.EveryonePrincipal;
 import org.apache.jackrabbit.spi.Path;
 import org.apache.jackrabbit.util.Text;
-import org.pentaho.platform.repository.pcr.jcr.PentahoJcrConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.util.Assert;
@@ -206,9 +205,9 @@ public class PentahoAccessControlProvider extends AbstractPentahoAccessControlPr
     }
 
     private boolean isFolderOrFileOrLinkedFileNode(final Node node) throws RepositoryException {
-      String nodeTypeName = node.getProperty(PentahoJcrConstants.JCR_PRIMARYTYPE).getString();
-      return PentahoJcrConstants.NT_FOLDER.equals(nodeTypeName) || PentahoJcrConstants.NT_FILE.equals(nodeTypeName)
-          || PentahoJcrConstants.NT_LINKEDFILE.equals(nodeTypeName);
+      String nodeTypeName = node.getProperty(JcrConstants.JCR_PRIMARYTYPE).getString();
+      return JcrConstants.NT_FOLDER.equals(nodeTypeName) || JcrConstants.NT_FILE.equals(nodeTypeName)
+          || JcrConstants.NT_LINKEDFILE.equals(nodeTypeName);
     }
 
     private NodeImpl findNearestPersistedNode(final Path absPath) throws RepositoryException {

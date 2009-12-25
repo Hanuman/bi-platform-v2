@@ -1,94 +1,135 @@
 package org.pentaho.platform.repository.pcr.jcr;
 
+import javax.jcr.Session;
+
+import org.springframework.extensions.jcr.JcrConstants;
+
 /**
- * Pentaho JCR constants for node and property names.
- * 
- * <p>
- * The naming convention for the constants is {@code <NS>_<NAME>} where {@code <NS>} is a namespace prefix (sometimes a
- * reserved prefix such as {@code jcr}) and {@code <NAME>} is the node or property name as all capital letters with no 
- * underscores. This matches Jackrabbit's convention.
- * </p>
+ * Pentaho JCR constants. The {@code get* } methods automatically prepend the appropriate namespace prefix.
  * 
  * @author mlowery
  */
-public interface PentahoJcrConstants {
+public class PentahoJcrConstants extends JcrConstants {
+
+  // ~ Static fields/initializers ======================================================================================
 
   /**
-   * All of Pentaho's node types use this namespace.
+   * Pentaho item name namespace.
    */
-  String PENTAHO_NAMESPACE_URI = "http://www.pentaho.org/jcr/1.0";
+  private static final String PHO_NS = "http://www.pentaho.org/jcr/1.0";
 
   /**
-   * Pentaho custom mixin type. To be applied to nt:file or nt:linkedfile nodes.
+   * Pentaho node type namespace.
    */
-  String PENTAHO_MIXIN_PENTAHOFILE = "pentahoFile";
+  protected static final String PHO_NT_NS = "http://www.pentaho.org/jcr/nt/1.0";
 
   /**
-   * Pentaho custom mixin type. To be applied to nt:resource nodes.
+   * Pentaho mixin type namespace.
    */
-  String PENTAHO_MIXIN_PENTAHORESOURCE = "pentahoResource";
-  
-  String JCR_ENCODING = "jcr:encoding";
+  protected static final String PHO_MIX_NS = "http://www.pentaho.org/jcr/mix/1.0";
 
-  String JCR_DATA = "jcr:data";
+  private static final String PHO_MIX_PENTAHOFILE = "pentahoFile";
 
-  String JCR_CREATED = "jcr:created";
+  private static final String PHO_MIX_PENTAHORESOURCE = "pentahoResource";
 
-  String JCR_CONTENT = "jcr:content";
+  private static final String PHO_MIX_LOCKABLE = "pentahoLockable";
 
-  String JCR_PRIMARYTYPE = "jcr:primaryType";
+  private static final String PHO_MIX_VERSIONABLE = "pentahoVersionable";
 
-  String JCR_MIXINTYPES = "jcr:mixinTypes";
+  private static final String PHO_NT_INTERNALFOLDER = "pentahoInternalFolder";
 
-  String JCR_MIMETYPE = "jcr:mimeType";
+  private static final String PHO_NT_LOCKTOKENSTORAGE = "pentahoLockTokenStorage";
 
-  String JCR_LASTMODIFIED = "jcr:lastModified";
+  private static final String PHO_RUNARGUMENTS = "runArguments";
 
-  String NT_FOLDER = "nt:folder";
+  private static final String PHO_AUX = "aux";
 
-  String NT_FILE = "nt:file";
+  private static final String PHO_CONTENTTYPE = "contentType";
 
-  String NT_LINKEDFILE = "nt:linkedFile";
+  private static final String PHO_LOCKMESSAGE = "lockMessage";
 
-  String NT_UNSTRUCTURED = "nt:unstructured";
+  private static final String PHO_LOCKDATE = "lockDate";
 
-  String NT_RESOURCE = "nt:resource";
+  private static final String PHO_LOCKEDNODEREF = "lockedNodeRef";
 
-  String MIX_VERSIONABLE = "mix:versionable";
+  private static final String PHO_LOCKTOKEN = "lockToken";
 
-  String MIX_REFERENCEABLE = "mix:referenceable";
+  private static final String PHO_VERSIONAUTHOR = "versionAuthor";
 
-  String PENTAHO_RUNARGUMENTS = "runArguments";
+  private static final String PHO_VERSIONMESSAGE = "versionMessage";
 
-  String PENTAHO_AUX = "aux";
+  // ~ Instance fields =================================================================================================
 
-//  String PENTAHO_PREVIEWLASTMODIFIED = "previewLastModified";
+  // ~ Constructors ====================================================================================================
 
-  //String PENTAHO_VERSIONED = "versioned";
+  public PentahoJcrConstants(final Session session) {
+    super(session);
+  }
 
-  String PENTAHO_CONTENTTYPE = "contentType";
+  public PentahoJcrConstants(final Session session, final boolean cache) {
+    super(session, cache);
+  }
 
-  String PENTAHO_LOCKMESSAGE = "lockMessage";
-  
-  String PENTAHO_LOCKDATE = "lockDate";
+  // ~ Methods ========================================================================================================= 
 
-  String PENTAHO_MIXIN_LOCKABLE = "pentahoLockable";
+  public String getPHO_MIX_PENTAHOFILE() {
+    return resolveName(PHO_MIX_NS, PHO_MIX_PENTAHOFILE);
+  }
 
-  String MIX_LOCKABLE = "mix:lockable";
+  public String getPHO_MIX_PENTAHORESOURCE() {
+    return resolveName(PHO_MIX_NS, PHO_MIX_PENTAHORESOURCE);
+  }
 
-  String PENTAHO_INTERNALFOLDER = "pentahoInternalFolder";
+  public String getPHO_MIX_LOCKABLE() {
+    return resolveName(PHO_MIX_NS, PHO_MIX_LOCKABLE);
+  }
 
-  String PENTAHO_LOCKEDNODEREF = "lockedNodeRef";
+  public String getPHO_MIX_VERSIONABLE() {
+    return resolveName(PHO_MIX_NS, PHO_MIX_VERSIONABLE);
+  }
 
-  String PENTAHO_LOCKTOKEN = "lockToken";
+  public String getPHO_NT_INTERNALFOLDER() {
+    return resolveName(PHO_NT_NS, PHO_NT_INTERNALFOLDER);
+  }
 
-  String PENTAHO_LOCKTOKENSTORAGE = "pentahoLockTokenStorage";
+  public String getPHO_NT_LOCKTOKENSTORAGE() {
+    return resolveName(PHO_NT_NS, PHO_NT_LOCKTOKENSTORAGE);
+  }
 
-  String PENTAHO_VERSIONAUTHOR = "versionAuthor";
-  
-  String PENTAHO_VERSIONMESSAGE = "versionMessage";
+  public String getPHO_RUNARGUMENTS() {
+    return resolveName(PHO_NS, PHO_RUNARGUMENTS);
+  }
 
-  String PENTAHO_MIXIN_VERSIONABLE = "pentahoVersionable";
+  public String getPHO_AUX() {
+    return resolveName(PHO_NS, PHO_AUX);
+  }
 
-  String JCR_FROZENNODE = "jcr:frozenNode";
+  public String getPHO_CONTENTTYPE() {
+    return resolveName(PHO_NS, PHO_CONTENTTYPE);
+  }
+
+  public String getPHO_LOCKMESSAGE() {
+    return resolveName(PHO_NS, PHO_LOCKMESSAGE);
+  }
+
+  public String getPHO_LOCKDATE() {
+    return resolveName(PHO_NS, PHO_LOCKDATE);
+  }
+
+  public String getPHO_LOCKEDNODEREF() {
+    return resolveName(PHO_NS, PHO_LOCKEDNODEREF);
+  }
+
+  public String getPHO_LOCKTOKEN() {
+    return resolveName(PHO_NS, PHO_LOCKTOKEN);
+  }
+
+  public String getPHO_VERSIONAUTHOR() {
+    return resolveName(PHO_NS, PHO_VERSIONAUTHOR);
+  }
+
+  public String getPHO_VERSIONMESSAGE() {
+    return resolveName(PHO_NS, PHO_VERSIONMESSAGE);
+  }
+
 }

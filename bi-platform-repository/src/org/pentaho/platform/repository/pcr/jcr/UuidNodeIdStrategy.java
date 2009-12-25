@@ -44,9 +44,9 @@ public class UuidNodeIdStrategy implements NodeIdStrategy {
   /**
    * Adds mix:referenceable to node. Node will get an actual id on save.
    */
-  public void setId(final Node node, final Serializable ignored) {
+  public void setId(final PentahoJcrConstants pentahoJcrConstants, final Node node, final Serializable ignored) {
     try {
-      node.addMixin(PentahoJcrConstants.MIX_REFERENCEABLE);
+      node.addMixin(pentahoJcrConstants.getMIX_REFERENCEABLE());
     } catch (RepositoryException e) {
       throw jcrTemplate.convertJcrAccessException(e);
     }

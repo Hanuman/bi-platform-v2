@@ -42,13 +42,14 @@ public class SimpleJcrTestUtils {
       final String primaryNodeTypeName) {
     return (String) jcrTemplate.execute(new JcrCallback() {
       public String doInJcr(final Session session) throws RepositoryException {
+        PentahoJcrConstants pentahoJcrConstants = new PentahoJcrConstants(session);
         Node newNode;
         try {
           Item item = session.getItem(parentAbsPath);
           Assert.isTrue(item.isNode());
           Node parentNode = (Node) item;
           newNode = parentNode.addNode(name, primaryNodeTypeName);
-          newNode.addMixin(PentahoJcrConstants.MIX_REFERENCEABLE);
+          newNode.addMixin(pentahoJcrConstants.getMIX_REFERENCEABLE());
         } catch (PathNotFoundException e) {
           return null;
         }

@@ -21,10 +21,11 @@ public interface NodeIdStrategy {
 
   /**
    * Sets the id of the given node.
+   * @param pentahoJcrConstants constants
    * @param node node for which to set id
    * @param id id to set
    */
-  void setId(final Node node, final Serializable id);
+  void setId(final PentahoJcrConstants pentahoJcrConstants, final Node node, final Serializable id);
 
   /**
    * Returns the node with the given id.
