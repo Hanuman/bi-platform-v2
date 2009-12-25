@@ -114,7 +114,6 @@
         org.pentaho.platform.api.repository.IPentahoContentRepository.deleteFile=PROPAGATION_REQUIRED
         org.pentaho.platform.api.repository.IPentahoContentRepository.lockFile=PROPAGATION_REQUIRED
         org.pentaho.platform.api.repository.IPentahoContentRepository.unlockFile=PROPAGATION_REQUIRED
-        org.pentaho.platform.api.repository.IPentahoContentRepository.getLockSummary=PROPAGATION_REQUIRED,readOnly
         org.pentaho.platform.api.repository.IPentahoContentRepository.getVersionSummaries=PROPAGATION_REQUIRED,readOnly
         </value>
     </property>
@@ -205,7 +204,6 @@
         org.pentaho.platform.api.repository.IPentahoContentRepository.deleteFile=VOTE_ROLE_FILE_Authenticated
         org.pentaho.platform.api.repository.IPentahoContentRepository.lockFile=VOTE_ROLE_FILE_Authenticated
         org.pentaho.platform.api.repository.IPentahoContentRepository.unlockFile=VOTE_ROLE_FILE_Authenticated
-        org.pentaho.platform.api.repository.IPentahoContentRepository.getLockSummary=VOTE_ROLE_FILE_Authenticated
         org.pentaho.platform.api.repository.IPentahoContentRepository.getPentahoRootFolderPath=VOTE_ROLE_FILE_Authenticated
         org.pentaho.platform.api.repository.IPentahoContentRepository.getTenantRootFolderPath=VOTE_ROLE_FILE_Authenticated
         org.pentaho.platform.api.repository.IPentahoContentRepository.getTenantHomeFolderPath=VOTE_ROLE_FILE_Authenticated

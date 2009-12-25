@@ -99,14 +99,6 @@ public interface IRepositoryFileDao {
   void unlockFile(final RepositoryFile file);
 
   /**
-   * Returns a non-null lock summary instance if this file is locked.
-   * 
-   * @param file file whose lock summary to get
-   * @return lock summary or {@code null} if file is not locked
-   */
-  LockSummary getLockSummary(final RepositoryFile file);
-
-  /**
    * Returns a list of version summary instances. The first version in the list is the root version. The last version
    * in the list is the base version. Branching and merging are not supported so this is a simple list.
    * 

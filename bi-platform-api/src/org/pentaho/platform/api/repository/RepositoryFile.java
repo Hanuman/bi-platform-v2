@@ -53,11 +53,31 @@ public class RepositoryFile implements Comparable<RepositoryFile> {
   private boolean hidden;
 
   private boolean versioned;
-  
+
   /**
    * The version name or number. Read-only.
    */
   private Serializable versionId;
+
+  /**
+   * Locked status. Read-only.
+   */
+  private boolean locked;
+
+  /**
+   * Username of the owner of the lock. Read-only. {@code null} if file not locked.
+   */
+  private String lockOwner;
+
+  /**
+   * Message left by the owner when he locked the file. Read-only. {@code null} if file not locked.
+   */
+  private String lockMessage;
+
+  /**
+   * The date that this lock was created. Read-only. {@code null} if file not locked.
+   */
+  private Date lockDate;
 
   // ~ Constructors ====================================================================================================
 
@@ -88,21 +108,13 @@ public class RepositoryFile implements Comparable<RepositoryFile> {
   }
 
   public Date getCreatedDate() {
-    // maintain immutability via defensive copy
-    if (createdDate != null) {
-      return new Date(createdDate.getTime());
-    } else {
-      return null;
-    }
+    // defensive copy
+    return (createdDate != null ? new Date(createdDate.getTime()) : null);
   }
 
   public Date getLastModifiedDate() {
-    // maintain immutability via defensive copy
-    if (lastModifiedDate != null) {
-      return new Date(lastModifiedDate.getTime());
-    } else {
-      return null;
-    }
+    // defensive copy
+    return (lastModifiedDate != null ? new Date(lastModifiedDate.getTime()) : null);
   }
 
   public String getContentType() {
@@ -127,6 +139,23 @@ public class RepositoryFile implements Comparable<RepositoryFile> {
 
   public Serializable getVersionId() {
     return versionId;
+  }
+
+  public boolean isLocked() {
+    return locked;
+  }
+
+  public String getLockOwner() {
+    return lockOwner;
+  }
+
+  public String getLockMessage() {
+    return lockMessage;
+  }
+
+  public Date getLockDate() {
+    // defensive copy
+    return (lockDate != null ? new Date(lockDate.getTime()) : null);
   }
 
   @Override
@@ -154,8 +183,16 @@ public class RepositoryFile implements Comparable<RepositoryFile> {
     private boolean hidden;
 
     private boolean versioned;
-    
+
     private Serializable versionId;
+
+    private boolean locked;
+
+    private String lockOwner;
+
+    private String lockMessage;
+
+    private Date lockDate;
 
     public Builder(final String name) {
       assertHasText(name);
@@ -173,7 +210,9 @@ public class RepositoryFile implements Comparable<RepositoryFile> {
     public Builder(final RepositoryFile other) {
       this(other.name, other.id, other.parentId);
       this.absolutePath(other.absolutePath).createdDate(other.createdDate).folder(other.folder).lastModificationDate(
-          other.lastModifiedDate).contentType(other.contentType).versioned(other.versioned).hidden(other.hidden).versionId(other.versionId);
+          other.lastModifiedDate).contentType(other.contentType).versioned(other.versioned).hidden(other.hidden)
+          .versionId(other.versionId).locked(other.locked).lockDate(other.lockDate).lockOwner(other.lockOwner)
+          .lockMessage(other.lockMessage);
     }
 
     public RepositoryFile build() {
@@ -186,6 +225,10 @@ public class RepositoryFile implements Comparable<RepositoryFile> {
       result.hidden = this.hidden;
       result.versioned = this.versioned;
       result.versionId = this.versionId;
+      result.locked = this.locked;
+      result.lockOwner = this.lockOwner;
+      result.lockMessage = this.lockMessage;
+      result.lockDate = this.lockDate;
       return result;
     }
 
@@ -195,12 +238,14 @@ public class RepositoryFile implements Comparable<RepositoryFile> {
     }
 
     public Builder createdDate(final Date createdDate) {
-      this.createdDate = createdDate;
+      // defensive copy
+      this.createdDate = (createdDate != null ? new Date(createdDate.getTime()) : null);
       return this;
     }
 
     public Builder lastModificationDate(final Date lastModifiedDate) {
-      this.lastModifiedDate = lastModifiedDate;
+      // defensive copy
+      this.lastModifiedDate = (lastModifiedDate != null ? new Date(lastModifiedDate.getTime()) : null);
       return this;
     }
 
@@ -223,9 +268,30 @@ public class RepositoryFile implements Comparable<RepositoryFile> {
       this.versioned = versioned;
       return this;
     }
-    
+
     public Builder versionId(final Serializable versionId) {
       this.versionId = versionId;
+      return this;
+    }
+
+    public Builder locked(final boolean locked) {
+      this.locked = locked;
+      return this;
+    }
+
+    public Builder lockOwner(final String lockOwner) {
+      this.lockOwner = lockOwner;
+      return this;
+    }
+
+    public Builder lockMessage(final String lockMessage) {
+      this.lockMessage = lockMessage;
+      return this;
+    }
+
+    public Builder lockDate(final Date lockDate) {
+      // defensive copy
+      this.lockDate = (lockDate != null ? new Date(lockDate.getTime()) : null);
       return this;
     }
 

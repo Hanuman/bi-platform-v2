@@ -46,6 +46,10 @@ public class JcrRepositoryFileUtils {
     boolean folder = false;
     boolean versioned = false;
     Serializable versionId = null;
+    boolean locked = false;
+    String lockOwner = null;
+    Date lockDate = null;
+    String lockMessage = null;
 
     if (isFolder(pentahoJcrConstants, node)) {
       folder = true;
@@ -75,10 +79,19 @@ public class JcrRepositoryFileUtils {
       versionId = node.getBaseVersion().getName();
     }
 
+    locked = isLocked(pentahoJcrConstants, node);
+    if (locked) {
+      Lock lock = node.getLock();
+      lockOwner = lock.getLockOwner();
+      lockDate = node.getProperty(pentahoJcrConstants.getPHO_LOCKDATE()).getDate().getTime();
+      lockMessage = node.getProperty(pentahoJcrConstants.getPHO_LOCKMESSAGE()).getString();
+    }
+
     RepositoryFile file = new RepositoryFile.Builder(node.getName(), nodeIdStrategy.getId(node), !node.getParent()
         .isSame(session.getRootNode()) ? nodeIdStrategy.getId(node.getParent()) : null).createdDate(created)
         .lastModificationDate(lastModified).contentType(contentType).folder(folder).versioned(versioned).absolutePath(
-            node.getPath()).versionId(versionId).build();
+            node.getPath()).versionId(versionId).locked(locked).lockDate(lockDate).lockMessage(lockMessage).lockOwner(
+            lockOwner).build();
 
     return file;
   }
@@ -212,6 +225,16 @@ public class JcrRepositoryFileUtils {
     Assert.notNull(node);
     return node.getProperty(pentahoJcrConstants.getJCR_PRIMARYTYPE()).getString().equals(
         pentahoJcrConstants.getNT_FOLDER());
+  }
+
+  private static boolean isLocked(final PentahoJcrConstants pentahoJcrConstants, final Node node)
+      throws RepositoryException {
+    Assert.notNull(node);
+    boolean locked = node.isLocked();
+    if (locked) {
+      Assert.isTrue(node.isNodeType(pentahoJcrConstants.getPHO_MIX_LOCKABLE()));
+    }
+    return locked;
   }
 
   private static boolean isResource(final PentahoJcrConstants pentahoJcrConstants, final Node node)
@@ -427,20 +450,6 @@ public class JcrRepositoryFileUtils {
     session.save();
     checkinNearestVersionableNodeIfNecessary(session, pentahoJcrConstants, nodeIdStrategy, fileNode,
         "[system] unlocked file with id=" + nodeIdStrategy.getId(fileNode));
-  }
-
-  public static LockSummary getLockSummary(final Session session, final PentahoJcrConstants pentahoJcrConstants,
-      final NodeIdStrategy nodeIdStrategy, final RepositoryFile file) throws RepositoryException, IOException {
-    Node fileNode = nodeIdStrategy.findNodeById(session, file.getId());
-    if (fileNode.isLocked()) {
-      Assert.isTrue(fileNode.isNodeType(pentahoJcrConstants.getPHO_MIX_LOCKABLE()));
-      Lock lock = fileNode.getLock();
-      return new LockSummary(lock.getNode().getUUID(), lock.getLockOwner(), fileNode.getProperty(
-          pentahoJcrConstants.getPHO_LOCKDATE()).getDate().getTime(), fileNode.getProperty(
-          pentahoJcrConstants.getPHO_LOCKMESSAGE()).getString());
-    } else {
-      return null;
-    }
   }
 
   public static Object nodeIdToFile(final Session session, final PentahoJcrConstants pentahoJcrConstants,

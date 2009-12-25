@@ -271,21 +271,6 @@ public class JcrRepositoryFileDao implements IRepositoryFileDao, InitializingBea
   /**
    * {@inheritDoc}
    */
-  public LockSummary getLockSummary(final RepositoryFile file) {
-    Assert.notNull(file);
-    Assert.notNull(file.getId());
-    Assert.isTrue(!file.isFolder());
-    return (LockSummary) jcrTemplate.execute(new JcrCallback() {
-      public Object doInJcr(final Session session) throws RepositoryException, IOException {
-        PentahoJcrConstants pentahoJcrConstants = new PentahoJcrConstants(session);
-        return JcrRepositoryFileUtils.getLockSummary(session, pentahoJcrConstants, nodeIdStrategy, file);
-      }
-    });
-  }
-
-  /**
-   * {@inheritDoc}
-   */
   public void lockFile(final RepositoryFile file, final String message) {
     Assert.notNull(file);
     Assert.notNull(file.getId());

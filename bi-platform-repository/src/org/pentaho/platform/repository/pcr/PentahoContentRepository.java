@@ -199,16 +199,6 @@ public class PentahoContentRepository implements IPentahoContentRepository {
   /**
    * {@inheritDoc}
    */
-  public synchronized LockSummary getLockSummary(final RepositoryFile file) {
-    Assert.notNull(file);
-    Assert.notNull(file.getId());
-    Assert.isTrue(!file.isFolder());
-    return contentDao.getLockSummary(file);
-  }
-
-  /**
-   * {@inheritDoc}
-   */
   public synchronized void lockFile(final RepositoryFile file, final String message) {
     Assert.notNull(file);
     Assert.notNull(file.getId());

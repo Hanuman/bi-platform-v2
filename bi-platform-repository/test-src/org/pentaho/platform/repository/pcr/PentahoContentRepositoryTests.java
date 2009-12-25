@@ -576,22 +576,33 @@ public class PentahoContentRepositoryTests implements ApplicationContextAware {
     final SimpleRepositoryFileContent content = new SimpleRepositoryFileContent(dataStream, encoding, mimeType);
     RepositoryFile newFile = repo.createFile(parentFolder, new RepositoryFile.Builder(fileName).build(), content);
     final String filePath = parentFolderPath + RepositoryFile.SEPARATOR + fileName;
-    assertNull(repo.getLockSummary(newFile));
+    assertFalse(newFile.isLocked());
+    assertNull(newFile.getLockDate());
+    assertNull(newFile.getLockMessage());
+    assertNull(newFile.getLockOwner());
     final String lockMessage = "test by Mat";
     repo.lockFile(newFile, lockMessage);
 
     assertTrue(SimpleJcrTestUtils.isLocked(testJcrTemplate, filePath));
-    assertTrue(SimpleJcrTestUtils.getString(testJcrTemplate, filePath + "/pho:lockMessage").equals(lockMessage));
+    assertEquals(lockMessage, SimpleJcrTestUtils.getString(testJcrTemplate, filePath + "/pho:lockMessage"));
     assertNotNull(SimpleJcrTestUtils.getDate(testJcrTemplate, filePath + "/pho:lockDate"));
 
     login(USERNAME_TIFFANY, TENANT_ID_ACME);
-    assertNotNull(repo.getLockSummary(repo.getFile(filePath)));
+    RepositoryFile lockedFile = repo.getFile(filePath);
+    assertTrue(lockedFile.isLocked());
+    assertNotNull(lockedFile.getLockDate());
+    assertEquals(lockMessage, lockedFile.getLockMessage());
+    assertEquals(USERNAME_SUZY, lockedFile.getLockOwner());
 
     login(USERNAME_SUZY, TENANT_ID_ACME);
     repo.unlockFile(newFile);
 
     assertFalse(SimpleJcrTestUtils.isLocked(testJcrTemplate, filePath));
-    assertNull(repo.getLockSummary(newFile));
+    RepositoryFile unlockedFile = repo.getFile(filePath);
+    assertFalse(unlockedFile.isLocked());
+    assertNull(unlockedFile.getLockDate());
+    assertNull(unlockedFile.getLockMessage());
+    assertNull(unlockedFile.getLockOwner());
 
     // make sure lock token node has been removed
     assertNull(SimpleJcrTestUtils.getItem(testJcrTemplate, repo.getUserHomeFolderPath() + "/.lockTokens/"
@@ -616,7 +627,7 @@ public class PentahoContentRepositoryTests implements ApplicationContextAware {
     final SimpleRepositoryFileContent content = new SimpleRepositoryFileContent(dataStream, encoding, mimeType);
     RepositoryFile newFile = repo.createFile(parentFolder, new RepositoryFile.Builder(fileName).build(), content);
     final String filePath = parentFolderPath + RepositoryFile.SEPARATOR + fileName;
-    assertNull(repo.getLockSummary(newFile));
+    assertFalse(repo.getFile(filePath).isLocked());
     final String lockMessage = "test by Mat";
     repo.lockFile(newFile, lockMessage);
 
@@ -656,7 +667,7 @@ public class PentahoContentRepositoryTests implements ApplicationContextAware {
     System.out.println(versionSummaries);
     System.out.println(versionSummaries.size());
   }
-  
+
   @Test
   public void testCircumventApiToGetVersionHistoryNodeAccessDenied() throws Exception {
     repo.startup();
@@ -665,7 +676,8 @@ public class PentahoContentRepositoryTests implements ApplicationContextAware {
     RepositoryFile parentFolder = repo.getFile(repo.getUserHomeFolderPath());
     RepositoryFile newFolder = new RepositoryFile.Builder("test").folder(true).versioned(true).build();
     newFolder = repo.createFolder(parentFolder, newFolder);
-    String versionHistoryAbsPath = SimpleJcrTestUtils.getVersionHistoryNodePath(testJcrTemplate, newFolder.getAbsolutePath());
+    String versionHistoryAbsPath = SimpleJcrTestUtils.getVersionHistoryNodePath(testJcrTemplate, newFolder
+        .getAbsolutePath());
     login(USERNAME_TIFFANY, TENANT_ID_ACME);
     assertNull(SimpleJcrTestUtils.getItem(testJcrTemplate, versionHistoryAbsPath));
   }
