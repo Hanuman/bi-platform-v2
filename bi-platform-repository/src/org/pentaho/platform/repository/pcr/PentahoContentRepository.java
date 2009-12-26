@@ -36,66 +36,41 @@ public class PentahoContentRepository implements IPentahoContentRepository {
 
   private IPentahoMutableAclService mutableAclService;
 
-  private IRepositoryAdminHelper repositoryAdminHelper;
-
-  private boolean startedUp;
+  private IRepositoryEventHandler repositoryEventHandler;
 
   // ~ Constructors ====================================================================================================
 
   public PentahoContentRepository(final IRepositoryFileDao contentDao,
-      final IPentahoMutableAclService mutableAclService, final IRepositoryAdminHelper repositoryAdminHelper) {
+      final IPentahoMutableAclService mutableAclService, final IRepositoryEventHandler repositoryEventHandler) {
     super();
     Assert.notNull(contentDao);
     Assert.notNull(mutableAclService);
-    Assert.notNull(repositoryAdminHelper);
+    Assert.notNull(repositoryEventHandler);
     this.contentDao = contentDao;
     this.mutableAclService = mutableAclService;
-    this.repositoryAdminHelper = repositoryAdminHelper;
+    this.repositoryEventHandler = repositoryEventHandler;
   }
 
   // ~ Methods =========================================================================================================
+
+  public synchronized IRepositoryEventHandler getRepositoryEventHandler() {
+    return repositoryEventHandler;
+  }
 
   /**
    * {@inheritDoc}
    */
   public synchronized RepositoryFile getFile(final String absPath) {
-    assertStartedUp();
     Assert.hasText(absPath);
 
-    assertStartedUp();
     return contentDao.getFile(absPath);
   }
 
   /**
    * {@inheritDoc}
    */
-  public synchronized RepositoryFile getOrCreateUserHomeFolder() {
-    assertStartedUp();
-    repositoryAdminHelper.createTenantRootFolder();
-    repositoryAdminHelper.createInitialTenantFolders();
-    repositoryAdminHelper.createUserHomeFolder();
-    return getFile(repositoryAdminHelper.getUserHomeFolderPath(internalGetUsername(), internalGetTenantId()));
-  }
-
-  /**
-   * {@inheritDoc}
-   */
-  public synchronized void shutdown() {
-    assertStartedUp();
-  }
-
-  /**
-   * {@inheritDoc}
-   */
-  public synchronized void startup() {
-    Assert.isNull(PentahoSessionHolder.getSession(), "startup must be run before any users login");
-    repositoryAdminHelper.createPentahoRootFolder();
-    startedUp = true;
-  }
-
   public synchronized RepositoryFile createFile(final RepositoryFile parentFolder, final RepositoryFile file,
       final IRepositoryFileContent content, final String... versionMessageAndLabel) {
-    assertStartedUp();
     Assert.notNull(file);
     Assert.isTrue(!file.isFolder());
     Assert.hasText(file.getName());
@@ -110,7 +85,6 @@ public class PentahoContentRepository implements IPentahoContentRepository {
    */
   public synchronized RepositoryFile createFolder(final RepositoryFile parentFolder, final RepositoryFile file,
       final String... versionMessageAndLabel) {
-    assertStartedUp();
     Assert.notNull(file);
     Assert.isTrue(file.isFolder());
     Assert.hasText(file.getName());
@@ -134,7 +108,6 @@ public class PentahoContentRepository implements IPentahoContentRepository {
    */
   public synchronized <T extends IRepositoryFileContent> T getContentForExecute(RepositoryFile file,
       Class<T> contentClass) {
-    assertStartedUp();
     return getContentForRead(file, contentClass);
   }
 
@@ -142,7 +115,6 @@ public class PentahoContentRepository implements IPentahoContentRepository {
    * {@inheritDoc}
    */
   public synchronized <T extends IRepositoryFileContent> T getContentForRead(RepositoryFile file, Class<T> contentClass) {
-    assertStartedUp();
     Assert.notNull(file);
     Assert.notNull(file.getId());
     return contentDao.getContent(file, contentClass);
@@ -152,7 +124,6 @@ public class PentahoContentRepository implements IPentahoContentRepository {
    * {@inheritDoc}
    */
   public synchronized List<RepositoryFile> getChildren(final RepositoryFile folder) {
-    assertStartedUp();
     Assert.notNull(folder);
     Assert.notNull(folder.getId());
     Assert.notNull(folder.isFolder());
@@ -164,7 +135,6 @@ public class PentahoContentRepository implements IPentahoContentRepository {
    */
   public synchronized RepositoryFile updateFile(final RepositoryFile file, final IRepositoryFileContent content,
       final String... versionMessageAndLabel) {
-    assertStartedUp();
     Assert.notNull(file);
     Assert.isTrue(!file.isFolder());
     Assert.hasText(file.getName());
@@ -180,7 +150,6 @@ public class PentahoContentRepository implements IPentahoContentRepository {
    * {@inheritDoc}
    */
   public synchronized void deleteFile(final RepositoryFile file, final String... versionMessageAndLabel) {
-    assertStartedUp();
     Assert.notNull(file);
     Assert.notNull(file.getId());
     // acl deleted when file node is deleted
@@ -215,50 +184,13 @@ public class PentahoContentRepository implements IPentahoContentRepository {
     contentDao.unlockFile(file);
   }
 
-  public List<VersionSummary> getVersionSummaries(final RepositoryFile file) {
+  /**
+   * {@inheritDoc}
+   */
+  public synchronized List<VersionSummary> getVersionSummaries(final RepositoryFile file) {
     Assert.notNull(file);
     Assert.notNull(file.getId());
     return contentDao.getVersionSummaries(file);
-  }
-
-  public String getPentahoRootFolderPath() {
-    return repositoryAdminHelper.getPentahoRootFolderPath();
-  }
-
-  public String getTenantHomeFolderPath() {
-    return repositoryAdminHelper.getTenantHomeFolderPath(internalGetTenantId());
-  }
-
-  public String getTenantPublicFolderPath() {
-    return repositoryAdminHelper.getTenantPublicFolderPath(internalGetTenantId());
-  }
-
-  public String getTenantRootFolderPath() {
-    return repositoryAdminHelper.getTenantRootFolderPath(internalGetTenantId());
-  }
-
-  public String getUserHomeFolderPath() {
-    return repositoryAdminHelper.getUserHomeFolderPath(internalGetUsername(), internalGetTenantId());
-  }
-
-  public static interface IRepositoryAdminHelper {
-    String getPentahoRootFolderPath();
-
-    String getTenantRootFolderPath(final String tenantId);
-
-    String getTenantHomeFolderPath(final String tenantId);
-
-    String getTenantPublicFolderPath(final String tenantId);
-
-    String getUserHomeFolderPath(final String username, final String tenantId);
-
-    void createPentahoRootFolder();
-
-    void createTenantRootFolder();
-
-    void createInitialTenantFolders();
-
-    void createUserHomeFolder();
   }
 
   /**
@@ -277,14 +209,6 @@ public class PentahoContentRepository implements IPentahoContentRepository {
     IPentahoSession pentahoSession = PentahoSessionHolder.getSession();
     Assert.state(pentahoSession != null);
     return (String) pentahoSession.getAttribute(IPentahoSession.TENANT_ID_KEY);
-  }
-
-  /**
-   * Throws an {@code IllegalStateException} if not started up.  Should be called from all public methods (except 
-   * {@link #startup()}).
-   */
-  private void assertStartedUp() {
-    Assert.state(startedUp, "startup must be called first");
   }
 
   private RepositoryFile internalCreateFile(final RepositoryFile parentFolder, final RepositoryFile file,

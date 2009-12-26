@@ -28,23 +28,6 @@ import org.springframework.security.acls.Acl;
 public interface IPentahoContentRepository {
 
   /**
-   * Starts up the repository.
-   */
-  void startup();
-
-  /**
-   * Shuts down the repository.
-   */
-  void shutdown();
-
-  /**
-   * Creates a home folder for the user if it does not already exist. Otherwise, returns existing home folder.
-   * 
-   * @return home folder
-   */
-  RepositoryFile getOrCreateUserHomeFolder();
-
-  /**
    * Gets file. Use this method to test for file existence too.
    * 
    * @param absPath absolute path to file
@@ -141,33 +124,6 @@ public interface IPentahoContentRepository {
 
   Acl getAcl(final RepositoryFile file);
 
-  // ~ Path methods ====================================================================================================
-
-  /**
-   * Returns the absolute path to the pentaho root folder.
-   */
-  String getPentahoRootFolderPath();
-
-  /**
-   * Returns the absolute path to the tenant root folder.
-   */
-  String getTenantRootFolderPath();
-
-  /**
-   * Returns the absolute path to the tenant home folder.
-   */
-  String getTenantHomeFolderPath();
-
-  /**
-   * Returns the absolute path to the tenant public folder.
-   */
-  String getTenantPublicFolderPath();
-
-  /**
-   * Returns the absolute path to the current user's home folder.
-   */
-  String getUserHomeFolderPath();
-
   // ~ Version methods ==================================================================================================
 
   /**
@@ -178,4 +134,62 @@ public interface IPentahoContentRepository {
    * @return list of version summaries (never {@code null})
    */
   List<VersionSummary> getVersionSummaries(final RepositoryFile file);
+
+  /**
+   * Returns the associated {@link IRepositoryEventHandler}.
+   * @return repository event handler
+   */
+  IRepositoryEventHandler getRepositoryEventHandler();
+
+  /**
+   * Handles various events like startup and new user. 
+   * 
+   * <p>
+   * Methods in this class are not called by the {@link IPentahoContentRepository} implementation; they must be called 
+   * by an external caller. A caller can get a reference to the {@link IRepositoryEventHandler} by calling 
+   * {@link IPentahoContentRepository#getRepositoryEventHandler()}. Methods should be able to be called more than once 
+   * with the same arguments with no adverse effects.
+   * </p>
+   * 
+   * <p>
+   * Example: When a servlet-based application starts up, a {@code ServletContextListener} calls {@link #onStartup()}. 
+   * When a user logs in, {@link #onNewTenant(String)} and {@link #onNewUser(String)} are called. Finally, the 
+   * {@code ServletContextListener} calls {@link #onShutdown()}.
+   * </p>
+   */
+  interface IRepositoryEventHandler {
+
+    /**
+     * To be called before any users call into the {@link IPentahoContentRepository}.
+     */
+    void onStartup();
+
+    /**
+     * To be called on repository shutdown.
+     */
+    void onShutdown();
+
+    /**
+     * To be called before any users belonging to a particular tenant call into the {@link IPentahoContentRepository}.
+     * @param tenantId new tenant id
+     */
+    void onNewTenant(final String tenantId);
+    
+    /**
+     * To be called before any users belonging to the current tenant call into the {@link IPentahoContentRepository}. 
+     */
+    void onNewTenant();
+
+    /**
+     * To be called before user indicated by {@code username} calls into the {@link IPentahoContentRepository}.
+     * @param tenantId tenant to which the user belongs
+     * @param username new username
+     */
+    void onNewUser(final String tenantId, final String username);
+
+    /**
+     * To be called before current user calls into the {@link IPentahoContentRepository}.
+     */
+    void onNewUser();
+  }
 }

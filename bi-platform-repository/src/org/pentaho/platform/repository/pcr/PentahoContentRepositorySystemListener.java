@@ -19,7 +19,7 @@ public class PentahoContentRepositorySystemListener implements IPentahoSystemLis
 
   public boolean startup(IPentahoSession session) {
     try {
-      PentahoSystem.get(IPentahoContentRepository.class).startup();
+      PentahoSystem.get(IPentahoContentRepository.class).getRepositoryEventHandler().onStartup();
       return true;
     } catch (Exception e) {
       logger.error("", e);

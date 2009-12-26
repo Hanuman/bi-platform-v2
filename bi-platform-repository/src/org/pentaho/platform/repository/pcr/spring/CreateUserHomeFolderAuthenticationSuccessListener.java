@@ -34,7 +34,8 @@ public class CreateUserHomeFolderAuthenticationSuccessListener implements Applic
     if (event instanceof InteractiveAuthenticationSuccessEvent) {
       logger.debug("heard interactive authentication success event; creating user home folder (if necessary)");
       try {
-        pentahoContentRepository.getOrCreateUserHomeFolder();
+        pentahoContentRepository.getRepositoryEventHandler().onNewTenant();
+        pentahoContentRepository.getRepositoryEventHandler().onNewUser();
       } catch (Exception e) {
         logger.error("an exception occurred while creating user home folder", e);
       }

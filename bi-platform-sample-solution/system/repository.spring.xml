@@ -102,7 +102,6 @@
     <property name="transactionManager" ref="jcrTransactionManager" />
     <property name="transactionAttributeSource">
       <value>
-        org.pentaho.platform.api.repository.IPentahoContentRepository.getOrCreateUserHomeFolder=PROPAGATION_REQUIRED
         org.pentaho.platform.api.repository.IPentahoContentRepository.getFile=PROPAGATION_REQUIRED,readOnly
         org.pentaho.platform.api.repository.IPentahoContentRepository.getContentForRead=PROPAGATION_REQUIRED,readOnly
         org.pentaho.platform.api.repository.IPentahoContentRepository.getContentForExecute=PROPAGATION_REQUIRED,readOnly
@@ -158,7 +157,7 @@
     <constructor-arg ref="pentahoContentDao" />
     <constructor-arg ref="aclService" />
     <constructor-arg>
-      <bean class="org.pentaho.platform.repository.pcr.DefaultRepositoryAdminHelper">
+      <bean class="org.pentaho.platform.repository.pcr.DefaultRepositoryEventHandler">
         <constructor-arg ref="pentahoContentDao" />
         <constructor-arg ref="aclService" />
         <constructor-arg>
@@ -192,7 +191,6 @@
     </property>
     <property name="objectDefinitionSource">
       <value>
-        org.pentaho.platform.api.repository.IPentahoContentRepository.getOrCreateUserHomeFolder=VOTE_ROLE_FILE_Authenticated
         org.pentaho.platform.api.repository.IPentahoContentRepository.getFile=VOTE_ROLE_FILE_Authenticated
         org.pentaho.platform.api.repository.IPentahoContentRepository.getContentForRead=VOTE_ROLE_FILE_Authenticated
         org.pentaho.platform.api.repository.IPentahoContentRepository.getContentForExecute=VOTE_ROLE_FILE_Authenticated
@@ -204,11 +202,6 @@
         org.pentaho.platform.api.repository.IPentahoContentRepository.deleteFile=VOTE_ROLE_FILE_Authenticated
         org.pentaho.platform.api.repository.IPentahoContentRepository.lockFile=VOTE_ROLE_FILE_Authenticated
         org.pentaho.platform.api.repository.IPentahoContentRepository.unlockFile=VOTE_ROLE_FILE_Authenticated
-        org.pentaho.platform.api.repository.IPentahoContentRepository.getPentahoRootFolderPath=VOTE_ROLE_FILE_Authenticated
-        org.pentaho.platform.api.repository.IPentahoContentRepository.getTenantRootFolderPath=VOTE_ROLE_FILE_Authenticated
-        org.pentaho.platform.api.repository.IPentahoContentRepository.getTenantHomeFolderPath=VOTE_ROLE_FILE_Authenticated
-        org.pentaho.platform.api.repository.IPentahoContentRepository.getTenantPublicFolderPath=VOTE_ROLE_FILE_Authenticated
-        org.pentaho.platform.api.repository.IPentahoContentRepository.getUserHomeFolderPath=VOTE_ROLE_FILE_Authenticated
         org.pentaho.platform.api.repository.IPentahoContentRepository.getVersionSummaries=VOTE_ROLE_FILE_Authenticated
       </value>
     </property>

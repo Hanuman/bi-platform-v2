@@ -50,6 +50,7 @@ public class TestPrincipalProvider implements PrincipalProvider {
     principals.put("acme_Authenticated", new SpringSecurityGrantedAuthorityPrincipal("acme_Authenticated"));
     principals.put("acme_Admin", new SpringSecurityGrantedAuthorityPrincipal("acme_Admin"));
     principals.put("duff_Authenticated", new SpringSecurityGrantedAuthorityPrincipal("duff_Authenticated"));
+    principals.put("duff_Admin", new SpringSecurityGrantedAuthorityPrincipal("duff_Admin"));
   }
 
   public Principal getPrincipal(String principalName) {
