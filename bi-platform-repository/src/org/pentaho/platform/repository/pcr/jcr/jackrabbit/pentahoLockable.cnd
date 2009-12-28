@@ -11,5 +11,5 @@ Pentaho lockable mixin node type. Extends mix:lockable.
 
 [pho_mix:pentahoLockable] > mix:lockable
   mixin
-  - pho:lockMessage (string)
-  - pho:lockDate (date)
+  - pho:lockMessage (string) ignore
+  - pho:lockDate (date) ignore

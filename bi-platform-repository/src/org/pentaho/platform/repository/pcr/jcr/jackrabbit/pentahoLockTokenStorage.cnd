@@ -13,6 +13,6 @@ that a reference to the lock token is preserved separately so that it can later 
 [pho_nt:pentahoLockTokenStorage]
   // reference to locked node is not strictly needed; only stored here in case admin needs to find the locked node to 
   // clear its lock
-  - pho:lockedNodeRef (reference)
+  - pho:lockedNodeRef (reference) ignore
   // lock token string; this is added to session via session.addLockToken()
-  - pho:lockToken (string)
+  - pho:lockToken (string) ignore

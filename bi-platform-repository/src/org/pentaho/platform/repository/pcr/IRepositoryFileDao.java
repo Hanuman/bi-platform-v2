@@ -105,4 +105,12 @@ public interface IRepositoryFileDao {
    * @return list of version summaries (never {@code null})
    */
   List<VersionSummary> getVersionSummaries(final RepositoryFile file);
+  
+  /**
+   * Gets file as it was at the given version. Use this method to test for file existence too.
+   * 
+   * @param versionSummary version of file to retrieve
+   * @return file or {@code null} if the file does not exist or access is denied
+   */
+  RepositoryFile getFile(final VersionSummary versionSummary);
 }

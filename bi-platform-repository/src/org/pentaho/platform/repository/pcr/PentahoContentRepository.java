@@ -194,6 +194,16 @@ public class PentahoContentRepository implements IPentahoContentRepository {
   }
 
   /**
+   * {@inheritDoc}
+   */
+  public synchronized RepositoryFile getFile(VersionSummary versionSummary) {
+    Assert.notNull(versionSummary);
+    Assert.notNull(versionSummary.getId());
+    Assert.notNull(versionSummary.getVersionedFileId());
+    return contentDao.getFile(versionSummary);
+  }
+
+  /**
    * Returns the username of the current user.
    */
   private String internalGetUsername() {

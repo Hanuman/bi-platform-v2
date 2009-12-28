@@ -14,5 +14,5 @@ TODO mlowery extend mix:simpleVersionable when implementation is moved to JSR-28
 
 [pho_mix:pentahoVersionable] > mix:versionable
   mixin
-  - pho:versionAuthor (string)
-  - pho:versionMessage (string)
+  - pho:versionAuthor (string) copy
+  - pho:versionMessage (string) copy

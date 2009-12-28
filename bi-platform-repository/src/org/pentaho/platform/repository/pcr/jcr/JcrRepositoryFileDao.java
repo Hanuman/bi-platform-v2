@@ -312,6 +312,21 @@ public class JcrRepositoryFileDao implements IRepositoryFileDao, InitializingBea
       }
     });
   }
+  
+  /**
+   * {@inheritDoc}
+   */
+  public RepositoryFile getFile(final VersionSummary versionSummary) {
+    Assert.notNull(versionSummary);
+    Assert.notNull(versionSummary.getId());
+    Assert.notNull(versionSummary.getVersionedFileId());
+    return (RepositoryFile) jcrTemplate.execute(new JcrCallback() {
+      public Object doInJcr(final Session session) throws RepositoryException, IOException {
+        PentahoJcrConstants pentahoJcrConstants = new PentahoJcrConstants(session);
+        return JcrRepositoryFileUtils.getFileAtVersion(session, pentahoJcrConstants, nodeIdStrategy, versionSummary);
+      }
+    });
+}
 
   /**
    * A pluggable method for reading and writing {@link IRepositoryFileContent} implementations.

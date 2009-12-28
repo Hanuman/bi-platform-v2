@@ -661,15 +661,72 @@ public class PentahoContentRepositoryTests implements ApplicationContextAware {
     assertNull(SimpleJcrTestUtils.getItem(testJcrTemplate, versionHistoryAbsPath));
   }
 
+  @Test
+  public void testGetFileByVersionSummary() throws Exception {
+    repo.getRepositoryEventHandler().onStartup();
+    login(USERNAME_SUZY, TENANT_ID_ACME);
+
+    final String parentFolderPath = RepositoryPaths.getUserHomeFolderPath();
+    final String encoding = "UTF-8";
+    final String runResultMimeType = "text/plain";
+    final String fileName = "helloworld.xaction";
+    final Map<String, String> runArguments = new HashMap<String, String>();
+    runArguments.put("testKey", "testValue");
+
+    final String origDataString = "Hello World!";
+    RepositoryFile newFile = createRunResultFile(parentFolderPath, fileName, origDataString, encoding,
+        runResultMimeType, runArguments, true);
+    final Serializable fileId = newFile.getId();
+    final Serializable parentId = newFile.getParentId();
+    final String absolutePath = newFile.getAbsolutePath();
+
+    final String modDataString = "Ciao World!";
+    ByteArrayInputStream modDataStream = new ByteArrayInputStream(modDataString.getBytes(encoding));
+
+    final RunResultRepositoryFileContent modContent = new RunResultRepositoryFileContent(modDataStream, encoding,
+        runResultMimeType, runArguments);
+
+    repo.updateFile(newFile, modContent);
+
+    List<VersionSummary> versionSummaries = repo.getVersionSummaries(newFile);
+    RepositoryFile v1 = repo.getFile(versionSummaries.get(0));
+    RepositoryFile v2 = repo.getFile(versionSummaries.get(versionSummaries.size() - 1));
+    assertEquals(fileName, v1.getName());
+    assertEquals(fileName, v2.getName());
+    assertEquals(fileId, v1.getId());
+    assertEquals(fileId, v2.getId());
+    assertEquals(parentId, v1.getParentId());
+    assertEquals(parentId, v2.getParentId());
+    assertEquals("1.0", v1.getVersionId());
+    assertEquals("1.3", v2.getVersionId());
+    assertEquals(absolutePath, v1.getAbsolutePath());
+    assertEquals(absolutePath, v2.getAbsolutePath());
+    System.out.println("or: " + newFile);
+    System.out.println("v1: " + v1);
+    System.out.println("v2: " + v2);
+    RunResultRepositoryFileContent c1 = repo.getContentForRead(v1, RunResultRepositoryFileContent.class);
+    RunResultRepositoryFileContent c2 = repo.getContentForRead(v2, RunResultRepositoryFileContent.class);
+    assertEquals(origDataString, IOUtils.toString(c1.getData(), c1.getEncoding()));
+    assertEquals(modDataString, IOUtils.toString(c2.getData(), c2.getEncoding()));
+  }
+
   private RepositoryFile createRunResultFile(final String parentFolderPath, final String expectedName,
       final String expectedDataString, final String expectedEncoding, final String expectedRunResultMimeType,
-      Map<String, String> expectedRunArguments) throws Exception {
+      Map<String, String> expectedRunArguments, boolean versioned) throws Exception {
     RepositoryFile parentFolder = repo.getFile(parentFolderPath);
     byte[] data = expectedDataString.getBytes(expectedEncoding);
     ByteArrayInputStream dataStream = new ByteArrayInputStream(data);
     final RunResultRepositoryFileContent content = new RunResultRepositoryFileContent(dataStream, expectedEncoding,
         expectedRunResultMimeType, expectedRunArguments);
-    return repo.createFile(parentFolder, new RepositoryFile.Builder(expectedName).build(), content);
+    return repo
+        .createFile(parentFolder, new RepositoryFile.Builder(expectedName).versioned(versioned).build(), content);
+  }
+
+  private RepositoryFile createRunResultFile(final String parentFolderPath, final String expectedName,
+      final String expectedDataString, final String expectedEncoding, final String expectedRunResultMimeType,
+      Map<String, String> expectedRunArguments) throws Exception {
+    return createRunResultFile(parentFolderPath, expectedName, expectedDataString, expectedEncoding,
+        expectedRunResultMimeType, expectedRunArguments, false);
   }
 
   private void assertLocalAceExists(final RepositoryFile file, final Sid sid, final Permission permission) {

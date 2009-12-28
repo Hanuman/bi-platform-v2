@@ -11,4 +11,4 @@ Pentaho "internal" folder. Like an nt:folder except that nodes of this node type
 
 [pho_nt:pentahoInternalFolder] > nt:hierarchyNode
   // allow any child nodes
-  + *
+  + * ignore
