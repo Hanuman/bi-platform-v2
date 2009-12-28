@@ -8,6 +8,11 @@ import org.pentaho.platform.api.engine.IPentahoSession;
 import org.pentaho.platform.engine.core.system.PentahoSessionHolder;
 import org.springframework.util.Assert;
 
+/**
+ * Class of static methods that return commonly needed absolute paths like "tenant root folder path."
+ * 
+ * @author mlowery
+ */
 public class RepositoryPaths {
 
   // ~ Static fields/initializers ======================================================================================
@@ -110,6 +115,9 @@ public class RepositoryPaths {
     initialize();
   }
 
+  /**
+   * Interface that allows pathing to be configurable.
+   */
   public static interface IRepositoryPathsStrategy {
     String getPentahoRootFolderPath();
 

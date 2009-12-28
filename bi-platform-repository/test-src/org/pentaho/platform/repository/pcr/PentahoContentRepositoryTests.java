@@ -30,12 +30,12 @@ import org.pentaho.platform.api.engine.IPentahoSession;
 import org.pentaho.platform.api.repository.IPentahoContentRepository;
 import org.pentaho.platform.api.repository.IRepositoryFileContent;
 import org.pentaho.platform.api.repository.RepositoryFile;
+import org.pentaho.platform.api.repository.RepositoryFilePermission;
 import org.pentaho.platform.api.repository.VersionSummary;
 import org.pentaho.platform.engine.core.system.PentahoSessionHolder;
 import org.pentaho.platform.engine.core.system.StandaloneSession;
 import org.pentaho.platform.engine.security.SecurityHelper;
 import org.pentaho.platform.repository.pcr.jcr.SimpleJcrTestUtils;
-import org.pentaho.platform.repository.pcr.springsecurity.RepositoryFilePermission;
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
@@ -46,6 +46,7 @@ import org.springframework.extensions.jcr.SessionFactory;
 import org.springframework.security.Authentication;
 import org.springframework.security.GrantedAuthority;
 import org.springframework.security.GrantedAuthorityImpl;
+import org.springframework.security.acls.AccessControlEntry;
 import org.springframework.security.acls.Acl;
 import org.springframework.security.acls.Permission;
 import org.springframework.security.acls.sid.GrantedAuthoritySid;
@@ -710,6 +711,17 @@ public class PentahoContentRepositoryTests implements ApplicationContextAware {
     assertEquals(modDataString, IOUtils.toString(c2.getData(), c2.getEncoding()));
   }
 
+  @Test
+  public void testOwnership() throws Exception {
+    repo.getRepositoryEventHandler().onStartup();
+    login(USERNAME_SUZY, TENANT_ID_ACME);
+    RepositoryFile parentFolder = repo.getFile(RepositoryPaths.getTenantPublicFolderPath());
+    RepositoryFile newFolder = new RepositoryFile.Builder("test").folder(true).versioned(true).build();
+    newFolder = repo.createFolder(parentFolder, newFolder);
+//    assertEquals(USERNAME_SUZY, newFolder.getOwner());
+    // TODO mlowery finish once setAcl is done
+  }
+
   private RepositoryFile createRunResultFile(final String parentFolderPath, final String expectedName,
       final String expectedDataString, final String expectedEncoding, final String expectedRunResultMimeType,
       Map<String, String> expectedRunArguments, boolean versioned) throws Exception {
@@ -731,7 +743,14 @@ public class PentahoContentRepositoryTests implements ApplicationContextAware {
 
   private void assertLocalAceExists(final RepositoryFile file, final Sid sid, final Permission permission) {
     Acl acl = repo.getAcl(file);
-    assertTrue(acl.isGranted(new Permission[] { permission }, new Sid[] { sid }, true));
+    AccessControlEntry[] aces = acl.getEntries();
+    for (int i = 0; i < aces.length; i++) {
+      AccessControlEntry ace = aces[i];
+      if (sid.equals(ace.getSid()) && permission.equals(ace.getPermission())) {
+        return;
+      }
+    }
+    fail();
   }
 
   private void assertLocalAclEmpty(final RepositoryFile file) {

@@ -3,58 +3,35 @@
 <beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd">
 
-  <!--
-  - Application context containing authentication beans.
-  -
-  - Used by all artifacts.
-  -
-  -->
-
-  <!-- ~~~~~~~~~~~~~~~~~~ "BEFORE INVOCATION" AUTHORIZATION DEFINITIONS ~~~~~~~~~~~~~~~~ -->
-
   <!-- ACL permission masks used by this application -->
   <bean id="RepositoryFilePermission.READ" class="org.springframework.beans.factory.config.FieldRetrievingFactoryBean">
-    <property name="staticField" value="org.pentaho.platform.repository.pcr.springsecurity.RepositoryFilePermission.READ" />
+    <property name="staticField" value="org.pentaho.platform.api.repository.RepositoryFilePermission.READ" />
   </bean>
   <bean id="RepositoryFilePermission.DELETE" class="org.springframework.beans.factory.config.FieldRetrievingFactoryBean">
-    <property name="staticField" value="org.pentaho.platform.repository.pcr.springsecurity.RepositoryFilePermission.DELETE" />
+    <property name="staticField" value="org.pentaho.platform.api.repository.RepositoryFilePermission.DELETE" />
   </bean>
   <bean id="RepositoryFilePermission.EXECUTE" class="org.springframework.beans.factory.config.FieldRetrievingFactoryBean">
-    <property name="staticField" value="org.pentaho.platform.repository.pcr.springsecurity.RepositoryFilePermission.EXECUTE" />
+    <property name="staticField" value="org.pentaho.platform.api.repository.RepositoryFilePermission.EXECUTE" />
   </bean>
   <bean id="RepositoryFilePermission.APPEND" class="org.springframework.beans.factory.config.FieldRetrievingFactoryBean">
-    <property name="staticField" value="org.pentaho.platform.repository.pcr.springsecurity.RepositoryFilePermission.APPEND" />
+    <property name="staticField" value="org.pentaho.platform.api.repository.RepositoryFilePermission.APPEND" />
   </bean>
   <bean id="RepositoryFilePermission.WRITE" class="org.springframework.beans.factory.config.FieldRetrievingFactoryBean">
-    <property name="staticField" value="org.pentaho.platform.repository.pcr.springsecurity.RepositoryFilePermission.WRITE" />
+    <property name="staticField" value="org.pentaho.platform.api.repository.RepositoryFilePermission.WRITE" />
   </bean>
   <bean id="RepositoryFilePermission.DELETE_CHILD" class="org.springframework.beans.factory.config.FieldRetrievingFactoryBean">
-    <property name="staticField" value="org.pentaho.platform.repository.pcr.springsecurity.RepositoryFilePermission.DELETE_CHILD" />
+    <property name="staticField" value="org.pentaho.platform.api.repository.RepositoryFilePermission.DELETE_CHILD" />
   </bean>
   <bean id="RepositoryFilePermission.READ_ACL" class="org.springframework.beans.factory.config.FieldRetrievingFactoryBean">
-    <property name="staticField" value="org.pentaho.platform.repository.pcr.springsecurity.RepositoryFilePermission.READ_ACL" />
+    <property name="staticField" value="org.pentaho.platform.api.repository.RepositoryFilePermission.READ_ACL" />
   </bean>
   <bean id="RepositoryFilePermission.WRITE_ACL" class="org.springframework.beans.factory.config.FieldRetrievingFactoryBean">
-    <property name="staticField" value="org.pentaho.platform.repository.pcr.springsecurity.RepositoryFilePermission.WRITE_ACL" />
+    <property name="staticField" value="org.pentaho.platform.api.repository.RepositoryFilePermission.WRITE_ACL" />
   </bean>
 
   <!-- An access decision voter that reads VOTE_ROLE_FILE_* configuration settings -->
   <bean id="roleVoter" class="org.pentaho.platform.engine.security.PentahoSubstringRoleVoter">
     <constructor-arg value="VOTE_ROLE_FILE_" />
-  </bean>
-
-  <!-- An access decision voter that reads VOTE_ACL_FILE_EXECUTE configuration settings. -->
-  <!-- For this voter to grant access, the domain object has to have an ACE with only one of the bits below. -->
-  <bean id="aclFileExecuteVoter" class="org.pentaho.platform.repository.pcr.springsecurity.AdminAclEntryVoter">
-    <constructor-arg ref="aclService" />
-    <constructor-arg value="VOTE_ACL_FILE_EXECUTE" />
-    <constructor-arg>
-      <list>
-        <ref local="RepositoryFilePermission.EXECUTE" />
-      </list>
-    </constructor-arg>
-    <constructor-arg ref="repositoryAdminAuthorityName" />
-    <property name="processDomainObjectClass" value="org.pentaho.platform.api.repository.RepositoryFile" />
   </bean>
 
   <!-- An access decision manager used by the business objects. -->
@@ -63,36 +40,9 @@
     <property name="decisionVoters">
       <list>
         <ref local="roleVoter" />
-        <ref local="aclFileExecuteVoter" />
       </list>
     </property>
   </bean>
-
-  <!-- ============== "AFTER INTERCEPTION" AUTHORIZATION DEFINITIONS =========== -->
-
-  <bean id="afterInvocationManager" class="org.springframework.security.afterinvocation.AfterInvocationProviderManager">
-    <property name="providers">
-      <list>
-        <ref local="afterAclTraverse" />
-      </list>
-    </property>
-  </bean>
-
-  <!-- Processes AFTER_ACL_TRAVERSE configuration settings -->
-  <!-- For this "after" to grant access, the domain object has to have an ACE with only one of the bits below. -->
-  <bean id="afterAclTraverse" class="org.pentaho.platform.repository.pcr.springsecurity.TraverseFolderAclEntryAfterInvocationProvider">
-    <constructor-arg ref="aclService" />
-    <constructor-arg value="AFTER_ACL_TRAVERSE" />
-    <constructor-arg>
-      <list>
-        <ref local="RepositoryFilePermission.EXECUTE" />
-      </list>
-    </constructor-arg>
-    <constructor-arg ref="repositoryAdminAuthorityName" />
-    <constructor-arg ref="pentahoContentDao" />
-  </bean>
-
-  <!--************************************************************************************************************** -->
 
   <bean id="jcrTransactionManager" class="org.springframework.extensions.jcr.jackrabbit.LocalTransactionManager">
     <property name="sessionFactory" ref="jcrSessionFactory"/>
@@ -186,9 +136,6 @@
     <property name="accessDecisionManager">
       <ref bean="businessAccessDecisionManager" />
     </property>
-    <property name="afterInvocationManager">
-      <ref bean="afterInvocationManager" />
-    </property>
     <property name="objectDefinitionSource">
       <value>
         org.pentaho.platform.api.repository.IPentahoContentRepository.getFile=VOTE_ROLE_FILE_Authenticated
@@ -215,7 +162,9 @@
 
   <bean id="jcrSessionFactory" class="org.pentaho.platform.repository.pcr.jcr.sejcr.CredentialsStrategyJackrabbitSessionFactory">
     <constructor-arg ref="jcrRepository" />
-    <constructor-arg ref="credentialsStrategy" />
+    <constructor-arg>
+      <bean class="org.pentaho.platform.repository.pcr.jcr.sejcr.PentahoSessionCredentialsStrategy" />
+    </constructor-arg>
     <property name="namespaces">
       <props>
         <prop key="pho">http://www.pentaho.org/jcr/1.0</prop>
@@ -234,8 +183,6 @@
       </list>
     </property>
   </bean>
-
-  <bean id="credentialsStrategy" class="org.pentaho.platform.repository.pcr.jcr.sejcr.PentahoSessionCredentialsStrategy" />
 
   <bean id="jcrTemplate" class="org.springframework.extensions.jcr.JcrTemplate">
     <property name="sessionFactory" ref="jcrSessionFactory" />
@@ -260,8 +207,153 @@
     </constructor-arg>
   </bean>
 
-  <bean class="org.pentaho.platform.repository.pcr.spring.CreateUserHomeFolderAuthenticationSuccessListener">
+  <bean class="org.pentaho.platform.repository.pcr.spring.RepositoryEventHandlerAuthenticationSuccessListener">
     <constructor-arg ref="pentahoContentRepository" />
   </bean>
+
+  <bean id="Privilege.JCR_READ" class="org.springframework.beans.factory.config.FieldRetrievingFactoryBean">
+    <property name="staticField" value="org.apache.jackrabbit.api.jsr283.security.Privilege.JCR_READ" />
+  </bean>
+  <bean id="Privilege.JCR_WRITE" class="org.springframework.beans.factory.config.FieldRetrievingFactoryBean">
+    <property name="staticField" value="org.apache.jackrabbit.api.jsr283.security.Privilege.JCR_WRITE" />
+  </bean>
+  <bean id="Privilege.JCR_REMOVE_NODE" class="org.springframework.beans.factory.config.FieldRetrievingFactoryBean">
+    <property name="staticField" value="org.apache.jackrabbit.api.jsr283.security.Privilege.JCR_REMOVE_NODE" />
+  </bean>
+  <bean id="Privilege.JCR_REMOVE_CHILD_NODES" class="org.springframework.beans.factory.config.FieldRetrievingFactoryBean">
+    <property name="staticField" value="org.apache.jackrabbit.api.jsr283.security.Privilege.JCR_REMOVE_CHILD_NODES" />
+  </bean>
+  <bean id="Privilege.JCR_READ_ACCESS_CONTROL" class="org.springframework.beans.factory.config.FieldRetrievingFactoryBean">
+    <property name="staticField" value="org.apache.jackrabbit.api.jsr283.security.Privilege.JCR_READ_ACCESS_CONTROL" />
+  </bean>
+  <bean id="Privilege.JCR_MODIFY_ACCESS_CONTROL" class="org.springframework.beans.factory.config.FieldRetrievingFactoryBean">
+    <property name="staticField" value="org.apache.jackrabbit.api.jsr283.security.Privilege.JCR_MODIFY_ACCESS_CONTROL" />
+  </bean>
+  <bean id="Privilege.JCR_NODE_TYPE_MANAGEMENT" class="org.springframework.beans.factory.config.FieldRetrievingFactoryBean">
+    <property name="staticField" value="org.apache.jackrabbit.api.jsr283.security.Privilege.JCR_NODE_TYPE_MANAGEMENT" />
+  </bean>
+  <bean id="Privilege.JCR_VERSION_MANAGEMENT" class="org.springframework.beans.factory.config.FieldRetrievingFactoryBean">
+    <property name="staticField" value="org.apache.jackrabbit.api.jsr283.security.Privilege.JCR_VERSION_MANAGEMENT" />
+  </bean>
+  <bean id="Privilege.JCR_LOCK_MANAGEMENT" class="org.springframework.beans.factory.config.FieldRetrievingFactoryBean">
+    <property name="staticField" value="org.apache.jackrabbit.api.jsr283.security.Privilege.JCR_LOCK_MANAGEMENT" />
+  </bean>
+
+  <!-- The authority name granted to the repository admin. -->
+  <bean id="jackrabbitWritePrivilegeName" class="java.lang.String">
+    <constructor-arg value="{internal}write" />
+  </bean>
+
+  <bean id="aclService" class="org.pentaho.platform.repository.pcr.jcr.jackrabbit.JackrabbitMutableAclService">
+    <constructor-arg ref="jcrTemplate" />
+    <constructor-arg ref="commonAuthenticatedAuthorityName" />
+    <constructor-arg>
+      <map>
+        <entry key-ref="RepositoryFilePermission.EXECUTE">
+          <list>
+            <!-- execute not implemented; READ is used -->
+          </list>
+        </entry>
+        <entry key-ref="RepositoryFilePermission.READ">
+          <list>
+            <ref bean="Privilege.JCR_READ" />
+          </list>
+        </entry>
+        <entry key-ref="RepositoryFilePermission.WRITE">
+          <list>
+            <!-- JCR_NODE_TYPE_MANAGEMENT is required when creating a node of a specific type -->
+            <ref bean="jackrabbitWritePrivilegeName" />
+            <ref bean="Privilege.JCR_VERSION_MANAGEMENT" />
+            <ref bean="Privilege.JCR_LOCK_MANAGEMENT" />
+          </list>
+        </entry>
+        <entry key-ref="RepositoryFilePermission.DELETE">
+          <list>
+            <ref bean="Privilege.JCR_REMOVE_NODE" />
+          </list>
+        </entry>
+        <entry key-ref="RepositoryFilePermission.APPEND">
+          <list>
+            <!-- JCR_NODE_TYPE_MANAGEMENT is required when creating a node of a specific type -->
+            <ref bean="jackrabbitWritePrivilegeName" />
+            <ref bean="Privilege.JCR_VERSION_MANAGEMENT" />
+            <ref bean="Privilege.JCR_LOCK_MANAGEMENT" />
+          </list>
+        </entry>
+        <entry key-ref="RepositoryFilePermission.DELETE_CHILD">
+          <list>
+            <ref bean="Privilege.JCR_REMOVE_CHILD_NODES" />
+          </list>
+        </entry>
+        <entry key-ref="RepositoryFilePermission.READ_ACL">
+          <list>
+            <ref bean="Privilege.JCR_READ_ACCESS_CONTROL" />
+          </list>
+        </entry>
+        <entry key-ref="RepositoryFilePermission.WRITE_ACL">
+          <list>
+            <ref bean="Privilege.JCR_MODIFY_ACCESS_CONTROL" />
+          </list>
+        </entry>
+      </map>
+    </constructor-arg>
+    <constructor-arg>
+      <map>
+        <entry key-ref="Privilege.JCR_READ">
+          <list>
+            <ref bean="RepositoryFilePermission.READ" />
+          </list>
+        </entry>
+        <entry key-ref="Privilege.JCR_WRITE">
+          <list>
+            <ref bean="RepositoryFilePermission.WRITE" />
+            <ref bean="RepositoryFilePermission.APPEND" />
+          </list>
+        </entry>
+        <entry key-ref="jackrabbitWritePrivilegeName">
+          <list>
+            <ref bean="RepositoryFilePermission.WRITE" />
+            <ref bean="RepositoryFilePermission.APPEND" />
+          </list>
+        </entry>
+        <entry key-ref="Privilege.JCR_REMOVE_NODE">
+          <list>
+            <ref bean="RepositoryFilePermission.DELETE" />
+          </list>
+        </entry>
+        <entry key-ref="Privilege.JCR_REMOVE_CHILD_NODES">
+          <list>
+            <ref bean="RepositoryFilePermission.DELETE_CHILD" />
+          </list>
+        </entry>
+        <entry key-ref="Privilege.JCR_READ_ACCESS_CONTROL">
+          <list>
+            <ref bean="RepositoryFilePermission.READ_ACL" />
+          </list>
+        </entry>
+        <entry key-ref="Privilege.JCR_MODIFY_ACCESS_CONTROL">
+          <list>
+            <ref bean="RepositoryFilePermission.WRITE_ACL" />
+          </list>
+        </entry>
+        <entry key-ref="Privilege.JCR_NODE_TYPE_MANAGEMENT">
+          <!-- JCR_NODE_TYPE_MANAGEMENT doesn't translate to a RepositoryFilePermission -->
+          <list>
+          </list>
+        </entry>
+        <entry key-ref="Privilege.JCR_VERSION_MANAGEMENT">
+          <!-- JCR_VERSION_MANAGEMENT doesn't translate to a RepositoryFilePermission -->
+          <list>
+          </list>
+        </entry>
+        <entry key-ref="Privilege.JCR_LOCK_MANAGEMENT">
+          <!-- JCR_LOCK_MANAGEMENT doesn't translate to a RepositoryFilePermission -->
+          <list>
+          </list>
+        </entry>
+      </map>
+    </constructor-arg>
+  </bean>
+
 
 </beans>

@@ -1,4 +1,4 @@
-package org.pentaho.platform.repository.pcr.springsecurity;
+package org.pentaho.platform.api.repository;
 
 import org.springframework.security.acls.Permission;
 import org.springframework.security.acls.domain.AbstractPermission;

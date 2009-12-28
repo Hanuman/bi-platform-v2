@@ -7,6 +7,11 @@ import org.apache.commons.logging.LogFactory;
 import org.pentaho.platform.api.repository.RepositoryFile;
 import org.pentaho.platform.repository.pcr.RepositoryPaths.IRepositoryPathsStrategy;
 
+/**
+ * Default {@link IRepositoryPathsStrategy} implementation. Uses MessageFormat patterns.
+ * 
+ * @author mlowery
+ */
 public class DefaultRepositoryPathsStrategy implements IRepositoryPathsStrategy {
 
   // ~ Static fields/initializers ======================================================================================

@@ -8,11 +8,17 @@ import org.springframework.context.ApplicationListener;
 import org.springframework.security.event.authentication.InteractiveAuthenticationSuccessEvent;
 import org.springframework.util.Assert;
 
-public class CreateUserHomeFolderAuthenticationSuccessListener implements ApplicationListener {
+/**
+ * {@link ApplicationListener} that invokes {@link IPentahoContentRepository.IRepositoryEventHandler#onNewTenant()} and
+ * {@link IPentahoContentRepository.IRepositoryEventHandler#onNewUser()}.
+ * 
+ * @author mlowery
+ */
+public class RepositoryEventHandlerAuthenticationSuccessListener implements ApplicationListener {
 
   // ~ Static fields/initializers ======================================================================================
 
-  private static final Log logger = LogFactory.getLog(CreateUserHomeFolderAuthenticationSuccessListener.class);
+  private static final Log logger = LogFactory.getLog(RepositoryEventHandlerAuthenticationSuccessListener.class);
 
   // ~ Instance fields =================================================================================================
 
@@ -20,7 +26,7 @@ public class CreateUserHomeFolderAuthenticationSuccessListener implements Applic
 
   // ~ Constructors ====================================================================================================
 
-  public CreateUserHomeFolderAuthenticationSuccessListener(final IPentahoContentRepository pentahoContentRepository) {
+  public RepositoryEventHandlerAuthenticationSuccessListener(final IPentahoContentRepository pentahoContentRepository) {
     super();
     Assert.notNull(pentahoContentRepository);
     this.pentahoContentRepository = pentahoContentRepository;

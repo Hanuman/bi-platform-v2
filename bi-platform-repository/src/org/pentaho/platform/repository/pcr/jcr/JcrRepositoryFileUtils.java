@@ -27,6 +27,11 @@ import org.pentaho.platform.repository.pcr.jcr.JcrRepositoryFileDao.Transformer;
 import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
 
+/**
+ * Class of static methods where the real JCR work takes place.
+ * 
+ * @author mlowery
+ */
 public class JcrRepositoryFileUtils {
   public static RepositoryFile getFileById(final Session session, final PentahoJcrConstants pentahoJcrConstants,
       final NodeIdStrategy nodeIdStrategy, final Serializable id) throws RepositoryException, IOException {

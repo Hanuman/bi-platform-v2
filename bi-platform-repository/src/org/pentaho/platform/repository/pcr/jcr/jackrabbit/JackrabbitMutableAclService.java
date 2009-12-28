@@ -1,7 +1,6 @@
 package org.pentaho.platform.repository.pcr.jcr.jackrabbit;
 
 import java.io.IOException;
-import java.io.Serializable;
 import java.security.Principal;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -28,12 +27,13 @@ import org.apache.jackrabbit.core.security.authorization.JackrabbitAccessControl
 import org.apache.jackrabbit.core.security.authorization.PrivilegeRegistry;
 import org.apache.jackrabbit.core.security.principal.AdminPrincipal;
 import org.pentaho.platform.api.repository.RepositoryFile;
+import org.pentaho.platform.api.repository.RepositoryFilePermission;
 import org.pentaho.platform.repository.pcr.IPentahoMutableAclService;
 import org.pentaho.platform.repository.pcr.jcr.JcrRepositoryFileUtils;
 import org.pentaho.platform.repository.pcr.jcr.NodeIdStrategy;
 import org.pentaho.platform.repository.pcr.jcr.PentahoJcrConstants;
 import org.pentaho.platform.repository.pcr.jcr.UuidNodeIdStrategy;
-import org.pentaho.platform.repository.pcr.springsecurity.RepositoryFilePermission;
+import org.pentaho.platform.repository.pcr.springsecurity.PentahoMutableAcl;
 import org.springframework.extensions.jcr.JcrCallback;
 import org.springframework.extensions.jcr.JcrTemplate;
 import org.springframework.security.acls.Acl;
@@ -44,7 +44,6 @@ import org.springframework.security.acls.MutableAclService;
 import org.springframework.security.acls.NotFoundException;
 import org.springframework.security.acls.Permission;
 import org.springframework.security.acls.domain.AclAuthorizationStrategy;
-import org.springframework.security.acls.domain.AclImpl;
 import org.springframework.security.acls.domain.AuditLogger;
 import org.springframework.security.acls.objectidentity.ObjectIdentity;
 import org.springframework.security.acls.objectidentity.ObjectIdentityImpl;
@@ -78,10 +77,6 @@ public class JackrabbitMutableAclService implements IPentahoMutableAclService {
 
   private NodeIdStrategy nodeIdStrategy;
 
-  private AclAuthorizationStrategy aclAuthorizationStrategy = new NoOpAclAuthorizationStrategy();
-
-  private AuditLogger auditLogger;
-
   private Map<Permission, List<String>> permissionToPrivilegeNamesMap;
 
   private Map<String, List<Permission>> privilegeNameToPermissionsMap;
@@ -96,13 +91,12 @@ public class JackrabbitMutableAclService implements IPentahoMutableAclService {
   // ~ Constructors ====================================================================================================
 
   public JackrabbitMutableAclService(final JcrTemplate jcrTemplate, final String commonAuthenticatedAuthorityName,
-      final AuditLogger auditLogger, Map<Permission, List<String>> permissionToPrivilegeNamesMap,
+      Map<Permission, List<String>> permissionToPrivilegeNamesMap,
       Map<String, List<Permission>> privilegeNameToPermissionsMap) {
     super();
     this.jcrTemplate = jcrTemplate;
     this.commonAuthenticatedAuthorityName = commonAuthenticatedAuthorityName;
     this.nodeIdStrategy = new UuidNodeIdStrategy(jcrTemplate);
-    this.auditLogger = auditLogger;
     this.permissionToPrivilegeNamesMap = permissionToPrivilegeNamesMap;
     this.privilegeNameToPermissionsMap = privilegeNameToPermissionsMap;
   }
@@ -391,11 +385,8 @@ public class JackrabbitMutableAclService implements IPentahoMutableAclService {
         }
       }
 
-      Serializable ignoredId = new String("ignored");
-      Sid[] loadedSids = null;
-
-      AclImpl acl = new AclImpl(objectIdentity, ignoredId, aclAuthorizationStrategy, auditLogger, parentAcl,
-          loadedSids, true, new PrincipalSid("ignored"));
+      // TODO mlowery fetch owner from Jackrabbit
+      PentahoMutableAcl acl = new PentahoMutableAcl(objectIdentity, parentAcl, true, new PrincipalSid("ignored"));
       Assert.isInstanceOf(AccessControlList.class, acPolicy);
       AccessControlList acList = (AccessControlList) acPolicy;
       AccessControlEntry[] acEntries = acList.getAccessControlEntries();
