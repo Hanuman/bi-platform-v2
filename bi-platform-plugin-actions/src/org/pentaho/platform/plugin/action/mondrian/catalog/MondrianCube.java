@@ -25,9 +25,15 @@ public class MondrianCube implements Serializable {
     
     private static final long serialVersionUID = 1L;
     private String name;
+    private String id;
 
-    public MondrianCube(final String name) {
+    public MondrianCube(final String name, final String identifier) {
       this.name = name;
+      this.id = identifier;
+    }
+    
+    public String getId() {
+      return id;
     }
 
     public String getName() {
@@ -36,7 +42,7 @@ public class MondrianCube implements Serializable {
 
     @Override
     public String toString() {
-      return new ToStringBuilder(this).append("name", name).toString(); //$NON-NLS-1$
+      return new ToStringBuilder(this).append("name", name).append("id", id).toString(); //$NON-NLS-1$ //$NON-NLS-2$
     }
 
   }
