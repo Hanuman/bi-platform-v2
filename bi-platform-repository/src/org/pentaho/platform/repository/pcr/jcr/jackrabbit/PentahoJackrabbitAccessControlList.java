@@ -29,6 +29,8 @@ import org.apache.jackrabbit.core.security.authorization.JackrabbitAccessControl
 import org.apache.jackrabbit.core.security.authorization.Permission;
 import org.apache.jackrabbit.core.security.authorization.PrivilegeRegistry;
 import org.apache.jackrabbit.core.security.principal.PrincipalImpl;
+import org.apache.jackrabbit.spi.Name;
+import org.apache.jackrabbit.spi.commons.name.NameFactoryImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -37,7 +39,7 @@ import org.slf4j.LoggerFactory;
  * 
  * @author mlowery
  */
-class PentahoJackrabbitAccessControlList implements JackrabbitAccessControlList {
+class PentahoJackrabbitAccessControlList implements IPentahoJackrabbitAccessControlList {
 
   private static final Logger log = LoggerFactory.getLogger(PentahoJackrabbitAccessControlList.class);
 
@@ -52,6 +54,19 @@ class PentahoJackrabbitAccessControlList implements JackrabbitAccessControlList 
    * and one deny ACE per principal.
    */
   private final Map entries = new ListOrderedMap();
+
+  private static final Name PHO_NT_PENTAHOACL = NameFactoryImpl.getInstance().create(
+      "http://www.pentaho.org/jcr/nt/1.0", "pentahoAcl");
+
+  private static final Name PHO_ACLOWNERNAME = NameFactoryImpl.getInstance().create("http://www.pentaho.org/jcr/1.0",
+      "aclOwnerName");
+
+  private static final Name PHO_ACLINHERITING = NameFactoryImpl.getInstance().create("http://www.pentaho.org/jcr/1.0",
+      "aclInheriting");
+
+  private Principal owner;
+
+  private boolean entriesInheriting = true;
 
   /**
    * The principal manager used for validation checks
@@ -92,8 +107,9 @@ class PentahoJackrabbitAccessControlList implements JackrabbitAccessControlList 
    * @throws RepositoryException
    */
   PentahoJackrabbitAccessControlList(NodeImpl aclNode, PrivilegeRegistry privilegeRegistry) throws RepositoryException {
-    if (aclNode == null || !aclNode.isNodeType(AccessControlConstants.NT_REP_ACL)) {
-      throw new IllegalArgumentException("Node must be of type 'rep:ACL'");
+    if (aclNode == null
+        || !(aclNode.isNodeType(PHO_NT_PENTAHOACL) || aclNode.isNodeType(AccessControlConstants.NT_REP_ACL))) {
+      throw new IllegalArgumentException("Node must be of type 'rep:ACL' or 'pho_nt:pentahoAcl'");
     }
     SessionImpl sImpl = (SessionImpl) aclNode.getSession();
     path = aclNode.getParent().getPath();
@@ -102,11 +118,32 @@ class PentahoJackrabbitAccessControlList implements JackrabbitAccessControlList 
 
     this.privilegeRegistry = privilegeRegistry;
 
+    if (!aclNode.getPrimaryNodeType().getName().equals(
+        AccessControlConstants.NT_REP_ACL.NS_REP_PREFIX + ":" + AccessControlConstants.NT_REP_ACL.getLocalName())) {
+      String ownerName = aclNode.getProperty(PHO_ACLOWNERNAME).getString();
+      if (principalMgr.hasPrincipal(ownerName)) {
+        try {
+          owner = principalMgr.getPrincipal(ownerName);
+        } catch (NoSuchPrincipalException e) {
+          // should not get here.
+        }
+      }
+      if (owner == null) {
+        log.debug("Owner with name " + ownerName + " unknown to PrincipalManager.");
+        owner = new PrincipalImpl(ownerName);
+      }
+
+      entriesInheriting = aclNode.getProperty(PHO_ACLINHERITING).getBoolean();
+    }
+
     // load the entries:
     AccessControlManager acMgr = sImpl.getAccessControlManager();
     NodeIterator itr = aclNode.getNodes();
     while (itr.hasNext()) {
       NodeImpl aceNode = (NodeImpl) itr.nextNode();
+      if (!aceNode.isNodeType(AccessControlConstants.NT_REP_ACE)) {
+        continue;
+      }
       try {
         String principalName = aceNode.getProperty(AccessControlConstants.P_PRINCIPAL_NAME).getString();
         Principal princ = null;
@@ -406,7 +443,8 @@ class PentahoJackrabbitAccessControlList implements JackrabbitAccessControlList 
 
     if (obj instanceof PentahoJackrabbitAccessControlList) {
       PentahoJackrabbitAccessControlList acl = (PentahoJackrabbitAccessControlList) obj;
-      return path.equals(acl.path) && entries.equals(acl.entries);
+      return path.equals(acl.path) && entries.equals(acl.entries) && owner.equals(acl.owner)
+          && entriesInheriting == acl.entriesInheriting;
     }
     return false;
   }
@@ -434,10 +472,25 @@ class PentahoJackrabbitAccessControlList implements JackrabbitAccessControlList 
 
   }
 
+  public Principal getOwner() {
+    return owner;
+  }
+
+  public boolean isEntriesInheriting() {
+    return entriesInheriting;
+  }
+
   @Override
   public String toString() {
-    StringBuilder buf = new StringBuilder();
-    buf.append(getClass().getName()).append("[").append(entries).append("]");
-    return buf.toString();
+    return "PentahoJackrabbitAccessControlList[entries=" + entries + ", owner=" + owner + ", entriesInheriting="
+        + entriesInheriting + "]";
+  }
+
+  public void setOwner(Principal owner) {
+    this.owner = owner;
+  }
+
+  public void setEntriesInheriting(boolean entriesInheriting) {
+    this.entriesInheriting = entriesInheriting;
   }
 }

@@ -78,6 +78,11 @@ public class RepositoryFile implements Comparable<RepositoryFile> {
    * The date that this lock was created. Read-only. {@code null} if file not locked.
    */
   private Date lockDate;
+  
+  /**
+   * The owner of this file. Usually plays a role in access control. Read-only.
+   */
+  private RepositoryFileSid owner;
 
   // ~ Constructors ====================================================================================================
 
@@ -158,8 +163,13 @@ public class RepositoryFile implements Comparable<RepositoryFile> {
     return (lockDate != null ? new Date(lockDate.getTime()) : null);
   }
 
+  public RepositoryFileSid getOwner() {
+    return owner;
+  }
+  
   @Override
   public String toString() {
+    // TODO mlowery remove this to be GWT-compatible
     return ToStringBuilder.reflectionToString(this);
   }
 
@@ -193,6 +203,8 @@ public class RepositoryFile implements Comparable<RepositoryFile> {
     private String lockMessage;
 
     private Date lockDate;
+    
+    private RepositoryFileSid owner;
 
     public Builder(final String name) {
       assertHasText(name);
@@ -212,7 +224,7 @@ public class RepositoryFile implements Comparable<RepositoryFile> {
       this.absolutePath(other.absolutePath).createdDate(other.createdDate).folder(other.folder).lastModificationDate(
           other.lastModifiedDate).contentType(other.contentType).versioned(other.versioned).hidden(other.hidden)
           .versionId(other.versionId).locked(other.locked).lockDate(other.lockDate).lockOwner(other.lockOwner)
-          .lockMessage(other.lockMessage);
+          .lockMessage(other.lockMessage).owner(other.owner);
     }
 
     public RepositoryFile build() {
@@ -229,6 +241,7 @@ public class RepositoryFile implements Comparable<RepositoryFile> {
       result.lockOwner = this.lockOwner;
       result.lockMessage = this.lockMessage;
       result.lockDate = this.lockDate;
+      result.owner = this.owner;
       return result;
     }
 
@@ -295,6 +308,11 @@ public class RepositoryFile implements Comparable<RepositoryFile> {
       return this;
     }
 
+    public Builder owner(final RepositoryFileSid owner) {
+      this.owner = owner;
+      return this;
+    }
+    
     /**
      * Implemented here to maintain GWT-compatibility.
      */

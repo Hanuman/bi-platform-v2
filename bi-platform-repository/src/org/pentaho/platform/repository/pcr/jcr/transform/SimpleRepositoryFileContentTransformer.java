@@ -8,12 +8,12 @@ import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
 import org.pentaho.platform.repository.pcr.SimpleRepositoryFileContent;
+import org.pentaho.platform.repository.pcr.jcr.ITransformer;
 import org.pentaho.platform.repository.pcr.jcr.NodeIdStrategy;
 import org.pentaho.platform.repository.pcr.jcr.PentahoJcrConstants;
-import org.pentaho.platform.repository.pcr.jcr.JcrRepositoryFileDao.Transformer;
 import org.springframework.util.StringUtils;
 
-public class SimpleRepositoryFileContentTransformer implements Transformer<SimpleRepositoryFileContent> {
+public class SimpleRepositoryFileContentTransformer implements ITransformer<SimpleRepositoryFileContent> {
 
   public SimpleRepositoryFileContent fromContentNode(Session session, final PentahoJcrConstants pentahoJcrConstants,
       NodeIdStrategy nodeIdStrategy, Node resourceNode) throws RepositoryException, IOException {

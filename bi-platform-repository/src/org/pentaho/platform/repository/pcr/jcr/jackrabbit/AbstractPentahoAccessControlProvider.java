@@ -261,6 +261,9 @@ public abstract class AbstractPentahoAccessControlProvider extends AbstractAcces
       privs = new Privilege[] { acMgr.privilegeFromName(Privilege.JCR_READ) };
       acl.addAccessControlEntry(everyone, privs);
 
+      acl.setEntriesInheriting(false);
+      acl.setOwner(administrators);
+      
       editor.setPolicy(rootPath, acl);
       session.save();
 

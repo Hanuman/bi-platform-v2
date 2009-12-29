@@ -13,6 +13,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -29,8 +30,10 @@ import org.junit.runner.RunWith;
 import org.pentaho.platform.api.engine.IPentahoSession;
 import org.pentaho.platform.api.repository.IPentahoContentRepository;
 import org.pentaho.platform.api.repository.IRepositoryFileContent;
+import org.pentaho.platform.api.repository.Permission;
 import org.pentaho.platform.api.repository.RepositoryFile;
-import org.pentaho.platform.api.repository.RepositoryFilePermission;
+import org.pentaho.platform.api.repository.RepositoryFileAcl;
+import org.pentaho.platform.api.repository.RepositoryFileSid;
 import org.pentaho.platform.api.repository.VersionSummary;
 import org.pentaho.platform.engine.core.system.PentahoSessionHolder;
 import org.pentaho.platform.engine.core.system.StandaloneSession;
@@ -46,12 +49,6 @@ import org.springframework.extensions.jcr.SessionFactory;
 import org.springframework.security.Authentication;
 import org.springframework.security.GrantedAuthority;
 import org.springframework.security.GrantedAuthorityImpl;
-import org.springframework.security.acls.AccessControlEntry;
-import org.springframework.security.acls.Acl;
-import org.springframework.security.acls.Permission;
-import org.springframework.security.acls.sid.GrantedAuthoritySid;
-import org.springframework.security.acls.sid.PrincipalSid;
-import org.springframework.security.acls.sid.Sid;
 import org.springframework.security.context.SecurityContextHolder;
 import org.springframework.security.providers.UsernamePasswordAuthenticationToken;
 import org.springframework.security.userdetails.User;
@@ -93,7 +90,7 @@ public class PentahoContentRepositoryTests implements ApplicationContextAware {
 
   private String commonAuthenticatedAuthorityName;
 
-  private Sid commonAuthenticatedAuthoritySid;
+  private RepositoryFileSid commonAuthenticatedAuthoritySid;
 
   private String repositoryAdminAuthorityName;
 
@@ -149,9 +146,8 @@ public class PentahoContentRepositoryTests implements ApplicationContextAware {
     final String rootFolderPath = RepositoryPaths.getPentahoRootFolderPath();
     assertNotNull(SimpleJcrTestUtils.getItem(testJcrTemplate, rootFolderPath));
     // make sure ACEs exist
-    assertLocalAceExists(repo.getFile(rootFolderPath), commonAuthenticatedAuthoritySid, RepositoryFilePermission.READ);
-    assertLocalAceExists(repo.getFile(rootFolderPath), commonAuthenticatedAuthoritySid,
-        RepositoryFilePermission.READ_ACL);
+    assertLocalAceExists(repo.getFile(rootFolderPath), commonAuthenticatedAuthoritySid, EnumSet.of(Permission.READ));
+    assertLocalAceExists(repo.getFile(rootFolderPath), commonAuthenticatedAuthoritySid, EnumSet.of(Permission.READ_ACL));
     // assertOwner(pentahoContentRepository.getFile(rootFolderPath), repositoryAdminSid);
   }
 
@@ -170,9 +166,9 @@ public class PentahoContentRepositoryTests implements ApplicationContextAware {
     //    assertOwner(pentahoContentRepository.getFile(homeFolderPath), repositoryAdminSid);
     final String suzyFolderPath = RepositoryPaths.getUserHomeFolderPath();
     assertNotNull(SimpleJcrTestUtils.getItem(testJcrTemplate, suzyFolderPath));
-    Sid suzySid = new PrincipalSid(USERNAME_SUZY);
-    assertLocalAceExists(repo.getFile(suzyFolderPath), suzySid, RepositoryFilePermission.WRITE);
-    assertLocalAceExists(repo.getFile(suzyFolderPath), suzySid, RepositoryFilePermission.READ);
+    RepositoryFileSid suzySid = new RepositoryFileSid(USERNAME_SUZY, RepositoryFileSid.Type.USER);
+    assertLocalAceExists(repo.getFile(suzyFolderPath), suzySid, EnumSet.of(Permission.WRITE));
+    assertLocalAceExists(repo.getFile(suzyFolderPath), suzySid, EnumSet.of(Permission.READ));
     // make sure Jackrabbit agrees
     assertTrue(SimpleJcrTestUtils.hasPrivileges(testJcrTemplate, suzyFolderPath, Privilege.JCR_WRITE));
     assertTrue(SimpleJcrTestUtils.hasPrivileges(testJcrTemplate, suzyFolderPath, Privilege.JCR_READ));
@@ -718,8 +714,28 @@ public class PentahoContentRepositoryTests implements ApplicationContextAware {
     RepositoryFile parentFolder = repo.getFile(RepositoryPaths.getTenantPublicFolderPath());
     RepositoryFile newFolder = new RepositoryFile.Builder("test").folder(true).versioned(true).build();
     newFolder = repo.createFolder(parentFolder, newFolder);
-//    assertEquals(USERNAME_SUZY, newFolder.getOwner());
+    // new folders/files don't have an owner yet at the time they're read
+    assertNull(newFolder.getOwner());
+    // to get a non-null owner, use getFile
+    RepositoryFile fetchedFolder = repo.getFile(RepositoryPaths.getTenantPublicFolderPath() + RepositoryFile.SEPARATOR
+        + "test");
+    assertEquals(new RepositoryFileSid(USERNAME_SUZY, RepositoryFileSid.Type.USER), fetchedFolder.getOwner());
     // TODO mlowery finish once setAcl is done
+  }
+
+  @Test
+  public void testGetAcl() throws Exception {
+    repo.getRepositoryEventHandler().onStartup();
+    login(USERNAME_SUZY, TENANT_ID_ACME);
+    RepositoryFile parentFolder = repo.getFile(RepositoryPaths.getTenantPublicFolderPath());
+    RepositoryFile newFolder = new RepositoryFile.Builder("test").folder(true).versioned(true).build();
+    newFolder = repo.createFolder(parentFolder, newFolder);
+    RepositoryFileAcl acl = repo.getAcl(newFolder);
+    assertEquals(true, acl.isEntriesInheriting());
+    assertEquals(new RepositoryFileSid(USERNAME_SUZY, RepositoryFileSid.Type.USER), acl.getOwner());
+    assertEquals(newFolder.getId(), acl.getFileId());
+    assertTrue(acl.getAces().isEmpty());
+    // TODO mlowery more in-depth ACE checking
   }
 
   private RepositoryFile createRunResultFile(final String parentFolderPath, final String expectedName,
@@ -741,12 +757,14 @@ public class PentahoContentRepositoryTests implements ApplicationContextAware {
         expectedRunResultMimeType, expectedRunArguments, false);
   }
 
-  private void assertLocalAceExists(final RepositoryFile file, final Sid sid, final Permission permission) {
-    Acl acl = repo.getAcl(file);
-    AccessControlEntry[] aces = acl.getEntries();
-    for (int i = 0; i < aces.length; i++) {
-      AccessControlEntry ace = aces[i];
-      if (sid.equals(ace.getSid()) && permission.equals(ace.getPermission())) {
+  private void assertLocalAceExists(final RepositoryFile file,
+      final org.pentaho.platform.api.repository.RepositoryFileSid sid, final EnumSet<Permission> permissions) {
+    RepositoryFileAcl acl = repo.getAcl(file);
+
+    List<RepositoryFileAcl.Ace> aces = acl.getAces();
+    for (int i = 0; i < aces.size(); i++) {
+      RepositoryFileAcl.Ace ace = aces.get(i);
+      if (sid.equals(ace.getSid()) && permissions.equals(ace.getPermissions())) {
         return;
       }
     }
@@ -754,12 +772,12 @@ public class PentahoContentRepositoryTests implements ApplicationContextAware {
   }
 
   private void assertLocalAclEmpty(final RepositoryFile file) {
-    Acl acl = repo.getAcl(file);
-    assertTrue(acl.getEntries().length == 0);
+    RepositoryFileAcl acl = repo.getAcl(file);
+    assertTrue(acl.getAces().size() == 0);
   }
 
-  private void assertOwner(final RepositoryFile file, final Sid sid) {
-    Acl acl = repo.getAcl(file);
+  private void assertOwner(final RepositoryFile file, final org.pentaho.platform.api.repository.RepositoryFileSid sid) {
+    RepositoryFileAcl acl = repo.getAcl(file);
     assertTrue(sid.equals(acl.getOwner()));
   }
 
@@ -777,7 +795,8 @@ public class PentahoContentRepositoryTests implements ApplicationContextAware {
     repositoryAdminUsername = (String) applicationContext.getBean("repositoryAdminUsername");
     repositoryAdminAuthorityName = (String) applicationContext.getBean("repositoryAdminAuthorityName");
     commonAuthenticatedAuthorityName = (String) applicationContext.getBean("commonAuthenticatedAuthorityName");
-    commonAuthenticatedAuthoritySid = new GrantedAuthoritySid(commonAuthenticatedAuthorityName);
+    commonAuthenticatedAuthoritySid = new RepositoryFileSid(commonAuthenticatedAuthorityName,
+        RepositoryFileSid.Type.ROLE);
     tenantAuthenticatedAuthorityNameSuffix = (String) applicationContext
         .getBean("tenantAuthenticatedAuthorityNameSuffix");
     tenantAdminAuthorityNameSuffix = (String) applicationContext.getBean("tenantAdminAuthorityNameSuffix");

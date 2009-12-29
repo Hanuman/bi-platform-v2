@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Set;
 
 import javax.jcr.ItemNotFoundException;
+import javax.jcr.NamespaceException;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.jcr.observation.Event;
@@ -27,7 +28,9 @@ import org.apache.jackrabbit.core.security.authorization.AccessControlEntryImpl;
 import org.apache.jackrabbit.core.security.authorization.CompiledPermissions;
 import org.apache.jackrabbit.core.security.authorization.Permission;
 import org.apache.jackrabbit.core.security.principal.EveryonePrincipal;
+import org.apache.jackrabbit.spi.Name;
 import org.apache.jackrabbit.spi.Path;
+import org.apache.jackrabbit.spi.commons.name.NameFactoryImpl;
 import org.apache.jackrabbit.util.Text;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -50,6 +53,15 @@ import org.springframework.util.Assert;
 public class PentahoAccessControlProvider extends AbstractPentahoAccessControlProvider {
 
   private static final Logger log = LoggerFactory.getLogger(PentahoAccessControlProvider.class);
+
+  private static final Name PHO_NT_PENTAHOACL = NameFactoryImpl.getInstance().create(
+      "http://www.pentaho.org/jcr/nt/1.0", "pentahoAcl");
+
+  private static final Name PHO_ACLOWNERNAME = NameFactoryImpl.getInstance().create("http://www.pentaho.org/jcr/1.0",
+      "aclOwnerName");
+
+  private static final Name PHO_ACLINHERITING = NameFactoryImpl.getInstance().create("http://www.pentaho.org/jcr/1.0",
+      "aclInheriting");
 
   @Override
   protected CompiledPermissions doCompilePermissions(Set principals, SessionImpl systemSession,
@@ -85,7 +97,7 @@ public class PentahoAccessControlProvider extends AbstractPentahoAccessControlPr
         principalNames.add(((Principal) it.next()).getName());
       }
 
-      if (listenToEvents) {
+      if (listenToEvents && isPentahoNodeTypesRegistered()) {
         /*
          Make sure this AclPermission recalculates the permissions if
          any ACL concerning it is modified. interesting events are:
@@ -97,9 +109,22 @@ public class PentahoAccessControlProvider extends AbstractPentahoAccessControlPr
         */
         int events = Event.PROPERTY_CHANGED | Event.NODE_ADDED | Event.NODE_REMOVED;
         String[] ntNames = new String[] { systemSession.getJCRName(AccessControlConstants.NT_REP_ACE),
-            systemSession.getJCRName(AccessControlConstants.NT_REP_ACL) };
+            systemSession.getJCRName(PHO_NT_PENTAHOACL) };
         systemSession.getWorkspace().getObservationManager().addEventListener(this, events,
             systemSession.getRootNode().getPath(), true, null, ntNames, true);
+      }
+    }
+
+    /**
+     * Returns true if custom Pentaho node types have been registered yet. In the early sessions, namespaces and node
+     * types aren't yet registered. (The act of registering a namespace and node type requires a session.)
+     */
+    private boolean isPentahoNodeTypesRegistered() {
+      try {
+        systemSession.getJCRName(PHO_NT_PENTAHOACL);
+        return true;
+      } catch (NamespaceException e) {
+        return false;
       }
     }
 
@@ -165,15 +190,15 @@ public class PentahoAccessControlProvider extends AbstractPentahoAccessControlPr
       NodeImpl nodeWithAclToUse = folderOrFileOrLinkedFileOrRootNode;
 
       // now we have a folder, file, or linkedFile node whose ACL will serve as the starting ACL
-      // simplifying assumption that an empty aces list means to inherit from parent; 
-      // TODO fix above assumption
       NodeImpl aclNode;
       aclNode = nodeWithAclToUse.getNode(AccessControlConstants.N_POLICY);
-      List<AccessControlEntry> aces = Arrays.asList(pentahoEditor.getACL(aclNode).getAccessControlEntries());
-      while (aces.isEmpty() && !isRootNode(nodeWithAclToUse)) {
+      PentahoJackrabbitAccessControlList acList = (PentahoJackrabbitAccessControlList) pentahoEditor.getACL(aclNode);
+      List<AccessControlEntry> aces = Arrays.asList(acList.getAccessControlEntries());
+      while (acList.isEntriesInheriting() && !isRootNode(nodeWithAclToUse)) {
         nodeWithAclToUse = (NodeImpl) nodeWithAclToUse.getParent();
         aclNode = nodeWithAclToUse.getNode(AccessControlConstants.N_POLICY);
-        aces = Arrays.asList(pentahoEditor.getACL(aclNode).getAccessControlEntries());
+        acList = (PentahoJackrabbitAccessControlList) pentahoEditor.getACL(aclNode);
+        aces = Arrays.asList(acList.getAccessControlEntries());
       }
 
       // if hit root and it has no ACEs, that is a problem as AbstractPentahoAccessControlProvider.initRootACL should
@@ -338,6 +363,10 @@ public class PentahoAccessControlProvider extends AbstractPentahoAccessControlPr
                 if (principalName != null && principalNames.contains(principalName)) {
                   clearCache = true;
                 }
+              }
+              if (parent.isNodeType(PHO_NT_PENTAHOACL)) {
+                // acl owner or inheriting flag changed
+                clearCache = true;
               }
               break;
             default:

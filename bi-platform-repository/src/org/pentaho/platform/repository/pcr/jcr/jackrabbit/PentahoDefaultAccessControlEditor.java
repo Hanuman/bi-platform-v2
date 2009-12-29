@@ -1,6 +1,7 @@
 package org.pentaho.platform.repository.pcr.jcr.jackrabbit;
 
 import java.security.Principal;
+import java.security.acl.Group;
 
 import javax.jcr.AccessDeniedException;
 import javax.jcr.Node;
@@ -30,6 +31,7 @@ import org.apache.jackrabbit.core.security.authorization.PrivilegeRegistry;
 import org.apache.jackrabbit.spi.Name;
 import org.apache.jackrabbit.spi.commons.conversion.NameException;
 import org.apache.jackrabbit.spi.commons.conversion.NameParser;
+import org.apache.jackrabbit.spi.commons.name.NameFactoryImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -45,6 +47,15 @@ public class PentahoDefaultAccessControlEditor extends PentahoProtectedItemModif
    * Default name for ace nodes
    */
   private static final String DEFAULT_ACE_NAME = "ace";
+
+  private static final Name PHO_NT_PENTAHOACL = NameFactoryImpl.getInstance().create(
+      "http://www.pentaho.org/jcr/nt/1.0", "pentahoAcl");
+
+  private static final Name PHO_ACLINHERITING = NameFactoryImpl.getInstance().create("http://www.pentaho.org/jcr/1.0",
+      "aclInheriting");
+
+  private static final Name PHO_ACLOWNERNAME = NameFactoryImpl.getInstance().create("http://www.pentaho.org/jcr/1.0",
+      "aclOwnerName");
 
   /**
    * the editing session
@@ -137,6 +148,8 @@ public class PentahoDefaultAccessControlEditor extends PentahoProtectedItemModif
     checkProtectsNode(nodePath);
     checkValidPolicy(nodePath, policy);
 
+    PentahoJackrabbitAccessControlList jrPolicy = (PentahoJackrabbitAccessControlList) policy;
+
     NodeImpl aclNode = getAclNode(nodePath);
     /* in order to assert that the parent (ac-controlled node) gets modified
        an existing ACL node is removed first and the recreated.
@@ -149,13 +162,20 @@ public class PentahoDefaultAccessControlEditor extends PentahoProtectedItemModif
     // now (re) create it
     aclNode = createAclNode(nodePath);
 
-    AccessControlEntry[] entries = ((PentahoJackrabbitAccessControlList) policy).getAccessControlEntries();
+    ValueFactory vf = systemSession.getValueFactory();
+
+    // see #createAclNode(String) comment for why we have to check primary node type here
+    if (!aclNode.getPrimaryNodeType().getName().equals(NT_REP_ACL.NS_REP_PREFIX + ":" + NT_REP_ACL.getLocalName())) {
+      setProperty(aclNode, PHO_ACLOWNERNAME, vf.createValue(jrPolicy.getOwner().getName()));
+      setProperty(aclNode, PHO_ACLINHERITING, vf.createValue(jrPolicy.isEntriesInheriting()));
+    }
+
+    AccessControlEntry[] entries = jrPolicy.getAccessControlEntries();
     for (int i = 0; i < entries.length; i++) {
       JackrabbitAccessControlEntry ace = (JackrabbitAccessControlEntry) entries[i];
 
       Name nodeName = getUniqueNodeName(aclNode, ace.isAllow() ? "allow" : "deny");
       Name ntName = (ace.isAllow()) ? NT_REP_GRANT_ACE : NT_REP_DENY_ACE;
-      ValueFactory vf = systemSession.getValueFactory();
 
       // create the ACE node
       NodeImpl aceNode = addNode(aclNode, nodeName, ntName);
@@ -275,7 +295,13 @@ public class PentahoDefaultAccessControlEditor extends PentahoProtectedItemModif
     if (!protectedNode.isNodeType(NT_REP_ACCESS_CONTROLLABLE)) {
       protectedNode.addMixin(NT_REP_ACCESS_CONTROLLABLE);
     }
-    return addNode(protectedNode, N_POLICY, NT_REP_ACL);
+    // AbstractPentahoAccessControlProvider.initRootACL calls this method (indirectly) when Pentaho node types are not 
+    // yet registered; for the root node, fallback on the standard Jackrabbit ACL node type
+    if (!"/".equals(nodePath)) { //$NON-NLS-1$
+      return addNode(protectedNode, N_POLICY, PHO_NT_PENTAHOACL);
+    } else {
+      return addNode(protectedNode, N_POLICY, NT_REP_ACL);
+    }
   }
 
   /**

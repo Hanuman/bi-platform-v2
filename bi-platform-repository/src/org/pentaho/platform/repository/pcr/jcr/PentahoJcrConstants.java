@@ -58,6 +58,8 @@ public class PentahoJcrConstants extends JcrConstants {
 
   private static final String PHO_VERSIONMESSAGE = "versionMessage";
 
+  private static final String PHO_ACLOWNERNAME = "aclOwnerName";
+
   // ~ Instance fields =================================================================================================
 
   // ~ Constructors ====================================================================================================
@@ -131,5 +133,10 @@ public class PentahoJcrConstants extends JcrConstants {
   public String getPHO_VERSIONMESSAGE() {
     return resolveName(PHO_NS, PHO_VERSIONMESSAGE);
   }
+
+  public String getPHO_ACLOWNERNAME() {
+    return resolveName(PHO_NS, PHO_ACLOWNERNAME);
+  }
+
 
 }

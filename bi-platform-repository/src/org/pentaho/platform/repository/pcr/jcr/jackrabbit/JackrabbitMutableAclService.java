@@ -15,7 +15,6 @@ import javax.jcr.Value;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.jackrabbit.api.jsr283.security.AccessControlEntry;
-import org.apache.jackrabbit.api.jsr283.security.AccessControlList;
 import org.apache.jackrabbit.api.jsr283.security.AccessControlManager;
 import org.apache.jackrabbit.api.jsr283.security.AccessControlPolicy;
 import org.apache.jackrabbit.api.jsr283.security.AccessControlPolicyIterator;
@@ -26,14 +25,14 @@ import org.apache.jackrabbit.core.security.authorization.JackrabbitAccessControl
 import org.apache.jackrabbit.core.security.authorization.JackrabbitAccessControlList;
 import org.apache.jackrabbit.core.security.authorization.PrivilegeRegistry;
 import org.apache.jackrabbit.core.security.principal.AdminPrincipal;
-import org.pentaho.platform.api.repository.RepositoryFile;
-import org.pentaho.platform.api.repository.RepositoryFilePermission;
+import org.apache.jackrabbit.core.security.principal.EveryonePrincipal;
 import org.pentaho.platform.repository.pcr.IPentahoMutableAclService;
 import org.pentaho.platform.repository.pcr.jcr.JcrRepositoryFileUtils;
 import org.pentaho.platform.repository.pcr.jcr.NodeIdStrategy;
 import org.pentaho.platform.repository.pcr.jcr.PentahoJcrConstants;
 import org.pentaho.platform.repository.pcr.jcr.UuidNodeIdStrategy;
 import org.pentaho.platform.repository.pcr.springsecurity.PentahoMutableAcl;
+import org.pentaho.platform.repository.pcr.springsecurity.RepositoryFilePermission;
 import org.springframework.extensions.jcr.JcrCallback;
 import org.springframework.extensions.jcr.JcrTemplate;
 import org.springframework.security.acls.Acl;
@@ -43,8 +42,6 @@ import org.springframework.security.acls.MutableAcl;
 import org.springframework.security.acls.MutableAclService;
 import org.springframework.security.acls.NotFoundException;
 import org.springframework.security.acls.Permission;
-import org.springframework.security.acls.domain.AclAuthorizationStrategy;
-import org.springframework.security.acls.domain.AuditLogger;
 import org.springframework.security.acls.objectidentity.ObjectIdentity;
 import org.springframework.security.acls.objectidentity.ObjectIdentityImpl;
 import org.springframework.security.acls.sid.GrantedAuthoritySid;
@@ -83,19 +80,13 @@ public class JackrabbitMutableAclService implements IPentahoMutableAclService {
 
   private IAclHelper aclHelper = new AclHelper();
 
-  /**
-   * The name of the authority which is granted to all authenticated users, regardless of tenant.
-   */
-  private String commonAuthenticatedAuthorityName;
-
   // ~ Constructors ====================================================================================================
 
-  public JackrabbitMutableAclService(final JcrTemplate jcrTemplate, final String commonAuthenticatedAuthorityName,
+  public JackrabbitMutableAclService(final JcrTemplate jcrTemplate,
       Map<Permission, List<String>> permissionToPrivilegeNamesMap,
       Map<String, List<Permission>> privilegeNameToPermissionsMap) {
     super();
     this.jcrTemplate = jcrTemplate;
-    this.commonAuthenticatedAuthorityName = commonAuthenticatedAuthorityName;
     this.nodeIdStrategy = new UuidNodeIdStrategy(jcrTemplate);
     this.permissionToPrivilegeNamesMap = permissionToPrivilegeNamesMap;
     this.privilegeNameToPermissionsMap = privilegeNameToPermissionsMap;
@@ -140,6 +131,10 @@ public class JackrabbitMutableAclService implements IPentahoMutableAclService {
         // acMgr.getPolicies(absPath)[0]
         if (iter.hasNext()) {
           AccessControlPolicy acPolicy = iter.nextAccessControlPolicy();
+          Assert.isInstanceOf(IPentahoJackrabbitAccessControlList.class, acPolicy);
+          IPentahoJackrabbitAccessControlList jrPolicy = (IPentahoJackrabbitAccessControlList) acPolicy;
+          // owner can never be null; give it a dummy value here until it has a "real" value
+          jrPolicy.setOwner(jrSession.getPrincipalManager().getEveryone());
           acMgr.setPolicy(absPath, acPolicy);
         }
 
@@ -220,7 +215,19 @@ public class JackrabbitMutableAclService implements IPentahoMutableAclService {
         AccessControlPolicy acPolicy = getAccessControlPolicy(acMgr, absPath);
         Assert.isInstanceOf(JackrabbitAccessControlList.class, acPolicy);
         // cast to JackrabbitAccessControlList to get addEntry call (for isAllow parameter)
-        JackrabbitAccessControlList acList = (JackrabbitAccessControlList) acPolicy;
+        IPentahoJackrabbitAccessControlList acList = (IPentahoJackrabbitAccessControlList) acPolicy;
+
+        acList.setEntriesInheriting(acl.isEntriesInheriting());
+
+        if (acl.getOwner() instanceof PrincipalSid) {
+          acList.setOwner(jrSession.getPrincipalManager().getPrincipal(((PrincipalSid) acl.getOwner()).getPrincipal()));
+        } else if (acl.getOwner() instanceof GrantedAuthoritySid) {
+          acList.setOwner(jrSession.getPrincipalManager().getPrincipal(
+              ((GrantedAuthoritySid) acl.getOwner()).getGrantedAuthority()));
+        } else {
+          acList.setOwner(jrSession.getPrincipalManager().getPrincipal(((JackrabbitSid) acl.getOwner()).getName()));
+        }
+
         // clear all entries
         AccessControlEntry[] acEntries = acList.getAccessControlEntries();
         for (int i = 0; i < acEntries.length; i++) {
@@ -287,30 +294,7 @@ public class JackrabbitMutableAclService implements IPentahoMutableAclService {
   }
 
   public ObjectIdentity[] findChildren(final ObjectIdentity parentIdentity) {
-    return (ObjectIdentity[]) jcrTemplate.execute(new JcrCallback() {
-      public Object doInJcr(final Session session) throws RepositoryException, IOException {
-        PentahoJcrConstants pentahoJcrConstants = new PentahoJcrConstants(session);
-        Assert.isTrue(session instanceof SessionImpl);
-        SessionImpl jrSession = (SessionImpl) session;
-        Node node = nodeIdStrategy.findNodeById(jrSession, parentIdentity.getIdentifier());
-        if (node == null) {
-          throw new NotFoundException(String.format("node with id [%s] not found", parentIdentity.getIdentifier()));
-        }
-        RepositoryFile file = JcrRepositoryFileUtils.nodeToFile(session, pentahoJcrConstants, nodeIdStrategy, node);
-        if (file.isFolder()
-            && !JcrRepositoryFileUtils.getChildren(session, pentahoJcrConstants, nodeIdStrategy, file).isEmpty()) {
-          List<RepositoryFile> children = JcrRepositoryFileUtils.getChildren(session, pentahoJcrConstants,
-              nodeIdStrategy, file);
-          ObjectIdentity[] oids = new ObjectIdentity[children.size()];
-          for (int i = 0; i < oids.length; i++) {
-            oids[i] = new ObjectIdentityImpl(RepositoryFile.class, children.get(i).getId());
-          }
-          return oids;
-        } else {
-          return null; // per AclService interface contract
-        }
-      }
-    });
+    throw new UnsupportedOperationException();
   }
 
   public Acl readAclById(ObjectIdentity object, Sid[] sids) throws NotFoundException {
@@ -385,10 +369,25 @@ public class JackrabbitMutableAclService implements IPentahoMutableAclService {
         }
       }
 
-      // TODO mlowery fetch owner from Jackrabbit
-      PentahoMutableAcl acl = new PentahoMutableAcl(objectIdentity, parentAcl, true, new PrincipalSid("ignored"));
-      Assert.isInstanceOf(AccessControlList.class, acPolicy);
-      AccessControlList acList = (AccessControlList) acPolicy;
+      Assert.isInstanceOf(IPentahoJackrabbitAccessControlList.class, acPolicy);
+
+      IPentahoJackrabbitAccessControlList acList = (IPentahoJackrabbitAccessControlList) acPolicy;
+
+      Sid owner = null;
+      Principal ownerPrincipal = acList.getOwner();
+      if (ownerPrincipal instanceof UserPrincipal) {
+        owner = new PrincipalSid(ownerPrincipal.getName());
+      } else if (ownerPrincipal instanceof SpringSecurityGrantedAuthorityPrincipal) {
+        owner = new GrantedAuthoritySid(ownerPrincipal.getName());
+      } else if (ownerPrincipal instanceof AdminPrincipal) {
+        owner = new PrincipalSid(ownerPrincipal.getName());
+      } else if (ownerPrincipal instanceof EveryonePrincipal) { // EveryonePrincipal is like a group, so treat as a role
+        owner = new GrantedAuthoritySid(ownerPrincipal.getName());
+      } else {
+        throw new RuntimeException("unknown owner type: " + ownerPrincipal.getClass().getName());
+      }
+
+      PentahoMutableAcl acl = new PentahoMutableAcl(objectIdentity, parentAcl, acList.isEntriesInheriting(), owner);
       AccessControlEntry[] acEntries = acList.getAccessControlEntries();
       for (int i = 0; i < acEntries.length; i++) {
         Assert.isInstanceOf(JackrabbitAccessControlEntry.class, acEntries[i]);
@@ -407,6 +406,8 @@ public class JackrabbitMutableAclService implements IPentahoMutableAclService {
             sid = new GrantedAuthoritySid(principal.getName());
           } else if (principal instanceof AdminPrincipal) {
             sid = new PrincipalSid(principal.getName());
+          } else if (principal instanceof EveryonePrincipal) { // EveryonePrincipal is like a group, so treat as a role
+            sid = new GrantedAuthoritySid(principal.getName());
           } else {
             throw new RuntimeException("unknown principal type: " + principal.getClass().getName());
           }
@@ -474,21 +475,6 @@ public class JackrabbitMutableAclService implements IPentahoMutableAclService {
     this.nodeIdStrategy = nodeIdStrategy;
   }
 
-  /**
-   * An {@link AclAuthorizationStrategy} that never throws an {@code AccessDeniedException}. 
-   * 
-   * <p>
-   * {@code AclAuthorizationStrategy} is used by {@code AclImpl} for access control when modifying the ACL itself. This
-   * implementation of {@code AclAuthorizationStrategy} is applicable when the datastore itself enforces ACL 
-   * modifications, such as is done in Jackrabbit.
-   * </p>
-   *
-   */
-  private class NoOpAclAuthorizationStrategy implements AclAuthorizationStrategy {
-    public void securityCheck(final Acl acl, final int changeType) {
-    }
-  }
-
   public static interface IAclHelper {
     void addPermission(final ObjectIdentity oid, final Sid recipient, final Permission permission,
         final boolean granting);
@@ -521,6 +507,7 @@ public class JackrabbitMutableAclService implements IPentahoMutableAclService {
         Acl newParent = readAclById(parentOid);
         acl.setParent(newParent);
       }
+      acl.setOwner(owner);
       if (!entriesInheriting) {
         acl.setEntriesInheriting(false);
         // TODO mlowery fix this null call
@@ -540,7 +527,6 @@ public class JackrabbitMutableAclService implements IPentahoMutableAclService {
       addPermission(oid, sid, RepositoryFilePermission.READ, true);
       addPermission(oid, sid, RepositoryFilePermission.READ_ACL, true);
       // TODO uncomment this when custom privileges are supported
-      //    internalAddPermission(file, sid, RepositoryFilePermission.TAKE_OWNERSHIP);
       addPermission(oid, sid, RepositoryFilePermission.WRITE, true);
       addPermission(oid, sid, RepositoryFilePermission.WRITE_ACL, true);
     }

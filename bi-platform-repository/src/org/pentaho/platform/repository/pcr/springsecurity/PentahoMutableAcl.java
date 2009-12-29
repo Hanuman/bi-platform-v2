@@ -21,7 +21,7 @@ import org.springframework.security.acls.sid.Sid;
 import org.springframework.util.Assert;
 
 /**
- * A custom implemention of {@link MutableAcl}. This implementation:
+ * A custom implemention of {@link MutableAcl}. Based on {@code AclImpl}. This implementation:
  * 
  * <ul>
  * <li>Has no auditing.</li>

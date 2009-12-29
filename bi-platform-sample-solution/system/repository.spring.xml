@@ -5,28 +5,28 @@
 
   <!-- ACL permission masks used by this application -->
   <bean id="RepositoryFilePermission.READ" class="org.springframework.beans.factory.config.FieldRetrievingFactoryBean">
-    <property name="staticField" value="org.pentaho.platform.api.repository.RepositoryFilePermission.READ" />
+    <property name="staticField" value="org.pentaho.platform.repository.pcr.springsecurity.RepositoryFilePermission.READ" />
   </bean>
   <bean id="RepositoryFilePermission.DELETE" class="org.springframework.beans.factory.config.FieldRetrievingFactoryBean">
-    <property name="staticField" value="org.pentaho.platform.api.repository.RepositoryFilePermission.DELETE" />
+    <property name="staticField" value="org.pentaho.platform.repository.pcr.springsecurity.RepositoryFilePermission.DELETE" />
   </bean>
   <bean id="RepositoryFilePermission.EXECUTE" class="org.springframework.beans.factory.config.FieldRetrievingFactoryBean">
-    <property name="staticField" value="org.pentaho.platform.api.repository.RepositoryFilePermission.EXECUTE" />
+    <property name="staticField" value="org.pentaho.platform.repository.pcr.springsecurity.RepositoryFilePermission.EXECUTE" />
   </bean>
   <bean id="RepositoryFilePermission.APPEND" class="org.springframework.beans.factory.config.FieldRetrievingFactoryBean">
-    <property name="staticField" value="org.pentaho.platform.api.repository.RepositoryFilePermission.APPEND" />
+    <property name="staticField" value="org.pentaho.platform.repository.pcr.springsecurity.RepositoryFilePermission.APPEND" />
   </bean>
   <bean id="RepositoryFilePermission.WRITE" class="org.springframework.beans.factory.config.FieldRetrievingFactoryBean">
-    <property name="staticField" value="org.pentaho.platform.api.repository.RepositoryFilePermission.WRITE" />
+    <property name="staticField" value="org.pentaho.platform.repository.pcr.springsecurity.RepositoryFilePermission.WRITE" />
   </bean>
   <bean id="RepositoryFilePermission.DELETE_CHILD" class="org.springframework.beans.factory.config.FieldRetrievingFactoryBean">
-    <property name="staticField" value="org.pentaho.platform.api.repository.RepositoryFilePermission.DELETE_CHILD" />
+    <property name="staticField" value="org.pentaho.platform.repository.pcr.springsecurity.RepositoryFilePermission.DELETE_CHILD" />
   </bean>
   <bean id="RepositoryFilePermission.READ_ACL" class="org.springframework.beans.factory.config.FieldRetrievingFactoryBean">
-    <property name="staticField" value="org.pentaho.platform.api.repository.RepositoryFilePermission.READ_ACL" />
+    <property name="staticField" value="org.pentaho.platform.repository.pcr.springsecurity.RepositoryFilePermission.READ_ACL" />
   </bean>
   <bean id="RepositoryFilePermission.WRITE_ACL" class="org.springframework.beans.factory.config.FieldRetrievingFactoryBean">
-    <property name="staticField" value="org.pentaho.platform.api.repository.RepositoryFilePermission.WRITE_ACL" />
+    <property name="staticField" value="org.pentaho.platform.repository.pcr.springsecurity.RepositoryFilePermission.WRITE_ACL" />
   </bean>
 
   <!-- An access decision voter that reads VOTE_ROLE_FILE_* configuration settings -->
@@ -180,6 +180,7 @@
         <value>classpath:/org/pentaho/platform/repository/pcr/jcr/jackrabbit/pentahoInternalFolder.cnd</value>
         <value>classpath:/org/pentaho/platform/repository/pcr/jcr/jackrabbit/pentahoLockTokenStorage.cnd</value>
         <value>classpath:/org/pentaho/platform/repository/pcr/jcr/jackrabbit/pentahoVersionable.cnd</value>
+        <value>classpath:/org/pentaho/platform/repository/pcr/jcr/jackrabbit/pentahoAcl.cnd</value>
       </list>
     </property>
   </bean>
@@ -201,9 +202,6 @@
           </constructor-arg>
         </bean>
       </list>
-    </constructor-arg>
-    <constructor-arg>
-      <bean class="org.pentaho.platform.repository.pcr.jcr.DefaultLockTokenHelper" />
     </constructor-arg>
   </bean>
 
@@ -246,7 +244,6 @@
 
   <bean id="aclService" class="org.pentaho.platform.repository.pcr.jcr.jackrabbit.JackrabbitMutableAclService">
     <constructor-arg ref="jcrTemplate" />
-    <constructor-arg ref="commonAuthenticatedAuthorityName" />
     <constructor-arg>
       <map>
         <entry key-ref="RepositoryFilePermission.EXECUTE">

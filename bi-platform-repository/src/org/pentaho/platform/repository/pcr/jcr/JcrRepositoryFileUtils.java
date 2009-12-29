@@ -21,9 +21,8 @@ import javax.jcr.version.VersionHistory;
 
 import org.pentaho.platform.api.repository.IRepositoryFileContent;
 import org.pentaho.platform.api.repository.RepositoryFile;
+import org.pentaho.platform.api.repository.RepositoryFileSid;
 import org.pentaho.platform.api.repository.VersionSummary;
-import org.pentaho.platform.repository.pcr.jcr.JcrRepositoryFileDao.ILockTokenHelper;
-import org.pentaho.platform.repository.pcr.jcr.JcrRepositoryFileDao.Transformer;
 import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
 
@@ -34,14 +33,16 @@ import org.springframework.util.StringUtils;
  */
 public class JcrRepositoryFileUtils {
   public static RepositoryFile getFileById(final Session session, final PentahoJcrConstants pentahoJcrConstants,
-      final NodeIdStrategy nodeIdStrategy, final Serializable id) throws RepositoryException, IOException {
+      final NodeIdStrategy nodeIdStrategy, final IOwnerLookupHelper ownerLookupHelper, final Serializable id)
+      throws RepositoryException, IOException {
     Node fileNode = nodeIdStrategy.findNodeById(session, id);
     Assert.notNull(fileNode);
-    return nodeToFile(session, pentahoJcrConstants, nodeIdStrategy, fileNode);
+    return nodeToFile(session, pentahoJcrConstants, nodeIdStrategy, ownerLookupHelper, fileNode);
   }
 
   public static RepositoryFile nodeToFile(final Session session, final PentahoJcrConstants pentahoJcrConstants,
-      final NodeIdStrategy nodeIdStrategy, final Node node) throws RepositoryException, IOException {
+      final NodeIdStrategy nodeIdStrategy, final IOwnerLookupHelper ownerLookupHelper, final Node node)
+      throws RepositoryException, IOException {
     Assert.isTrue(isSupportedNodeType(pentahoJcrConstants, node));
 
     Serializable id = null;
@@ -58,6 +59,7 @@ public class JcrRepositoryFileUtils {
     String lockOwner = null;
     Date lockDate = null;
     String lockMessage = null;
+    RepositoryFileSid owner = null;
 
     id = getNodeId(session, pentahoJcrConstants, nodeIdStrategy, node);
     parentId = getParentId(session, pentahoJcrConstants, nodeIdStrategy, node);
@@ -100,11 +102,26 @@ public class JcrRepositoryFileUtils {
       lockMessage = node.getProperty(pentahoJcrConstants.getPHO_LOCKMESSAGE()).getString();
     }
 
+    owner = getRepositoryFileSid(session, pentahoJcrConstants, ownerLookupHelper, node);
+
     RepositoryFile file = new RepositoryFile.Builder(name, id, parentId).createdDate(created).lastModificationDate(
         lastModified).contentType(contentType).folder(folder).versioned(versioned).absolutePath(absolutePath)
-        .versionId(versionId).locked(locked).lockDate(lockDate).lockMessage(lockMessage).lockOwner(lockOwner).build();
+        .versionId(versionId).locked(locked).lockDate(lockDate).lockMessage(lockMessage).lockOwner(lockOwner).owner(
+            owner).build();
 
     return file;
+  }
+
+  private static RepositoryFileSid getRepositoryFileSid(final Session session,
+      final PentahoJcrConstants pentahoJcrConstants, final IOwnerLookupHelper ownerLookupHelper, final Node node)
+      throws RepositoryException {
+    Node nonFrozenNode = null;
+    if (node.isNodeType(pentahoJcrConstants.getNT_FROZENNODE())) {
+      nonFrozenNode = session.getNodeByUUID(node.getProperty(pentahoJcrConstants.getJCR_FROZENUUID()).getString());
+    } else {
+      nonFrozenNode = node;
+    }
+    return ownerLookupHelper.getOwner(session, pentahoJcrConstants, nonFrozenNode);
   }
 
   private static String getAbsolutePath(final Session session, final PentahoJcrConstants pentahoJcrConstants,
@@ -182,7 +199,7 @@ public class JcrRepositoryFileUtils {
 
   public static Node createFileNode(final Session session, final PentahoJcrConstants pentahoJcrConstants,
       final NodeIdStrategy nodeIdStrategy, final RepositoryFile parentFolder, final RepositoryFile file,
-      final IRepositoryFileContent content, final Transformer<IRepositoryFileContent> transformer)
+      final IRepositoryFileContent content, final ITransformer<IRepositoryFileContent> transformer)
       throws RepositoryException, IOException {
 
     Node parentFolderNode;
@@ -219,7 +236,7 @@ public class JcrRepositoryFileUtils {
 
   public static Node updateFileNode(final Session session, final PentahoJcrConstants pentahoJcrConstants,
       final NodeIdStrategy nodeIdStrategy, final RepositoryFile file, final IRepositoryFileContent content,
-      final Transformer<IRepositoryFileContent> transformer) throws RepositoryException, IOException {
+      final ITransformer<IRepositoryFileContent> transformer) throws RepositoryException, IOException {
 
     Calendar lastModified = Calendar.getInstance();
 
@@ -254,7 +271,7 @@ public class JcrRepositoryFileUtils {
 
   public static IRepositoryFileContent getContent(final Session session, final PentahoJcrConstants pentahoJcrConstants,
       final NodeIdStrategy nodeIdStrategy, final RepositoryFile file,
-      final Transformer<IRepositoryFileContent> transformer) throws RepositoryException, IOException {
+      final ITransformer<IRepositoryFileContent> transformer) throws RepositoryException, IOException {
     Node fileNode = nodeIdStrategy.findNodeById(session, file.getId());
     if (isVersioned(session, pentahoJcrConstants, fileNode)) {
       Assert.notNull(file.getVersionId());
@@ -268,7 +285,8 @@ public class JcrRepositoryFileUtils {
   }
 
   public static List<RepositoryFile> getChildren(final Session session, final PentahoJcrConstants pentahoJcrConstants,
-      final NodeIdStrategy nodeIdStrategy, final RepositoryFile folder) throws RepositoryException, IOException {
+      final NodeIdStrategy nodeIdStrategy, final IOwnerLookupHelper ownerLookupHelper, final RepositoryFile folder)
+      throws RepositoryException, IOException {
     Node folderNode = nodeIdStrategy.findNodeById(session, folder.getId());
     Assert.isTrue(isFolder(pentahoJcrConstants, folderNode));
 
@@ -278,7 +296,7 @@ public class JcrRepositoryFileUtils {
     while (nodeIterator.hasNext()) {
       Node node = nodeIterator.nextNode();
       if (isFolder(pentahoJcrConstants, node) || isFileOrLinkedFile(pentahoJcrConstants, node)) {
-        children.add(nodeToFile(session, pentahoJcrConstants, nodeIdStrategy, node));
+        children.add(nodeToFile(session, pentahoJcrConstants, nodeIdStrategy, ownerLookupHelper, node));
       }
     }
     Collections.sort(children);
@@ -542,9 +560,10 @@ public class JcrRepositoryFileUtils {
   }
 
   public static Object nodeIdToFile(final Session session, final PentahoJcrConstants pentahoJcrConstants,
-      final NodeIdStrategy nodeIdStrategy, final Serializable id) throws RepositoryException, IOException {
+      final NodeIdStrategy nodeIdStrategy, final IOwnerLookupHelper ownerLookupHelper, final Serializable id)
+      throws RepositoryException, IOException {
     Node fileNode = nodeIdStrategy.findNodeById(session, id);
-    return nodeToFile(session, pentahoJcrConstants, nodeIdStrategy, fileNode);
+    return nodeToFile(session, pentahoJcrConstants, nodeIdStrategy, ownerLookupHelper, fileNode);
   }
 
   public static Object getVersionSummaries(final Session session, final PentahoJcrConstants pentahoJcrConstants,
@@ -587,10 +606,12 @@ public class JcrRepositoryFileUtils {
   }
 
   public static RepositoryFile getFileAtVersion(final Session session, final PentahoJcrConstants pentahoJcrConstants,
-      final NodeIdStrategy nodeIdStrategy, final VersionSummary versionSummary) throws RepositoryException, IOException {
+      final NodeIdStrategy nodeIdStrategy, final IOwnerLookupHelper ownerLookupHelper,
+      final VersionSummary versionSummary) throws RepositoryException, IOException {
     Node fileNode = nodeIdStrategy.findNodeById(session, versionSummary.getVersionedFileId());
     Version version = fileNode.getVersionHistory().getVersion(versionSummary.getId().toString());
-    return nodeToFile(session, pentahoJcrConstants, nodeIdStrategy, getNodeAtVersion(pentahoJcrConstants, version));
+    return nodeToFile(session, pentahoJcrConstants, nodeIdStrategy, ownerLookupHelper, getNodeAtVersion(
+        pentahoJcrConstants, version));
   }
 
 }

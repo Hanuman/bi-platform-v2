@@ -2,8 +2,6 @@ package org.pentaho.platform.api.repository;
 
 import java.util.List;
 
-import org.springframework.security.acls.Acl;
-
 /**
  * Entry point into the content repository.
  * 
@@ -122,7 +120,7 @@ public interface IPentahoContentRepository {
 
   // ~ Access query methods ============================================================================================
 
-  Acl getAcl(final RepositoryFile file);
+  RepositoryFileAcl getAcl(final RepositoryFile file);
 
   // ~ Version methods ==================================================================================================
 

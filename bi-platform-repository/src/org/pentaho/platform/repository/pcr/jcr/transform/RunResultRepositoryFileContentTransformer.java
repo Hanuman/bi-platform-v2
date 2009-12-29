@@ -14,12 +14,12 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.pentaho.platform.repository.pcr.RunResultRepositoryFileContent;
 import org.pentaho.platform.repository.pcr.SimpleRepositoryFileContent;
+import org.pentaho.platform.repository.pcr.jcr.ITransformer;
 import org.pentaho.platform.repository.pcr.jcr.JcrRepositoryFileUtils;
 import org.pentaho.platform.repository.pcr.jcr.NodeIdStrategy;
 import org.pentaho.platform.repository.pcr.jcr.PentahoJcrConstants;
-import org.pentaho.platform.repository.pcr.jcr.JcrRepositoryFileDao.Transformer;
 
-public class RunResultRepositoryFileContentTransformer implements Transformer<RunResultRepositoryFileContent> {
+public class RunResultRepositoryFileContentTransformer implements ITransformer<RunResultRepositoryFileContent> {
 
   // ~ Static fields/initializers ======================================================================================
 

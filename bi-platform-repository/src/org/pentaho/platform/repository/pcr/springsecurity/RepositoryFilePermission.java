@@ -1,4 +1,4 @@
-package org.pentaho.platform.api.repository;
+package org.pentaho.platform.repository.pcr.springsecurity;
 
 import org.springframework.security.acls.Permission;
 import org.springframework.security.acls.domain.AbstractPermission;
@@ -11,6 +11,7 @@ import org.springframework.security.acls.domain.DefaultPermissionFactory;
  * Note: There is no "full control" mask. To be granted access to a domain object, the user must have an ACE specifying
  * one of user's sids as the recipient and a single bit as the permission value. This could be expensive in terms of
  * database rows, however ACL inheritance will go far in reducing the number of rows.
+ * TODO mlowery add full control bit mask
  * </p>
  * 
  * @author mlowery
@@ -31,15 +32,9 @@ public class RepositoryFilePermission extends AbstractPermission {
 
   public static final Permission DELETE_CHILD = new RepositoryFilePermission(1 << 5, 'C'); // 32
 
-//  public static final Permission READ_ATTRIBUTES = new RepositoryFilePermission(1 << 6, 'T'); // 64
-//
-//  public static final Permission WRITE_ATTRIBUTES = new RepositoryFilePermission(1 << 7, 'B'); // 128
-
   public static final Permission READ_ACL = new RepositoryFilePermission(1 << 8, 'P'); // 256
 
   public static final Permission WRITE_ACL = new RepositoryFilePermission(1 << 9, 'L'); // 512
-
-  public static final Permission TAKE_OWNERSHIP = new RepositoryFilePermission(1 << 10, 'O'); // 1028
 
   protected static DefaultPermissionFactory defaultPermissionFactory = new DefaultPermissionFactory();
 
