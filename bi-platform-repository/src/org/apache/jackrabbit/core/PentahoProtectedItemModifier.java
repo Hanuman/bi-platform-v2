@@ -52,7 +52,6 @@ import org.pentaho.platform.repository.pcr.jcr.jackrabbit.PentahoDefaultAccessCo
              NodeDefinitionImpl def = parentImpl.getApplicableChildNodeDefinition(name, ntName);
 
              // check for name collisions
-             // TODO: improve. copied from NodeImpl
              NodeState thisState = (NodeState) parentImpl.getItemState();
              ChildNodeEntry cne = thisState.getChildNodeEntry(name, 1);
              if (cne != null) {

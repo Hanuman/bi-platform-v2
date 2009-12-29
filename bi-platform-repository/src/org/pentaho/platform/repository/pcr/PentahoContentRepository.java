@@ -45,7 +45,7 @@ public class PentahoContentRepository implements IPentahoContentRepository {
 
   private IRepositoryEventHandler repositoryEventHandler;
 
-  private IAclConverter aclConverter = new AclConverter();
+  private IAclConverter aclConverter = new DefaultAclConverter();
 
   // ~ Constructors ====================================================================================================
 
@@ -268,7 +268,7 @@ public class PentahoContentRepository implements IPentahoContentRepository {
       parentOid = new ObjectIdentityImpl(RepositoryFile.class, file.getParentId());
     }
     return mutableAclService.createAndInitializeAcl(new ObjectIdentityImpl(RepositoryFile.class, file.getId()),
-        parentOid, entriesInheriting, new PrincipalSid(internalGetUsername()));
+        parentOid, entriesInheriting, new PrincipalSid(internalGetUsername()), RepositoryFilePermission.ALL);
   }
 
   /**
@@ -278,101 +278,6 @@ public class PentahoContentRepository implements IPentahoContentRepository {
     RepositoryFileAcl ssAclToPentahoAcl(final Acl ssAcl);
 
     Acl pentahoAclToSsAcl(final RepositoryFileAcl pentahoAcl);
-  }
-
-  private class AclConverter implements IAclConverter {
-
-    public Acl pentahoAclToSsAcl(final RepositoryFileAcl pentahoAcl) {
-      // TODO Auto-generated method stub 
-      return null;
-    }
-
-    public RepositoryFileAcl ssAclToPentahoAcl(final Acl ssAcl) {
-      Assert.notNull(ssAcl);
-
-      String sidName = null;
-      RepositoryFileSid.Type sidType = null;
-      org.springframework.security.acls.sid.Sid sid = ssAcl.getOwner();
-      if (sid instanceof PrincipalSid) {
-        sidName = ((PrincipalSid) sid).getPrincipal();
-        sidType = RepositoryFileSid.Type.USER;
-      } else if (sid instanceof GrantedAuthoritySid) {
-        sidName = ((GrantedAuthoritySid) sid).getGrantedAuthority();
-        sidType = RepositoryFileSid.Type.ROLE;
-      } else {
-        throw new RuntimeException("unrecognized sid type");
-      }
-
-      RepositoryFileAcl.Builder builder = new RepositoryFileAcl.Builder(ssAcl.getObjectIdentity().getIdentifier(),
-          sidName, sidType);
-
-      AccessControlEntry[] aces = ssAcl.getEntries();
-      for (int i = 0; i < aces.length; i++) {
-        RepositoryFileSid recipient = springSecuritySidToRepositoryFileSid(aces[i].getSid());
-        EnumSet<Permission> permissions = ssPermissionsToPentahoPermissions(aces[i].getPermission());
-        builder.ace(recipient, permissions);
-      }
-
-      return builder.build();
-    }
-
-    private org.springframework.security.acls.sid.Sid repositoryFileSidToSpringSecuritySid(final RepositoryFileSid pentahoSid) {
-      return null;
-
-    }
-
-    private RepositoryFileSid springSecuritySidToRepositoryFileSid(final org.springframework.security.acls.sid.Sid ssSid) {
-      String sidName = null;
-      RepositoryFileSid.Type sidType = null;
-      if (ssSid instanceof PrincipalSid) {
-        sidName = ((PrincipalSid) ssSid).getPrincipal();
-        sidType = RepositoryFileSid.Type.USER;
-      } else if (ssSid instanceof GrantedAuthoritySid) {
-        sidName = ((GrantedAuthoritySid) ssSid).getGrantedAuthority();
-        sidType = RepositoryFileSid.Type.ROLE;
-      } else {
-        throw new RuntimeException("unrecognized sid type");
-      }
-      return new RepositoryFileSid(sidName, sidType);
-    }
-
-    private EnumSet<Permission> ssPermissionsToPentahoPermissions(
-        final org.springframework.security.acls.Permission ssPermission) {
-      EnumSet<Permission> permissions = EnumSet.noneOf(Permission.class);
-      if ((RepositoryFilePermission.READ.getMask() & ssPermission.getMask()) == RepositoryFilePermission.READ.getMask()) {
-        permissions.add(Permission.READ);
-      }
-      if ((RepositoryFilePermission.APPEND.getMask() & ssPermission.getMask()) == RepositoryFilePermission.APPEND
-          .getMask()) {
-        permissions.add(Permission.APPEND);
-      }
-      if ((RepositoryFilePermission.DELETE.getMask() & ssPermission.getMask()) == RepositoryFilePermission.DELETE
-          .getMask()) {
-        permissions.add(Permission.DELETE);
-      }
-      if ((RepositoryFilePermission.DELETE_CHILD.getMask() & ssPermission.getMask()) == RepositoryFilePermission.DELETE_CHILD
-          .getMask()) {
-        permissions.add(Permission.DELETE_CHILD);
-      }
-      if ((RepositoryFilePermission.EXECUTE.getMask() & ssPermission.getMask()) == RepositoryFilePermission.EXECUTE
-          .getMask()) {
-        permissions.add(Permission.EXECUTE);
-      }
-      if ((RepositoryFilePermission.READ_ACL.getMask() & ssPermission.getMask()) == RepositoryFilePermission.READ_ACL
-          .getMask()) {
-        permissions.add(Permission.READ_ACL);
-      }
-      if ((RepositoryFilePermission.WRITE.getMask() & ssPermission.getMask()) == RepositoryFilePermission.WRITE
-          .getMask()) {
-        permissions.add(Permission.WRITE);
-      }
-      if ((RepositoryFilePermission.WRITE_ACL.getMask() & ssPermission.getMask()) == RepositoryFilePermission.WRITE_ACL
-          .getMask()) {
-        permissions.add(Permission.WRITE_ACL);
-      }
-      return permissions;
-    }
-
   }
 
 }

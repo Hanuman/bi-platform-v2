@@ -2,9 +2,8 @@ package org.pentaho.platform.repository.pcr.jcr.jackrabbit;
 
 import java.io.IOException;
 import java.security.Principal;
-import java.util.ArrayList;
+import java.security.acl.Group;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import javax.jcr.Node;
@@ -20,19 +19,14 @@ import org.apache.jackrabbit.api.jsr283.security.AccessControlPolicy;
 import org.apache.jackrabbit.api.jsr283.security.AccessControlPolicyIterator;
 import org.apache.jackrabbit.api.jsr283.security.Privilege;
 import org.apache.jackrabbit.core.SessionImpl;
-import org.apache.jackrabbit.core.security.UserPrincipal;
 import org.apache.jackrabbit.core.security.authorization.JackrabbitAccessControlEntry;
 import org.apache.jackrabbit.core.security.authorization.JackrabbitAccessControlList;
-import org.apache.jackrabbit.core.security.authorization.PrivilegeRegistry;
-import org.apache.jackrabbit.core.security.principal.AdminPrincipal;
-import org.apache.jackrabbit.core.security.principal.EveryonePrincipal;
 import org.pentaho.platform.repository.pcr.IPentahoMutableAclService;
 import org.pentaho.platform.repository.pcr.jcr.JcrRepositoryFileUtils;
 import org.pentaho.platform.repository.pcr.jcr.NodeIdStrategy;
 import org.pentaho.platform.repository.pcr.jcr.PentahoJcrConstants;
 import org.pentaho.platform.repository.pcr.jcr.UuidNodeIdStrategy;
 import org.pentaho.platform.repository.pcr.springsecurity.PentahoMutableAcl;
-import org.pentaho.platform.repository.pcr.springsecurity.RepositoryFilePermission;
 import org.springframework.extensions.jcr.JcrCallback;
 import org.springframework.extensions.jcr.JcrTemplate;
 import org.springframework.security.acls.Acl;
@@ -74,29 +68,19 @@ public class JackrabbitMutableAclService implements IPentahoMutableAclService {
 
   private NodeIdStrategy nodeIdStrategy;
 
-  private Map<Permission, List<String>> permissionToPrivilegeNamesMap;
+  private IAclHelper aclHelper = new DefaultAclHelper();
 
-  private Map<String, List<Permission>> privilegeNameToPermissionsMap;
-
-  private IAclHelper aclHelper = new AclHelper();
+  private IPermissionConversionHelper permissionConversionHelper = new DefaultPermissionConversionHelper();
 
   // ~ Constructors ====================================================================================================
 
-  public JackrabbitMutableAclService(final JcrTemplate jcrTemplate,
-      Map<Permission, List<String>> permissionToPrivilegeNamesMap,
-      Map<String, List<Permission>> privilegeNameToPermissionsMap) {
+  public JackrabbitMutableAclService(final JcrTemplate jcrTemplate) {
     super();
     this.jcrTemplate = jcrTemplate;
     this.nodeIdStrategy = new UuidNodeIdStrategy(jcrTemplate);
-    this.permissionToPrivilegeNamesMap = permissionToPrivilegeNamesMap;
-    this.privilegeNameToPermissionsMap = privilegeNameToPermissionsMap;
   }
 
   // ~ Methods =========================================================================================================
-
-  private Privilege getPrivilege(final String name, final SessionImpl jrSession) throws RepositoryException {
-    return new PrivilegeRegistry(jrSession).getPrivilege(name);
-  }
 
   /**
    * {@inheritDoc}
@@ -221,11 +205,9 @@ public class JackrabbitMutableAclService implements IPentahoMutableAclService {
 
         if (acl.getOwner() instanceof PrincipalSid) {
           acList.setOwner(jrSession.getPrincipalManager().getPrincipal(((PrincipalSid) acl.getOwner()).getPrincipal()));
-        } else if (acl.getOwner() instanceof GrantedAuthoritySid) {
+        } else {
           acList.setOwner(jrSession.getPrincipalManager().getPrincipal(
               ((GrantedAuthoritySid) acl.getOwner()).getGrantedAuthority()));
-        } else {
-          acList.setOwner(jrSession.getPrincipalManager().getPrincipal(((JackrabbitSid) acl.getOwner()).getName()));
         }
 
         // clear all entries
@@ -240,13 +222,12 @@ public class JackrabbitMutableAclService implements IPentahoMutableAclService {
 
           if (ssAce.getSid() instanceof PrincipalSid) {
             principal = jrSession.getPrincipalManager().getPrincipal(((PrincipalSid) ssAce.getSid()).getPrincipal());
-          } else if (ssAce.getSid() instanceof GrantedAuthoritySid) {
+          } else {
             principal = jrSession.getPrincipalManager().getPrincipal(
                 ((GrantedAuthoritySid) ssAce.getSid()).getGrantedAuthority());
-          } else {
-            principal = jrSession.getPrincipalManager().getPrincipal(((JackrabbitSid) ssAce.getSid()).getName());
           }
-          acList.addEntry(principal, permissionToPrivileges(ssAce.getPermission(), jrSession), ssAce.isGranting());
+          acList.addEntry(principal, permissionConversionHelper
+              .permissionToPrivileges(jrSession, ssAce.getPermission()), ssAce.isGranting());
         }
         acMgr.setPolicy(absPath, acList);
         session.save();
@@ -265,32 +246,6 @@ public class JackrabbitMutableAclService implements IPentahoMutableAclService {
     AccessControlPolicy[] policies = acMgr.getPolicies(absPath);
     Assert.notEmpty(policies, "most likely due to calling readAclById before calling createAcl");
     return policies[0];
-  }
-
-  private Privilege[] permissionToPrivileges(final Permission permission, final SessionImpl jrSession)
-      throws RepositoryException {
-    List<String> privilegeNames = permissionToPrivilegeNamesMap.get(permission);
-    Assert.notEmpty(privilegeNames, String.format("no privilege names found for permission [%s]", permission));
-    List<Privilege> privileges = new ArrayList<Privilege>(privilegeNames.size());
-    for (String privilegeName : privilegeNames) {
-      privileges.add(getPrivilege(privilegeName, jrSession));
-    }
-    return privileges.toArray(new Privilege[0]);
-  }
-
-  private Permission[] privilegeToPermissions(final Privilege privilege, final SessionImpl jrSession)
-      throws RepositoryException {
-    String privilegeName = privilege.getName();
-    String extendedPrivilegeName = privilegeName;
-    int colonIndex = privilegeName.indexOf(":");
-    if (colonIndex != -1) {
-      String prefix = privilegeName.substring(0, colonIndex);
-      extendedPrivilegeName = "{" + jrSession.getNamespaceURI(prefix) + "}" + privilegeName.substring(colonIndex + 1);
-    }
-    List<Permission> permissions = privilegeNameToPermissionsMap.get(extendedPrivilegeName);
-    // permissions here can be empty but not null
-    Assert.notNull(permissions, String.format("no permissions found for privilege name [%s]", extendedPrivilegeName));
-    return permissions.toArray(new Permission[0]);
   }
 
   public ObjectIdentity[] findChildren(final ObjectIdentity parentIdentity) {
@@ -375,16 +330,10 @@ public class JackrabbitMutableAclService implements IPentahoMutableAclService {
 
       Sid owner = null;
       Principal ownerPrincipal = acList.getOwner();
-      if (ownerPrincipal instanceof UserPrincipal) {
-        owner = new PrincipalSid(ownerPrincipal.getName());
-      } else if (ownerPrincipal instanceof SpringSecurityGrantedAuthorityPrincipal) {
-        owner = new GrantedAuthoritySid(ownerPrincipal.getName());
-      } else if (ownerPrincipal instanceof AdminPrincipal) {
-        owner = new PrincipalSid(ownerPrincipal.getName());
-      } else if (ownerPrincipal instanceof EveryonePrincipal) { // EveryonePrincipal is like a group, so treat as a role
+      if (ownerPrincipal instanceof Group) {
         owner = new GrantedAuthoritySid(ownerPrincipal.getName());
       } else {
-        throw new RuntimeException("unknown owner type: " + ownerPrincipal.getClass().getName());
+        owner = new PrincipalSid(ownerPrincipal.getName());
       }
 
       PentahoMutableAcl acl = new PentahoMutableAcl(objectIdentity, parentAcl, acList.isEntriesInheriting(), owner);
@@ -393,30 +342,18 @@ public class JackrabbitMutableAclService implements IPentahoMutableAclService {
         Assert.isInstanceOf(JackrabbitAccessControlEntry.class, acEntries[i]);
         JackrabbitAccessControlEntry jrAce = (JackrabbitAccessControlEntry) acEntries[i];
         Principal principal = jrAce.getPrincipal();
+        // TODO principal sid??? need to be able to lookup principal name
+        Sid sid = null;
+        if (principal instanceof Group) {
+          sid = new GrantedAuthoritySid(principal.getName());
+        } else {
+          sid = new PrincipalSid(principal.getName());
+        }
         logger.debug(String.format("principal class [%s]", principal.getClass().getName()));
         Privilege[] privileges = jrAce.getPrivileges();
-        int aceIndex = 0;
-        for (int j = 0; j < privileges.length; j++) {
-
-          // TODO principal sid??? need to be able to lookup principal name
-          Sid sid = null;
-          if (principal instanceof UserPrincipal) {
-            sid = new PrincipalSid(principal.getName());
-          } else if (principal instanceof SpringSecurityGrantedAuthorityPrincipal) {
-            sid = new GrantedAuthoritySid(principal.getName());
-          } else if (principal instanceof AdminPrincipal) {
-            sid = new PrincipalSid(principal.getName());
-          } else if (principal instanceof EveryonePrincipal) { // EveryonePrincipal is like a group, so treat as a role
-            sid = new GrantedAuthoritySid(principal.getName());
-          } else {
-            throw new RuntimeException("unknown principal type: " + principal.getClass().getName());
-          }
-
-          Permission[] permissions = privilegeToPermissions(privileges[j], jrSession);
-          for (Permission permission : permissions) {
-            acl.insertAce(aceIndex++, permission, sid, jrAce.isAllow());
-          }
-        }
+        acl
+            .insertAce(i, permissionConversionHelper.privilegesToPermission(jrSession, privileges), sid, jrAce
+                .isAllow());
       }
       return acl;
     } catch (RepositoryException e) {
@@ -424,68 +361,12 @@ public class JackrabbitMutableAclService implements IPentahoMutableAclService {
     }
   }
 
-  public static class JackrabbitSid implements Sid {
-    private static final long serialVersionUID = 7653528032566695538L;
-
-    private String name;
-
-    public JackrabbitSid(String name) {
-      super();
-      this.name = name;
-    }
-
-    @Override
-    public int hashCode() {
-      final int prime = 31;
-      int result = 1;
-      result = prime * result + ((name == null) ? 0 : name.hashCode());
-      return result;
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-      if (this == obj)
-        return true;
-      if (obj == null)
-        return false;
-      if (getClass() != obj.getClass())
-        return false;
-      JackrabbitSid other = (JackrabbitSid) obj;
-      if (name == null) {
-        if (other.name != null)
-          return false;
-      } else if (!name.equals(other.name))
-        return false;
-      return true;
-    }
-
-    @Override
-    public String toString() {
-      return "JackrabbitSid [" + name + "]";
-    }
-
-    public String getName() {
-      return name;
-    }
-
-  }
-
   public void setNodeIdStrategy(final NodeIdStrategy nodeIdStrategy) {
     Assert.notNull(nodeIdStrategy);
     this.nodeIdStrategy = nodeIdStrategy;
   }
 
-  public static interface IAclHelper {
-    void addPermission(final ObjectIdentity oid, final Sid recipient, final Permission permission,
-        final boolean granting);
-
-    MutableAcl createAndInitializeAcl(final ObjectIdentity oid, final ObjectIdentity parentOid,
-        final boolean entriesInheriting, final Sid owner);
-
-    void setFullControl(final ObjectIdentity oid, final Sid sid, final Permission permission);
-  }
-
-  private class AclHelper implements IAclHelper {
+  private class DefaultAclHelper implements IAclHelper {
 
     public void addPermission(ObjectIdentity oid, Sid recipient, Permission permission, boolean granting) {
       Assert.notNull(oid);
@@ -500,7 +381,7 @@ public class JackrabbitMutableAclService implements IPentahoMutableAclService {
     }
 
     public MutableAcl createAndInitializeAcl(final ObjectIdentity oid, final ObjectIdentity parentOid,
-        final boolean entriesInheriting, final Sid owner) {
+        final boolean entriesInheriting, final Sid owner, final Permission allPermission) {
       MutableAcl acl = createAcl(oid);
       // link up parent if parent not null
       if (parentOid != null) {
@@ -510,25 +391,13 @@ public class JackrabbitMutableAclService implements IPentahoMutableAclService {
       acl.setOwner(owner);
       if (!entriesInheriting) {
         acl.setEntriesInheriting(false);
-        // TODO mlowery fix this null call
-        setFullControl(oid, owner, null);
+        setFullControl(oid, owner, allPermission);
       }
       return updateAcl(acl);
     }
 
     public void setFullControl(final ObjectIdentity oid, final Sid sid, final Permission permission) {
-      // TODO mlowery don't call addPermission as this is a connect to jcr per addPermission call
-      // TODO mlowery don't import RepositoryFilePermission
-      addPermission(oid, sid, RepositoryFilePermission.APPEND, true);
-      addPermission(oid, sid, RepositoryFilePermission.DELETE, true);
-      addPermission(oid, sid, RepositoryFilePermission.DELETE_CHILD, true);
-      // TODO uncomment this when custom privileges are supported
-      //    internalAddPermission(file, sid, RepositoryFilePermission.EXECUTE);
-      addPermission(oid, sid, RepositoryFilePermission.READ, true);
-      addPermission(oid, sid, RepositoryFilePermission.READ_ACL, true);
-      // TODO uncomment this when custom privileges are supported
-      addPermission(oid, sid, RepositoryFilePermission.WRITE, true);
-      addPermission(oid, sid, RepositoryFilePermission.WRITE_ACL, true);
+      addPermission(oid, sid, permission, true);
     }
 
   }
@@ -539,8 +408,8 @@ public class JackrabbitMutableAclService implements IPentahoMutableAclService {
   }
 
   public MutableAcl createAndInitializeAcl(final ObjectIdentity oid, final ObjectIdentity parentOid,
-      final boolean entriesInheriting, final Sid owner) {
-    return aclHelper.createAndInitializeAcl(oid, parentOid, entriesInheriting, owner);
+      final boolean entriesInheriting, final Sid owner, final Permission allPermission) {
+    return aclHelper.createAndInitializeAcl(oid, parentOid, entriesInheriting, owner, allPermission);
   }
 
   public void setFullControl(final ObjectIdentity oid, final Sid sid, final Permission permission) {
@@ -550,6 +419,27 @@ public class JackrabbitMutableAclService implements IPentahoMutableAclService {
   public void setAclHelper(final IAclHelper aclHelper) {
     Assert.notNull(aclHelper);
     this.aclHelper = aclHelper;
+  }
+
+  public static interface IAclHelper {
+    void addPermission(final ObjectIdentity oid, final Sid recipient, final Permission permission,
+        final boolean granting);
+
+    MutableAcl createAndInitializeAcl(final ObjectIdentity oid, final ObjectIdentity parentOid,
+        final boolean entriesInheriting, final Sid owner, final Permission allPermission);
+
+    void setFullControl(final ObjectIdentity oid, final Sid sid, final Permission permission);
+  }
+
+  public void setPermissionConversionHelper(final IPermissionConversionHelper permissionConversionHelper) {
+    Assert.notNull(permissionConversionHelper);
+    this.permissionConversionHelper = permissionConversionHelper;
+  }
+
+  public static interface IPermissionConversionHelper {
+    Privilege[] permissionToPrivileges(final SessionImpl jrSession, final Permission first) throws RepositoryException;
+
+    Permission privilegesToPermission(final SessionImpl jrSession, final Privilege[] first) throws RepositoryException;
   }
 
 }

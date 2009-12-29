@@ -2,29 +2,29 @@ package org.pentaho.platform.repository.pcr.springsecurity;
 
 import org.springframework.security.acls.Permission;
 import org.springframework.security.acls.domain.AbstractPermission;
+import org.springframework.security.acls.domain.CumulativePermission;
 import org.springframework.security.acls.domain.DefaultPermissionFactory;
 
 /**
- * A set of standard permissions.
- * 
- * <p>
- * Note: There is no "full control" mask. To be granted access to a domain object, the user must have an ACE specifying
- * one of user's sids as the recipient and a single bit as the permission value. This could be expensive in terms of
- * database rows, however ACL inheritance will go far in reducing the number of rows.
- * TODO mlowery add full control bit mask
- * </p>
+ * A set of standard permissions. Permissions loosely based on 
+ * <a href="http://developer.apple.com/mac/library/documentation/Security/Conceptual/Security_Overview/Concepts/Concepts.html#//apple_ref/doc/uid/TP30000976-CH203-SW3">File System Access Control Policy</a>.
  * 
  * @author mlowery
  */
 public class RepositoryFilePermission extends AbstractPermission {
-  
+
   private static final long serialVersionUID = -5386252944598776600L;
-  
+
+  /**
+   * All bits off. The second argument in the constructor is not used. ({@link #getPattern()} is overridden.)
+   */
+  public static final Permission NONE = new RepositoryFilePermission(0, 'N'); // 1
+
   public static final Permission READ = new RepositoryFilePermission(1 << 0, 'R'); // 1
 
   public static final Permission WRITE = new RepositoryFilePermission(1 << 1, 'W'); // 2
 
-  public static final Permission EXECUTE = new RepositoryFilePermission(1 << 2, 'E'); // 4
+  public static final Permission EXECUTE = new RepositoryFilePermission(1 << 2, 'X'); // 4
 
   public static final Permission DELETE = new RepositoryFilePermission(1 << 3, 'D'); // 8
 
@@ -35,6 +35,12 @@ public class RepositoryFilePermission extends AbstractPermission {
   public static final Permission READ_ACL = new RepositoryFilePermission(1 << 8, 'P'); // 256
 
   public static final Permission WRITE_ACL = new RepositoryFilePermission(1 << 9, 'L'); // 512
+
+  /**
+   * All bits on. This value is future-proof in that new permissions will automatically be included in this value. The
+   * second argument in the constructor is not used. ({@link #getPattern()} is overridden.)
+   */
+  public static final Permission ALL = new RepositoryFilePermission(-1, 'Z');
 
   protected static DefaultPermissionFactory defaultPermissionFactory = new DefaultPermissionFactory();
 
@@ -69,4 +75,27 @@ public class RepositoryFilePermission extends AbstractPermission {
   public final static Permission[] buildFromName(String[] names) {
     return defaultPermissionFactory.buildFromName(names);
   }
+
+  /**
+   * Override to handle NONE and ALL specially.
+   */
+  @Override
+  public String getPattern() {
+    if (mask == -1) {
+      return "ALL"; //$NON-NLS-1$
+    } else if (mask == 0) {
+      return "NONE"; //$NON-NLS-1$
+    } else {
+      return super.getPattern();
+    }
+  }
+
+  public static void main(String[] args) {
+    System.out.println(NONE.toString());
+    System.out.println(new CumulativePermission().set(READ).set(DELETE_CHILD));
+    System.out.println(WRITE_ACL.toString());
+    System.out.println(ALL.toString());
+
+  }
+
 }

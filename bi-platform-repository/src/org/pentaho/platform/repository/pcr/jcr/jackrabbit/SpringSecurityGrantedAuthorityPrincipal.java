@@ -1,20 +1,19 @@
 package org.pentaho.platform.repository.pcr.jcr.jackrabbit;
 
 import java.security.Principal;
-
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import java.security.acl.Group;
+import java.util.Enumeration;
 
 /**
- * The Jackrabbit representation of a {@code GrantedAuthoritySid}.
+ * The Jackrabbit representation of a {@code org.springframework.security.acls.sid.GrantedAuthoritySid}. This was 
+ * required as no {@link Group} implementations that could re-used were found. (Jackrabbit's {@code UserPrincipal} is 
+ * used for representing {@code org.springframework.security.acls.sid.PrincipalSid}.
  * 
  * @author mlowery
  */
-public class SpringSecurityGrantedAuthorityPrincipal implements Principal {
+public class SpringSecurityGrantedAuthorityPrincipal implements Group {
 
   // ~ Static fields/initializers ======================================================================================
-
-  private static final Log logger = LogFactory.getLog(SpringSecurityGrantedAuthorityPrincipal.class);
 
   // ~ Instance fields =================================================================================================
 
@@ -60,7 +59,23 @@ public class SpringSecurityGrantedAuthorityPrincipal implements Principal {
 
   @Override
   public String toString() {
-    return "GrantedAuthorityPrincipal[name=" + name + "]";
+    return "PentahoRolePrincipal[name=" + name + "]";
+  }
+
+  public boolean addMember(final Principal user) {
+    throw new UnsupportedOperationException();
+  }
+
+  public boolean isMember(final Principal member) {
+    throw new UnsupportedOperationException();
+  }
+
+  public Enumeration<? extends Principal> members() {
+    throw new UnsupportedOperationException();
+  }
+
+  public boolean removeMember(final Principal user) {
+    throw new UnsupportedOperationException();
   }
 
 }

@@ -19,7 +19,6 @@ import org.apache.jackrabbit.core.security.principal.AdminPrincipal;
 import org.apache.jackrabbit.core.security.principal.EveryonePrincipal;
 import org.apache.jackrabbit.core.security.principal.PrincipalIteratorAdapter;
 import org.apache.jackrabbit.core.security.principal.PrincipalProvider;
-import org.pentaho.platform.repository.pcr.jcr.jackrabbit.SpringSecurityGrantedAuthorityPrincipal;
 
 /**
  * PrincipalProvider for unit test purposes. Has joe and the other Pentaho users. In addition, it has "everyone", 

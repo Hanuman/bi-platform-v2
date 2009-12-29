@@ -90,8 +90,6 @@ public class PentahoContentRepositoryTests implements ApplicationContextAware {
 
   private String commonAuthenticatedAuthorityName;
 
-  private RepositoryFileSid commonAuthenticatedAuthoritySid;
-
   private String repositoryAdminAuthorityName;
 
   private String tenantAdminAuthorityNameSuffix;
@@ -127,7 +125,6 @@ public class PentahoContentRepositoryTests implements ApplicationContextAware {
     testJcrTemplate = null;
     repositoryAdminUsername = null;
     commonAuthenticatedAuthorityName = null;
-    commonAuthenticatedAuthoritySid = null;
     repositoryAdminAuthorityName = null;
     tenantAdminAuthorityNameSuffix = null;
     tenantAuthenticatedAuthorityNameSuffix = null;
@@ -139,40 +136,94 @@ public class PentahoContentRepositoryTests implements ApplicationContextAware {
   }
 
   @Test
-  public void testStartup() throws Exception {
+  public void testOnStartup() throws Exception {
     repo.getRepositoryEventHandler().onStartup();
     loginAsRepositoryAdmin();
     // make sure pentaho root folder exists
     final String rootFolderPath = RepositoryPaths.getPentahoRootFolderPath();
     assertNotNull(SimpleJcrTestUtils.getItem(testJcrTemplate, rootFolderPath));
-    // make sure ACEs exist
-    assertLocalAceExists(repo.getFile(rootFolderPath), commonAuthenticatedAuthoritySid, EnumSet.of(Permission.READ));
-    assertLocalAceExists(repo.getFile(rootFolderPath), commonAuthenticatedAuthoritySid, EnumSet.of(Permission.READ_ACL));
-    // assertOwner(pentahoContentRepository.getFile(rootFolderPath), repositoryAdminSid);
   }
 
+  /**
+   * This test method depends on {@code DefaultRepositoryEventHandler} behavior.
+   */
   @Test
-  public void testGetOrCreateUserHomeFolder() throws Exception {
+  public void testOnNewUser() throws Exception {
     repo.getRepositoryEventHandler().onStartup();
     login(USERNAME_SUZY, TENANT_ID_ACME);
     RepositoryFile suzyHomeFolder = repo.getFile(RepositoryPaths.getUserHomeFolderPath());
     assertNotNull(suzyHomeFolder);
     assertNotNull(SimpleJcrTestUtils.getItem(testJcrTemplate, RepositoryPaths.getTenantRootFolderPath()));
     assertNotNull(SimpleJcrTestUtils.getItem(testJcrTemplate, RepositoryPaths.getTenantPublicFolderPath()));
-    assertLocalAclEmpty(repo.getFile(RepositoryPaths.getTenantPublicFolderPath()));
-    //    assertOwner(pentahoContentRepository.getFile(publicFolderPath), repositoryAdminSid);
     assertNotNull(SimpleJcrTestUtils.getItem(testJcrTemplate, RepositoryPaths.getTenantHomeFolderPath()));
-    assertLocalAclEmpty(repo.getFile(RepositoryPaths.getTenantHomeFolderPath()));
-    //    assertOwner(pentahoContentRepository.getFile(homeFolderPath), repositoryAdminSid);
     final String suzyFolderPath = RepositoryPaths.getUserHomeFolderPath();
     assertNotNull(SimpleJcrTestUtils.getItem(testJcrTemplate, suzyFolderPath));
-    RepositoryFileSid suzySid = new RepositoryFileSid(USERNAME_SUZY, RepositoryFileSid.Type.USER);
-    assertLocalAceExists(repo.getFile(suzyFolderPath), suzySid, EnumSet.of(Permission.WRITE));
-    assertLocalAceExists(repo.getFile(suzyFolderPath), suzySid, EnumSet.of(Permission.READ));
-    // make sure Jackrabbit agrees
-    assertTrue(SimpleJcrTestUtils.hasPrivileges(testJcrTemplate, suzyFolderPath, Privilege.JCR_WRITE));
-    assertTrue(SimpleJcrTestUtils.hasPrivileges(testJcrTemplate, suzyFolderPath, Privilege.JCR_READ));
-    // assertOwner(pentahoContentRepository.getFile(suzyFolderPath), suzySid);
+  }
+
+  /**
+   * This test method depends on {@code DefaultRepositoryEventHandler} behavior.
+   */
+  @Test
+  public void testAclsOnDefaultFolders() throws Exception {
+    final RepositoryFileSid acmeAdminSid = new RepositoryFileSid(TENANT_ID_ACME + tenantAdminAuthorityNameSuffix,
+        RepositoryFileSid.Type.ROLE);
+    final RepositoryFileSid suzySid = new RepositoryFileSid(USERNAME_SUZY, RepositoryFileSid.Type.USER);
+    final RepositoryFileSid acmeAuthenticatedAuthoritySid = new RepositoryFileSid(TENANT_ID_ACME
+        + tenantAuthenticatedAuthorityNameSuffix, RepositoryFileSid.Type.ROLE);
+    final RepositoryFileSid repositoryAdminSid = new RepositoryFileSid(repositoryAdminUsername,
+        RepositoryFileSid.Type.USER);
+    final RepositoryFileSid commonAuthenticatedAuthoritySid = new RepositoryFileSid(commonAuthenticatedAuthorityName,
+        RepositoryFileSid.Type.ROLE);
+
+    repo.getRepositoryEventHandler().onStartup();
+    login(USERNAME_SUZY, TENANT_ID_ACME);
+
+    // pentaho root folder
+    // admin has implicit all access
+    //    assertLocalAceExists(repo.getFile(RepositoryPaths.getPentahoRootFolderPath()), repositoryAdminSid, EnumSet
+    //        .of(Permission.ALL));
+    assertLocalAceExists(repo.getFile(RepositoryPaths.getPentahoRootFolderPath()), commonAuthenticatedAuthoritySid,
+        EnumSet.of(Permission.READ, Permission.READ_ACL));
+    assertEquals(repositoryAdminSid, repo.getFile(RepositoryPaths.getPentahoRootFolderPath()).getOwner());
+    assertTrue(SimpleJcrTestUtils.hasPrivileges(testJcrTemplate, RepositoryPaths.getPentahoRootFolderPath(),
+        Privilege.JCR_READ));
+    assertTrue(SimpleJcrTestUtils.hasPrivileges(testJcrTemplate, RepositoryPaths.getPentahoRootFolderPath(),
+        Privilege.JCR_READ_ACCESS_CONTROL));
+
+    // tenant root folder
+    assertLocalAceExists(repo.getFile(RepositoryPaths.getTenantRootFolderPath()), acmeAdminSid, EnumSet
+        .of(Permission.ALL));
+    assertLocalAceExists(repo.getFile(RepositoryPaths.getTenantRootFolderPath()), acmeAuthenticatedAuthoritySid,
+        EnumSet.of(Permission.READ, Permission.READ_ACL));
+    assertEquals(acmeAdminSid, repo.getFile(RepositoryPaths.getTenantRootFolderPath()).getOwner());
+    assertTrue(SimpleJcrTestUtils.hasPrivileges(testJcrTemplate, RepositoryPaths.getTenantRootFolderPath(),
+        Privilege.JCR_READ));
+    assertTrue(SimpleJcrTestUtils.hasPrivileges(testJcrTemplate, RepositoryPaths.getTenantRootFolderPath(),
+        Privilege.JCR_READ_ACCESS_CONTROL));
+
+    // tenant public folder
+    assertLocalAceExists(repo.getFile(RepositoryPaths.getTenantPublicFolderPath()), acmeAuthenticatedAuthoritySid,
+        EnumSet.of(Permission.APPEND, Permission.WRITE, Permission.WRITE_ACL, Permission.READ, Permission.READ_ACL,
+            Permission.DELETE_CHILD));
+    assertEquals(acmeAdminSid, repo.getFile(RepositoryPaths.getTenantPublicFolderPath()).getOwner());
+    assertTrue(SimpleJcrTestUtils.hasPrivileges(testJcrTemplate, RepositoryPaths.getTenantPublicFolderPath(),
+        Privilege.JCR_READ));
+    assertTrue(SimpleJcrTestUtils.hasPrivileges(testJcrTemplate, RepositoryPaths.getTenantPublicFolderPath(),
+        Privilege.JCR_READ_ACCESS_CONTROL));
+
+    // tenant home folder
+    assertLocalAclEmpty(repo.getFile(RepositoryPaths.getTenantHomeFolderPath()));
+    assertEquals(acmeAdminSid, repo.getFile(RepositoryPaths.getTenantHomeFolderPath()).getOwner());
+    assertTrue(SimpleJcrTestUtils.hasPrivileges(testJcrTemplate, RepositoryPaths.getTenantHomeFolderPath(),
+        Privilege.JCR_READ));
+    assertTrue(SimpleJcrTestUtils.hasPrivileges(testJcrTemplate, RepositoryPaths.getTenantHomeFolderPath(),
+        Privilege.JCR_READ_ACCESS_CONTROL));
+
+    // suzy home folder
+    assertLocalAceExists(repo.getFile(RepositoryPaths.getUserHomeFolderPath()), suzySid, EnumSet.of(Permission.ALL));
+    assertEquals(suzySid, repo.getFile(RepositoryPaths.getUserHomeFolderPath()).getOwner());
+    assertTrue(SimpleJcrTestUtils.hasPrivileges(testJcrTemplate, RepositoryPaths.getUserHomeFolderPath(),
+        Privilege.JCR_ALL));
   }
 
   @Test
@@ -218,14 +269,6 @@ public class PentahoContentRepositoryTests implements ApplicationContextAware {
     RepositoryFile file2 = repo.getFile("/doesnotexist");
     assertNull(file2);
   }
-
-  //  @Test
-  //  public void testGetStreamForExecute() throws Exception {
-  //    pentahoContentRepository.startup();
-  //    SecurityContextHolder.getContext().setAuthentication(AUTHENTICATION_TIFFANY);
-  //    RepositoryFile file = pentahoContentRepository.getStreamForExecute("/pentaho/acme/home");
-  //    assertNotNull(file);
-  //  }
 
   @Test
   public void testStartupTwice() throws Exception {
@@ -721,6 +764,7 @@ public class PentahoContentRepositoryTests implements ApplicationContextAware {
         + "test");
     assertEquals(new RepositoryFileSid(USERNAME_SUZY, RepositoryFileSid.Type.USER), fetchedFolder.getOwner());
     // TODO mlowery finish once setAcl is done
+
   }
 
   @Test
@@ -776,11 +820,6 @@ public class PentahoContentRepositoryTests implements ApplicationContextAware {
     assertTrue(acl.getAces().size() == 0);
   }
 
-  private void assertOwner(final RepositoryFile file, final org.pentaho.platform.api.repository.RepositoryFileSid sid) {
-    RepositoryFileAcl acl = repo.getAcl(file);
-    assertTrue(sid.equals(acl.getOwner()));
-  }
-
   private Serializable getNodeId(final String absPath) throws Exception {
     return SimpleJcrTestUtils.getNodeId(testJcrTemplate, absPath);
   }
@@ -791,12 +830,9 @@ public class PentahoContentRepositoryTests implements ApplicationContextAware {
     testJcrTemplate = new JcrTemplate(jcrSessionFactory);
     testJcrTemplate.setAllowCreate(true);
     testJcrTemplate.setExposeNativeSession(true);
-    //    testMutableAclService = (MutableAclService) applicationContext.getBean("aclService");
     repositoryAdminUsername = (String) applicationContext.getBean("repositoryAdminUsername");
     repositoryAdminAuthorityName = (String) applicationContext.getBean("repositoryAdminAuthorityName");
     commonAuthenticatedAuthorityName = (String) applicationContext.getBean("commonAuthenticatedAuthorityName");
-    commonAuthenticatedAuthoritySid = new RepositoryFileSid(commonAuthenticatedAuthorityName,
-        RepositoryFileSid.Type.ROLE);
     tenantAuthenticatedAuthorityNameSuffix = (String) applicationContext
         .getBean("tenantAuthenticatedAuthorityNameSuffix");
     tenantAdminAuthorityNameSuffix = (String) applicationContext.getBean("tenantAdminAuthorityNameSuffix");

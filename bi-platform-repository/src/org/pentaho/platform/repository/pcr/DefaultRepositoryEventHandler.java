@@ -16,6 +16,7 @@ import org.springframework.security.GrantedAuthority;
 import org.springframework.security.GrantedAuthorityImpl;
 import org.springframework.security.acls.MutableAcl;
 import org.springframework.security.acls.Permission;
+import org.springframework.security.acls.domain.CumulativePermission;
 import org.springframework.security.acls.objectidentity.ObjectIdentity;
 import org.springframework.security.acls.objectidentity.ObjectIdentityImpl;
 import org.springframework.security.acls.sid.GrantedAuthoritySid;
@@ -155,12 +156,8 @@ public class DefaultRepositoryEventHandler implements IPentahoContentRepository.
                 "[system] create pentaho root folder");
             // allow all authenticated users to see the contents of this folder (and its ACL)
             internalAddPermission(rootFolder, new GrantedAuthoritySid(commonAuthenticatedAuthorityName),
-                RepositoryFilePermission.READ);
-            internalAddPermission(rootFolder, new GrantedAuthoritySid(commonAuthenticatedAuthorityName),
-                RepositoryFilePermission.READ_ACL);
-            // TODO uncomment this line
-            //    internalAddPermission(rootFolder, new GrantedAuthoritySid(commonAuthorityName),
-            //        RepositoryFilePermission.EXECUTE);
+                new CumulativePermission().set(RepositoryFilePermission.READ).set(RepositoryFilePermission.READ_ACL)
+                    .set(RepositoryFilePermission.EXECUTE));
           }
         }
       });
@@ -187,9 +184,7 @@ public class DefaultRepositoryEventHandler implements IPentahoContentRepository.
             internalSetOwner(tenantRootFolder, ownerSid);
             internalSetFullControl(tenantRootFolder, ownerSid);
             internalAddPermission(tenantRootFolder, new GrantedAuthoritySid(tenantAuthenticatedAuthorityName),
-                RepositoryFilePermission.READ);
-            internalAddPermission(tenantRootFolder, new GrantedAuthoritySid(tenantAuthenticatedAuthorityName),
-                RepositoryFilePermission.READ_ACL);
+                new CumulativePermission().set(RepositoryFilePermission.READ).set(RepositoryFilePermission.READ_ACL));
           }
         }
       });
@@ -212,28 +207,16 @@ public class DefaultRepositoryEventHandler implements IPentahoContentRepository.
           if (contentDao.getFile(RepositoryPaths.getTenantPublicFolderPath(tenantId)) == null) {
             // public folder is versioned
             RepositoryFile tenantPublicFolder = internalCreateFolder(tenantRootFolder, new RepositoryFile.Builder(
-                RepositoryPaths.getTenantPublicFolderName()).folder(true).versioned(true).build(), true,
+                RepositoryPaths.getTenantPublicFolderName()).folder(true).versioned(true).build(), false,
                 tenantAdminAuthorityName, "[system] created tenant public folder");
             Sid ownerSid = new GrantedAuthoritySid(tenantAdminAuthorityName);
             internalSetOwner(tenantPublicFolder, ownerSid);
-            internalAddPermission(tenantRootFolder, new GrantedAuthoritySid(tenantAuthenticatedAuthorityName),
-                RepositoryFilePermission.READ);
-            internalAddPermission(tenantRootFolder, new GrantedAuthoritySid(tenantAuthenticatedAuthorityName),
-                RepositoryFilePermission.READ_ACL);
-            internalAddPermission(tenantRootFolder, new GrantedAuthoritySid(tenantAuthenticatedAuthorityName),
-                RepositoryFilePermission.APPEND);
-            internalAddPermission(tenantRootFolder, new GrantedAuthoritySid(tenantAuthenticatedAuthorityName),
-                RepositoryFilePermission.DELETE_CHILD);
-            // TODO mlowery uncomment
-            //              internalAddPermission(tenantRootFolder, new GrantedAuthoritySid(tenantAuthenticatedAuthorityName),
-            //                  RepositoryFilePermission.EXECUTE);
-            internalAddPermission(tenantRootFolder, new GrantedAuthoritySid(tenantAuthenticatedAuthorityName),
-                RepositoryFilePermission.WRITE);
-            // TODO mlowery don't want to give write_acl access on the folder itself but also don't want a special
-            // "createPublicFile" and "createPublicFolder" methods either
-            internalAddPermission(tenantRootFolder, new GrantedAuthoritySid(tenantAuthenticatedAuthorityName),
-                RepositoryFilePermission.WRITE_ACL);
-            // inherits the ACEs from parent ACL
+            internalAddPermission(tenantPublicFolder, new GrantedAuthoritySid(tenantAuthenticatedAuthorityName),
+                new CumulativePermission().set(RepositoryFilePermission.READ).set(RepositoryFilePermission.READ_ACL)
+                    .set(RepositoryFilePermission.APPEND).set(RepositoryFilePermission.DELETE_CHILD).set(
+                        RepositoryFilePermission.WRITE).set(RepositoryFilePermission.WRITE_ACL).set(
+                        RepositoryFilePermission.EXECUTE));
+            // home folder inherits ACEs from parent ACL
             RepositoryFile tenantHomeFolder = internalCreateFolder(tenantRootFolder, new RepositoryFile.Builder(
                 RepositoryPaths.getTenantHomeFolderName()).folder(true).build(), true, tenantAdminAuthorityName,
                 "[system] created tenant home folder");
@@ -287,8 +270,8 @@ public class DefaultRepositoryEventHandler implements IPentahoContentRepository.
   private void internalSetFullControl(final RepositoryFile file, final Sid sid) {
     Assert.notNull(file);
     Assert.notNull(sid);
-    // TODO mlowery fix this null param
-    mutableAclService.setFullControl(new ObjectIdentityImpl(RepositoryFile.class, file.getId()), sid, null);
+    mutableAclService.setFullControl(new ObjectIdentityImpl(RepositoryFile.class, file.getId()), sid,
+        RepositoryFilePermission.ALL);
   }
 
   private MutableAcl internalCreateAcl(final RepositoryFile file, final boolean entriesInheriting,
@@ -300,7 +283,7 @@ public class DefaultRepositoryEventHandler implements IPentahoContentRepository.
       parentOid = new ObjectIdentityImpl(RepositoryFile.class, file.getParentId());
     }
     return mutableAclService.createAndInitializeAcl(new ObjectIdentityImpl(RepositoryFile.class, file.getId()),
-        parentOid, entriesInheriting, new PrincipalSid(ownerUsername));
+        parentOid, entriesInheriting, new PrincipalSid(ownerUsername), RepositoryFilePermission.ALL);
   }
 
   private void internalAddPermission(final RepositoryFile file, final Sid recipient, final Permission permission,

@@ -32,10 +32,11 @@ public interface IPentahoMutableAclService extends MutableAclService {
    * @param parentOid parent object identity or {@code null} if no parent
    * @param entriesInheriting {@code true} if this ACL should inherit ACEs from parent ACL
    * @param owner owner of the domain object associated with this ACL
+   * @param allPermission permission representing all permissions (aka admin permission)
    * @return initialized ACL
    */
   MutableAcl createAndInitializeAcl(final ObjectIdentity oid, final ObjectIdentity parentOid,
-      final boolean entriesInheriting, final Sid owner);
+      final boolean entriesInheriting, final Sid owner, final Permission allPermission);
 
   /**
    * Adds ACE to end of ACL. ACL should already have been created. {@link #updateAcl(MutableAcl)} should not need to be 
