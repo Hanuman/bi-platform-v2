@@ -22,6 +22,11 @@ import org.springframework.util.Assert;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
 
+/**
+ * Default {@link IPermissionConversionHelper} implementation.
+ * 
+ * @author mlowery
+ */
 public class DefaultPermissionConversionHelper implements IPermissionConversionHelper {
 
   // ~ Static fields/initializers ======================================================================================

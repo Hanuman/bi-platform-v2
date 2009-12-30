@@ -69,6 +69,7 @@
     	<dependency org="javax.activation" name="activation" rev="1.0.2" />     
 
         <!--  internal dependencies -->
+      <dependency org="${ivy.artifact.group}" name="pentaho-third-party-security" rev="TRUNK-SNAPSHOT" conf="default->default" changing="true" />
 		<dependency org="org.pentaho" name="pentaho-vfs"                     rev="1.0"          changing="true"/>
         <dependency org="pentaho" name="pentaho-connections"                 rev="${dependency.pentaho-connections.revision}" changing="true"/>
         <dependency org="pentaho" name="pentaho-metadata"                rev="${dependency.pentaho-metadata.revision}" changing="true" />

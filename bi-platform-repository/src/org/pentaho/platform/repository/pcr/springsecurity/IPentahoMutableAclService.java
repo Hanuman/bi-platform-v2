@@ -1,4 +1,4 @@
-package org.pentaho.platform.repository.pcr;
+package org.pentaho.platform.repository.pcr.springsecurity;
 
 import org.springframework.security.acls.MutableAcl;
 import org.springframework.security.acls.MutableAclService;

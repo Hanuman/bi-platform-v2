@@ -21,11 +21,12 @@ import org.apache.jackrabbit.api.jsr283.security.Privilege;
 import org.apache.jackrabbit.core.SessionImpl;
 import org.apache.jackrabbit.core.security.authorization.JackrabbitAccessControlEntry;
 import org.apache.jackrabbit.core.security.authorization.JackrabbitAccessControlList;
-import org.pentaho.platform.repository.pcr.IPentahoMutableAclService;
+import org.pentaho.commons.security.jackrabbit.IPentahoJackrabbitAccessControlList;
 import org.pentaho.platform.repository.pcr.jcr.JcrRepositoryFileUtils;
 import org.pentaho.platform.repository.pcr.jcr.NodeIdStrategy;
 import org.pentaho.platform.repository.pcr.jcr.PentahoJcrConstants;
 import org.pentaho.platform.repository.pcr.jcr.UuidNodeIdStrategy;
+import org.pentaho.platform.repository.pcr.springsecurity.IPentahoMutableAclService;
 import org.pentaho.platform.repository.pcr.springsecurity.PentahoMutableAcl;
 import org.springframework.extensions.jcr.JcrCallback;
 import org.springframework.extensions.jcr.JcrTemplate;
@@ -44,7 +45,7 @@ import org.springframework.security.acls.sid.Sid;
 import org.springframework.util.Assert;
 
 /**
- * Jackrabbit-based implementation of {@link MutableAclService}.
+ * Jackrabbit-based implementation of {@link IPentahoMutableAclService}.
  * 
  * <p>
  * All mutating public methods require checkout and checkin calls since the act of simply calling 
@@ -67,8 +68,6 @@ public class JackrabbitMutableAclService implements IPentahoMutableAclService {
   private JcrTemplate jcrTemplate;
 
   private NodeIdStrategy nodeIdStrategy;
-
-  private IAclHelper aclHelper = new DefaultAclHelper();
 
   private IPermissionConversionHelper permissionConversionHelper = new DefaultPermissionConversionHelper();
 
@@ -366,69 +365,36 @@ public class JackrabbitMutableAclService implements IPentahoMutableAclService {
     this.nodeIdStrategy = nodeIdStrategy;
   }
 
-  private class DefaultAclHelper implements IAclHelper {
-
-    public void addPermission(ObjectIdentity oid, Sid recipient, Permission permission, boolean granting) {
-      Assert.notNull(oid);
-      Assert.notNull(recipient);
-      Assert.notNull(permission);
-      MutableAcl acl = (MutableAcl) readAclById(oid);
-      Assert.notNull(acl);
-      acl.insertAce(acl.getEntries().length, permission, recipient, granting);
-      updateAcl(acl);
-      logger.debug("added ace: oid=" + oid + ", sid=" + recipient + ", permission=" + permission + ", granting="
-          + granting);
-    }
-
-    public MutableAcl createAndInitializeAcl(final ObjectIdentity oid, final ObjectIdentity parentOid,
-        final boolean entriesInheriting, final Sid owner, final Permission allPermission) {
-      MutableAcl acl = createAcl(oid);
-      // link up parent if parent not null
-      if (parentOid != null) {
-        Acl newParent = readAclById(parentOid);
-        acl.setParent(newParent);
-      }
-      acl.setOwner(owner);
-      if (!entriesInheriting) {
-        acl.setEntriesInheriting(false);
-        setFullControl(oid, owner, allPermission);
-      }
-      return updateAcl(acl);
-    }
-
-    public void setFullControl(final ObjectIdentity oid, final Sid sid, final Permission permission) {
-      addPermission(oid, sid, permission, true);
-    }
-
-  }
-
-  public void addPermission(final ObjectIdentity oid, final Sid recipient, final Permission permission,
-      final boolean granting) {
-    aclHelper.addPermission(oid, recipient, permission, granting);
+  public void addPermission(ObjectIdentity oid, Sid recipient, Permission permission, boolean granting) {
+    Assert.notNull(oid);
+    Assert.notNull(recipient);
+    Assert.notNull(permission);
+    MutableAcl acl = (MutableAcl) readAclById(oid);
+    Assert.notNull(acl);
+    acl.insertAce(acl.getEntries().length, permission, recipient, granting);
+    updateAcl(acl);
+    logger.debug("added ace: oid=" + oid + ", sid=" + recipient + ", permission=" + permission + ", granting="
+        + granting);
   }
 
   public MutableAcl createAndInitializeAcl(final ObjectIdentity oid, final ObjectIdentity parentOid,
       final boolean entriesInheriting, final Sid owner, final Permission allPermission) {
-    return aclHelper.createAndInitializeAcl(oid, parentOid, entriesInheriting, owner, allPermission);
+    MutableAcl acl = createAcl(oid);
+    // link up parent if parent not null
+    if (parentOid != null) {
+      Acl newParent = readAclById(parentOid);
+      acl.setParent(newParent);
+    }
+    acl.setOwner(owner);
+    if (!entriesInheriting) {
+      acl.setEntriesInheriting(false);
+      setFullControl(oid, owner, allPermission);
+    }
+    return updateAcl(acl);
   }
 
   public void setFullControl(final ObjectIdentity oid, final Sid sid, final Permission permission) {
-    aclHelper.setFullControl(oid, sid, permission);
-  }
-
-  public void setAclHelper(final IAclHelper aclHelper) {
-    Assert.notNull(aclHelper);
-    this.aclHelper = aclHelper;
-  }
-
-  public static interface IAclHelper {
-    void addPermission(final ObjectIdentity oid, final Sid recipient, final Permission permission,
-        final boolean granting);
-
-    MutableAcl createAndInitializeAcl(final ObjectIdentity oid, final ObjectIdentity parentOid,
-        final boolean entriesInheriting, final Sid owner, final Permission allPermission);
-
-    void setFullControl(final ObjectIdentity oid, final Sid sid, final Permission permission);
+    addPermission(oid, sid, permission, true);
   }
 
   public void setPermissionConversionHelper(final IPermissionConversionHelper permissionConversionHelper) {
@@ -436,10 +402,15 @@ public class JackrabbitMutableAclService implements IPentahoMutableAclService {
     this.permissionConversionHelper = permissionConversionHelper;
   }
 
+  /**
+   * Converts between Spring Security {@link Permission} instances and Jackrabbit {@link Privilege} instances.
+   */
   public static interface IPermissionConversionHelper {
-    Privilege[] permissionToPrivileges(final SessionImpl jrSession, final Permission first) throws RepositoryException;
+    Privilege[] permissionToPrivileges(final SessionImpl jrSession, final Permission permission)
+        throws RepositoryException;
 
-    Permission privilegesToPermission(final SessionImpl jrSession, final Privilege[] first) throws RepositoryException;
+    Permission privilegesToPermission(final SessionImpl jrSession, final Privilege[] privileges)
+        throws RepositoryException;
   }
 
 }

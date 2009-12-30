@@ -10,7 +10,8 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 /**
- * A simplified and GWT-compatible version of {@code org.springframework.security.acls.Acl}.
+ * A simplified (i.e. no access control logic) and GWT-compatible version of 
+ * {@code org.springframework.security.acls.Acl}.
  * 
  * @author mlowery
  */
@@ -56,6 +57,52 @@ public class RepositoryFileAcl {
     return entriesInheriting;
   }
 
+  @Override
+  public int hashCode() {
+    final int prime = 31;
+    int result = 1;
+    result = prime * result + ((aces == null) ? 0 : aces.hashCode());
+    result = prime * result + (entriesInheriting ? 1231 : 1237);
+    result = prime * result + ((fileId == null) ? 0 : fileId.hashCode());
+    result = prime * result + ((owner == null) ? 0 : owner.hashCode());
+    return result;
+  }
+
+  @Override
+  public boolean equals(Object obj) {
+    if (this == obj)
+      return true;
+    if (obj == null)
+      return false;
+    if (getClass() != obj.getClass())
+      return false;
+    RepositoryFileAcl other = (RepositoryFileAcl) obj;
+    if (aces == null) {
+      if (other.aces != null)
+        return false;
+    } else if (!aces.equals(other.aces))
+      return false;
+    if (entriesInheriting != other.entriesInheriting)
+      return false;
+    if (fileId == null) {
+      if (other.fileId != null)
+        return false;
+    } else if (!fileId.equals(other.fileId))
+      return false;
+    if (owner == null) {
+      if (other.owner != null)
+        return false;
+    } else if (!owner.equals(other.owner))
+      return false;
+    return true;
+  }
+
+  @Override
+  public String toString() {
+    return "RepositoryFileAcl[fileId=" + fileId + ", owner=" + owner + ", entriesInheriting=" + entriesInheriting
+        + ", aces=" + aces + "]";
+  }
+
   // ~ Inner classes ===================================================================================================
 
   public static class Ace {
@@ -79,6 +126,42 @@ public class RepositoryFileAcl {
 
     public EnumSet<Permission> getPermissions() {
       return permissions;
+    }
+
+    @Override
+    public int hashCode() {
+      final int prime = 31;
+      int result = 1;
+      result = prime * result + ((permissions == null) ? 0 : permissions.hashCode());
+      result = prime * result + ((recipient == null) ? 0 : recipient.hashCode());
+      return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+      if (this == obj)
+        return true;
+      if (obj == null)
+        return false;
+      if (getClass() != obj.getClass())
+        return false;
+      Ace other = (Ace) obj;
+      if (permissions == null) {
+        if (other.permissions != null)
+          return false;
+      } else if (!permissions.equals(other.permissions))
+        return false;
+      if (recipient == null) {
+        if (other.recipient != null)
+          return false;
+      } else if (!recipient.equals(other.recipient))
+        return false;
+      return true;
+    }
+
+    @Override
+    public String toString() {
+      return "Ace[recipient=" + recipient + ", permissions=" + permissions + "]";
     }
 
   }
@@ -121,6 +204,11 @@ public class RepositoryFileAcl {
       return this;
     }
 
+    public Builder owner(final RepositoryFileSid owner) {
+      this.owner = owner;
+      return this;
+    }
+    
     public Builder ace(final Ace ace) {
       this.aces.add(ace);
       return this;
@@ -135,7 +223,8 @@ public class RepositoryFileAcl {
       return this;
     }
 
-    public Builder ace(final String name, final RepositoryFileSid.Type type, final Permission first, final Permission... rest) {
+    public Builder ace(final String name, final RepositoryFileSid.Type type, final Permission first,
+        final Permission... rest) {
       return ace(new RepositoryFileSid(name, type), first, rest);
     }
 
@@ -143,4 +232,5 @@ public class RepositoryFileAcl {
       return ace(new RepositoryFileSid(name, type), permissions);
     }
   }
+
 }

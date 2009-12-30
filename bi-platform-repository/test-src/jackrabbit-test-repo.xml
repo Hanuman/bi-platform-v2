@@ -67,7 +67,7 @@
            <param name="adminId" value="admin"/>
            
            <param name="principalProvider" 
-               value="org.pentaho.platform.repository.pcr.jcr.jackrabbit.TestPrincipalProvider"/>
+               value="org.pentaho.commons.security.jackrabbit.TestPrincipalProvider"/>
         </LoginModule>
     </Security>
 
@@ -110,7 +110,7 @@
         </SearchIndex>
         
         <WorkspaceSecurity> 
-            <AccessControlProvider class="org.pentaho.platform.repository.pcr.jcr.jackrabbit.PentahoAccessControlProvider" />
+            <AccessControlProvider class="org.pentaho.commons.security.jackrabbit.PentahoAccessControlProvider" />
         </WorkspaceSecurity> 
     </Workspace>
 

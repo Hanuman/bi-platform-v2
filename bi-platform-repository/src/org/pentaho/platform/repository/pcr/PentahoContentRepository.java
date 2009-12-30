@@ -14,6 +14,7 @@ import org.pentaho.platform.api.repository.RepositoryFileAcl;
 import org.pentaho.platform.api.repository.RepositoryFileSid;
 import org.pentaho.platform.api.repository.VersionSummary;
 import org.pentaho.platform.engine.core.system.PentahoSessionHolder;
+import org.pentaho.platform.repository.pcr.springsecurity.IPentahoMutableAclService;
 import org.pentaho.platform.repository.pcr.springsecurity.RepositoryFilePermission;
 import org.springframework.security.acls.AccessControlEntry;
 import org.springframework.security.acls.Acl;

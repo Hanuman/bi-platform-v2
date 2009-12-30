@@ -10,6 +10,7 @@ import org.pentaho.platform.api.repository.RepositoryFile;
 import org.pentaho.platform.engine.core.system.PentahoSessionHolder;
 import org.pentaho.platform.engine.core.system.StandaloneSession;
 import org.pentaho.platform.engine.security.SecurityHelper;
+import org.pentaho.platform.repository.pcr.springsecurity.IPentahoMutableAclService;
 import org.pentaho.platform.repository.pcr.springsecurity.RepositoryFilePermission;
 import org.springframework.security.Authentication;
 import org.springframework.security.GrantedAuthority;

@@ -60,10 +60,10 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 @ContextConfiguration(locations = { "file:../bi-platform-sample-solution/system/repository.spring.xml",
     "classpath:/repository-test-override.spring.xml" })
 //@SuppressWarnings("nls")
-public class PentahoContentRepositoryTests implements ApplicationContextAware {
+public class PentahoContentRepositoryTest implements ApplicationContextAware {
   // ~ Static fields/initializers ======================================================================================
 
-  private static final Log logger = LogFactory.getLog(PentahoContentRepositoryTests.class);
+  private static final Log logger = LogFactory.getLog(PentahoContentRepositoryTest.class);
 
   private static final String USERNAME_SUZY = "suzy";
 
@@ -98,7 +98,7 @@ public class PentahoContentRepositoryTests implements ApplicationContextAware {
 
   // ~ Constructors ==================================================================================================== 
 
-  public PentahoContentRepositoryTests() throws Exception {
+  public PentahoContentRepositoryTest() throws Exception {
     super();
   }
 
@@ -780,6 +780,21 @@ public class PentahoContentRepositoryTests implements ApplicationContextAware {
     assertEquals(newFolder.getId(), acl.getFileId());
     assertTrue(acl.getAces().isEmpty());
     // TODO mlowery more in-depth ACE checking
+  }
+  
+  @Test
+  public void testSetAcl() throws Exception {
+    repo.getRepositoryEventHandler().onStartup();
+    login(USERNAME_SUZY, TENANT_ID_ACME);
+    RepositoryFile parentFolder = repo.getFile(RepositoryPaths.getTenantPublicFolderPath());
+    RepositoryFile newFolder = new RepositoryFile.Builder("test").folder(true).versioned(true).build();
+    newFolder = repo.createFolder(parentFolder, newFolder);
+    RepositoryFileAcl acl = repo.getAcl(newFolder);
+    
+    RepositoryFileAcl.Builder newAclBuilder = new RepositoryFileAcl.Builder(acl);
+    RepositoryFileSid tiffanySid = new RepositoryFileSid(USERNAME_TIFFANY);
+    newAclBuilder.owner(tiffanySid);
+//    repo.setAcl(newAclBuilder.build());
   }
 
   private RepositoryFile createRunResultFile(final String parentFolderPath, final String expectedName,
