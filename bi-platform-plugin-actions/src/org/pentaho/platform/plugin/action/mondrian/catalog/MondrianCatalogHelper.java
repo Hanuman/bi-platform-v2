@@ -674,7 +674,7 @@ public class MondrianCatalogHelper implements IMondrianCatalogService {
           if (StringUtils.isBlank(name)) {
             name = cube.name;
           }
-          mondrianCubes.add(new MondrianCube(name));
+          mondrianCubes.add(new MondrianCube(name, cube.name));
         }
       }
       for (MondrianDef.VirtualCube cube : schemaFromXml.virtualCubes) {
@@ -683,7 +683,7 @@ public class MondrianCatalogHelper implements IMondrianCatalogService {
           name = cube.name;
         }
         if (cube.enabled == null || cube.enabled.booleanValue()) {
-          mondrianCubes.add(new MondrianCube(name));
+          mondrianCubes.add(new MondrianCube(name, cube.name));
         }
       }
 
