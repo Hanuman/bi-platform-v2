@@ -19,7 +19,7 @@
   </bean>
 
   <bean id="jcrTransactionManager" class="org.springframework.extensions.jcr.jackrabbit.LocalTransactionManager">
-    <property name="sessionFactory" ref="jcrSessionFactory"/>
+    <property name="sessionFactory" ref="jcrSessionFactory" />
   </bean>
 
   <bean id="pentahoContentRepositoryTransactionInterceptor" class="org.springframework.transaction.interceptor.TransactionInterceptor">
@@ -38,7 +38,7 @@
         org.pentaho.platform.api.repository.IPentahoContentRepository.lockFile=PROPAGATION_REQUIRED
         org.pentaho.platform.api.repository.IPentahoContentRepository.unlockFile=PROPAGATION_REQUIRED
         org.pentaho.platform.api.repository.IPentahoContentRepository.getVersionSummaries=PROPAGATION_REQUIRED,readOnly
-        </value>
+      </value>
     </property>
   </bean>
 
@@ -57,11 +57,16 @@
     <constructor-arg value="admin" />
   </bean>
 
+  <!-- This token allows Jackrabbit to trust that this application has already authenticated the user. -->
+  <bean id="jcrPreAuthenticationToken" class="java.lang.String">
+    <constructor-arg value="ZchBOvP8q9FQ" />
+  </bean>
+
   <!-- The name of the authority which is granted to all authenticated users, regardless of tenant. -->
   <bean id="commonAuthenticatedAuthorityName" class="java.lang.String">
     <constructor-arg value="Authenticated" />
   </bean>
-  
+
   <!-- The authority name granted to the repository admin. -->
   <bean id="repositoryAdminAuthorityName" class="java.lang.String">
     <constructor-arg value="Admin" />
@@ -71,8 +76,8 @@
   <bean id="tenantAuthenticatedAuthorityNameSuffix" class="java.lang.String">
     <constructor-arg value="_Authenticated" />
   </bean>
-  
-    <!-- The suffix appended to the tenantId to create a role granted to all admin users of a certain tenant. -->
+
+  <!-- The suffix appended to the tenantId to create a role granted to all admin users of a certain tenant. -->
   <bean id="tenantAdminAuthorityNameSuffix" class="java.lang.String">
     <constructor-arg value="_Admin" />
   </bean>
@@ -88,7 +93,7 @@
           <!-- The code sets the propagation behavior to PROPAGATION_REQUIRES_NEW. -->
           <bean class="org.springframework.transaction.support.TransactionTemplate">
             <constructor-arg ref="jcrTransactionManager" />
-          </bean> 
+          </bean>
         </constructor-arg>
         <constructor-arg ref="repositoryAdminUsername" />
         <constructor-arg ref="repositoryAdminAuthorityName" />
@@ -98,7 +103,7 @@
       </bean>
     </constructor-arg>
   </bean>
-  
+
   <!-- In create[File|Folder], the first parameter is the parentFolder. This is the object whose ACL is checked. -->
   <bean id="pentahoContentRepositoryMethodInterceptor" class="org.springframework.security.intercept.method.aopalliance.MethodSecurityInterceptor">
     <property name="validateConfigAttributes">
@@ -137,7 +142,9 @@
   <bean id="jcrSessionFactory" class="org.pentaho.platform.repository.pcr.jcr.sejcr.CredentialsStrategyJackrabbitSessionFactory">
     <constructor-arg ref="jcrRepository" />
     <constructor-arg>
-      <bean class="org.pentaho.platform.repository.pcr.jcr.sejcr.PentahoSessionCredentialsStrategy" />
+      <bean class="org.pentaho.platform.repository.pcr.jcr.sejcr.PentahoSessionCredentialsStrategy">
+        <constructor-arg ref="jcrPreAuthenticationToken" />
+      </bean>
     </constructor-arg>
     <property name="namespaces">
       <props>

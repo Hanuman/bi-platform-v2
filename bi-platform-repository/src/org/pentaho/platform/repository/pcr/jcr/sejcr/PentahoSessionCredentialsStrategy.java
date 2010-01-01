@@ -14,11 +14,31 @@ import org.springframework.util.Assert;
  */
 public class PentahoSessionCredentialsStrategy implements CredentialsStrategy {
 
+  // ~ Static fields/initializers ======================================================================================
+
+  private static final String ATTR_PRE_AUTHENTICATION_TOKEN = "pre_authentication_token"; //$NON-NLS-1$
+
   private static final char[] PASSWORD = "ignored".toCharArray(); //$NON-NLS-1$
-    
+
+  // ~ Instance fields =================================================================================================
+
+  private String preAuthenticationToken;
+
+  // ~ Constructors ====================================================================================================
+
+  public PentahoSessionCredentialsStrategy(final String preAuthenticationToken) {
+    super();
+    Assert.hasText(preAuthenticationToken);
+    this.preAuthenticationToken = preAuthenticationToken;
+  }
+
+  // ~ Methods =========================================================================================================
+
   public Credentials getCredentials() {
     String username = getUsername();
-    return new SimpleCredentials(username, PASSWORD);
+    SimpleCredentials creds = new SimpleCredentials(username, PASSWORD);
+    creds.setAttribute(ATTR_PRE_AUTHENTICATION_TOKEN, preAuthenticationToken);
+    return creds;
   }
 
   private String getUsername() {
