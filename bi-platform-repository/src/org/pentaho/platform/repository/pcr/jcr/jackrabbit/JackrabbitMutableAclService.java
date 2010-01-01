@@ -22,6 +22,8 @@ import org.apache.jackrabbit.core.SessionImpl;
 import org.apache.jackrabbit.core.security.authorization.JackrabbitAccessControlEntry;
 import org.apache.jackrabbit.core.security.authorization.JackrabbitAccessControlList;
 import org.pentaho.commons.security.jackrabbit.IPentahoJackrabbitAccessControlList;
+import org.pentaho.platform.api.engine.IPentahoSession;
+import org.pentaho.platform.engine.core.system.PentahoSessionHolder;
 import org.pentaho.platform.repository.pcr.jcr.JcrRepositoryFileUtils;
 import org.pentaho.platform.repository.pcr.jcr.NodeIdStrategy;
 import org.pentaho.platform.repository.pcr.jcr.PentahoJcrConstants;
@@ -101,7 +103,6 @@ public class JackrabbitMutableAclService implements IPentahoMutableAclService {
         JcrRepositoryFileUtils.checkoutNearestVersionableNodeIfNecessary(session, pentahoJcrConstants, nodeIdStrategy,
             node);
 
-        // TODO mlowery set owner to currently authenticated user
         Assert.isInstanceOf(SessionImpl.class, session);
         SessionImpl jrSession = (SessionImpl) session;
 
@@ -116,8 +117,7 @@ public class JackrabbitMutableAclService implements IPentahoMutableAclService {
           AccessControlPolicy acPolicy = iter.nextAccessControlPolicy();
           Assert.isInstanceOf(IPentahoJackrabbitAccessControlList.class, acPolicy);
           IPentahoJackrabbitAccessControlList jrPolicy = (IPentahoJackrabbitAccessControlList) acPolicy;
-          // owner can never be null; give it a dummy value here until it has a "real" value
-          jrPolicy.setOwner(jrSession.getPrincipalManager().getEveryone());
+          jrPolicy.setOwner(jrSession.getPrincipalManager().getPrincipal(getUsername()));
           acMgr.setPolicy(absPath, acPolicy);
         }
 
@@ -285,6 +285,12 @@ public class JackrabbitMutableAclService implements IPentahoMutableAclService {
     });
 
   }
+  
+  private String getUsername() {
+    IPentahoSession pentahoSession = PentahoSessionHolder.getSession();
+    Assert.state(pentahoSession != null);
+    return pentahoSession.getName();
+  }
 
   private boolean isReferenceable(final PentahoJcrConstants pentahoJcrConstants, final Node node)
       throws RepositoryException {
@@ -335,7 +341,6 @@ public class JackrabbitMutableAclService implements IPentahoMutableAclService {
         Assert.isInstanceOf(JackrabbitAccessControlEntry.class, acEntries[i]);
         JackrabbitAccessControlEntry jrAce = (JackrabbitAccessControlEntry) acEntries[i];
         Principal principal = jrAce.getPrincipal();
-        // TODO principal sid??? need to be able to lookup principal name
         Sid sid = null;
         if (principal instanceof Group) {
           sid = new GrantedAuthoritySid(principal.getName());

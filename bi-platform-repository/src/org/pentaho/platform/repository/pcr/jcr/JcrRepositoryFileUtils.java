@@ -19,10 +19,12 @@ import javax.jcr.lock.Lock;
 import javax.jcr.version.Version;
 import javax.jcr.version.VersionHistory;
 
+import org.pentaho.platform.api.engine.IPentahoSession;
 import org.pentaho.platform.api.repository.IRepositoryFileContent;
 import org.pentaho.platform.api.repository.RepositoryFile;
 import org.pentaho.platform.api.repository.RepositoryFileSid;
 import org.pentaho.platform.api.repository.VersionSummary;
+import org.pentaho.platform.engine.core.system.PentahoSessionHolder;
 import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
 
@@ -462,8 +464,7 @@ public class JcrRepositoryFileUtils {
     Node versionableNode = findNearestVersionableNode(session, pentahoJcrConstants, node);
 
     if (versionableNode != null) {
-      // TODO mlowery fix this constant
-      versionableNode.setProperty(pentahoJcrConstants.getPHO_VERSIONAUTHOR(), "MANHANDS");
+      versionableNode.setProperty(pentahoJcrConstants.getPHO_VERSIONAUTHOR(), getUsername());
       if (versionMessageAndLabel.length > 0 && StringUtils.hasText(versionMessageAndLabel[0])) {
         versionableNode.setProperty(pentahoJcrConstants.getPHO_VERSIONMESSAGE(), versionMessageAndLabel[0]);
       } else {
@@ -475,6 +476,12 @@ public class JcrRepositoryFileUtils {
         newVersion.getContainingHistory().addVersionLabel(newVersion.getName(), versionMessageAndLabel[1], true);
       }
     }
+  }
+  
+  private static String getUsername() {
+    IPentahoSession pentahoSession = PentahoSessionHolder.getSession();
+    Assert.state(pentahoSession != null);
+    return pentahoSession.getName();
   }
 
   /**

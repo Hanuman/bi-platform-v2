@@ -685,6 +685,7 @@ public class PentahoContentRepositoryTest implements ApplicationContextAware {
     assertEquals("update 3", versionSummaries.get(versionSummaries.size() - 1).getMessage());
     assertEquals(Arrays.asList(new String[] { "label3" }), versionSummaries.get(versionSummaries.size() - 1)
         .getLabels());
+    assertEquals(USERNAME_SUZY, versionSummaries.get(0).getAuthor());
     System.out.println(versionSummaries);
     System.out.println(versionSummaries.size());
   }
