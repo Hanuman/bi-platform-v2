@@ -14,7 +14,7 @@ import org.apache.jackrabbit.api.jsr283.security.Privilege;
 import org.apache.jackrabbit.core.SessionImpl;
 import org.apache.jackrabbit.core.security.authorization.PrivilegeRegistry;
 import org.pentaho.platform.repository.pcr.jcr.jackrabbit.JackrabbitMutableAclService.IPermissionConversionHelper;
-import org.pentaho.platform.repository.pcr.springsecurity.RepositoryFilePermission;
+import org.pentaho.platform.repository.pcr.springsecurity.SpringSecurityRepositoryFilePermission;
 import org.springframework.security.acls.Permission;
 import org.springframework.security.acls.domain.CumulativePermission;
 import org.springframework.util.Assert;
@@ -104,7 +104,7 @@ public class DefaultPermissionConversionHelper implements IPermissionConversionH
       if (privilegeNameToPermissionIntegersMap.containsKey(extendedPrivilegeName)) {
         Collection<Integer> permIntegers = privilegeNameToPermissionIntegersMap.get(extendedPrivilegeName);
         for (Integer permInteger : permIntegers) {
-          Permission permission = RepositoryFilePermission.buildFromMask(permInteger);
+          Permission permission = SpringSecurityRepositoryFilePermission.buildFromMask(permInteger);
           Assert.isTrue(!(permission instanceof CumulativePermission));
           permissions.add(permission);
         }
@@ -133,56 +133,56 @@ public class DefaultPermissionConversionHelper implements IPermissionConversionH
     permissionIntegerToPrivilegeNamesMap = HashMultimap.create();
 
     // READ
-    permissionIntegerToPrivilegeNamesMap.put(RepositoryFilePermission.READ.getMask(), Privilege.JCR_READ);
+    permissionIntegerToPrivilegeNamesMap.put(SpringSecurityRepositoryFilePermission.READ.getMask(), Privilege.JCR_READ);
     // WRITE
-    permissionIntegerToPrivilegeNamesMap.put(RepositoryFilePermission.WRITE.getMask(), PrivilegeRegistry.REP_WRITE);
+    permissionIntegerToPrivilegeNamesMap.put(SpringSecurityRepositoryFilePermission.WRITE.getMask(), PrivilegeRegistry.REP_WRITE);
     permissionIntegerToPrivilegeNamesMap
-        .put(RepositoryFilePermission.WRITE.getMask(), Privilege.JCR_VERSION_MANAGEMENT);
-    permissionIntegerToPrivilegeNamesMap.put(RepositoryFilePermission.WRITE.getMask(), Privilege.JCR_LOCK_MANAGEMENT);
+        .put(SpringSecurityRepositoryFilePermission.WRITE.getMask(), Privilege.JCR_VERSION_MANAGEMENT);
+    permissionIntegerToPrivilegeNamesMap.put(SpringSecurityRepositoryFilePermission.WRITE.getMask(), Privilege.JCR_LOCK_MANAGEMENT);
     // DELETE
-    permissionIntegerToPrivilegeNamesMap.put(RepositoryFilePermission.DELETE.getMask(), Privilege.JCR_REMOVE_NODE);
+    permissionIntegerToPrivilegeNamesMap.put(SpringSecurityRepositoryFilePermission.DELETE.getMask(), Privilege.JCR_REMOVE_NODE);
     // APPEND
-    permissionIntegerToPrivilegeNamesMap.put(RepositoryFilePermission.APPEND.getMask(), PrivilegeRegistry.REP_WRITE);
-    permissionIntegerToPrivilegeNamesMap.put(RepositoryFilePermission.APPEND.getMask(),
+    permissionIntegerToPrivilegeNamesMap.put(SpringSecurityRepositoryFilePermission.APPEND.getMask(), PrivilegeRegistry.REP_WRITE);
+    permissionIntegerToPrivilegeNamesMap.put(SpringSecurityRepositoryFilePermission.APPEND.getMask(),
         Privilege.JCR_VERSION_MANAGEMENT);
-    permissionIntegerToPrivilegeNamesMap.put(RepositoryFilePermission.APPEND.getMask(), Privilege.JCR_LOCK_MANAGEMENT);
+    permissionIntegerToPrivilegeNamesMap.put(SpringSecurityRepositoryFilePermission.APPEND.getMask(), Privilege.JCR_LOCK_MANAGEMENT);
     // DELETE_CHILD
-    permissionIntegerToPrivilegeNamesMap.put(RepositoryFilePermission.DELETE_CHILD.getMask(),
+    permissionIntegerToPrivilegeNamesMap.put(SpringSecurityRepositoryFilePermission.DELETE_CHILD.getMask(),
         Privilege.JCR_REMOVE_CHILD_NODES);
     // READ_ACL
-    permissionIntegerToPrivilegeNamesMap.put(RepositoryFilePermission.READ_ACL.getMask(),
+    permissionIntegerToPrivilegeNamesMap.put(SpringSecurityRepositoryFilePermission.READ_ACL.getMask(),
         Privilege.JCR_READ_ACCESS_CONTROL);
     // WRITE_ACL
-    permissionIntegerToPrivilegeNamesMap.put(RepositoryFilePermission.WRITE_ACL.getMask(),
+    permissionIntegerToPrivilegeNamesMap.put(SpringSecurityRepositoryFilePermission.WRITE_ACL.getMask(),
         Privilege.JCR_MODIFY_ACCESS_CONTROL);
     // ALL
-    permissionIntegerToPrivilegeNamesMap.put(RepositoryFilePermission.ALL.getMask(), Privilege.JCR_ALL);
+    permissionIntegerToPrivilegeNamesMap.put(SpringSecurityRepositoryFilePermission.ALL.getMask(), Privilege.JCR_ALL);
 
     // None of the following translate into a Privilege:
     // RepositoryFilePermission.EXECUTE (READ is used for both READ and EXECUTE)
 
     privilegeNameToPermissionIntegersMap = HashMultimap.create();
     // JCR_READ
-    privilegeNameToPermissionIntegersMap.put(Privilege.JCR_READ, RepositoryFilePermission.READ.getMask());
+    privilegeNameToPermissionIntegersMap.put(Privilege.JCR_READ, SpringSecurityRepositoryFilePermission.READ.getMask());
     // JCR_WRITE
-    privilegeNameToPermissionIntegersMap.put(Privilege.JCR_WRITE, RepositoryFilePermission.WRITE.getMask());
-    privilegeNameToPermissionIntegersMap.put(Privilege.JCR_WRITE, RepositoryFilePermission.APPEND.getMask());
+    privilegeNameToPermissionIntegersMap.put(Privilege.JCR_WRITE, SpringSecurityRepositoryFilePermission.WRITE.getMask());
+    privilegeNameToPermissionIntegersMap.put(Privilege.JCR_WRITE, SpringSecurityRepositoryFilePermission.APPEND.getMask());
     // REP_WRITE (Jackrabbit's combination of Privilege.JCR_WRITE and Privilege.JCR_NODE_TYPE_MNGMT
-    privilegeNameToPermissionIntegersMap.put(PrivilegeRegistry.REP_WRITE, RepositoryFilePermission.WRITE.getMask());
-    privilegeNameToPermissionIntegersMap.put(PrivilegeRegistry.REP_WRITE, RepositoryFilePermission.APPEND.getMask());
+    privilegeNameToPermissionIntegersMap.put(PrivilegeRegistry.REP_WRITE, SpringSecurityRepositoryFilePermission.WRITE.getMask());
+    privilegeNameToPermissionIntegersMap.put(PrivilegeRegistry.REP_WRITE, SpringSecurityRepositoryFilePermission.APPEND.getMask());
     // JCR_REMOVE_NODE
-    privilegeNameToPermissionIntegersMap.put(Privilege.JCR_REMOVE_NODE, RepositoryFilePermission.DELETE.getMask());
+    privilegeNameToPermissionIntegersMap.put(Privilege.JCR_REMOVE_NODE, SpringSecurityRepositoryFilePermission.DELETE.getMask());
     // JCR_REMOVE_CHILD_NODES
-    privilegeNameToPermissionIntegersMap.put(Privilege.JCR_REMOVE_CHILD_NODES, RepositoryFilePermission.DELETE_CHILD
+    privilegeNameToPermissionIntegersMap.put(Privilege.JCR_REMOVE_CHILD_NODES, SpringSecurityRepositoryFilePermission.DELETE_CHILD
         .getMask());
     // JCR_READ_ACCESS_CONTROL
-    privilegeNameToPermissionIntegersMap.put(Privilege.JCR_READ_ACCESS_CONTROL, RepositoryFilePermission.READ_ACL
+    privilegeNameToPermissionIntegersMap.put(Privilege.JCR_READ_ACCESS_CONTROL, SpringSecurityRepositoryFilePermission.READ_ACL
         .getMask());
     // JCR_MODIFY_ACCESS_CONTROL
-    privilegeNameToPermissionIntegersMap.put(Privilege.JCR_MODIFY_ACCESS_CONTROL, RepositoryFilePermission.WRITE_ACL
+    privilegeNameToPermissionIntegersMap.put(Privilege.JCR_MODIFY_ACCESS_CONTROL, SpringSecurityRepositoryFilePermission.WRITE_ACL
         .getMask());
     // JCR_ALL
-    privilegeNameToPermissionIntegersMap.put(Privilege.JCR_ALL, RepositoryFilePermission.ALL.getMask());
+    privilegeNameToPermissionIntegersMap.put(Privilege.JCR_ALL, SpringSecurityRepositoryFilePermission.ALL.getMask());
 
     // None of the following translate into a RepositoryFilePermission:
     // JCR_NODE_TYPE_MANAGEMENT
@@ -198,40 +198,40 @@ public class DefaultPermissionConversionHelper implements IPermissionConversionH
       return permissions;
     }
     if (mask == -1) {
-      permissions.add(RepositoryFilePermission.ALL);
+      permissions.add(SpringSecurityRepositoryFilePermission.ALL);
       return permissions;
     }
-    if ((mask & RepositoryFilePermission.READ.getMask()) == RepositoryFilePermission.READ.getMask()) {
-      permissions.add(RepositoryFilePermission.READ);
-      mask &= ~RepositoryFilePermission.READ.getMask();
+    if ((mask & SpringSecurityRepositoryFilePermission.READ.getMask()) == SpringSecurityRepositoryFilePermission.READ.getMask()) {
+      permissions.add(SpringSecurityRepositoryFilePermission.READ);
+      mask &= ~SpringSecurityRepositoryFilePermission.READ.getMask();
     }
-    if ((mask & RepositoryFilePermission.APPEND.getMask()) == RepositoryFilePermission.APPEND.getMask()) {
-      permissions.add(RepositoryFilePermission.APPEND);
-      mask &= ~RepositoryFilePermission.APPEND.getMask();
+    if ((mask & SpringSecurityRepositoryFilePermission.APPEND.getMask()) == SpringSecurityRepositoryFilePermission.APPEND.getMask()) {
+      permissions.add(SpringSecurityRepositoryFilePermission.APPEND);
+      mask &= ~SpringSecurityRepositoryFilePermission.APPEND.getMask();
     }
-    if ((mask & RepositoryFilePermission.DELETE.getMask()) == RepositoryFilePermission.DELETE.getMask()) {
-      permissions.add(RepositoryFilePermission.DELETE);
-      mask &= ~RepositoryFilePermission.DELETE.getMask();
+    if ((mask & SpringSecurityRepositoryFilePermission.DELETE.getMask()) == SpringSecurityRepositoryFilePermission.DELETE.getMask()) {
+      permissions.add(SpringSecurityRepositoryFilePermission.DELETE);
+      mask &= ~SpringSecurityRepositoryFilePermission.DELETE.getMask();
     }
-    if ((mask & RepositoryFilePermission.DELETE_CHILD.getMask()) == RepositoryFilePermission.DELETE_CHILD.getMask()) {
-      permissions.add(RepositoryFilePermission.DELETE_CHILD);
-      mask &= ~RepositoryFilePermission.DELETE_CHILD.getMask();
+    if ((mask & SpringSecurityRepositoryFilePermission.DELETE_CHILD.getMask()) == SpringSecurityRepositoryFilePermission.DELETE_CHILD.getMask()) {
+      permissions.add(SpringSecurityRepositoryFilePermission.DELETE_CHILD);
+      mask &= ~SpringSecurityRepositoryFilePermission.DELETE_CHILD.getMask();
     }
-    if ((mask & RepositoryFilePermission.EXECUTE.getMask()) == RepositoryFilePermission.EXECUTE.getMask()) {
-      permissions.add(RepositoryFilePermission.EXECUTE);
-      mask &= ~RepositoryFilePermission.EXECUTE.getMask();
+    if ((mask & SpringSecurityRepositoryFilePermission.EXECUTE.getMask()) == SpringSecurityRepositoryFilePermission.EXECUTE.getMask()) {
+      permissions.add(SpringSecurityRepositoryFilePermission.EXECUTE);
+      mask &= ~SpringSecurityRepositoryFilePermission.EXECUTE.getMask();
     }
-    if ((mask & RepositoryFilePermission.READ_ACL.getMask()) == RepositoryFilePermission.READ_ACL.getMask()) {
-      permissions.add(RepositoryFilePermission.READ_ACL);
-      mask &= ~RepositoryFilePermission.READ_ACL.getMask();
+    if ((mask & SpringSecurityRepositoryFilePermission.READ_ACL.getMask()) == SpringSecurityRepositoryFilePermission.READ_ACL.getMask()) {
+      permissions.add(SpringSecurityRepositoryFilePermission.READ_ACL);
+      mask &= ~SpringSecurityRepositoryFilePermission.READ_ACL.getMask();
     }
-    if ((mask & RepositoryFilePermission.WRITE.getMask()) == RepositoryFilePermission.WRITE.getMask()) {
-      permissions.add(RepositoryFilePermission.WRITE);
-      mask &= ~RepositoryFilePermission.WRITE.getMask();
+    if ((mask & SpringSecurityRepositoryFilePermission.WRITE.getMask()) == SpringSecurityRepositoryFilePermission.WRITE.getMask()) {
+      permissions.add(SpringSecurityRepositoryFilePermission.WRITE);
+      mask &= ~SpringSecurityRepositoryFilePermission.WRITE.getMask();
     }
-    if ((mask & RepositoryFilePermission.WRITE_ACL.getMask()) == RepositoryFilePermission.WRITE_ACL.getMask()) {
-      permissions.add(RepositoryFilePermission.WRITE_ACL);
-      mask &= ~RepositoryFilePermission.WRITE_ACL.getMask();
+    if ((mask & SpringSecurityRepositoryFilePermission.WRITE_ACL.getMask()) == SpringSecurityRepositoryFilePermission.WRITE_ACL.getMask()) {
+      permissions.add(SpringSecurityRepositoryFilePermission.WRITE_ACL);
+      mask &= ~SpringSecurityRepositoryFilePermission.WRITE_ACL.getMask();
     }
     if (mask != 0) {
       throw new RuntimeException("unrecognized bits in cumulative permission mask=" + permission.getMask()

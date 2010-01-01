@@ -11,36 +11,36 @@ import org.springframework.security.acls.domain.DefaultPermissionFactory;
  * 
  * @author mlowery
  */
-public class RepositoryFilePermission extends AbstractPermission {
+public class SpringSecurityRepositoryFilePermission extends AbstractPermission {
 
   private static final long serialVersionUID = -5386252944598776600L;
 
   /**
    * All bits off. The second argument in the constructor is not used. ({@link #getPattern()} is overridden.)
    */
-  public static final Permission NONE = new RepositoryFilePermission(0, 'N'); // 1
+  public static final Permission NONE = new SpringSecurityRepositoryFilePermission(0, 'N'); // 1
 
-  public static final Permission READ = new RepositoryFilePermission(1 << 0, 'R'); // 1
+  public static final Permission READ = new SpringSecurityRepositoryFilePermission(1 << 0, 'R'); // 1
 
-  public static final Permission WRITE = new RepositoryFilePermission(1 << 1, 'W'); // 2
+  public static final Permission WRITE = new SpringSecurityRepositoryFilePermission(1 << 1, 'W'); // 2
 
-  public static final Permission EXECUTE = new RepositoryFilePermission(1 << 2, 'X'); // 4
+  public static final Permission EXECUTE = new SpringSecurityRepositoryFilePermission(1 << 2, 'X'); // 4
 
-  public static final Permission DELETE = new RepositoryFilePermission(1 << 3, 'D'); // 8
+  public static final Permission DELETE = new SpringSecurityRepositoryFilePermission(1 << 3, 'D'); // 8
 
-  public static final Permission APPEND = new RepositoryFilePermission(1 << 4, 'A'); // 16
+  public static final Permission APPEND = new SpringSecurityRepositoryFilePermission(1 << 4, 'A'); // 16
 
-  public static final Permission DELETE_CHILD = new RepositoryFilePermission(1 << 5, 'C'); // 32
+  public static final Permission DELETE_CHILD = new SpringSecurityRepositoryFilePermission(1 << 5, 'C'); // 32
 
-  public static final Permission READ_ACL = new RepositoryFilePermission(1 << 8, 'P'); // 256
+  public static final Permission READ_ACL = new SpringSecurityRepositoryFilePermission(1 << 8, 'P'); // 256
 
-  public static final Permission WRITE_ACL = new RepositoryFilePermission(1 << 9, 'L'); // 512
+  public static final Permission WRITE_ACL = new SpringSecurityRepositoryFilePermission(1 << 9, 'L'); // 512
 
   /**
    * All bits on. This value is future-proof in that new permissions will automatically be included in this value. The
    * second argument in the constructor is not used. ({@link #getPattern()} is overridden.)
    */
-  public static final Permission ALL = new RepositoryFilePermission(-1, 'Z');
+  public static final Permission ALL = new SpringSecurityRepositoryFilePermission(-1, 'Z');
 
   protected static DefaultPermissionFactory defaultPermissionFactory = new DefaultPermissionFactory();
 
@@ -49,10 +49,10 @@ public class RepositoryFilePermission extends AbstractPermission {
      * that the static methods will operate correctly.
      */
   static {
-    registerPermissionsFor(RepositoryFilePermission.class);
+    registerPermissionsFor(SpringSecurityRepositoryFilePermission.class);
   }
 
-  protected RepositoryFilePermission(int mask, char code) {
+  protected SpringSecurityRepositoryFilePermission(int mask, char code) {
     super(mask, code);
   }
 

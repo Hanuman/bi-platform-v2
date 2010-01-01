@@ -25,7 +25,9 @@ public class RepositoryFileAcl {
 
   private List<Ace> aces = new ArrayList<Ace>();
 
-  private Serializable fileId;
+  private Serializable id;
+
+  private Serializable parentId;
 
   private RepositoryFileSid owner;
 
@@ -33,9 +35,10 @@ public class RepositoryFileAcl {
 
   // ~ Constructors ====================================================================================================
 
-  public RepositoryFileAcl(final Serializable fileId, final RepositoryFileSid owner) {
+  public RepositoryFileAcl(final Serializable id, final Serializable parentId, final RepositoryFileSid owner) {
     super();
-    this.fileId = fileId;
+    this.id = id;
+    this.parentId = parentId;
     this.owner = owner;
   }
 
@@ -45,8 +48,12 @@ public class RepositoryFileAcl {
     return Collections.unmodifiableList(aces);
   }
 
-  public Serializable getFileId() {
-    return fileId;
+  public Serializable getId() {
+    return id;
+  }
+
+  public Serializable getParentId() {
+    return parentId;
   }
 
   public RepositoryFileSid getOwner() {
@@ -63,8 +70,9 @@ public class RepositoryFileAcl {
     int result = 1;
     result = prime * result + ((aces == null) ? 0 : aces.hashCode());
     result = prime * result + (entriesInheriting ? 1231 : 1237);
-    result = prime * result + ((fileId == null) ? 0 : fileId.hashCode());
+    result = prime * result + ((id == null) ? 0 : id.hashCode());
     result = prime * result + ((owner == null) ? 0 : owner.hashCode());
+    result = prime * result + ((parentId == null) ? 0 : parentId.hashCode());
     return result;
   }
 
@@ -84,23 +92,28 @@ public class RepositoryFileAcl {
       return false;
     if (entriesInheriting != other.entriesInheriting)
       return false;
-    if (fileId == null) {
-      if (other.fileId != null)
+    if (id == null) {
+      if (other.id != null)
         return false;
-    } else if (!fileId.equals(other.fileId))
+    } else if (!id.equals(other.id))
       return false;
     if (owner == null) {
       if (other.owner != null)
         return false;
     } else if (!owner.equals(other.owner))
       return false;
+    if (parentId == null) {
+      if (other.parentId != null)
+        return false;
+    } else if (!parentId.equals(other.parentId))
+      return false;
     return true;
   }
 
   @Override
   public String toString() {
-    return "RepositoryFileAcl[fileId=" + fileId + ", owner=" + owner + ", entriesInheriting=" + entriesInheriting
-        + ", aces=" + aces + "]";
+    return "RepositoryFileAcl [id=" + id + ", parentId=" + parentId + ", owner=" + owner + ", entriesInheriting="
+        + entriesInheriting + ", aces=" + aces + "]";
   }
 
   // ~ Inner classes ===================================================================================================
@@ -108,13 +121,13 @@ public class RepositoryFileAcl {
   public static class Ace {
     private RepositoryFileSid recipient;
 
-    private EnumSet<Permission> permissions;
+    private EnumSet<RepositoryFilePermission> permissions;
 
-    public Ace(final RepositoryFileSid recipient, final Permission first, final Permission... rest) {
+    public Ace(final RepositoryFileSid recipient, final RepositoryFilePermission first, final RepositoryFilePermission... rest) {
       this(recipient, EnumSet.of(first, rest));
     }
 
-    public Ace(final RepositoryFileSid recipient, final EnumSet<Permission> permissions) {
+    public Ace(final RepositoryFileSid recipient, final EnumSet<RepositoryFilePermission> permissions) {
       super();
       this.recipient = recipient;
       this.permissions = permissions;
@@ -124,7 +137,7 @@ public class RepositoryFileAcl {
       return recipient;
     }
 
-    public EnumSet<Permission> getPermissions() {
+    public EnumSet<RepositoryFilePermission> getPermissions() {
       return permissions;
     }
 
@@ -169,23 +182,27 @@ public class RepositoryFileAcl {
   public static class Builder {
     private List<Ace> aces = new ArrayList<Ace>();
 
-    private Serializable fileId;
+    private Serializable id;
+
+    private Serializable parentId;
 
     private RepositoryFileSid owner;
 
     private boolean entriesInheriting = true;
 
-    public Builder(final Serializable fileId, final RepositoryFileSid owner) {
-      this.fileId = fileId;
+    public Builder(final Serializable id, final Serializable parentId, final RepositoryFileSid owner) {
+      this.id = id;
+      this.parentId = parentId;
       this.owner = owner;
     }
 
-    public Builder(final Serializable fileId, final String name, final RepositoryFileSid.Type type) {
-      this(fileId, new RepositoryFileSid(name, type));
+    public Builder(final Serializable id, final Serializable parentId, final String name,
+        final RepositoryFileSid.Type type) {
+      this(id, parentId, new RepositoryFileSid(name, type));
     }
 
     public Builder(final RepositoryFileAcl other) {
-      this(other.fileId, other.owner);
+      this(other.id, other.parentId, other.owner);
       this.entriesInheriting(other.entriesInheriting);
       for (Ace ace : other.aces) {
         this.ace(ace);
@@ -193,7 +210,7 @@ public class RepositoryFileAcl {
     }
 
     public RepositoryFileAcl build() {
-      RepositoryFileAcl result = new RepositoryFileAcl(fileId, owner);
+      RepositoryFileAcl result = new RepositoryFileAcl(id, parentId, owner);
       result.aces = this.aces;
       result.entriesInheriting = this.entriesInheriting;
       return result;
@@ -208,28 +225,33 @@ public class RepositoryFileAcl {
       this.owner = owner;
       return this;
     }
-    
+
     public Builder ace(final Ace ace) {
       this.aces.add(ace);
       return this;
     }
 
-    public Builder ace(final RepositoryFileSid recipient, final Permission first, final Permission... rest) {
+    public Builder ace(final RepositoryFileSid recipient, final RepositoryFilePermission first, final RepositoryFilePermission... rest) {
       return ace(recipient, EnumSet.of(first, rest));
     }
 
-    public Builder ace(final RepositoryFileSid recipient, final EnumSet<Permission> permissions) {
+    public Builder ace(final RepositoryFileSid recipient, final EnumSet<RepositoryFilePermission> permissions) {
       this.aces.add(new Ace(recipient, permissions));
       return this;
     }
 
-    public Builder ace(final String name, final RepositoryFileSid.Type type, final Permission first,
-        final Permission... rest) {
+    public Builder ace(final String name, final RepositoryFileSid.Type type, final RepositoryFilePermission first,
+        final RepositoryFilePermission... rest) {
       return ace(new RepositoryFileSid(name, type), first, rest);
     }
 
-    public Builder ace(final String name, final RepositoryFileSid.Type type, final EnumSet<Permission> permissions) {
+    public Builder ace(final String name, final RepositoryFileSid.Type type, final EnumSet<RepositoryFilePermission> permissions) {
       return ace(new RepositoryFileSid(name, type), permissions);
+    }
+    
+    public Builder clearAces() {
+      this.aces.clear();
+      return this;
     }
   }
 

@@ -11,7 +11,7 @@ import org.pentaho.platform.engine.core.system.PentahoSessionHolder;
 import org.pentaho.platform.engine.core.system.StandaloneSession;
 import org.pentaho.platform.engine.security.SecurityHelper;
 import org.pentaho.platform.repository.pcr.springsecurity.IPentahoMutableAclService;
-import org.pentaho.platform.repository.pcr.springsecurity.RepositoryFilePermission;
+import org.pentaho.platform.repository.pcr.springsecurity.SpringSecurityRepositoryFilePermission;
 import org.springframework.security.Authentication;
 import org.springframework.security.GrantedAuthority;
 import org.springframework.security.GrantedAuthorityImpl;
@@ -157,8 +157,8 @@ public class DefaultRepositoryEventHandler implements IPentahoContentRepository.
                 "[system] create pentaho root folder");
             // allow all authenticated users to see the contents of this folder (and its ACL)
             internalAddPermission(rootFolder, new GrantedAuthoritySid(commonAuthenticatedAuthorityName),
-                new CumulativePermission().set(RepositoryFilePermission.READ).set(RepositoryFilePermission.READ_ACL)
-                    .set(RepositoryFilePermission.EXECUTE));
+                new CumulativePermission().set(SpringSecurityRepositoryFilePermission.READ).set(SpringSecurityRepositoryFilePermission.READ_ACL)
+                    .set(SpringSecurityRepositoryFilePermission.EXECUTE));
           }
         }
       });
@@ -185,7 +185,7 @@ public class DefaultRepositoryEventHandler implements IPentahoContentRepository.
             internalSetOwner(tenantRootFolder, ownerSid);
             internalSetFullControl(tenantRootFolder, ownerSid);
             internalAddPermission(tenantRootFolder, new GrantedAuthoritySid(tenantAuthenticatedAuthorityName),
-                new CumulativePermission().set(RepositoryFilePermission.READ).set(RepositoryFilePermission.READ_ACL));
+                new CumulativePermission().set(SpringSecurityRepositoryFilePermission.READ).set(SpringSecurityRepositoryFilePermission.READ_ACL));
           }
         }
       });
@@ -213,10 +213,10 @@ public class DefaultRepositoryEventHandler implements IPentahoContentRepository.
             Sid ownerSid = new GrantedAuthoritySid(tenantAdminAuthorityName);
             internalSetOwner(tenantPublicFolder, ownerSid);
             internalAddPermission(tenantPublicFolder, new GrantedAuthoritySid(tenantAuthenticatedAuthorityName),
-                new CumulativePermission().set(RepositoryFilePermission.READ).set(RepositoryFilePermission.READ_ACL)
-                    .set(RepositoryFilePermission.APPEND).set(RepositoryFilePermission.DELETE_CHILD).set(
-                        RepositoryFilePermission.WRITE).set(RepositoryFilePermission.WRITE_ACL).set(
-                        RepositoryFilePermission.EXECUTE));
+                new CumulativePermission().set(SpringSecurityRepositoryFilePermission.READ).set(SpringSecurityRepositoryFilePermission.READ_ACL)
+                    .set(SpringSecurityRepositoryFilePermission.APPEND).set(SpringSecurityRepositoryFilePermission.DELETE_CHILD).set(
+                        SpringSecurityRepositoryFilePermission.WRITE).set(SpringSecurityRepositoryFilePermission.WRITE_ACL).set(
+                        SpringSecurityRepositoryFilePermission.EXECUTE));
             // home folder inherits ACEs from parent ACL
             RepositoryFile tenantHomeFolder = internalCreateFolder(tenantRootFolder, new RepositoryFile.Builder(
                 RepositoryPaths.getTenantHomeFolderName()).folder(true).build(), true, tenantAdminAuthorityName,
@@ -272,7 +272,7 @@ public class DefaultRepositoryEventHandler implements IPentahoContentRepository.
     Assert.notNull(file);
     Assert.notNull(sid);
     mutableAclService.setFullControl(new ObjectIdentityImpl(RepositoryFile.class, file.getId()), sid,
-        RepositoryFilePermission.ALL);
+        SpringSecurityRepositoryFilePermission.ALL);
   }
 
   private MutableAcl internalCreateAcl(final RepositoryFile file, final boolean entriesInheriting,
@@ -284,7 +284,7 @@ public class DefaultRepositoryEventHandler implements IPentahoContentRepository.
       parentOid = new ObjectIdentityImpl(RepositoryFile.class, file.getParentId());
     }
     return mutableAclService.createAndInitializeAcl(new ObjectIdentityImpl(RepositoryFile.class, file.getId()),
-        parentOid, entriesInheriting, new PrincipalSid(ownerUsername), RepositoryFilePermission.ALL);
+        parentOid, entriesInheriting, new PrincipalSid(ownerUsername), SpringSecurityRepositoryFilePermission.ALL);
   }
 
   private void internalAddPermission(final RepositoryFile file, final Sid recipient, final Permission permission,

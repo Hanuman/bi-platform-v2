@@ -8,6 +8,9 @@ public class RepositoryFileSid {
 
   private RepositoryFileSid.Type type;
 
+  /**
+   * Creates a new Sid with given name and type of {@link Type#USER}.
+   */
   public RepositoryFileSid(final String name) {
     this(name, Type.USER);
   }

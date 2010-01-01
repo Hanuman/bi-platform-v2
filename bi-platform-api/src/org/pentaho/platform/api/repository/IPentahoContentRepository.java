@@ -118,11 +118,13 @@ public interface IPentahoContentRepository {
    */
   void unlockFile(final RepositoryFile file);
 
-  // ~ Access query methods ============================================================================================
+  // ~ Access read/write methods =======================================================================================
 
   RepositoryFileAcl getAcl(final RepositoryFile file);
+  
+  void setAcl(final RepositoryFileAcl acl);
 
-  // ~ Version methods ==================================================================================================
+  // ~ Version methods =================================================================================================
 
   /**
    * Returns a list of version summary instances. The first version in the list is the root version. The last version

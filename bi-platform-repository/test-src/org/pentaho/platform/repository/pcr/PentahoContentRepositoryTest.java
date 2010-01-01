@@ -30,7 +30,7 @@ import org.junit.runner.RunWith;
 import org.pentaho.platform.api.engine.IPentahoSession;
 import org.pentaho.platform.api.repository.IPentahoContentRepository;
 import org.pentaho.platform.api.repository.IRepositoryFileContent;
-import org.pentaho.platform.api.repository.Permission;
+import org.pentaho.platform.api.repository.RepositoryFilePermission;
 import org.pentaho.platform.api.repository.RepositoryFile;
 import org.pentaho.platform.api.repository.RepositoryFileAcl;
 import org.pentaho.platform.api.repository.RepositoryFileSid;
@@ -183,7 +183,7 @@ public class PentahoContentRepositoryTest implements ApplicationContextAware {
     //    assertLocalAceExists(repo.getFile(RepositoryPaths.getPentahoRootFolderPath()), repositoryAdminSid, EnumSet
     //        .of(Permission.ALL));
     assertLocalAceExists(repo.getFile(RepositoryPaths.getPentahoRootFolderPath()), commonAuthenticatedAuthoritySid,
-        EnumSet.of(Permission.READ, Permission.READ_ACL));
+        EnumSet.of(RepositoryFilePermission.READ, RepositoryFilePermission.READ_ACL));
     assertEquals(repositoryAdminSid, repo.getFile(RepositoryPaths.getPentahoRootFolderPath()).getOwner());
     assertTrue(SimpleJcrTestUtils.hasPrivileges(testJcrTemplate, RepositoryPaths.getPentahoRootFolderPath(),
         Privilege.JCR_READ));
@@ -192,9 +192,9 @@ public class PentahoContentRepositoryTest implements ApplicationContextAware {
 
     // tenant root folder
     assertLocalAceExists(repo.getFile(RepositoryPaths.getTenantRootFolderPath()), acmeAdminSid, EnumSet
-        .of(Permission.ALL));
+        .of(RepositoryFilePermission.ALL));
     assertLocalAceExists(repo.getFile(RepositoryPaths.getTenantRootFolderPath()), acmeAuthenticatedAuthoritySid,
-        EnumSet.of(Permission.READ, Permission.READ_ACL));
+        EnumSet.of(RepositoryFilePermission.READ, RepositoryFilePermission.READ_ACL));
     assertEquals(acmeAdminSid, repo.getFile(RepositoryPaths.getTenantRootFolderPath()).getOwner());
     assertTrue(SimpleJcrTestUtils.hasPrivileges(testJcrTemplate, RepositoryPaths.getTenantRootFolderPath(),
         Privilege.JCR_READ));
@@ -203,8 +203,8 @@ public class PentahoContentRepositoryTest implements ApplicationContextAware {
 
     // tenant public folder
     assertLocalAceExists(repo.getFile(RepositoryPaths.getTenantPublicFolderPath()), acmeAuthenticatedAuthoritySid,
-        EnumSet.of(Permission.APPEND, Permission.WRITE, Permission.WRITE_ACL, Permission.READ, Permission.READ_ACL,
-            Permission.DELETE_CHILD));
+        EnumSet.of(RepositoryFilePermission.APPEND, RepositoryFilePermission.WRITE, RepositoryFilePermission.WRITE_ACL,
+            RepositoryFilePermission.READ, RepositoryFilePermission.READ_ACL, RepositoryFilePermission.DELETE_CHILD));
     assertEquals(acmeAdminSid, repo.getFile(RepositoryPaths.getTenantPublicFolderPath()).getOwner());
     assertTrue(SimpleJcrTestUtils.hasPrivileges(testJcrTemplate, RepositoryPaths.getTenantPublicFolderPath(),
         Privilege.JCR_READ));
@@ -220,7 +220,8 @@ public class PentahoContentRepositoryTest implements ApplicationContextAware {
         Privilege.JCR_READ_ACCESS_CONTROL));
 
     // suzy home folder
-    assertLocalAceExists(repo.getFile(RepositoryPaths.getUserHomeFolderPath()), suzySid, EnumSet.of(Permission.ALL));
+    assertLocalAceExists(repo.getFile(RepositoryPaths.getUserHomeFolderPath()), suzySid, EnumSet
+        .of(RepositoryFilePermission.ALL));
     assertEquals(suzySid, repo.getFile(RepositoryPaths.getUserHomeFolderPath()).getOwner());
     assertTrue(SimpleJcrTestUtils.hasPrivileges(testJcrTemplate, RepositoryPaths.getUserHomeFolderPath(),
         Privilege.JCR_ALL));
@@ -756,15 +757,23 @@ public class PentahoContentRepositoryTest implements ApplicationContextAware {
     login(USERNAME_SUZY, TENANT_ID_ACME);
     RepositoryFile parentFolder = repo.getFile(RepositoryPaths.getTenantPublicFolderPath());
     RepositoryFile newFolder = new RepositoryFile.Builder("test").folder(true).versioned(true).build();
+    final String testFolderPath = RepositoryPaths.getTenantPublicFolderPath() + RepositoryFile.SEPARATOR + "test";
     newFolder = repo.createFolder(parentFolder, newFolder);
-    // new folders/files don't have an owner yet at the time they're read
+    // new folders/files don't have an owner yet at the time they're read; unfortunate aspect of impl
     assertNull(newFolder.getOwner());
     // to get a non-null owner, use getFile
-    RepositoryFile fetchedFolder = repo.getFile(RepositoryPaths.getTenantPublicFolderPath() + RepositoryFile.SEPARATOR
-        + "test");
-    assertEquals(new RepositoryFileSid(USERNAME_SUZY, RepositoryFileSid.Type.USER), fetchedFolder.getOwner());
-    // TODO mlowery finish once setAcl is done
+    RepositoryFile fetchedFolder = repo.getFile(testFolderPath);
+    assertEquals(new RepositoryFileSid(USERNAME_SUZY), fetchedFolder.getOwner());
 
+    // set acl removing suzy's rights to this folder
+    loginAsRepositoryAdmin();
+    RepositoryFileAcl testFolderAcl = repo.getAcl(repo.getFile(testFolderPath));
+    RepositoryFileAcl newAcl = new RepositoryFileAcl.Builder(testFolderAcl).entriesInheriting(false).clearAces()
+        .build();
+    repo.setAcl(newAcl);
+    // but suzy is still the owner--she should be able to "acl" herself back into the folder
+    login(USERNAME_SUZY, TENANT_ID_ACME);
+    assertNotNull(repo.getFile(testFolderPath));
   }
 
   @Test
@@ -776,12 +785,27 @@ public class PentahoContentRepositoryTest implements ApplicationContextAware {
     newFolder = repo.createFolder(parentFolder, newFolder);
     RepositoryFileAcl acl = repo.getAcl(newFolder);
     assertEquals(true, acl.isEntriesInheriting());
-    assertEquals(new RepositoryFileSid(USERNAME_SUZY, RepositoryFileSid.Type.USER), acl.getOwner());
-    assertEquals(newFolder.getId(), acl.getFileId());
+    assertEquals(new RepositoryFileSid(USERNAME_SUZY), acl.getOwner());
+    assertEquals(newFolder.getId(), acl.getId());
+    assertEquals(newFolder.getParentId(), acl.getParentId());
     assertTrue(acl.getAces().isEmpty());
-    // TODO mlowery more in-depth ACE checking
   }
-  
+
+  @Test
+  public void testGetAcl2() throws Exception {
+    repo.getRepositoryEventHandler().onStartup();
+    login(USERNAME_SUZY, TENANT_ID_ACME);
+    RepositoryFile parentFolder = repo.getFile(RepositoryPaths.getTenantPublicFolderPath());
+    RepositoryFile newFolder = new RepositoryFile.Builder("test").folder(true).versioned(true).build();
+    newFolder = repo.createFolder(parentFolder, newFolder);
+    RepositoryFileAcl acl = repo.getAcl(newFolder);
+    RepositoryFileAcl newAcl = new RepositoryFileAcl.Builder(acl).entriesInheriting(false).ace(
+        new RepositoryFileSid(USERNAME_SUZY), RepositoryFilePermission.ALL).build();
+    repo.setAcl(newAcl);
+    RepositoryFileAcl fetchedAcl = repo.getAcl(newFolder);
+    assertEquals(1, fetchedAcl.getAces().size());
+  }
+
   @Test
   public void testSetAcl() throws Exception {
     repo.getRepositoryEventHandler().onStartup();
@@ -790,11 +814,13 @@ public class PentahoContentRepositoryTest implements ApplicationContextAware {
     RepositoryFile newFolder = new RepositoryFile.Builder("test").folder(true).versioned(true).build();
     newFolder = repo.createFolder(parentFolder, newFolder);
     RepositoryFileAcl acl = repo.getAcl(newFolder);
-    
+
     RepositoryFileAcl.Builder newAclBuilder = new RepositoryFileAcl.Builder(acl);
     RepositoryFileSid tiffanySid = new RepositoryFileSid(USERNAME_TIFFANY);
     newAclBuilder.owner(tiffanySid);
-//    repo.setAcl(newAclBuilder.build());
+    repo.setAcl(newAclBuilder.build());
+    RepositoryFileAcl fetchedAcl = repo.getAcl(newFolder);
+    assertEquals(new RepositoryFileSid(USERNAME_TIFFANY), fetchedAcl.getOwner());
   }
 
   private RepositoryFile createRunResultFile(final String parentFolderPath, final String expectedName,
@@ -817,7 +843,8 @@ public class PentahoContentRepositoryTest implements ApplicationContextAware {
   }
 
   private void assertLocalAceExists(final RepositoryFile file,
-      final org.pentaho.platform.api.repository.RepositoryFileSid sid, final EnumSet<Permission> permissions) {
+      final org.pentaho.platform.api.repository.RepositoryFileSid sid,
+      final EnumSet<RepositoryFilePermission> permissions) {
     RepositoryFileAcl acl = repo.getAcl(file);
 
     List<RepositoryFileAcl.Ace> aces = acl.getAces();

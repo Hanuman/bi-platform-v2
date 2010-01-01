@@ -288,13 +288,7 @@ public class JackrabbitMutableAclService implements IPentahoMutableAclService {
 
   private boolean isReferenceable(final PentahoJcrConstants pentahoJcrConstants, final Node node)
       throws RepositoryException {
-    Value[] mixinTypeNames = node.getProperty(pentahoJcrConstants.getJCR_MIXINTYPES()).getValues();
-    for (Value v : mixinTypeNames) {
-      if (pentahoJcrConstants.getMIX_REFERENCEABLE().equals(v.getString())) {
-        return true;
-      }
-    }
-    return false;
+    return node.isNodeType(pentahoJcrConstants.getMIX_REFERENCEABLE());
   }
 
   private Acl toAcl(final SessionImpl session, final PentahoJcrConstants pentahoJcrConstants,
