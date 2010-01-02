@@ -10,8 +10,12 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 /**
- * A simplified (i.e. no access control logic) and GWT-compatible version of 
- * {@code org.springframework.security.acls.Acl}.
+ * Immutable repository file access control list (ACL). Use the {@link Builder} to create instances.
+ * 
+ * <p>
+ * Same abstraction as {@code org.springframework.security.acls.Acl} although it contains no logic and is 
+ * GWT-compatible.
+ * </p>
  * 
  * @author mlowery
  */

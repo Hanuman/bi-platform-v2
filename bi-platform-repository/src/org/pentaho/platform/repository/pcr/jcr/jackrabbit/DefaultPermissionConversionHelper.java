@@ -13,7 +13,7 @@ import org.apache.jackrabbit.api.jsr283.security.Privilege;
 import org.apache.jackrabbit.core.SessionImpl;
 import org.apache.jackrabbit.core.security.authorization.PrivilegeRegistry;
 import org.pentaho.platform.api.repository.RepositoryFilePermission;
-import org.pentaho.platform.repository.pcr.jcr.jackrabbit.JackrabbitMutableAclService.IPermissionConversionHelper;
+import org.pentaho.platform.repository.pcr.jcr.jackrabbit.JackrabbitRepositoryFileAclDao.IPermissionConversionHelper;
 import org.springframework.util.Assert;
 
 import com.google.common.collect.HashMultimap;

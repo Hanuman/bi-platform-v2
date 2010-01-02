@@ -7,24 +7,16 @@ import java.util.List;
  * Entry point into the content repository.
  * 
  * <p>
- * Implementations should never filter results because of access restrictions. Furthermore, implementations should never
- * return {@code null} if a user does not have access to a file. The reason for this behavior is that you cannot know 
- * what the user wishes to do with a file when the user asks for it. Furthermore, this behavior is consistent with the
- * behavior of Linux. Of course, if a user has no read access to a folder, then you should not return file objects 
- * within that folder. Instead, throw an access exception.
- * </p>
- * 
- * <p>
  * With the exception of the {@code create} methods, all {@code RepositoryFile} instances should be retrieved 
- * from this service and not created explicitly. For example, to get a stream for execute, use
+ * from this service and not created outside of this service. For example, to get a stream for read, use
  * <pre>{@code
- * InputStream stream = getStreamForExecute(getFile("/myfile"));
+ * InputStream stream = getContentForRead(getFile("/pentaho/acme/public/myfile.xml"));
  * }</pre>
  * </p>
  * 
  * @author mlowery
  */
-public interface IPentahoContentRepository {
+public interface IRepositoryService {
 
   /**
    * Gets file. Use this method to test for file existence too.
@@ -121,8 +113,19 @@ public interface IPentahoContentRepository {
 
   // ~ Access read/write methods =======================================================================================
 
+  /**
+   * Returns ACL for file.
+   * 
+   * @param file file whose ACL to get
+   * @return access control list
+   */
   RepositoryFileAcl getAcl(final RepositoryFile file);
   
+  /**
+   * Sets an ACL.
+   * 
+   * @param acl ACL to set
+   */
   void setAcl(final RepositoryFileAcl acl);
   
   /**
@@ -171,9 +174,9 @@ public interface IPentahoContentRepository {
    * Handles various events like startup and new user. 
    * 
    * <p>
-   * Methods in this class are not called by the {@link IPentahoContentRepository} implementation; they must be called 
+   * Methods in this class are not called by the {@link IRepositoryService} implementation; they must be called 
    * by an external caller. A caller can get a reference to the {@link IRepositoryEventHandler} by calling 
-   * {@link IPentahoContentRepository#getRepositoryEventHandler()}. Methods should be able to be called more than once 
+   * {@link IRepositoryService#getRepositoryEventHandler()}. Methods should be able to be called more than once 
    * with the same arguments with no adverse effects.
    * </p>
    * 
@@ -186,7 +189,7 @@ public interface IPentahoContentRepository {
   interface IRepositoryEventHandler {
 
     /**
-     * To be called before any users call into the {@link IPentahoContentRepository}.
+     * To be called before any users call into the {@link IRepositoryService}.
      */
     void onStartup();
 
@@ -196,25 +199,25 @@ public interface IPentahoContentRepository {
     void onShutdown();
 
     /**
-     * To be called before any users belonging to a particular tenant call into the {@link IPentahoContentRepository}.
+     * To be called before any users belonging to a particular tenant call into the {@link IRepositoryService}.
      * @param tenantId new tenant id
      */
     void onNewTenant(final String tenantId);
     
     /**
-     * To be called before any users belonging to the current tenant call into the {@link IPentahoContentRepository}. 
+     * To be called before any users belonging to the current tenant call into the {@link IRepositoryService}. 
      */
     void onNewTenant();
 
     /**
-     * To be called before user indicated by {@code username} calls into the {@link IPentahoContentRepository}.
+     * To be called before user indicated by {@code username} calls into the {@link IRepositoryService}.
      * @param tenantId tenant to which the user belongs
      * @param username new username
      */
     void onNewUser(final String tenantId, final String username);
 
     /**
-     * To be called before current user calls into the {@link IPentahoContentRepository}.
+     * To be called before current user calls into the {@link IRepositoryService}.
      */
     void onNewUser();
   }

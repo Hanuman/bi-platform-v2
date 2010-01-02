@@ -2,15 +2,15 @@ package org.pentaho.platform.repository.pcr.spring;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.pentaho.platform.api.repository.IPentahoContentRepository;
+import org.pentaho.platform.api.repository.IRepositoryService;
 import org.springframework.context.ApplicationEvent;
 import org.springframework.context.ApplicationListener;
 import org.springframework.security.event.authentication.InteractiveAuthenticationSuccessEvent;
 import org.springframework.util.Assert;
 
 /**
- * {@link ApplicationListener} that invokes {@link IPentahoContentRepository.IRepositoryEventHandler#onNewTenant()} and
- * {@link IPentahoContentRepository.IRepositoryEventHandler#onNewUser()}.
+ * {@link ApplicationListener} that invokes {@link IRepositoryService.IRepositoryEventHandler#onNewTenant()} and
+ * {@link IRepositoryService.IRepositoryEventHandler#onNewUser()}.
  * 
  * @author mlowery
  */
@@ -22,14 +22,14 @@ public class RepositoryEventHandlerAuthenticationSuccessListener implements Appl
 
   // ~ Instance fields =================================================================================================
 
-  private IPentahoContentRepository pentahoContentRepository;
+  private IRepositoryService repositoryService;
 
   // ~ Constructors ====================================================================================================
 
-  public RepositoryEventHandlerAuthenticationSuccessListener(final IPentahoContentRepository pentahoContentRepository) {
+  public RepositoryEventHandlerAuthenticationSuccessListener(final IRepositoryService repositoryService) {
     super();
-    Assert.notNull(pentahoContentRepository);
-    this.pentahoContentRepository = pentahoContentRepository;
+    Assert.notNull(repositoryService);
+    this.repositoryService = repositoryService;
   }
 
   // ~ Methods =========================================================================================================
@@ -40,8 +40,8 @@ public class RepositoryEventHandlerAuthenticationSuccessListener implements Appl
     if (event instanceof InteractiveAuthenticationSuccessEvent) {
       logger.debug("heard interactive authentication success event; creating user home folder (if necessary)");
       try {
-        pentahoContentRepository.getRepositoryEventHandler().onNewTenant();
-        pentahoContentRepository.getRepositoryEventHandler().onNewUser();
+        repositoryService.getRepositoryEventHandler().onNewTenant();
+        repositoryService.getRepositoryEventHandler().onNewUser();
       } catch (Exception e) {
         logger.error("an exception occurred while creating user home folder", e);
       }

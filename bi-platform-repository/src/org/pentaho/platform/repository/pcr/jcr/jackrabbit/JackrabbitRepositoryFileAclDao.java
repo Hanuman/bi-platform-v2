@@ -39,7 +39,7 @@ import org.springframework.extensions.jcr.JcrTemplate;
 import org.springframework.util.Assert;
 
 /**
- * Jackrabbit-based implementation of {@link IPentahoMutableAclService}.
+ * Jackrabbit-based implementation of {@link IRepositoryFileAclDao}.
  * 
  * <p>
  * All mutating public methods require checkout and checkin calls since the act of simply calling 
@@ -51,11 +51,11 @@ import org.springframework.util.Assert;
  * 
  * @author mlowery
  */
-public class JackrabbitMutableAclService implements IRepositoryFileAclDao {
+public class JackrabbitRepositoryFileAclDao implements IRepositoryFileAclDao {
 
   // ~ Static fields/initializers ======================================================================================
 
-  private static final Log logger = LogFactory.getLog(JackrabbitMutableAclService.class);
+  private static final Log logger = LogFactory.getLog(JackrabbitRepositoryFileAclDao.class);
 
   // ~ Instance fields =================================================================================================
 
@@ -67,7 +67,7 @@ public class JackrabbitMutableAclService implements IRepositoryFileAclDao {
 
   // ~ Constructors ====================================================================================================
 
-  public JackrabbitMutableAclService(final JcrTemplate jcrTemplate) {
+  public JackrabbitRepositoryFileAclDao(final JcrTemplate jcrTemplate) {
     super();
     this.jcrTemplate = jcrTemplate;
     this.nodeIdStrategy = new UuidNodeIdStrategy(jcrTemplate);

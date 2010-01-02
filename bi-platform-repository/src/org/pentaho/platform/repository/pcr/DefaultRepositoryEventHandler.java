@@ -5,12 +5,12 @@ import java.util.EnumSet;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.pentaho.platform.api.engine.IPentahoSession;
-import org.pentaho.platform.api.repository.IPentahoContentRepository;
+import org.pentaho.platform.api.repository.IRepositoryService;
 import org.pentaho.platform.api.repository.RepositoryFile;
 import org.pentaho.platform.api.repository.RepositoryFileAcl;
 import org.pentaho.platform.api.repository.RepositoryFilePermission;
 import org.pentaho.platform.api.repository.RepositoryFileSid;
-import org.pentaho.platform.api.repository.IPentahoContentRepository.IRepositoryEventHandler;
+import org.pentaho.platform.api.repository.IRepositoryService.IRepositoryEventHandler;
 import org.pentaho.platform.engine.core.system.PentahoSessionHolder;
 import org.pentaho.platform.engine.core.system.StandaloneSession;
 import org.pentaho.platform.engine.security.SecurityHelper;
@@ -31,13 +31,13 @@ import org.springframework.util.Assert;
  * 
  * <ul>
  * <li>Runs as the repository admin. (Actually method is called as a regular user and the context is switched.)</li>
- * <li>Wraps calls to {@code contentDao} and {@code mutableAclService} in transactions.</li>
+ * <li>Wraps calls to {@code repositoryFileDao} and {@code repositoryFileAclDao} in transactions.</li>
  * <li>Uses programmatic transactions to keep the amount of declarative transaction XML to a minimum.</li>
  * </ul>
  * 
  * @author mlowery
  */
-public class DefaultRepositoryEventHandler implements IPentahoContentRepository.IRepositoryEventHandler {
+public class DefaultRepositoryEventHandler implements IRepositoryService.IRepositoryEventHandler {
 
   // ~ Static fields/initializers ======================================================================================
 
@@ -66,29 +66,29 @@ public class DefaultRepositoryEventHandler implements IPentahoContentRepository.
 
   private TransactionTemplate txnTemplate;
 
-  private IRepositoryFileDao contentDao;
+  private IRepositoryFileDao repositoryFileDao;
 
-  private IRepositoryFileAclDao mutableAclService;
+  private IRepositoryFileAclDao repositoryFileAclDao;
 
   private boolean startedUp;
 
   // ~ Constructors ====================================================================================================
 
   public DefaultRepositoryEventHandler(final IRepositoryFileDao contentDao,
-      final IRepositoryFileAclDao mutableAclService, final TransactionTemplate txnTemplate,
+      final IRepositoryFileAclDao repositoryFileAclDao, final TransactionTemplate txnTemplate,
       final String repositoryAdminUsername, final String repositoryAdminAuthorityName,
       final String commonAuthenticatedAuthorityName, final String tenantAuthenticatedAuthorityNameSuffix,
       final String tenantAdminAuthorityNameSuffix) {
     Assert.notNull(contentDao);
-    Assert.notNull(mutableAclService);
+    Assert.notNull(repositoryFileAclDao);
     Assert.notNull(txnTemplate);
     Assert.hasText(repositoryAdminUsername);
     Assert.hasText(repositoryAdminAuthorityName);
     Assert.hasText(commonAuthenticatedAuthorityName);
     Assert.hasText(tenantAuthenticatedAuthorityNameSuffix);
     Assert.hasText(tenantAdminAuthorityNameSuffix);
-    this.contentDao = contentDao;
-    this.mutableAclService = mutableAclService;
+    this.repositoryFileDao = contentDao;
+    this.repositoryFileAclDao = repositoryFileAclDao;
     this.txnTemplate = txnTemplate;
     this.repositoryAdminAuthorityName = repositoryAdminAuthorityName;
     this.repositoryAdminUsername = repositoryAdminUsername;
@@ -142,7 +142,7 @@ public class DefaultRepositoryEventHandler implements IPentahoContentRepository.
     try {
       txnTemplate.execute(new TransactionCallbackWithoutResult() {
         public void doInTransactionWithoutResult(final TransactionStatus status) {
-          RepositoryFile rootFolder = contentDao.getFile(RepositoryPaths.getPentahoRootFolderPath());
+          RepositoryFile rootFolder = repositoryFileDao.getFile(RepositoryPaths.getPentahoRootFolderPath());
           if (rootFolder == null) {
             // because this is running as the repo admin, the owner of this folder is the repo admin who also has full
             // control (no need to do a setOwner call)
@@ -170,8 +170,8 @@ public class DefaultRepositoryEventHandler implements IPentahoContentRepository.
     try {
       txnTemplate.execute(new TransactionCallbackWithoutResult() {
         public void doInTransactionWithoutResult(final TransactionStatus status) {
-          RepositoryFile rootFolder = contentDao.getFile(RepositoryPaths.getPentahoRootFolderPath());
-          RepositoryFile tenantRootFolder = contentDao.getFile(RepositoryPaths.getTenantRootFolderPath(tenantId));
+          RepositoryFile rootFolder = repositoryFileDao.getFile(RepositoryPaths.getPentahoRootFolderPath());
+          RepositoryFile tenantRootFolder = repositoryFileDao.getFile(RepositoryPaths.getTenantRootFolderPath(tenantId));
           if (tenantRootFolder == null) {
             tenantRootFolder = internalCreateFolder(rootFolder, new RepositoryFile.Builder(tenantId).folder(true)
                 .build(), false, tenantAdminAuthorityName, "[system] created tenant root folder");
@@ -198,9 +198,9 @@ public class DefaultRepositoryEventHandler implements IPentahoContentRepository.
     try {
       txnTemplate.execute(new TransactionCallbackWithoutResult() {
         public void doInTransactionWithoutResult(final TransactionStatus status) {
-          RepositoryFile tenantRootFolder = contentDao.getFile(RepositoryPaths.getTenantRootFolderPath(tenantId));
+          RepositoryFile tenantRootFolder = repositoryFileDao.getFile(RepositoryPaths.getTenantRootFolderPath(tenantId));
           Assert.notNull(tenantRootFolder);
-          if (contentDao.getFile(RepositoryPaths.getTenantPublicFolderPath(tenantId)) == null) {
+          if (repositoryFileDao.getFile(RepositoryPaths.getTenantPublicFolderPath(tenantId)) == null) {
             // public folder is versioned
             RepositoryFile tenantPublicFolder = internalCreateFolder(tenantRootFolder, new RepositoryFile.Builder(
                 RepositoryPaths.getTenantPublicFolderName()).folder(true).versioned(true).build(), false,
@@ -233,9 +233,9 @@ public class DefaultRepositoryEventHandler implements IPentahoContentRepository.
     try {
       txnTemplate.execute(new TransactionCallbackWithoutResult() {
         public void doInTransactionWithoutResult(final TransactionStatus status) {
-          RepositoryFile userHomeFolder = contentDao.getFile(RepositoryPaths.getUserHomeFolderPath(tenantId, username));
+          RepositoryFile userHomeFolder = repositoryFileDao.getFile(RepositoryPaths.getUserHomeFolderPath(tenantId, username));
           if (userHomeFolder == null) {
-            RepositoryFile tenantHomeFolder = contentDao.getFile(RepositoryPaths.getTenantHomeFolderPath(tenantId));
+            RepositoryFile tenantHomeFolder = repositoryFileDao.getFile(RepositoryPaths.getTenantHomeFolderPath(tenantId));
             // user home folder is versioned
             userHomeFolder = internalCreateFolder(tenantHomeFolder, new RepositoryFile.Builder(username).folder(true)
                 .versioned(true).build(), false, username, "[system] created user home folder");
@@ -259,7 +259,7 @@ public class DefaultRepositoryEventHandler implements IPentahoContentRepository.
       final boolean inheritAces, final String ownerUsername, final String versionMessage) {
     Assert.notNull(file);
 
-    RepositoryFile newFile = contentDao.createFolder(parentFolder, file, versionMessage);
+    RepositoryFile newFile = repositoryFileDao.createFolder(parentFolder, file, versionMessage);
     internalCreateAcl(newFile, inheritAces, ownerUsername);
 
     return newFile;
@@ -268,14 +268,14 @@ public class DefaultRepositoryEventHandler implements IPentahoContentRepository.
   private void internalSetFullControl(final RepositoryFile file, final RepositoryFileSid sid) {
     Assert.notNull(file);
     Assert.notNull(sid);
-    mutableAclService.setFullControl(file.getId(), sid, RepositoryFilePermission.ALL);
+    repositoryFileAclDao.setFullControl(file.getId(), sid, RepositoryFilePermission.ALL);
   }
 
   private RepositoryFileAcl internalCreateAcl(final RepositoryFile file, final boolean entriesInheriting,
       final String ownerUsername) {
     Assert.notNull(file);
 
-    return mutableAclService.createAcl(file.getId(), entriesInheriting, new RepositoryFileSid(ownerUsername),
+    return repositoryFileAclDao.createAcl(file.getId(), entriesInheriting, new RepositoryFileSid(ownerUsername),
         RepositoryFilePermission.ALL);
   }
 
@@ -286,7 +286,7 @@ public class DefaultRepositoryEventHandler implements IPentahoContentRepository.
     Assert.notNull(permissions);
     Assert.notEmpty(permissions);
 
-    mutableAclService.addPermission(file.getId(), recipient, permissions);
+    repositoryFileAclDao.addPermission(file.getId(), recipient, permissions);
   }
 
   private IPentahoSession createRepositoryAdminPentahoSession() {
@@ -295,7 +295,7 @@ public class DefaultRepositoryEventHandler implements IPentahoContentRepository.
     final GrantedAuthority[] repositoryAdminAuthorities = new GrantedAuthority[2];
     // necessary for AclAuthorizationStrategyImpl
     repositoryAdminAuthorities[0] = new GrantedAuthorityImpl(repositoryAdminAuthorityName);
-    // necessary for unit test (Spring Security requires Authenticated role on all methods of PentahoContentRepository)
+    // necessary for unit test (Spring Security requires Authenticated role on all methods of DefaultRepositoryService)
     repositoryAdminAuthorities[1] = new GrantedAuthorityImpl(commonAuthenticatedAuthorityName);
     final String password = "ignored"; //$NON-NLS-1$
     UserDetails repositoryAdminUserDetails = new User(repositoryAdminUsername, password, true, true, true, true,
@@ -325,9 +325,9 @@ public class DefaultRepositoryEventHandler implements IPentahoContentRepository.
     Assert.notNull(file);
     Assert.notNull(owner);
 
-    RepositoryFileAcl acl = mutableAclService.readAclById(file.getId());
+    RepositoryFileAcl acl = repositoryFileAclDao.readAclById(file.getId());
     RepositoryFileAcl newAcl = new RepositoryFileAcl.Builder(acl).owner(owner).build();
-    mutableAclService.updateAcl(newAcl);
+    repositoryFileAclDao.updateAcl(newAcl);
   }
 
   /**

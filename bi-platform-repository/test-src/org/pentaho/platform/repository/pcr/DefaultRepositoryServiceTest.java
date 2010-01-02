@@ -28,7 +28,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.pentaho.platform.api.engine.IPentahoSession;
-import org.pentaho.platform.api.repository.IPentahoContentRepository;
+import org.pentaho.platform.api.repository.IRepositoryService;
 import org.pentaho.platform.api.repository.IRepositoryFileContent;
 import org.pentaho.platform.api.repository.RepositoryFilePermission;
 import org.pentaho.platform.api.repository.RepositoryFile;
@@ -60,10 +60,10 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 @ContextConfiguration(locations = { "file:../bi-platform-sample-solution/system/repository.spring.xml",
     "classpath:/repository-test-override.spring.xml" })
 //@SuppressWarnings("nls")
-public class PentahoContentRepositoryTest implements ApplicationContextAware {
+public class DefaultRepositoryServiceTest implements ApplicationContextAware {
   // ~ Static fields/initializers ======================================================================================
 
-  private static final Log logger = LogFactory.getLog(PentahoContentRepositoryTest.class);
+  private static final Log logger = LogFactory.getLog(DefaultRepositoryServiceTest.class);
 
   private static final String USERNAME_SUZY = "suzy";
 
@@ -79,7 +79,7 @@ public class PentahoContentRepositoryTest implements ApplicationContextAware {
 
   // ~ Instance fields =================================================================================================
 
-  private IPentahoContentRepository repo;
+  private IRepositoryService repo;
 
   /**
    * Used for state verification and test cleanup.
@@ -98,7 +98,7 @@ public class PentahoContentRepositoryTest implements ApplicationContextAware {
 
   // ~ Constructors ==================================================================================================== 
 
-  public PentahoContentRepositoryTest() throws Exception {
+  public DefaultRepositoryServiceTest() throws Exception {
     super();
   }
 
@@ -893,7 +893,7 @@ public class PentahoContentRepositoryTest implements ApplicationContextAware {
   }
 
   public void setApplicationContext(final ApplicationContext applicationContext) throws BeansException {
-    repo = (IPentahoContentRepository) applicationContext.getBean("pentahoContentRepository");
+    repo = (IRepositoryService) applicationContext.getBean("repositoryService");
     SessionFactory jcrSessionFactory = (SessionFactory) applicationContext.getBean("jcrSessionFactory");
     testJcrTemplate = new JcrTemplate(jcrSessionFactory);
     testJcrTemplate.setAllowCreate(true);
@@ -943,7 +943,7 @@ public class PentahoContentRepositoryTest implements ApplicationContextAware {
     final GrantedAuthority[] repositoryAdminAuthorities = new GrantedAuthority[2];
     // necessary for AclAuthorizationStrategyImpl
     repositoryAdminAuthorities[0] = new GrantedAuthorityImpl(repositoryAdminAuthorityName);
-    // necessary for unit test (Spring Security requires Authenticated role on all methods of PentahoContentRepository)
+    // necessary for unit test (Spring Security requires Authenticated role on all methods of DefaultRepositoryService)
     repositoryAdminAuthorities[1] = new GrantedAuthorityImpl(commonAuthenticatedAuthorityName);
     final String password = "ignored";
     UserDetails repositoryAdminUserDetails = new User(repositoryAdminUsername, password, true, true, true, true,

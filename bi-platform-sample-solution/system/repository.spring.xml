@@ -22,35 +22,35 @@
     <property name="sessionFactory" ref="jcrSessionFactory" />
   </bean>
 
-  <bean id="pentahoContentRepositoryTransactionInterceptor" class="org.springframework.transaction.interceptor.TransactionInterceptor">
+  <bean id="repositoryServiceTransactionInterceptor" class="org.springframework.transaction.interceptor.TransactionInterceptor">
     <property name="transactionManager" ref="jcrTransactionManager" />
     <property name="transactionAttributeSource">
       <value>
-        org.pentaho.platform.api.repository.IPentahoContentRepository.getFile=PROPAGATION_REQUIRED,readOnly
-        org.pentaho.platform.api.repository.IPentahoContentRepository.getContentForRead=PROPAGATION_REQUIRED,readOnly
-        org.pentaho.platform.api.repository.IPentahoContentRepository.getContentForExecute=PROPAGATION_REQUIRED,readOnly
-        org.pentaho.platform.api.repository.IPentahoContentRepository.createFile=PROPAGATION_REQUIRED
-        org.pentaho.platform.api.repository.IPentahoContentRepository.createFolder=PROPAGATION_REQUIRED
-        org.pentaho.platform.api.repository.IPentahoContentRepository.getChildren=PROPAGATION_REQUIRED,readOnly
-        org.pentaho.platform.api.repository.IPentahoContentRepository.updateFile=PROPAGATION_REQUIRED
-        org.pentaho.platform.api.repository.IPentahoContentRepository.getAcl=PROPAGATION_REQUIRED,readOnly
-        org.pentaho.platform.api.repository.IPentahoContentRepository.hasAccess=PROPAGATION_REQUIRED,readOnly
-        org.pentaho.platform.api.repository.IPentahoContentRepository.getEffectiveAces=PROPAGATION_REQUIRED,readOnly
-        org.pentaho.platform.api.repository.IPentahoContentRepository.setAcl=PROPAGATION_REQUIRED
-        org.pentaho.platform.api.repository.IPentahoContentRepository.deleteFile=PROPAGATION_REQUIRED
-        org.pentaho.platform.api.repository.IPentahoContentRepository.lockFile=PROPAGATION_REQUIRED
-        org.pentaho.platform.api.repository.IPentahoContentRepository.unlockFile=PROPAGATION_REQUIRED
-        org.pentaho.platform.api.repository.IPentahoContentRepository.getVersionSummaries=PROPAGATION_REQUIRED,readOnly
+        org.pentaho.platform.api.repository.IRepositoryService.getFile=PROPAGATION_REQUIRED,readOnly
+        org.pentaho.platform.api.repository.IRepositoryService.getContentForRead=PROPAGATION_REQUIRED,readOnly
+        org.pentaho.platform.api.repository.IRepositoryService.getContentForExecute=PROPAGATION_REQUIRED,readOnly
+        org.pentaho.platform.api.repository.IRepositoryService.createFile=PROPAGATION_REQUIRED
+        org.pentaho.platform.api.repository.IRepositoryService.createFolder=PROPAGATION_REQUIRED
+        org.pentaho.platform.api.repository.IRepositoryService.getChildren=PROPAGATION_REQUIRED,readOnly
+        org.pentaho.platform.api.repository.IRepositoryService.updateFile=PROPAGATION_REQUIRED
+        org.pentaho.platform.api.repository.IRepositoryService.getAcl=PROPAGATION_REQUIRED,readOnly
+        org.pentaho.platform.api.repository.IRepositoryService.hasAccess=PROPAGATION_REQUIRED,readOnly
+        org.pentaho.platform.api.repository.IRepositoryService.getEffectiveAces=PROPAGATION_REQUIRED,readOnly
+        org.pentaho.platform.api.repository.IRepositoryService.setAcl=PROPAGATION_REQUIRED
+        org.pentaho.platform.api.repository.IRepositoryService.deleteFile=PROPAGATION_REQUIRED
+        org.pentaho.platform.api.repository.IRepositoryService.lockFile=PROPAGATION_REQUIRED
+        org.pentaho.platform.api.repository.IRepositoryService.unlockFile=PROPAGATION_REQUIRED
+        org.pentaho.platform.api.repository.IRepositoryService.getVersionSummaries=PROPAGATION_REQUIRED,readOnly
       </value>
     </property>
   </bean>
 
-  <bean id="pentahoContentRepository" class="org.springframework.aop.framework.ProxyFactoryBean">
-    <property name="target" ref="pentahoContentRepositoryTarget" />
+  <bean id="repositoryService" class="org.springframework.aop.framework.ProxyFactoryBean">
+    <property name="target" ref="repositoryServiceTarget" />
     <property name="interceptorNames">
       <list>
-        <idref local="pentahoContentRepositoryTransactionInterceptor" />
-        <idref local="pentahoContentRepositoryMethodInterceptor" />
+        <idref local="repositoryServiceTransactionInterceptor" />
+        <idref local="repositoryServiceMethodInterceptor" />
       </list>
     </property>
   </bean>
@@ -85,13 +85,13 @@
     <constructor-arg value="_Admin" />
   </bean>
 
-  <bean id="pentahoContentRepositoryTarget" class="org.pentaho.platform.repository.pcr.PentahoContentRepository">
-    <constructor-arg ref="pentahoContentDao" />
-    <constructor-arg ref="aclService" />
+  <bean id="repositoryServiceTarget" class="org.pentaho.platform.repository.pcr.DefaultRepositoryService">
+    <constructor-arg ref="repositoryFileDao" />
+    <constructor-arg ref="repositoryFileAclDao" />
     <constructor-arg>
       <bean class="org.pentaho.platform.repository.pcr.DefaultRepositoryEventHandler">
-        <constructor-arg ref="pentahoContentDao" />
-        <constructor-arg ref="aclService" />
+        <constructor-arg ref="repositoryFileDao" />
+        <constructor-arg ref="repositoryFileAclDao" />
         <constructor-arg>
           <!-- The code sets the propagation behavior to PROPAGATION_REQUIRES_NEW. -->
           <bean class="org.springframework.transaction.support.TransactionTemplate">
@@ -108,7 +108,7 @@
   </bean>
 
   <!-- In create[File|Folder], the first parameter is the parentFolder. This is the object whose ACL is checked. -->
-  <bean id="pentahoContentRepositoryMethodInterceptor" class="org.springframework.security.intercept.method.aopalliance.MethodSecurityInterceptor">
+  <bean id="repositoryServiceMethodInterceptor" class="org.springframework.security.intercept.method.aopalliance.MethodSecurityInterceptor">
     <property name="validateConfigAttributes">
       <value>true</value>
     </property>
@@ -120,21 +120,21 @@
     </property>
     <property name="objectDefinitionSource">
       <value>
-        org.pentaho.platform.api.repository.IPentahoContentRepository.getFile=VOTE_ROLE_FILE_Authenticated
-        org.pentaho.platform.api.repository.IPentahoContentRepository.getContentForRead=VOTE_ROLE_FILE_Authenticated
-        org.pentaho.platform.api.repository.IPentahoContentRepository.getContentForExecute=VOTE_ROLE_FILE_Authenticated
-        org.pentaho.platform.api.repository.IPentahoContentRepository.createFile=VOTE_ROLE_FILE_Authenticated
-        org.pentaho.platform.api.repository.IPentahoContentRepository.createFolder=VOTE_ROLE_FILE_Authenticated
-        org.pentaho.platform.api.repository.IPentahoContentRepository.getChildren=VOTE_ROLE_FILE_Authenticated
-        org.pentaho.platform.api.repository.IPentahoContentRepository.updateFile=VOTE_ROLE_FILE_Authenticated
-        org.pentaho.platform.api.repository.IPentahoContentRepository.getAcl=VOTE_ROLE_FILE_Authenticated
-        org.pentaho.platform.api.repository.IPentahoContentRepository.hasAccess=VOTE_ROLE_FILE_Authenticated
-        org.pentaho.platform.api.repository.IPentahoContentRepository.getEffectiveAces=VOTE_ROLE_FILE_Authenticated
-        org.pentaho.platform.api.repository.IPentahoContentRepository.setAcl=VOTE_ROLE_FILE_Authenticated
-        org.pentaho.platform.api.repository.IPentahoContentRepository.deleteFile=VOTE_ROLE_FILE_Authenticated
-        org.pentaho.platform.api.repository.IPentahoContentRepository.lockFile=VOTE_ROLE_FILE_Authenticated
-        org.pentaho.platform.api.repository.IPentahoContentRepository.unlockFile=VOTE_ROLE_FILE_Authenticated
-        org.pentaho.platform.api.repository.IPentahoContentRepository.getVersionSummaries=VOTE_ROLE_FILE_Authenticated
+        org.pentaho.platform.api.repository.IRepositoryService.getFile=VOTE_ROLE_FILE_Authenticated
+        org.pentaho.platform.api.repository.IRepositoryService.getContentForRead=VOTE_ROLE_FILE_Authenticated
+        org.pentaho.platform.api.repository.IRepositoryService.getContentForExecute=VOTE_ROLE_FILE_Authenticated
+        org.pentaho.platform.api.repository.IRepositoryService.createFile=VOTE_ROLE_FILE_Authenticated
+        org.pentaho.platform.api.repository.IRepositoryService.createFolder=VOTE_ROLE_FILE_Authenticated
+        org.pentaho.platform.api.repository.IRepositoryService.getChildren=VOTE_ROLE_FILE_Authenticated
+        org.pentaho.platform.api.repository.IRepositoryService.updateFile=VOTE_ROLE_FILE_Authenticated
+        org.pentaho.platform.api.repository.IRepositoryService.getAcl=VOTE_ROLE_FILE_Authenticated
+        org.pentaho.platform.api.repository.IRepositoryService.hasAccess=VOTE_ROLE_FILE_Authenticated
+        org.pentaho.platform.api.repository.IRepositoryService.getEffectiveAces=VOTE_ROLE_FILE_Authenticated
+        org.pentaho.platform.api.repository.IRepositoryService.setAcl=VOTE_ROLE_FILE_Authenticated
+        org.pentaho.platform.api.repository.IRepositoryService.deleteFile=VOTE_ROLE_FILE_Authenticated
+        org.pentaho.platform.api.repository.IRepositoryService.lockFile=VOTE_ROLE_FILE_Authenticated
+        org.pentaho.platform.api.repository.IRepositoryService.unlockFile=VOTE_ROLE_FILE_Authenticated
+        org.pentaho.platform.api.repository.IRepositoryService.getVersionSummaries=VOTE_ROLE_FILE_Authenticated
       </value>
     </property>
   </bean>
@@ -178,7 +178,7 @@
     <property name="exposeNativeSession" value="true" />
   </bean>
 
-  <bean id="pentahoContentDao" class="org.pentaho.platform.repository.pcr.jcr.JcrRepositoryFileDao">
+  <bean id="repositoryFileDao" class="org.pentaho.platform.repository.pcr.jcr.JcrRepositoryFileDao">
     <constructor-arg ref="jcrTemplate" />
     <constructor-arg>
       <list>
@@ -193,10 +193,10 @@
   </bean>
 
   <bean class="org.pentaho.platform.repository.pcr.spring.RepositoryEventHandlerAuthenticationSuccessListener">
-    <constructor-arg ref="pentahoContentRepository" />
+    <constructor-arg ref="repositoryService" />
   </bean>
 
-  <bean id="aclService" class="org.pentaho.platform.repository.pcr.jcr.jackrabbit.JackrabbitMutableAclService">
+  <bean id="repositoryFileAclDao" class="org.pentaho.platform.repository.pcr.jcr.jackrabbit.JackrabbitRepositoryFileAclDao">
     <constructor-arg ref="jcrTemplate" />
   </bean>
 

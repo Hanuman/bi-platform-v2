@@ -1,7 +1,11 @@
 package org.pentaho.platform.api.repository;
 
 /**
+ * Repository file security identifier (SID) used as file owners and permission recipients in access control entries.
+ * 
+ * <p>
  * Same abstraction as {@code org.springframework.security.acls.sid.Sid}.
+ * </p>
  */
 public class RepositoryFileSid {
   private String name;

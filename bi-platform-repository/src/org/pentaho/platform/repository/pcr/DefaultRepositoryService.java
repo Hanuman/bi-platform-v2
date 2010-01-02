@@ -6,7 +6,7 @@ import java.util.List;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.pentaho.platform.api.engine.IPentahoSession;
-import org.pentaho.platform.api.repository.IPentahoContentRepository;
+import org.pentaho.platform.api.repository.IRepositoryService;
 import org.pentaho.platform.api.repository.IRepositoryFileContent;
 import org.pentaho.platform.api.repository.RepositoryFile;
 import org.pentaho.platform.api.repository.RepositoryFileAcl;
@@ -18,45 +18,45 @@ import org.pentaho.platform.engine.core.system.PentahoSessionHolder;
 import org.springframework.util.Assert;
 
 /**
- * Default implementation of {@link IPentahoContentRepository}.
+ * Default implementation of {@link IRepositoryService}.
  * 
  * @author mlowery
  */
-public class PentahoContentRepository implements IPentahoContentRepository {
+public class DefaultRepositoryService implements IRepositoryService {
 
   // ~ Static fields/initializers ======================================================================================
 
-  private static final Log logger = LogFactory.getLog(PentahoContentRepository.class);
+  private static final Log logger = LogFactory.getLog(DefaultRepositoryService.class);
 
   // ~ Instance fields =================================================================================================
 
-  private IRepositoryFileDao contentDao;
+  private IRepositoryFileDao repositoryFileDao;
 
-  private IRepositoryFileAclDao aclDao;
+  private IRepositoryFileAclDao repositoryFileAclDao;
 
   private IRepositoryEventHandler repositoryEventHandler;
 
   // ~ Constructors ====================================================================================================
 
-  public PentahoContentRepository(final IRepositoryFileDao contentDao, final IRepositoryFileAclDao aclDao,
+  public DefaultRepositoryService(final IRepositoryFileDao contentDao, final IRepositoryFileAclDao aclDao,
       final IRepositoryEventHandler repositoryEventHandler) {
     super();
     Assert.notNull(contentDao);
     Assert.notNull(aclDao);
     Assert.notNull(repositoryEventHandler);
-    this.contentDao = contentDao;
-    this.aclDao = aclDao;
+    this.repositoryFileDao = contentDao;
+    this.repositoryFileAclDao = aclDao;
     this.repositoryEventHandler = repositoryEventHandler;
   }
 
   // ~ Methods =========================================================================================================
 
   public synchronized List<Ace> getEffectiveAces(final RepositoryFile file) {
-    return aclDao.getEffectiveAces(file);
+    return repositoryFileAclDao.getEffectiveAces(file);
   }
   
   public synchronized boolean hasAccess(final String absPath, final EnumSet<RepositoryFilePermission> permissions) {
-    return aclDao.hasAccess(absPath, permissions);
+    return repositoryFileAclDao.hasAccess(absPath, permissions);
   }
 
   public synchronized IRepositoryEventHandler getRepositoryEventHandler() {
@@ -69,7 +69,7 @@ public class PentahoContentRepository implements IPentahoContentRepository {
   public synchronized RepositoryFile getFile(final String absPath) {
     Assert.hasText(absPath);
 
-    return contentDao.getFile(absPath);
+    return repositoryFileDao.getFile(absPath);
   }
 
   /**
@@ -126,7 +126,7 @@ public class PentahoContentRepository implements IPentahoContentRepository {
   public synchronized <T extends IRepositoryFileContent> T getContentForRead(RepositoryFile file, Class<T> contentClass) {
     Assert.notNull(file);
     Assert.notNull(file.getId());
-    return contentDao.getContent(file, contentClass);
+    return repositoryFileDao.getContent(file, contentClass);
   }
 
   /**
@@ -136,7 +136,7 @@ public class PentahoContentRepository implements IPentahoContentRepository {
     Assert.notNull(folder);
     Assert.notNull(folder.getId());
     Assert.notNull(folder.isFolder());
-    return contentDao.getChildren(folder);
+    return repositoryFileDao.getChildren(folder);
   }
 
   /**
@@ -162,7 +162,7 @@ public class PentahoContentRepository implements IPentahoContentRepository {
     Assert.notNull(file);
     Assert.notNull(file.getId());
     // acl deleted when file node is deleted
-    contentDao.deleteFile(file, versionMessageAndLabel);
+    repositoryFileDao.deleteFile(file, versionMessageAndLabel);
   }
 
   /**
@@ -171,7 +171,7 @@ public class PentahoContentRepository implements IPentahoContentRepository {
   public synchronized RepositoryFileAcl getAcl(final RepositoryFile file) {
     Assert.notNull(file);
     Assert.notNull(file.getId());
-    return aclDao.readAclById(file.getId());
+    return repositoryFileAclDao.readAclById(file.getId());
   }
 
   /**
@@ -181,7 +181,7 @@ public class PentahoContentRepository implements IPentahoContentRepository {
     Assert.notNull(file);
     Assert.notNull(file.getId());
     Assert.isTrue(!file.isFolder());
-    contentDao.lockFile(file, message);
+    repositoryFileDao.lockFile(file, message);
   }
 
   /**
@@ -191,7 +191,7 @@ public class PentahoContentRepository implements IPentahoContentRepository {
     Assert.notNull(file);
     Assert.notNull(file.getId());
     Assert.isTrue(!file.isFolder());
-    contentDao.unlockFile(file);
+    repositoryFileDao.unlockFile(file);
   }
 
   /**
@@ -200,7 +200,7 @@ public class PentahoContentRepository implements IPentahoContentRepository {
   public synchronized List<VersionSummary> getVersionSummaries(final RepositoryFile file) {
     Assert.notNull(file);
     Assert.notNull(file.getId());
-    return contentDao.getVersionSummaries(file);
+    return repositoryFileDao.getVersionSummaries(file);
   }
 
   /**
@@ -210,7 +210,7 @@ public class PentahoContentRepository implements IPentahoContentRepository {
     Assert.notNull(versionSummary);
     Assert.notNull(versionSummary.getId());
     Assert.notNull(versionSummary.getVersionedFileId());
-    return contentDao.getFile(versionSummary);
+    return repositoryFileDao.getFile(versionSummary);
   }
 
   /**
@@ -219,7 +219,7 @@ public class PentahoContentRepository implements IPentahoContentRepository {
   public synchronized void setAcl(final RepositoryFileAcl acl) {
     Assert.notNull(acl);
     Assert.notNull(acl.getId());
-    aclDao.updateAcl(acl);
+    repositoryFileAclDao.updateAcl(acl);
   }
 
   /**
@@ -236,7 +236,7 @@ public class PentahoContentRepository implements IPentahoContentRepository {
     Assert.notNull(file);
     Assert.notNull(content);
 
-    RepositoryFile newFile = contentDao.createFile(parentFolder, file, content, versionMessageAndLabel);
+    RepositoryFile newFile = repositoryFileDao.createFile(parentFolder, file, content, versionMessageAndLabel);
     internalCreateAcl(newFile, inheritAces);
 
     return newFile;
@@ -246,7 +246,7 @@ public class PentahoContentRepository implements IPentahoContentRepository {
       final boolean inheritAces, final String... versionMessageAndLabel) {
     Assert.notNull(file);
 
-    RepositoryFile newFile = contentDao.createFolder(parentFolder, file, versionMessageAndLabel);
+    RepositoryFile newFile = repositoryFileDao.createFolder(parentFolder, file, versionMessageAndLabel);
     internalCreateAcl(newFile, inheritAces);
 
     return newFile;
@@ -257,13 +257,13 @@ public class PentahoContentRepository implements IPentahoContentRepository {
     Assert.notNull(file);
     Assert.notNull(content);
 
-    return contentDao.updateFile(file, content, versionMessageAndLabel);
+    return repositoryFileDao.updateFile(file, content, versionMessageAndLabel);
   }
 
   private RepositoryFileAcl internalCreateAcl(final RepositoryFile file, final boolean entriesInheriting) {
     Assert.notNull(file);
 
-    return aclDao.createAcl(file.getId(), entriesInheriting, new RepositoryFileSid(internalGetUsername()),
+    return repositoryFileAclDao.createAcl(file.getId(), entriesInheriting, new RepositoryFileSid(internalGetUsername()),
         RepositoryFilePermission.ALL);
   }
 
