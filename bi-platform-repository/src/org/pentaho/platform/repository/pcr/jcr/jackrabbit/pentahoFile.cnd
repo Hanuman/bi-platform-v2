@@ -11,6 +11,8 @@ Pentaho file mixin node type.  (To be applied to nt:file or nt:linkedfile nodes.
 
 [pho_mix:pentahoFile]
   mixin
-  - pho:contentType (string)
+  // strangely, nt:file's don't have lastModified; instead this attribute is on nt:resource; however not all pentaho
+  // files have an nt:resource; so we put the lastModified date on the nt:file node itself
+  - pho:lastModified (date)
   mandatory
-  copy
+  ignore

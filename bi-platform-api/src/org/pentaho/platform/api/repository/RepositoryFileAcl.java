@@ -6,9 +6,6 @@ import java.util.Collections;
 import java.util.EnumSet;
 import java.util.List;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
 /**
  * Immutable repository file access control list (ACL). Use the {@link Builder} to create instances.
  * 
@@ -19,11 +16,11 @@ import org.apache.commons.logging.LogFactory;
  * 
  * @author mlowery
  */
-public class RepositoryFileAcl {
+public class RepositoryFileAcl implements Serializable {
 
   // ~ Static fields/initializers ======================================================================================
 
-  private static final Log logger = LogFactory.getLog(RepositoryFileAcl.class);
+  private static final long serialVersionUID = 6661340152568187033L;
 
   // ~ Instance fields =================================================================================================
 

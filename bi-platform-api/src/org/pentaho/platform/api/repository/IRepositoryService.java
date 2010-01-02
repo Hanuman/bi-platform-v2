@@ -30,19 +30,19 @@ public interface IRepositoryService {
    * Gets content for read.
    * 
    * @param file to read
-   * @param contentClass class that implements {@link IRepositoryFileContent}
+   * @param contentClass class that implements {@link IRepositoryFileData}
    * @return content
    */
-  <T extends IRepositoryFileContent> T getContentForRead(final RepositoryFile file, final Class<T> contentClass);
+  <T extends IRepositoryFileData> T getContentForRead(final RepositoryFile file, final Class<T> contentClass);
 
   /**
    * Gets content for execute.
    * 
    * @param file to execute
-   * @param contentClass class that implements {@link IRepositoryFileContent}
+   * @param contentClass class that implements {@link IRepositoryFileData}
    * @return content
    */
-  <T extends IRepositoryFileContent> T getContentForExecute(final RepositoryFile file, final Class<T> contentClass);
+  <T extends IRepositoryFileData> T getContentForExecute(final RepositoryFile file, final Class<T> contentClass);
 
   /**
    * Creates a file.
@@ -54,7 +54,7 @@ public interface IRepositoryService {
    * @return file that is equal to given file except with id populated
    */
   RepositoryFile createFile(final RepositoryFile parentFolder, final RepositoryFile file,
-      final IRepositoryFileContent content, final String... versionMessageAndLabel);
+      final IRepositoryFileData content, final String... versionMessageAndLabel);
 
   /**
    * Creates a folder.
@@ -83,7 +83,7 @@ public interface IRepositoryService {
    * @param versionMessageAndLabel optional version comment [0] and label [1]
    * @return updated file (possible with new version number)
    */
-  RepositoryFile updateFile(final RepositoryFile file, final IRepositoryFileContent content,
+  RepositoryFile updateFile(final RepositoryFile file, final IRepositoryFileData content,
       final String... versionMessageAndLabel);
 
   /**

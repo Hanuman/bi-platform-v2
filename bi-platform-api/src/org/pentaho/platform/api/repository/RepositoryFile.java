@@ -14,9 +14,11 @@ import org.apache.commons.lang.builder.ToStringBuilder;
  * 
  * @author mlowery
  */
-public class RepositoryFile implements Comparable<RepositoryFile> {
+public class RepositoryFile implements Comparable<RepositoryFile>, Serializable {
 
   // ~ Static fields/initializers ======================================================================================
+
+  private static final long serialVersionUID = -6955142003557786114L;
 
   public static final String SEPARATOR = "/"; //$NON-NLS-1$
 
@@ -37,11 +39,6 @@ public class RepositoryFile implements Comparable<RepositoryFile> {
    * Read-only.
    */
   private Date lastModifiedDate;
-
-  /**
-   * Read-only. (Determined by {@code IRepositoryFileContent} associated with this file.)
-   */
-  private String contentType;
 
   private boolean folder;
 
@@ -78,7 +75,7 @@ public class RepositoryFile implements Comparable<RepositoryFile> {
    * The date that this lock was created. Read-only. {@code null} if file not locked.
    */
   private Date lockDate;
-  
+
   /**
    * The owner of this file. Usually plays a role in access control. Read-only.
    */
@@ -122,10 +119,6 @@ public class RepositoryFile implements Comparable<RepositoryFile> {
     return (lastModifiedDate != null ? new Date(lastModifiedDate.getTime()) : null);
   }
 
-  public String getContentType() {
-    return contentType;
-  }
-
   public boolean isFolder() {
     return folder;
   }
@@ -166,7 +159,7 @@ public class RepositoryFile implements Comparable<RepositoryFile> {
   public RepositoryFileSid getOwner() {
     return owner;
   }
-  
+
   @Override
   public String toString() {
     // TODO mlowery remove this to be GWT-compatible
@@ -183,8 +176,6 @@ public class RepositoryFile implements Comparable<RepositoryFile> {
     private Date createdDate;
 
     private Date lastModifiedDate;
-
-    private String contentType;
 
     private boolean folder;
 
@@ -203,7 +194,7 @@ public class RepositoryFile implements Comparable<RepositoryFile> {
     private String lockMessage;
 
     private Date lockDate;
-    
+
     private RepositoryFileSid owner;
 
     public Builder(final String name) {
@@ -222,16 +213,15 @@ public class RepositoryFile implements Comparable<RepositoryFile> {
     public Builder(final RepositoryFile other) {
       this(other.name, other.id, other.parentId);
       this.absolutePath(other.absolutePath).createdDate(other.createdDate).folder(other.folder).lastModificationDate(
-          other.lastModifiedDate).contentType(other.contentType).versioned(other.versioned).hidden(other.hidden)
-          .versionId(other.versionId).locked(other.locked).lockDate(other.lockDate).lockOwner(other.lockOwner)
-          .lockMessage(other.lockMessage).owner(other.owner);
+          other.lastModifiedDate).versioned(other.versioned).hidden(other.hidden).versionId(other.versionId).locked(
+          other.locked).lockDate(other.lockDate).lockOwner(other.lockOwner).lockMessage(other.lockMessage).owner(
+          other.owner);
     }
 
     public RepositoryFile build() {
       RepositoryFile result = new RepositoryFile(name, id, parentId);
       result.createdDate = this.createdDate;
       result.lastModifiedDate = this.lastModifiedDate;
-      result.contentType = this.contentType;
       result.folder = this.folder;
       result.absolutePath = this.absolutePath;
       result.hidden = this.hidden;
@@ -243,11 +233,6 @@ public class RepositoryFile implements Comparable<RepositoryFile> {
       result.lockDate = this.lockDate;
       result.owner = this.owner;
       return result;
-    }
-
-    public Builder contentType(final String contentType) {
-      this.contentType = contentType;
-      return this;
     }
 
     public Builder createdDate(final Date createdDate) {
@@ -312,7 +297,7 @@ public class RepositoryFile implements Comparable<RepositoryFile> {
       this.owner = owner;
       return this;
     }
-    
+
     /**
      * Implemented here to maintain GWT-compatibility.
      */

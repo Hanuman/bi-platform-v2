@@ -2,7 +2,7 @@ package org.pentaho.platform.repository.pcr;
 
 import java.util.List;
 
-import org.pentaho.platform.api.repository.IRepositoryFileContent;
+import org.pentaho.platform.api.repository.IRepositoryFileData;
 import org.pentaho.platform.api.repository.RepositoryFile;
 import org.pentaho.platform.api.repository.VersionSummary;
 
@@ -25,10 +25,10 @@ public interface IRepositoryFileDao {
    * Gets content for read.
    * 
    * @param file to read
-   * @param contentClass class that implements {@link IRepositoryFileContent}
+   * @param contentClass class that implements {@link IRepositoryFileData}
    * @return content
    */
-  <T extends IRepositoryFileContent> T getContent(final RepositoryFile file, final Class<T> contentClass);
+  <T extends IRepositoryFileData> T getContent(final RepositoryFile file, final Class<T> contentClass);
 
   //  void removeFile(final RepositoryFile file);
 
@@ -42,7 +42,7 @@ public interface IRepositoryFileDao {
    * @return new file with non-null id
    */
   RepositoryFile createFile(final RepositoryFile parentFolder, final RepositoryFile file,
-      final IRepositoryFileContent content, final String... versionMessageAndLabel);
+      final IRepositoryFileData content, final String... versionMessageAndLabel);
 
   /**
    * Creates a folder.
@@ -71,7 +71,7 @@ public interface IRepositoryFileDao {
    * @param versionMessageAndLabel optional version comment [0] and label [1]
    * @return updated file (possible with new version number)
    */
-  RepositoryFile updateFile(final RepositoryFile file, final IRepositoryFileContent content,
+  RepositoryFile updateFile(final RepositoryFile file, final IRepositoryFileData content,
       final String... versionMessageAndLabel);
 
   /**

@@ -7,7 +7,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.pentaho.platform.api.engine.IPentahoSession;
 import org.pentaho.platform.api.repository.IRepositoryService;
-import org.pentaho.platform.api.repository.IRepositoryFileContent;
+import org.pentaho.platform.api.repository.IRepositoryFileData;
 import org.pentaho.platform.api.repository.RepositoryFile;
 import org.pentaho.platform.api.repository.RepositoryFileAcl;
 import org.pentaho.platform.api.repository.RepositoryFilePermission;
@@ -76,7 +76,7 @@ public class DefaultRepositoryService implements IRepositoryService {
    * {@inheritDoc}
    */
   public synchronized RepositoryFile createFile(final RepositoryFile parentFolder, final RepositoryFile file,
-      final IRepositoryFileContent content, final String... versionMessageAndLabel) {
+      final IRepositoryFileData content, final String... versionMessageAndLabel) {
     Assert.notNull(file);
     Assert.isTrue(!file.isFolder());
     Assert.hasText(file.getName());
@@ -115,7 +115,7 @@ public class DefaultRepositoryService implements IRepositoryService {
    * 
    * @see #getContentForRead(RepositoryFile, Class)
    */
-  public synchronized <T extends IRepositoryFileContent> T getContentForExecute(RepositoryFile file,
+  public synchronized <T extends IRepositoryFileData> T getContentForExecute(RepositoryFile file,
       Class<T> contentClass) {
     return getContentForRead(file, contentClass);
   }
@@ -123,7 +123,7 @@ public class DefaultRepositoryService implements IRepositoryService {
   /**
    * {@inheritDoc}
    */
-  public synchronized <T extends IRepositoryFileContent> T getContentForRead(RepositoryFile file, Class<T> contentClass) {
+  public synchronized <T extends IRepositoryFileData> T getContentForRead(RepositoryFile file, Class<T> contentClass) {
     Assert.notNull(file);
     Assert.notNull(file.getId());
     return repositoryFileDao.getContent(file, contentClass);
@@ -142,14 +142,13 @@ public class DefaultRepositoryService implements IRepositoryService {
   /**
    * {@inheritDoc}
    */
-  public synchronized RepositoryFile updateFile(final RepositoryFile file, final IRepositoryFileContent content,
+  public synchronized RepositoryFile updateFile(final RepositoryFile file, final IRepositoryFileData content,
       final String... versionMessageAndLabel) {
     Assert.notNull(file);
     Assert.isTrue(!file.isFolder());
     Assert.hasText(file.getName());
     if (!file.isFolder()) {
       Assert.notNull(content);
-      Assert.hasText(file.getContentType());
     }
 
     return internalUpdateFile(file, content, versionMessageAndLabel);
@@ -232,7 +231,7 @@ public class DefaultRepositoryService implements IRepositoryService {
   }
 
   private RepositoryFile internalCreateFile(final RepositoryFile parentFolder, final RepositoryFile file,
-      final IRepositoryFileContent content, final boolean inheritAces, final String... versionMessageAndLabel) {
+      final IRepositoryFileData content, final boolean inheritAces, final String... versionMessageAndLabel) {
     Assert.notNull(file);
     Assert.notNull(content);
 
@@ -252,7 +251,7 @@ public class DefaultRepositoryService implements IRepositoryService {
     return newFile;
   }
 
-  private RepositoryFile internalUpdateFile(final RepositoryFile file, final IRepositoryFileContent content,
+  private RepositoryFile internalUpdateFile(final RepositoryFile file, final IRepositoryFileData content,
       final String... versionMessageAndLabel) {
     Assert.notNull(file);
     Assert.notNull(content);

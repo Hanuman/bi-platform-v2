@@ -29,7 +29,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.pentaho.platform.api.engine.IPentahoSession;
 import org.pentaho.platform.api.repository.IRepositoryService;
-import org.pentaho.platform.api.repository.IRepositoryFileContent;
+import org.pentaho.platform.api.repository.IRepositoryFileData;
 import org.pentaho.platform.api.repository.RepositoryFilePermission;
 import org.pentaho.platform.api.repository.RepositoryFile;
 import org.pentaho.platform.api.repository.RepositoryFileAcl;
@@ -281,7 +281,7 @@ public class DefaultRepositoryServiceTest implements ApplicationContextAware {
   }
 
   @Test
-  public void testGetOrCreateUserHomeFolderTwice() throws Exception {
+  public void testOnNewUserTwice() throws Exception {
     repo.getRepositoryEventHandler().onStartup();
     login(USERNAME_SUZY, TENANT_ID_ACME);
     login(USERNAME_SUZY, TENANT_ID_ACME);
@@ -329,7 +329,7 @@ public class DefaultRepositoryServiceTest implements ApplicationContextAware {
     byte[] data = dataString.getBytes(encoding);
     ByteArrayInputStream dataStream = new ByteArrayInputStream(data);
     final String fileName = "helloworld.xaction";
-    final SimpleRepositoryFileContent content = new SimpleRepositoryFileContent(dataStream, encoding, "text/plain");
+    final SimpleRepositoryFileData content = new SimpleRepositoryFileData(dataStream, encoding, "text/plain");
     repo.createFile(null, new RepositoryFile.Builder(fileName).build(), content);
   }
 
@@ -346,7 +346,7 @@ public class DefaultRepositoryServiceTest implements ApplicationContextAware {
     final String expectedName = "helloworld.xaction";
     final String expectedAbsolutePath = RepositoryPaths.getUserHomeFolderPath() + "/helloworld.xaction";
 
-    final SimpleRepositoryFileContent content = new SimpleRepositoryFileContent(dataStream, expectedEncoding,
+    final SimpleRepositoryFileData content = new SimpleRepositoryFileData(dataStream, expectedEncoding,
         expectedMimeType);
     Date beginTime = Calendar.getInstance().getTime();
     RepositoryFile newFile = repo.createFile(parentFolder, new RepositoryFile.Builder(expectedName).build(), content);
@@ -361,26 +361,25 @@ public class DefaultRepositoryServiceTest implements ApplicationContextAware {
     assertNotNull(foundFile.getCreatedDate());
     assertNotNull(foundFile.getLastModifiedDate());
 
-    SimpleRepositoryFileContent contentFromRepo = repo.getContentForRead(foundFile, SimpleRepositoryFileContent.class);
+    SimpleRepositoryFileData contentFromRepo = repo.getContentForRead(foundFile, SimpleRepositoryFileData.class);
     assertEquals(expectedEncoding, contentFromRepo.getEncoding());
     assertEquals(expectedMimeType, contentFromRepo.getMimeType());
-    assertEquals(expectedDataString, IOUtils.toString(contentFromRepo.getData(), expectedEncoding));
+    assertEquals(expectedDataString, IOUtils.toString(contentFromRepo.getStream(), expectedEncoding));
   }
 
   @Test
-  public void testCreateRunResultFile() throws Exception {
+  public void testCreateSampleFile() throws Exception {
     repo.getRepositoryEventHandler().onStartup();
     login(USERNAME_SUZY, TENANT_ID_ACME);
     final String expectedDataString = "Hello World!";
-    final String expectedEncoding = "UTF-8";
-    final String expectedRunResultMimeType = "text/plain";
-    final String expectedName = "helloworld.xaction";
+    final String expectedName = "helloworld.sample";
+    final String sampleString = "Ciao World!";
+    final boolean sampleBoolean = true;
+    final int sampleInteger = 99;
     final String parentFolderPath = RepositoryPaths.getUserHomeFolderPath();
     final String expectedAbsolutePath = parentFolderPath + RepositoryFile.SEPARATOR + expectedName;
-    final Map<String, String> expectedRunArguments = new HashMap<String, String>();
-    expectedRunArguments.put("testKey", "testValue");
-    RepositoryFile newFile = createRunResultFile(parentFolderPath, expectedName, expectedDataString, expectedEncoding,
-        expectedRunResultMimeType, expectedRunArguments);
+    RepositoryFile newFile = createSampleFile(parentFolderPath, expectedName, sampleString, sampleBoolean,
+        sampleInteger);
 
     assertNotNull(newFile.getId());
     RepositoryFile foundFile = repo.getFile(expectedAbsolutePath);
@@ -390,13 +389,11 @@ public class DefaultRepositoryServiceTest implements ApplicationContextAware {
     assertNotNull(foundFile.getCreatedDate());
     assertNotNull(foundFile.getLastModifiedDate());
 
-    RunResultRepositoryFileContent contentFromRepo = repo.getContentForRead(foundFile,
-        RunResultRepositoryFileContent.class);
-    assertEquals(expectedEncoding, contentFromRepo.getEncoding());
+    SampleRepositoryFileData data = repo.getContentForRead(foundFile, SampleRepositoryFileData.class);
 
-    assertEquals(expectedDataString, IOUtils.toString(contentFromRepo.getData(), expectedEncoding));
-    assertEquals(expectedRunArguments, contentFromRepo.getArguments());
-    assertEquals(expectedRunResultMimeType, contentFromRepo.getMimeType());
+    assertEquals(sampleString, data.getSampleString());
+    assertEquals(sampleBoolean, data.getSampleBoolean());
+    assertEquals(sampleInteger, data.getSampleInteger());
   }
 
   @Test(expected = IllegalArgumentException.class)
@@ -404,22 +401,16 @@ public class DefaultRepositoryServiceTest implements ApplicationContextAware {
     repo.getRepositoryEventHandler().onStartup();
     login(USERNAME_SUZY, TENANT_ID_ACME);
     RepositoryFile parentFolder = repo.getFile(RepositoryPaths.getUserHomeFolderPath());
-    //    final String expectedDataString = "Hello World!";
-    //    final String expectedEncoding = "UTF-8";
-    //    byte[] data = expectedDataString.getBytes(expectedEncoding);
-    //    ByteArrayInputStream dataStream = new ByteArrayInputStream(data);
-    //    final String expectedContentType = "notsupported";
-    //    final String expectedMimeType = "text/plain";
-    //    final String expectedName = "helloworld.xaction";
-    //    final SimpleRepositoryFileContent content = new SimpleRepositoryFileContent(dataStream, expectedEncoding,
-    //        expectedMimeType);
-    IRepositoryFileContent content = new IRepositoryFileContent() {
-      public String getContentType() {
-        return "notsupported";
-      }
+    IRepositoryFileData content = new IRepositoryFileData() {
     };
-
     repo.createFile(parentFolder, new RepositoryFile.Builder("helloworld.xaction").build(), content);
+  }
+  
+  @Test(expected = IllegalArgumentException.class)
+  public void testCreateFileNoExtension() throws Exception {
+    repo.getRepositoryEventHandler().onStartup();
+    login(USERNAME_SUZY, TENANT_ID_ACME);
+    createSampleFile(RepositoryPaths.getUserHomeFolderPath(), "helloworld", "blah", false, 123);
   }
 
   @Test
@@ -456,32 +447,25 @@ public class DefaultRepositoryServiceTest implements ApplicationContextAware {
     login(USERNAME_SUZY, TENANT_ID_ACME);
 
     final String parentFolderPath = RepositoryPaths.getUserHomeFolderPath();
-    final String expectedEncoding = "UTF-8";
-    final String expectedRunResultMimeType = "text/plain";
-    final String expectedName = "helloworld.xaction";
-    final Map<String, String> expectedRunArguments = new HashMap<String, String>();
-    expectedRunArguments.put("testKey", "testValue");
+    final String fileName = "helloworld.sample";
 
-    RepositoryFile newFile = createRunResultFile(parentFolderPath, expectedName, "Hello World!", expectedEncoding,
-        expectedRunResultMimeType, expectedRunArguments);
+    RepositoryFile newFile = createSampleFile(parentFolderPath, fileName, "Hello World!", false, 222);
 
-    final String expectedModDataString = "Ciao World!";
-    ByteArrayInputStream modDataStream = new ByteArrayInputStream(expectedModDataString.getBytes(expectedEncoding));
-    final Map<String, String> modExpectedRunArguments = new HashMap<String, String>();
-    modExpectedRunArguments.put("testKey2", "testValue2");
+    final String modSampleString = "Ciao World!";
+    final boolean modSampleBoolean = true;
+    final int modSampleInteger = 99;
 
-    final RunResultRepositoryFileContent modContent = new RunResultRepositoryFileContent(modDataStream,
-        expectedEncoding, expectedRunResultMimeType, modExpectedRunArguments);
+    final SampleRepositoryFileData modContent = new SampleRepositoryFileData(modSampleString, modSampleBoolean,
+        modSampleInteger);
 
     repo.updateFile(newFile, modContent);
 
-    RunResultRepositoryFileContent modContentFromRepo = repo.getContentForRead(repo.getFile(RepositoryPaths
-        .getUserHomeFolderPath()
-        + "/helloworld.xaction"), RunResultRepositoryFileContent.class);
+    SampleRepositoryFileData modData = repo.getContentForRead(repo.getFile(RepositoryPaths.getUserHomeFolderPath()
+        + RepositoryFile.SEPARATOR + fileName), SampleRepositoryFileData.class);
 
-    assertEquals(expectedModDataString, IOUtils.toString(modContentFromRepo.getData(), expectedEncoding));
-
-    assertEquals(modExpectedRunArguments, modContentFromRepo.getArguments());
+    assertEquals(modSampleString, modData.getSampleString());
+    assertEquals(modSampleBoolean, modData.getSampleBoolean());
+    assertEquals(modSampleInteger, modData.getSampleInteger());
   }
 
   /**
@@ -542,8 +526,7 @@ public class DefaultRepositoryServiceTest implements ApplicationContextAware {
     final String encoding = "UTF-8";
     final Map<String, String> runArguments = new HashMap<String, String>();
     runArguments.put("testKey", "testValue");
-    assertNotNull(createRunResultFile(parentFolderPath, "helloworld.xaction", "Hello World!", encoding, "text/plain",
-        runArguments));
+    assertNotNull(createSampleFile(parentFolderPath, "helloworld.sample", "Hello World!", false, 500));
   }
 
   @Test
@@ -571,7 +554,7 @@ public class DefaultRepositoryServiceTest implements ApplicationContextAware {
     final String mimeType = "text/plain";
     final String fileName = "helloworld.xaction";
 
-    final SimpleRepositoryFileContent content = new SimpleRepositoryFileContent(dataStream, encoding, mimeType);
+    final SimpleRepositoryFileData content = new SimpleRepositoryFileData(dataStream, encoding, mimeType);
     RepositoryFile newFile = repo.createFile(parentFolder,
         new RepositoryFile.Builder(fileName).versioned(true).build(), content);
     assertTrue(newFile.isVersioned());
@@ -596,7 +579,7 @@ public class DefaultRepositoryServiceTest implements ApplicationContextAware {
     final String mimeType = "text/plain";
     final String fileName = "helloworld.xaction";
 
-    final SimpleRepositoryFileContent content = new SimpleRepositoryFileContent(dataStream, encoding, mimeType);
+    final SimpleRepositoryFileData content = new SimpleRepositoryFileData(dataStream, encoding, mimeType);
     RepositoryFile newFile = repo.createFile(parentFolder, new RepositoryFile.Builder(fileName).build(), content);
     final String filePath = parentFolderPath + RepositoryFile.SEPARATOR + fileName;
     assertFalse(newFile.isLocked());
@@ -646,7 +629,7 @@ public class DefaultRepositoryServiceTest implements ApplicationContextAware {
     final String mimeType = "text/plain";
     final String fileName = "helloworld.xaction";
 
-    final SimpleRepositoryFileContent content = new SimpleRepositoryFileContent(dataStream, encoding, mimeType);
+    final SimpleRepositoryFileData content = new SimpleRepositoryFileData(dataStream, encoding, mimeType);
     RepositoryFile newFile = repo.createFile(parentFolder, new RepositoryFile.Builder(fileName).build(), content);
     final String filePath = parentFolderPath + RepositoryFile.SEPARATOR + fileName;
     assertFalse(repo.getFile(filePath).isLocked());
@@ -672,7 +655,7 @@ public class DefaultRepositoryServiceTest implements ApplicationContextAware {
     ByteArrayInputStream dataStream = new ByteArrayInputStream(data);
     final String mimeType = "text/plain";
     final String fileName = "helloworld.xaction";
-    final SimpleRepositoryFileContent content = new SimpleRepositoryFileContent(dataStream, encoding, mimeType);
+    final SimpleRepositoryFileData content = new SimpleRepositoryFileData(dataStream, encoding, mimeType);
     RepositoryFile newFile = repo.createFile(parentFolder,
         new RepositoryFile.Builder(fileName).versioned(true).build(), content, "created helloworld.xaction",
         "new version", "label 0");
@@ -709,26 +692,26 @@ public class DefaultRepositoryServiceTest implements ApplicationContextAware {
     login(USERNAME_SUZY, TENANT_ID_ACME);
 
     final String parentFolderPath = RepositoryPaths.getUserHomeFolderPath();
-    final String encoding = "UTF-8";
-    final String runResultMimeType = "text/plain";
-    final String fileName = "helloworld.xaction";
-    final Map<String, String> runArguments = new HashMap<String, String>();
-    runArguments.put("testKey", "testValue");
+    final String fileName = "helloworld.sample";
 
-    final String origDataString = "Hello World!";
-    RepositoryFile newFile = createRunResultFile(parentFolderPath, fileName, origDataString, encoding,
-        runResultMimeType, runArguments, true);
+    final String origSampleString = "Hello World!";
+    final boolean origSampleBoolean = false;
+    final int origSampleInteger = 1024;
+
+    RepositoryFile newFile = createSampleFile(parentFolderPath, fileName, origSampleString, origSampleBoolean,
+        origSampleInteger, true);
     final Serializable fileId = newFile.getId();
     final Serializable parentId = newFile.getParentId();
     final String absolutePath = newFile.getAbsolutePath();
 
-    final String modDataString = "Ciao World!";
-    ByteArrayInputStream modDataStream = new ByteArrayInputStream(modDataString.getBytes(encoding));
+    final String modSampleString = "Ciao World!";
+    final boolean modSampleBoolean = true;
+    final int modSampleInteger = 2048;
 
-    final RunResultRepositoryFileContent modContent = new RunResultRepositoryFileContent(modDataStream, encoding,
-        runResultMimeType, runArguments);
+    final SampleRepositoryFileData modData = new SampleRepositoryFileData(modSampleString, modSampleBoolean,
+        modSampleInteger);
 
-    repo.updateFile(newFile, modContent);
+    repo.updateFile(newFile, modData);
 
     List<VersionSummary> versionSummaries = repo.getVersionSummaries(newFile);
     RepositoryFile v1 = repo.getFile(versionSummaries.get(0));
@@ -746,10 +729,14 @@ public class DefaultRepositoryServiceTest implements ApplicationContextAware {
     System.out.println("or: " + newFile);
     System.out.println("v1: " + v1);
     System.out.println("v2: " + v2);
-    RunResultRepositoryFileContent c1 = repo.getContentForRead(v1, RunResultRepositoryFileContent.class);
-    RunResultRepositoryFileContent c2 = repo.getContentForRead(v2, RunResultRepositoryFileContent.class);
-    assertEquals(origDataString, IOUtils.toString(c1.getData(), c1.getEncoding()));
-    assertEquals(modDataString, IOUtils.toString(c2.getData(), c2.getEncoding()));
+    SampleRepositoryFileData c1 = repo.getContentForRead(v1, SampleRepositoryFileData.class);
+    SampleRepositoryFileData c2 = repo.getContentForRead(v2, SampleRepositoryFileData.class);
+    assertEquals(origSampleString, c1.getSampleString());
+    assertEquals(origSampleBoolean, c1.getSampleBoolean());
+    assertEquals(origSampleInteger, c1.getSampleInteger());
+    assertEquals(modSampleString, c2.getSampleString());
+    assertEquals(modSampleBoolean, c2.getSampleBoolean());
+    assertEquals(modSampleInteger, c2.getSampleInteger());
   }
 
   @Test
@@ -849,23 +836,17 @@ public class DefaultRepositoryServiceTest implements ApplicationContextAware {
     assertEquals(new RepositoryFileSid(USERNAME_TIFFANY), fetchedAcl.getOwner());
   }
 
-  private RepositoryFile createRunResultFile(final String parentFolderPath, final String expectedName,
-      final String expectedDataString, final String expectedEncoding, final String expectedRunResultMimeType,
-      Map<String, String> expectedRunArguments, boolean versioned) throws Exception {
+  private RepositoryFile createSampleFile(final String parentFolderPath, final String fileName,
+      final String sampleString, final boolean sampleBoolean, final int sampleInteger, boolean versioned)
+      throws Exception {
     RepositoryFile parentFolder = repo.getFile(parentFolderPath);
-    byte[] data = expectedDataString.getBytes(expectedEncoding);
-    ByteArrayInputStream dataStream = new ByteArrayInputStream(data);
-    final RunResultRepositoryFileContent content = new RunResultRepositoryFileContent(dataStream, expectedEncoding,
-        expectedRunResultMimeType, expectedRunArguments);
-    return repo
-        .createFile(parentFolder, new RepositoryFile.Builder(expectedName).versioned(versioned).build(), content);
+    final SampleRepositoryFileData content = new SampleRepositoryFileData(sampleString, sampleBoolean, sampleInteger);
+    return repo.createFile(parentFolder, new RepositoryFile.Builder(fileName).versioned(versioned).build(), content);
   }
 
-  private RepositoryFile createRunResultFile(final String parentFolderPath, final String expectedName,
-      final String expectedDataString, final String expectedEncoding, final String expectedRunResultMimeType,
-      Map<String, String> expectedRunArguments) throws Exception {
-    return createRunResultFile(parentFolderPath, expectedName, expectedDataString, expectedEncoding,
-        expectedRunResultMimeType, expectedRunArguments, false);
+  private RepositoryFile createSampleFile(final String parentFolderPath, final String fileName,
+      final String sampleString, final boolean sampleBoolean, final int sampleInteger) throws Exception {
+    return createSampleFile(parentFolderPath, fileName, sampleString, sampleBoolean, sampleInteger, false);
   }
 
   private void assertLocalAceExists(final RepositoryFile file,

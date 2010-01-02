@@ -1,5 +1,7 @@
 package org.pentaho.platform.api.repository;
 
+import java.io.Serializable;
+
 /**
  * Repository file security identifier (SID) used as file owners and permission recipients in access control entries.
  * 
@@ -7,10 +9,19 @@ package org.pentaho.platform.api.repository;
  * Same abstraction as {@code org.springframework.security.acls.sid.Sid}.
  * </p>
  */
-public class RepositoryFileSid {
+public class RepositoryFileSid implements Serializable {
+
+  // ~ Static fields/initializers ======================================================================================
+
+  private static final long serialVersionUID = 6081475460363558001L;
+
+  // ~ Instance fields =================================================================================================
+
   private String name;
 
   private RepositoryFileSid.Type type;
+
+  // ~ Constructors ====================================================================================================
 
   /**
    * Creates a new Sid with given name and type of {@link Type#USER}.
@@ -24,6 +35,8 @@ public class RepositoryFileSid {
     this.name = name;
     this.type = type;
   }
+
+  // ~ Methods =========================================================================================================
 
   public String getName() {
     return name;

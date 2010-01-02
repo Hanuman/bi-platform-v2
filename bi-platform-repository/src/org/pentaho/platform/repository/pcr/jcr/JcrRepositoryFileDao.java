@@ -11,7 +11,7 @@ import javax.jcr.Session;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.pentaho.platform.api.repository.IRepositoryFileContent;
+import org.pentaho.platform.api.repository.IRepositoryFileData;
 import org.pentaho.platform.api.repository.RepositoryFile;
 import org.pentaho.platform.api.repository.VersionSummary;
 import org.pentaho.platform.repository.pcr.IRepositoryFileDao;
@@ -37,7 +37,7 @@ public class JcrRepositoryFileDao implements IRepositoryFileDao, InitializingBea
 
   private NodeIdStrategy nodeIdStrategy;
 
-  private List<ITransformer<IRepositoryFileContent>> transformers;
+  private List<ITransformer<IRepositoryFileData>> transformers;
 
   private ILockTokenHelper lockTokenHelper = new DefaultLockTokenHelper();
 
@@ -45,8 +45,7 @@ public class JcrRepositoryFileDao implements IRepositoryFileDao, InitializingBea
 
   // ~ Constructors ====================================================================================================
 
-  public JcrRepositoryFileDao(final JcrTemplate jcrTemplate,
-      final List<ITransformer<IRepositoryFileContent>> transformers) {
+  public JcrRepositoryFileDao(final JcrTemplate jcrTemplate, final List<ITransformer<IRepositoryFileData>> transformers) {
     super();
     Assert.notNull(jcrTemplate);
     Assert.notNull(transformers);
@@ -89,7 +88,7 @@ public class JcrRepositoryFileDao implements IRepositoryFileDao, InitializingBea
   }
 
   private RepositoryFile internalCreateFile(final RepositoryFile parentFolder, final RepositoryFile file,
-      final IRepositoryFileContent content, final String... versionMessageAndLabel) {
+      final IRepositoryFileData content, final String... versionMessageAndLabel) {
     Assert.notNull(file);
     Assert.hasText(file.getName());
     Assert.isTrue(!file.isFolder());
@@ -104,7 +103,7 @@ public class JcrRepositoryFileDao implements IRepositoryFileDao, InitializingBea
         JcrRepositoryFileUtils.checkoutNearestVersionableFileIfNecessary(session, pentahoJcrConstants, nodeIdStrategy,
             parentFolder);
         Node fileNode = JcrRepositoryFileUtils.createFileNode(session, pentahoJcrConstants, nodeIdStrategy,
-            parentFolder, file, content, findTransformer(content.getContentType()));
+            parentFolder, file, content, findTransformer(getFileExtension(file.getName()), content.getClass()));
         session.save();
         if (file.isVersioned()) {
           JcrRepositoryFileUtils.checkinNearestVersionableNodeIfNecessary(session, pentahoJcrConstants, nodeIdStrategy,
@@ -119,13 +118,28 @@ public class JcrRepositoryFileDao implements IRepositoryFileDao, InitializingBea
     });
   }
 
-  private RepositoryFile internalUpdateFile(final RepositoryFile file, final IRepositoryFileContent content,
+  /**
+   * File names can contain more than one period but the very first period starting from the left will be used to find
+   * the files
+   * @param fileName
+   * @return
+   */
+  private String getFileExtension(final String fileName) {
+    final String DOT = "."; //$NON-NLS-1$
+    Assert.hasText(fileName);
+    Assert.isTrue(fileName.contains(DOT), "file names must have an extension");
+    int firstDotIndex = fileName.indexOf(DOT);
+    String extension = fileName.substring(firstDotIndex + 1);
+    Assert.hasText(extension, "file names must have an extension");
+    return extension;
+  }
+
+  private RepositoryFile internalUpdateFile(final RepositoryFile file, final IRepositoryFileData content,
       final String... versionMessageAndLabel) {
     Assert.notNull(file);
     Assert.hasText(file.getName());
     Assert.isTrue(!file.isFolder());
     Assert.notNull(content);
-    Assert.hasText(file.getContentType());
 
     return (RepositoryFile) jcrTemplate.execute(new JcrCallback() {
       public Object doInJcr(final Session session) throws RepositoryException, IOException {
@@ -133,7 +147,7 @@ public class JcrRepositoryFileDao implements IRepositoryFileDao, InitializingBea
         JcrRepositoryFileUtils.checkoutNearestVersionableFileIfNecessary(session, pentahoJcrConstants, nodeIdStrategy,
             file);
         JcrRepositoryFileUtils.updateFileNode(session, pentahoJcrConstants, nodeIdStrategy, file, content,
-            findTransformer(file.getContentType()));
+            findTransformer(getFileExtension(file.getName()), content.getClass()));
         session.save();
         JcrRepositoryFileUtils.checkinNearestVersionableFileIfNecessary(session, pentahoJcrConstants, nodeIdStrategy,
             file, versionMessageAndLabel);
@@ -143,20 +157,22 @@ public class JcrRepositoryFileDao implements IRepositoryFileDao, InitializingBea
     });
   }
 
-  private ITransformer<IRepositoryFileContent> findTransformer(final String contentType) {
-    for (ITransformer<IRepositoryFileContent> transformer : transformers) {
-      if (transformer.supports(contentType)) {
+  private ITransformer<IRepositoryFileData> findTransformer(final String extension,
+      final Class<? extends IRepositoryFileData> clazz) {
+    for (ITransformer<IRepositoryFileData> transformer : transformers) {
+      if (transformer.supports(extension, clazz)) {
         return transformer;
       }
     }
-    throw new IllegalArgumentException(String.format("no transformer for this resource type [%s] exists", contentType));
+    throw new IllegalArgumentException(String.format(
+        "no transformer for the file extension [%s] and IRepositoryData type [%s] exists", extension, clazz.getName()));
   }
 
   /**
    * {@inheritDoc}
    */
   public RepositoryFile createFile(final RepositoryFile parentFolder, final RepositoryFile file,
-      final IRepositoryFileContent content, final String... versionMessageAndLabel) {
+      final IRepositoryFileData content, final String... versionMessageAndLabel) {
     Assert.notNull(file);
     Assert.isTrue(!file.isFolder());
     return internalCreateFile(parentFolder, file, content, versionMessageAndLabel);
@@ -209,15 +225,15 @@ public class JcrRepositoryFileDao implements IRepositoryFileDao, InitializingBea
    * {@inheritDoc}
    */
   @SuppressWarnings("unchecked")
-  public <T extends IRepositoryFileContent> T getContent(final RepositoryFile file, final Class<T> contentClass) {
+  public <T extends IRepositoryFileData> T getContent(final RepositoryFile file, final Class<T> contentClass) {
     Assert.notNull(file);
     Assert.notNull(file.getId());
     Assert.isTrue(!file.isFolder());
     return (T) jcrTemplate.execute(new JcrCallback() {
       public Object doInJcr(final Session session) throws RepositoryException, IOException {
         PentahoJcrConstants pentahoJcrConstants = new PentahoJcrConstants(session);
-        return JcrRepositoryFileUtils.getContent(session, pentahoJcrConstants, nodeIdStrategy, file,
-            findTransformer(file.getContentType()));
+        return JcrRepositoryFileUtils.getContent(session, pentahoJcrConstants, nodeIdStrategy, file, findTransformer(
+            getFileExtension(file.getName()), contentClass));
       }
     });
 
@@ -243,7 +259,7 @@ public class JcrRepositoryFileDao implements IRepositoryFileDao, InitializingBea
   /**
    * {@inheritDoc}
    */
-  public RepositoryFile updateFile(final RepositoryFile file, final IRepositoryFileContent content,
+  public RepositoryFile updateFile(final RepositoryFile file, final IRepositoryFileData content,
       final String... versionMessageAndLabel) {
     Assert.notNull(file);
     Assert.isTrue(!file.isFolder());

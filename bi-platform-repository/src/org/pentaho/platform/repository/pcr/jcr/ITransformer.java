@@ -6,37 +6,38 @@ import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
-import org.pentaho.platform.api.repository.IRepositoryFileContent;
+import org.pentaho.platform.api.repository.IRepositoryFileData;
 
 /**
- * A pluggable method for reading and writing {@link IRepositoryFileContent} implementations.
+ * A pluggable method for reading and writing {@link IRepositoryFileData} implementations.
  * 
  * @param <T> type which this transformer reads and writes
  * @author mlowery
  */
-public interface ITransformer<T extends IRepositoryFileContent> {
+public interface ITransformer<T extends IRepositoryFileData> {
 
   /**
-   * Returns {@code true} if this transformer can read and write content of the given type.
+   * Returns {@code true} if this transformer can read and write data for files with the given extension and return the
+   * data in the format indicated.
    * 
-   * @param contentType content type to check 
-   * @return {@code true} if this transformer can read and write content of the given type
+   * @param extension extension type to check 
+   * @return {@code true} if this transformer supports this extension and class
    */
-  boolean supports(final String contentType);
+  boolean supports(final String extension, final Class<? extends IRepositoryFileData> clazz);
 
   /**
-   * Transforms a JCR node subtree into an {@link IRepositoryFileContent}.
+   * Transforms a JCR node subtree into an {@link IRepositoryFileData}.
    * 
    * @param session JCR session
    * @param pentahoJcrConstants constants
    * @param nodeIdStrategy node id strategy to use
-   * @param resourceNode root of JCR subtree containing the data that goes into the {@link IRepositoryFileContent}
-   * @return an {@link IRepositoryFileContent} instance
+   * @param fileNode node of type nt:file or nt:linkedFile
+   * @return an {@link IRepositoryFileData} instance
    * @throws RepositoryException if anything goes wrong
    * @throws IOException if anything goes wrong
    */
   T fromContentNode(final Session session, final PentahoJcrConstants pentahoJcrConstants,
-      final NodeIdStrategy nodeIdStrategy, final Node resourceNode) throws RepositoryException, IOException;
+      final NodeIdStrategy nodeIdStrategy, final Node fileNode) throws RepositoryException, IOException;
 
   /**
    * Creates a JCR node subtree representing the given {@code content}.
@@ -44,14 +45,14 @@ public interface ITransformer<T extends IRepositoryFileContent> {
    * @param session JCR session
    * @param pentahoJcrConstants constants
    * @param nodeIdStrategy node id strategy to use
-   * @param content content to create
-   * @param resourceNode root of JCR subtree containing the data that goes into the {@link IRepositoryFileContent}
-   * @return an {@link IRepositoryFileContent} instance
+   * @param data data to create
+   * @param fileNode node of type nt:file or nt:linkedFile
+   * @return an {@link IRepositoryFileData} instance
    * @throws RepositoryException if anything goes wrong
    * @throws IOException if anything goes wrong
    */
   void createContentNode(final Session session, final PentahoJcrConstants pentahoJcrConstants,
-      final NodeIdStrategy nodeIdStrategy, final T content, final Node resourceNode) throws RepositoryException,
+      final NodeIdStrategy nodeIdStrategy, final T data, final Node fileNode) throws RepositoryException,
       IOException;
 
   /**
@@ -60,14 +61,14 @@ public interface ITransformer<T extends IRepositoryFileContent> {
    * @param session JCR session
    * @param pentahoJcrConstants constants
    * @param nodeIdStrategy node id strategy to use
-   * @param content content to update
-   * @param resourceNode root of JCR subtree containing the data that goes into the {@link IRepositoryFileContent}
-   * @return an {@link IRepositoryFileContent} instance
+   * @param data data to update
+   * @param fileNode node of type nt:file or nt:linkedFile
+   * @return an {@link IRepositoryFileData} instance
    * @throws RepositoryException if anything goes wrong
    * @throws IOException if anything goes wrong
    */
   void updateContentNode(final Session session, final PentahoJcrConstants pentahoJcrConstants,
-      final NodeIdStrategy nodeIdStrategy, final T content, final Node resourceNode) throws RepositoryException,
+      final NodeIdStrategy nodeIdStrategy, final T data, final Node fileNode) throws RepositoryException,
       IOException;
 
 }

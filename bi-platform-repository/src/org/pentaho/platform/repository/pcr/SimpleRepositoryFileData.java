@@ -2,33 +2,36 @@ package org.pentaho.platform.repository.pcr;
 
 import java.io.InputStream;
 
-import org.pentaho.platform.api.repository.IRepositoryFileContent;
+import org.pentaho.platform.api.repository.IRepositoryFileData;
 
 /**
- * A {@link IRepositoryFileContent} that has an input stream and encoding (the minimum required by 
- * {@link IRepositoryFileContent}).
+ * A {@link IRepositoryFileData} that has an input stream, encoding, and optional MIME type.
  * 
  * @author mlowery
  */
-public class SimpleRepositoryFileContent implements IRepositoryFileContent {
+public class SimpleRepositoryFileData implements IRepositoryFileData {
 
   // ~ Static fields/initializers ======================================================================================
 
-  public static final String CONTENT_TYPE = "simple";
-  
+  private static final long serialVersionUID = -1571991472814251230L;
+
   // ~ Instance fields =================================================================================================
 
-  private InputStream data;
+  private InputStream stream;
 
   private String encoding;
-  
+
   private String mimeType;
 
   // ~ Constructors ====================================================================================================
 
-  public SimpleRepositoryFileContent(final InputStream data, final String encoding, final String mimeType) {
+  public SimpleRepositoryFileData(final InputStream data, final String encoding) {
+    this(data, encoding, null);
+  }
+
+  public SimpleRepositoryFileData(final InputStream stream, final String encoding, final String mimeType) {
     super();
-    this.data = data;
+    this.stream = stream;
     this.encoding = encoding;
     this.mimeType = mimeType;
   }
@@ -40,8 +43,8 @@ public class SimpleRepositoryFileContent implements IRepositoryFileContent {
    * 
    * @return stream (may be {@code null})
    */
-  public InputStream getData() {
-    return data;
+  public InputStream getStream() {
+    return stream;
   }
 
   /**
@@ -52,7 +55,7 @@ public class SimpleRepositoryFileContent implements IRepositoryFileContent {
   public String getEncoding() {
     return encoding;
   }
-  
+
   /**
    * Returns the MIME type of the data in this file.
    * 
@@ -60,13 +63,6 @@ public class SimpleRepositoryFileContent implements IRepositoryFileContent {
    */
   public String getMimeType() {
     return mimeType;
-  }
-
-  /**
-   * {@inheritDoc}
-   */
-  public String getContentType() {
-    return CONTENT_TYPE;
   }
 
 }
