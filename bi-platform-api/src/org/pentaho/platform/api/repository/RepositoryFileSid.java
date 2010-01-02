@@ -66,7 +66,7 @@ public class RepositoryFileSid {
 
   @Override
   public String toString() {
-    return "Sid[name=" + name + ", type=" + type + "]";
+    return "RepositoryFileSid[name=" + name + ", type=" + type + "]";
   }
 
 }

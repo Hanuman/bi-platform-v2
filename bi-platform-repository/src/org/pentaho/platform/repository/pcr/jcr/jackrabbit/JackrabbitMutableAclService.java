@@ -1,15 +1,14 @@
 package org.pentaho.platform.repository.pcr.jcr.jackrabbit;
 
 import java.io.IOException;
+import java.io.Serializable;
 import java.security.Principal;
 import java.security.acl.Group;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.EnumSet;
 
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
-import javax.jcr.Value;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -23,27 +22,17 @@ import org.apache.jackrabbit.core.security.authorization.JackrabbitAccessControl
 import org.apache.jackrabbit.core.security.authorization.JackrabbitAccessControlList;
 import org.pentaho.commons.security.jackrabbit.IPentahoJackrabbitAccessControlList;
 import org.pentaho.platform.api.engine.IPentahoSession;
+import org.pentaho.platform.api.repository.RepositoryFileAcl;
+import org.pentaho.platform.api.repository.RepositoryFilePermission;
+import org.pentaho.platform.api.repository.RepositoryFileSid;
 import org.pentaho.platform.engine.core.system.PentahoSessionHolder;
+import org.pentaho.platform.repository.pcr.IRepositoryFileAclDao;
 import org.pentaho.platform.repository.pcr.jcr.JcrRepositoryFileUtils;
 import org.pentaho.platform.repository.pcr.jcr.NodeIdStrategy;
 import org.pentaho.platform.repository.pcr.jcr.PentahoJcrConstants;
 import org.pentaho.platform.repository.pcr.jcr.UuidNodeIdStrategy;
-import org.pentaho.platform.repository.pcr.springsecurity.IPentahoMutableAclService;
-import org.pentaho.platform.repository.pcr.springsecurity.PentahoMutableAcl;
 import org.springframework.extensions.jcr.JcrCallback;
 import org.springframework.extensions.jcr.JcrTemplate;
-import org.springframework.security.acls.Acl;
-import org.springframework.security.acls.AlreadyExistsException;
-import org.springframework.security.acls.ChildrenExistException;
-import org.springframework.security.acls.MutableAcl;
-import org.springframework.security.acls.MutableAclService;
-import org.springframework.security.acls.NotFoundException;
-import org.springframework.security.acls.Permission;
-import org.springframework.security.acls.objectidentity.ObjectIdentity;
-import org.springframework.security.acls.objectidentity.ObjectIdentityImpl;
-import org.springframework.security.acls.sid.GrantedAuthoritySid;
-import org.springframework.security.acls.sid.PrincipalSid;
-import org.springframework.security.acls.sid.Sid;
 import org.springframework.util.Assert;
 
 /**
@@ -52,14 +41,14 @@ import org.springframework.util.Assert;
  * <p>
  * All mutating public methods require checkout and checkin calls since the act of simply calling 
  * {@code AccessControlManager.getApplicablePolicies()} (as is done in 
- * {@link #toAcl(SessionImpl, ObjectIdentity, boolean)}) will query that the node is allowed to have the "access 
+ * {@link #toAcl(SessionImpl, Serializable, boolean)}) will query that the node is allowed to have the "access 
  * controlled" mixin type added. If the node is checked in, this query will return false. See Jackrabbit's 
  * {@code ItemValidator.hasCondition()}.
  * </p>
  * 
  * @author mlowery
  */
-public class JackrabbitMutableAclService implements IPentahoMutableAclService {
+public class JackrabbitMutableAclService implements IRepositoryFileAclDao {
 
   // ~ Static fields/initializers ======================================================================================
 
@@ -85,19 +74,34 @@ public class JackrabbitMutableAclService implements IPentahoMutableAclService {
 
   /**
    * {@inheritDoc}
+   */
+  public boolean hasAccess(final String absPath, final EnumSet<RepositoryFilePermission> permissions) {
+    return (Boolean) jcrTemplate.execute(new JcrCallback() {
+      public Object doInJcr(final Session session) throws RepositoryException, IOException {
+        Assert.isInstanceOf(SessionImpl.class, session);
+        SessionImpl jrSession = (SessionImpl) session;
+
+        Privilege[] privs = permissionConversionHelper.pentahoPermissionsToJackrabbitPrivileges(jrSession, permissions);
+        return jrSession.getAccessControlManager().hasPrivileges(absPath, privs);
+      }
+    });
+  }
+
+  /**
+   * {@inheritDoc}
    * 
    * <p>
    * In Jackrabbit 1.6 (and maybe 2.0), objects already have an AccessControlPolicy of type AccessControlList. It is 
    * empty by default with implicit read access for everyone.
    * </p>
    */
-  public MutableAcl createAcl(final ObjectIdentity objectIdentity) throws AlreadyExistsException {
-    return (MutableAcl) jcrTemplate.execute(new JcrCallback() {
+  private RepositoryFileAcl createAcl(final Serializable id) {
+    return (RepositoryFileAcl) jcrTemplate.execute(new JcrCallback() {
       public Object doInJcr(final Session session) throws RepositoryException, IOException {
         PentahoJcrConstants pentahoJcrConstants = new PentahoJcrConstants(session);
-        Node node = nodeIdStrategy.findNodeById(session, objectIdentity.getIdentifier());
+        Node node = nodeIdStrategy.findNodeById(session, id);
         if (node == null) {
-          throw new NotFoundException(String.format("node with id [%s] not found", objectIdentity.getIdentifier()));
+          throw new RepositoryException(String.format("node with id [%s] not found", id));
         }
 
         JcrRepositoryFileUtils.checkoutNearestVersionableNodeIfNecessary(session, pentahoJcrConstants, nodeIdStrategy,
@@ -125,69 +129,148 @@ public class JackrabbitMutableAclService implements IPentahoMutableAclService {
         JcrRepositoryFileUtils.checkinNearestVersionableNodeIfNecessary(session, pentahoJcrConstants, nodeIdStrategy,
             node, "[system] created ACL");
 
-        Acl acl = toAcl(jrSession, pentahoJcrConstants, objectIdentity);
-        return acl;
+        return toAcl(jrSession, pentahoJcrConstants, id);
       }
     });
   }
 
-  public void deleteAcl(final ObjectIdentity objectIdentity, final boolean deleteChildren)
-      throws ChildrenExistException {
-    jcrTemplate.execute(new JcrCallback() {
+  private AccessControlPolicy getAccessControlPolicy(final AccessControlManager acMgr, final String absPath)
+      throws RepositoryException {
+    AccessControlPolicy[] policies = acMgr.getPolicies(absPath);
+    Assert.notEmpty(policies, "most likely due to calling readAclById before calling createAcl");
+    return policies[0];
+  }
+
+  private String getUsername() {
+    IPentahoSession pentahoSession = PentahoSessionHolder.getSession();
+    Assert.state(pentahoSession != null);
+    return pentahoSession.getName();
+  }
+
+  private boolean isReferenceable(final PentahoJcrConstants pentahoJcrConstants, final Node node)
+      throws RepositoryException {
+    return node.isNodeType(pentahoJcrConstants.getMIX_REFERENCEABLE());
+  }
+
+  private RepositoryFileAcl toAcl(final SessionImpl jrSession, final PentahoJcrConstants pentahoJcrConstants,
+      final Serializable id) throws RepositoryException {
+
+    Node node = nodeIdStrategy.findNodeById(jrSession, id);
+    if (node == null) {
+      throw new RepositoryException(String.format("node with id [%s] not found", id));
+    }
+    String absPath = node.getPath();
+    AccessControlManager acMgr = jrSession.getAccessControlManager();
+    AccessControlPolicy acPolicy = getAccessControlPolicy(acMgr, absPath);
+
+    Serializable parentId = null;
+
+    if (!node.getParent().isSame(jrSession.getRootNode())) {
+      parentId = nodeIdStrategy.getId(node.getParent());
+    }
+
+    Assert.isInstanceOf(IPentahoJackrabbitAccessControlList.class, acPolicy);
+
+    IPentahoJackrabbitAccessControlList acList = (IPentahoJackrabbitAccessControlList) acPolicy;
+
+    RepositoryFileSid owner = null;
+    Principal ownerPrincipal = acList.getOwner();
+    if (ownerPrincipal instanceof Group) {
+      owner = new RepositoryFileSid(ownerPrincipal.getName(), RepositoryFileSid.Type.ROLE);
+    } else {
+      owner = new RepositoryFileSid(ownerPrincipal.getName());
+    }
+
+    RepositoryFileAcl.Builder aclBuilder = new RepositoryFileAcl.Builder(id, parentId, owner);
+    aclBuilder.entriesInheriting(acList.isEntriesInheriting());
+    AccessControlEntry[] acEntries = acList.getAccessControlEntries();
+    for (int i = 0; i < acEntries.length; i++) {
+      Assert.isInstanceOf(JackrabbitAccessControlEntry.class, acEntries[i]);
+      JackrabbitAccessControlEntry jrAce = (JackrabbitAccessControlEntry) acEntries[i];
+      Principal principal = jrAce.getPrincipal();
+      RepositoryFileSid sid = null;
+      if (principal instanceof Group) {
+        sid = new RepositoryFileSid(principal.getName(), RepositoryFileSid.Type.ROLE);
+      } else {
+        sid = new RepositoryFileSid(principal.getName());
+      }
+      logger.debug(String.format("principal class [%s]", principal.getClass().getName()));
+      Privilege[] privileges = jrAce.getPrivileges();
+      aclBuilder.ace(sid, permissionConversionHelper.jackrabbitPrivilegesToPentahoPermissions(jrSession, privileges));
+
+    }
+    return aclBuilder.build();
+
+  }
+
+  public void setNodeIdStrategy(final NodeIdStrategy nodeIdStrategy) {
+    Assert.notNull(nodeIdStrategy);
+    this.nodeIdStrategy = nodeIdStrategy;
+  }
+
+  public void setPermissionConversionHelper(final IPermissionConversionHelper permissionConversionHelper) {
+    Assert.notNull(permissionConversionHelper);
+    this.permissionConversionHelper = permissionConversionHelper;
+  }
+
+  public static interface IPermissionConversionHelper {
+    Privilege[] pentahoPermissionsToJackrabbitPrivileges(final SessionImpl jrSession,
+        final EnumSet<RepositoryFilePermission> permission) throws RepositoryException;
+
+    EnumSet<RepositoryFilePermission> jackrabbitPrivilegesToPentahoPermissions(final SessionImpl jrSession,
+        final Privilege[] privileges) throws RepositoryException;
+  }
+
+  public void addPermission(final Serializable id, final RepositoryFileSid recipient,
+      final EnumSet<RepositoryFilePermission> permission) {
+    Assert.notNull(id);
+    Assert.notNull(recipient);
+    Assert.notNull(permission);
+    RepositoryFileAcl acl = readAclById(id);
+    Assert.notNull(acl);
+    // TODO mlowery find an ACE with the recipient and update that rather than adding a new ACE
+    RepositoryFileAcl updatedAcl = new RepositoryFileAcl.Builder(acl).ace(recipient, permission).build();
+    updateAcl(updatedAcl);
+    logger.debug("added ace: id=" + id + ", sid=" + recipient + ", permission=" + permission);
+  }
+
+  public RepositoryFileAcl createAcl(final Serializable id, final boolean entriesInheriting,
+      final RepositoryFileSid owner, final RepositoryFilePermission allPermission) {
+    RepositoryFileAcl acl = createAcl(id);
+    RepositoryFileAcl.Builder aclBuilder = new RepositoryFileAcl.Builder(acl);
+    aclBuilder.owner(owner);
+    aclBuilder.entriesInheriting(entriesInheriting);
+    if (!entriesInheriting) {
+      setFullControl(id, owner, allPermission);
+    }
+    return updateAcl(aclBuilder.build());
+  }
+
+  public RepositoryFileAcl readAclById(final Serializable id) {
+    return (RepositoryFileAcl) jcrTemplate.execute(new JcrCallback() {
       public Object doInJcr(final Session session) throws RepositoryException, IOException {
         PentahoJcrConstants pentahoJcrConstants = new PentahoJcrConstants(session);
         Assert.isTrue(session instanceof SessionImpl);
         SessionImpl jrSession = (SessionImpl) session;
-        Node node = nodeIdStrategy.findNodeById(session, objectIdentity.getIdentifier());
-        if (node == null) {
-          throw new NotFoundException(String.format("node with id [%s] not found", objectIdentity.getIdentifier()));
-        }
 
-        JcrRepositoryFileUtils.checkoutNearestVersionableNodeIfNecessary(session, pentahoJcrConstants, nodeIdStrategy,
-            node);
-
-        if (deleteChildren) {
-          ObjectIdentity[] children = findChildren(objectIdentity);
-          if (children != null) {
-            for (int i = 0; i < children.length; i++) {
-              deleteAcl(children[i], true);
-            }
-          }
-        } else {
-
-          ObjectIdentity[] children = findChildren(objectIdentity);
-          if (children != null) {
-            throw new ChildrenExistException("Cannot delete '" + objectIdentity + "' (has " + children.length
-                + " children)");
-          }
-        }
-
-        String absPath = node.getPath();
-        AccessControlManager acMgr = jrSession.getAccessControlManager();
-        AccessControlPolicy acPolicy = getAccessControlPolicy(acMgr, absPath);
-        acMgr.removePolicy(absPath, acPolicy);
-        jrSession.save();
-        JcrRepositoryFileUtils.checkinNearestVersionableNodeIfNecessary(session, pentahoJcrConstants, nodeIdStrategy,
-            node, "[system] deleted ACL");
-        return null;
+        return toAcl(jrSession, pentahoJcrConstants, id);
       }
     });
   }
 
-  /**
-   * {@inheritDoc}
-   * 
-   */
-  public MutableAcl updateAcl(final MutableAcl acl) throws NotFoundException {
-    return (MutableAcl) jcrTemplate.execute(new JcrCallback() {
+  public void setFullControl(Serializable id, RepositoryFileSid sid, RepositoryFilePermission permission) {
+    addPermission(id, sid, EnumSet.of(permission));
+  }
+
+  public RepositoryFileAcl updateAcl(final RepositoryFileAcl acl) {
+    return (RepositoryFileAcl) jcrTemplate.execute(new JcrCallback() {
       public Object doInJcr(final Session session) throws RepositoryException, IOException {
         PentahoJcrConstants pentahoJcrConstants = new PentahoJcrConstants(session);
         Assert.isTrue(session instanceof SessionImpl);
         SessionImpl jrSession = (SessionImpl) session;
-        Node node = nodeIdStrategy.findNodeById(session, acl.getObjectIdentity().getIdentifier());
+        Node node = nodeIdStrategy.findNodeById(session, acl.getId());
         if (node == null) {
-          throw new NotFoundException(String.format("node with id [%s] not found", acl.getObjectIdentity()
-              .getIdentifier()));
+          throw new RepositoryException(String.format("node with id [%s] not found", acl.getId()));
         }
 
         JcrRepositoryFileUtils.checkoutNearestVersionableNodeIfNecessary(session, pentahoJcrConstants, nodeIdStrategy,
@@ -202,12 +285,7 @@ public class JackrabbitMutableAclService implements IPentahoMutableAclService {
 
         acList.setEntriesInheriting(acl.isEntriesInheriting());
 
-        if (acl.getOwner() instanceof PrincipalSid) {
-          acList.setOwner(jrSession.getPrincipalManager().getPrincipal(((PrincipalSid) acl.getOwner()).getPrincipal()));
-        } else {
-          acList.setOwner(jrSession.getPrincipalManager().getPrincipal(
-              ((GrantedAuthoritySid) acl.getOwner()).getGrantedAuthority()));
-        }
+        acList.setOwner(jrSession.getPrincipalManager().getPrincipal(acl.getOwner().getName()));
 
         // clear all entries
         AccessControlEntry[] acEntries = acList.getAccessControlEntries();
@@ -215,201 +293,21 @@ public class JackrabbitMutableAclService implements IPentahoMutableAclService {
           acList.removeAccessControlEntry(acEntries[i]);
         }
         // add entries
-        for (int i = 0; i < acl.getEntries().length; i++) {
-          org.springframework.security.acls.AccessControlEntry ssAce = acl.getEntries()[i];
+        for (RepositoryFileAcl.Ace ace : acl.getAces()) {
           Principal principal = null;
 
-          if (ssAce.getSid() instanceof PrincipalSid) {
-            principal = jrSession.getPrincipalManager().getPrincipal(((PrincipalSid) ssAce.getSid()).getPrincipal());
-          } else {
-            principal = jrSession.getPrincipalManager().getPrincipal(
-                ((GrantedAuthoritySid) ssAce.getSid()).getGrantedAuthority());
-          }
-          acList.addEntry(principal, permissionConversionHelper
-              .permissionToPrivileges(jrSession, ssAce.getPermission()), ssAce.isGranting());
+          principal = jrSession.getPrincipalManager().getPrincipal(ace.getSid().getName());
+          acList.addEntry(principal, permissionConversionHelper.pentahoPermissionsToJackrabbitPrivileges(jrSession, ace
+              .getPermissions()), true);
         }
         acMgr.setPolicy(absPath, acList);
         session.save();
         JcrRepositoryFileUtils.checkinNearestVersionableNodeIfNecessary(session, pentahoJcrConstants, nodeIdStrategy,
             node, "[system] updated ACL");
-        Acl readAcl = readAclById(acl.getObjectIdentity());
-        Assert.isInstanceOf(MutableAcl.class, readAcl, "MutableAcl should be been returned");
-
-        return readAcl;
-      }
-    });
-  }
-
-  private AccessControlPolicy getAccessControlPolicy(final AccessControlManager acMgr, final String absPath)
-      throws RepositoryException {
-    AccessControlPolicy[] policies = acMgr.getPolicies(absPath);
-    Assert.notEmpty(policies, "most likely due to calling readAclById before calling createAcl");
-    return policies[0];
-  }
-
-  public ObjectIdentity[] findChildren(final ObjectIdentity parentIdentity) {
-    throw new UnsupportedOperationException();
-  }
-
-  public Acl readAclById(ObjectIdentity object, Sid[] sids) throws NotFoundException {
-    Map<ObjectIdentity, Acl> map = readAclsById(new ObjectIdentity[] { object }, sids);
-    Assert.isTrue(map.containsKey(object), "There should have been an Acl entry for ObjectIdentity " + object);
-
-    return map.get(object);
-  }
-
-  public Acl readAclById(ObjectIdentity object) throws NotFoundException {
-    return readAclById(object, null);
-  }
-
-  public Map<ObjectIdentity, Acl> readAclsById(ObjectIdentity[] objects) throws NotFoundException {
-    return readAclsById(objects, null);
-  }
-
-  @SuppressWarnings("unchecked")
-  public Map<ObjectIdentity, Acl> readAclsById(final ObjectIdentity[] objects, final Sid[] sids)
-      throws NotFoundException {
-    return (Map<ObjectIdentity, Acl>) jcrTemplate.execute(new JcrCallback() {
-      public Object doInJcr(final Session session) throws RepositoryException, IOException {
-        PentahoJcrConstants pentahoJcrConstants = new PentahoJcrConstants(session);
-        Map<ObjectIdentity, Acl> map = new HashMap<ObjectIdentity, Acl>();
-        Assert.isTrue(session instanceof SessionImpl);
-        SessionImpl jrSession = (SessionImpl) session;
-
-        for (int i = 0; i < objects.length; i++) {
-          map.put(objects[i], toAcl(jrSession, pentahoJcrConstants, objects[i]));
-        }
-
-        return map;
+        return readAclById(acl.getId());
       }
     });
 
-  }
-  
-  private String getUsername() {
-    IPentahoSession pentahoSession = PentahoSessionHolder.getSession();
-    Assert.state(pentahoSession != null);
-    return pentahoSession.getName();
-  }
-
-  private boolean isReferenceable(final PentahoJcrConstants pentahoJcrConstants, final Node node)
-      throws RepositoryException {
-    return node.isNodeType(pentahoJcrConstants.getMIX_REFERENCEABLE());
-  }
-
-  private Acl toAcl(final SessionImpl session, final PentahoJcrConstants pentahoJcrConstants,
-      final ObjectIdentity objectIdentity) throws RepositoryException {
-    return toAcl(session, pentahoJcrConstants, objectIdentity, true);
-  }
-
-  private Acl toAcl(final SessionImpl jrSession, final PentahoJcrConstants pentahoJcrConstants,
-      final ObjectIdentity objectIdentity, final boolean fetchParent) throws RepositoryException {
-    try {
-      Node node = nodeIdStrategy.findNodeById(jrSession, objectIdentity.getIdentifier());
-      if (node == null) {
-        throw new NotFoundException(String.format("node with id [%s] not found", objectIdentity.getIdentifier()));
-      }
-      String absPath = node.getPath();
-      AccessControlManager acMgr = jrSession.getAccessControlManager();
-      AccessControlPolicy acPolicy = getAccessControlPolicy(acMgr, absPath);
-
-      Acl parentAcl = null;
-      if (fetchParent) {
-        Node parentNode = node.getParent();
-        // all Pentaho nodes are referenceable; if we hit one that is not, that is the root
-        if (isReferenceable(pentahoJcrConstants, parentNode)) {
-          parentAcl = toAcl(jrSession, pentahoJcrConstants, new ObjectIdentityImpl(objectIdentity.getClass(),
-              nodeIdStrategy.getId(parentNode)), false);
-        }
-      }
-
-      Assert.isInstanceOf(IPentahoJackrabbitAccessControlList.class, acPolicy);
-
-      IPentahoJackrabbitAccessControlList acList = (IPentahoJackrabbitAccessControlList) acPolicy;
-
-      Sid owner = null;
-      Principal ownerPrincipal = acList.getOwner();
-      if (ownerPrincipal instanceof Group) {
-        owner = new GrantedAuthoritySid(ownerPrincipal.getName());
-      } else {
-        owner = new PrincipalSid(ownerPrincipal.getName());
-      }
-
-      PentahoMutableAcl acl = new PentahoMutableAcl(objectIdentity, parentAcl, acList.isEntriesInheriting(), owner);
-      AccessControlEntry[] acEntries = acList.getAccessControlEntries();
-      for (int i = 0; i < acEntries.length; i++) {
-        Assert.isInstanceOf(JackrabbitAccessControlEntry.class, acEntries[i]);
-        JackrabbitAccessControlEntry jrAce = (JackrabbitAccessControlEntry) acEntries[i];
-        Principal principal = jrAce.getPrincipal();
-        Sid sid = null;
-        if (principal instanceof Group) {
-          sid = new GrantedAuthoritySid(principal.getName());
-        } else {
-          sid = new PrincipalSid(principal.getName());
-        }
-        logger.debug(String.format("principal class [%s]", principal.getClass().getName()));
-        Privilege[] privileges = jrAce.getPrivileges();
-        acl
-            .insertAce(i, permissionConversionHelper.privilegesToPermission(jrSession, privileges), sid, jrAce
-                .isAllow());
-      }
-      return acl;
-    } catch (RepositoryException e) {
-      throw jcrTemplate.convertJcrAccessException(e);
-    }
-  }
-
-  public void setNodeIdStrategy(final NodeIdStrategy nodeIdStrategy) {
-    Assert.notNull(nodeIdStrategy);
-    this.nodeIdStrategy = nodeIdStrategy;
-  }
-
-  public void addPermission(ObjectIdentity oid, Sid recipient, Permission permission, boolean granting) {
-    Assert.notNull(oid);
-    Assert.notNull(recipient);
-    Assert.notNull(permission);
-    MutableAcl acl = (MutableAcl) readAclById(oid);
-    Assert.notNull(acl);
-    acl.insertAce(acl.getEntries().length, permission, recipient, granting);
-    updateAcl(acl);
-    logger.debug("added ace: oid=" + oid + ", sid=" + recipient + ", permission=" + permission + ", granting="
-        + granting);
-  }
-
-  public MutableAcl createAndInitializeAcl(final ObjectIdentity oid, final ObjectIdentity parentOid,
-      final boolean entriesInheriting, final Sid owner, final Permission allPermission) {
-    MutableAcl acl = createAcl(oid);
-    // link up parent if parent not null
-    if (parentOid != null) {
-      Acl newParent = readAclById(parentOid);
-      acl.setParent(newParent);
-    }
-    acl.setOwner(owner);
-    if (!entriesInheriting) {
-      acl.setEntriesInheriting(false);
-      setFullControl(oid, owner, allPermission);
-    }
-    return updateAcl(acl);
-  }
-
-  public void setFullControl(final ObjectIdentity oid, final Sid sid, final Permission permission) {
-    addPermission(oid, sid, permission, true);
-  }
-
-  public void setPermissionConversionHelper(final IPermissionConversionHelper permissionConversionHelper) {
-    Assert.notNull(permissionConversionHelper);
-    this.permissionConversionHelper = permissionConversionHelper;
-  }
-
-  /**
-   * Converts between Spring Security {@link Permission} instances and Jackrabbit {@link Privilege} instances.
-   */
-  public static interface IPermissionConversionHelper {
-    Privilege[] permissionToPrivileges(final SessionImpl jrSession, final Permission permission)
-        throws RepositoryException;
-
-    Permission privilegesToPermission(final SessionImpl jrSession, final Privilege[] privileges)
-        throws RepositoryException;
   }
 
 }

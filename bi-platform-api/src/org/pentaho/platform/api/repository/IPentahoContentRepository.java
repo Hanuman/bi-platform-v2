@@ -1,5 +1,6 @@
 package org.pentaho.platform.api.repository;
 
+import java.util.EnumSet;
 import java.util.List;
 
 /**
@@ -123,6 +124,15 @@ public interface IPentahoContentRepository {
   RepositoryFileAcl getAcl(final RepositoryFile file);
   
   void setAcl(final RepositoryFileAcl acl);
+  
+  /**
+   * Returns {@code true} if user has all permissions given.
+   * 
+   * @param absPath absolute path to file or folder
+   * @param permissions permissions to check
+   * @return {@code true} if user has all permissions given
+   */
+  boolean hasAccess(final String absPath, final EnumSet<RepositoryFilePermission> permissions);
 
   // ~ Version methods =================================================================================================
 

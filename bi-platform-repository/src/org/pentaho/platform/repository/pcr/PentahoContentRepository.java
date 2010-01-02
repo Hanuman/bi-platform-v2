@@ -8,27 +8,16 @@ import org.apache.commons.logging.LogFactory;
 import org.pentaho.platform.api.engine.IPentahoSession;
 import org.pentaho.platform.api.repository.IPentahoContentRepository;
 import org.pentaho.platform.api.repository.IRepositoryFileContent;
-import org.pentaho.platform.api.repository.RepositoryFilePermission;
 import org.pentaho.platform.api.repository.RepositoryFile;
 import org.pentaho.platform.api.repository.RepositoryFileAcl;
+import org.pentaho.platform.api.repository.RepositoryFilePermission;
 import org.pentaho.platform.api.repository.RepositoryFileSid;
 import org.pentaho.platform.api.repository.VersionSummary;
 import org.pentaho.platform.engine.core.system.PentahoSessionHolder;
-import org.pentaho.platform.repository.pcr.springsecurity.IPentahoMutableAclService;
-import org.pentaho.platform.repository.pcr.springsecurity.SpringSecurityRepositoryFilePermission;
-import org.springframework.security.acls.AccessControlEntry;
-import org.springframework.security.acls.Acl;
-import org.springframework.security.acls.MutableAcl;
-import org.springframework.security.acls.MutableAclService;
-import org.springframework.security.acls.objectidentity.ObjectIdentity;
-import org.springframework.security.acls.objectidentity.ObjectIdentityImpl;
-import org.springframework.security.acls.sid.GrantedAuthoritySid;
-import org.springframework.security.acls.sid.PrincipalSid;
 import org.springframework.util.Assert;
 
 /**
- * Implementation of {@link IPentahoContentRepository} using an {@link IRepositoryFileDao} and Spring 
- * Security's {@link MutableAclService}.
+ * Default implementation of {@link IPentahoContentRepository}.
  * 
  * @author mlowery
  */
@@ -42,16 +31,14 @@ public class PentahoContentRepository implements IPentahoContentRepository {
 
   private IRepositoryFileDao contentDao;
 
-  private IPentahoMutableAclService mutableAclService;
+  private IRepositoryFileAclDao mutableAclService;
 
   private IRepositoryEventHandler repositoryEventHandler;
-
-  private IAclConversionHelper aclConversionHelper;
 
   // ~ Constructors ====================================================================================================
 
   public PentahoContentRepository(final IRepositoryFileDao contentDao,
-      final IPentahoMutableAclService mutableAclService, final IRepositoryEventHandler repositoryEventHandler) {
+      final IRepositoryFileAclDao mutableAclService, final IRepositoryEventHandler repositoryEventHandler) {
     super();
     Assert.notNull(contentDao);
     Assert.notNull(mutableAclService);
@@ -59,11 +46,14 @@ public class PentahoContentRepository implements IPentahoContentRepository {
     this.contentDao = contentDao;
     this.mutableAclService = mutableAclService;
     this.repositoryEventHandler = repositoryEventHandler;
-    this.aclConversionHelper = new DefaultAclConversionHelper(mutableAclService);
   }
 
   // ~ Methods =========================================================================================================
 
+  public synchronized boolean hasAccess(final String absPath, final EnumSet<RepositoryFilePermission> permissions) {
+    return mutableAclService.hasAccess(absPath, permissions);  
+  }
+  
   public synchronized IRepositoryEventHandler getRepositoryEventHandler() {
     return repositoryEventHandler;
   }
@@ -113,7 +103,10 @@ public class PentahoContentRepository implements IPentahoContentRepository {
    * is protecting this method with different authorization rules than {@link #getStreamForRead(RepositoryFile)}.
    * </p>
    * 
-   * TODO mlowery figure this delegation out
+   * <p>
+   * In a direct contradiction of the previous paragraph, this implementation is not currently protected by Spring
+   * Security.
+   * </p>
    * 
    * @see #getContentForRead(RepositoryFile, Class)
    */
@@ -173,8 +166,7 @@ public class PentahoContentRepository implements IPentahoContentRepository {
   public synchronized RepositoryFileAcl getAcl(final RepositoryFile file) {
     Assert.notNull(file);
     Assert.notNull(file.getId());
-    return aclConversionHelper.ssAclToPentahoAcl((MutableAcl) mutableAclService.readAclById(new ObjectIdentityImpl(
-        RepositoryFile.class, file.getId())));
+    return mutableAclService.readAclById(file.getId());
   }
 
   /**
@@ -219,10 +211,10 @@ public class PentahoContentRepository implements IPentahoContentRepository {
   /**
    * {@inheritDoc}
    */
-  public void setAcl(final RepositoryFileAcl acl) {
+  public synchronized void setAcl(final RepositoryFileAcl acl) {
     Assert.notNull(acl);
     Assert.notNull(acl.getId());
-    mutableAclService.updateAcl(aclConversionHelper.pentahoAclToSsAcl(acl));
+    mutableAclService.updateAcl(acl);
   }
 
   /**
@@ -232,15 +224,6 @@ public class PentahoContentRepository implements IPentahoContentRepository {
     IPentahoSession pentahoSession = PentahoSessionHolder.getSession();
     Assert.state(pentahoSession != null);
     return pentahoSession.getName();
-  }
-
-  /**
-   * Returns the tenant ID of the current user.
-   */
-  private String internalGetTenantId() {
-    IPentahoSession pentahoSession = PentahoSessionHolder.getSession();
-    Assert.state(pentahoSession != null);
-    return (String) pentahoSession.getAttribute(IPentahoSession.TENANT_ID_KEY);
   }
 
   private RepositoryFile internalCreateFile(final RepositoryFile parentFolder, final RepositoryFile file,
@@ -272,25 +255,11 @@ public class PentahoContentRepository implements IPentahoContentRepository {
     return contentDao.updateFile(file, content, versionMessageAndLabel);
   }
 
-  private MutableAcl internalCreateAcl(final RepositoryFile file, final boolean entriesInheriting) {
+  private RepositoryFileAcl internalCreateAcl(final RepositoryFile file, final boolean entriesInheriting) {
     Assert.notNull(file);
 
-    ObjectIdentity parentOid = null;
-    if (file.getParentId() != null) {
-      parentOid = new ObjectIdentityImpl(RepositoryFile.class, file.getParentId());
-    }
-    return mutableAclService.createAndInitializeAcl(new ObjectIdentityImpl(RepositoryFile.class, file.getId()),
-        parentOid, entriesInheriting, new PrincipalSid(internalGetUsername()), SpringSecurityRepositoryFilePermission.ALL);
-  }
-
-  /**
-   * Converts between org.springframework.security.acls.Acl (ssAcl) and org.pentaho.api.repository.RepositoryFileAcl 
-   * (pentahoAcl).
-   */
-  public static interface IAclConversionHelper {
-    RepositoryFileAcl ssAclToPentahoAcl(final MutableAcl ssAcl);
-
-    MutableAcl pentahoAclToSsAcl(final RepositoryFileAcl pentahoAcl);
+    return mutableAclService.createAcl(file.getId(), entriesInheriting, new RepositoryFileSid(internalGetUsername()),
+        RepositoryFilePermission.ALL);
   }
 
 }

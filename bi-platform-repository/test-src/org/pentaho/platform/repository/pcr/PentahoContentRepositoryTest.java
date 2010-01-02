@@ -808,6 +808,16 @@ public class PentahoContentRepositoryTest implements ApplicationContextAware {
   }
 
   @Test
+  public void testHasAccess() throws Exception {
+    repo.getRepositoryEventHandler().onStartup();
+    login(USERNAME_SUZY, TENANT_ID_ACME);
+    assertTrue(repo.hasAccess(RepositoryPaths.getTenantPublicFolderPath(), EnumSet.of(RepositoryFilePermission.READ)));
+    login(USERNAME_PAT, TENANT_ID_DUFF);
+    assertFalse(repo.hasAccess(RepositoryPaths.getTenantPublicFolderPath(TENANT_ID_ACME), EnumSet
+        .of(RepositoryFilePermission.READ)));
+  }
+
+  @Test
   public void testSetAcl() throws Exception {
     repo.getRepositoryEventHandler().onStartup();
     login(USERNAME_SUZY, TENANT_ID_ACME);

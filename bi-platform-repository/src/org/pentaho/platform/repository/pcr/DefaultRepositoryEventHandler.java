@@ -1,28 +1,22 @@
 package org.pentaho.platform.repository.pcr;
 
-import java.io.Serializable;
+import java.util.EnumSet;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.pentaho.platform.api.engine.IPentahoSession;
 import org.pentaho.platform.api.repository.IPentahoContentRepository;
 import org.pentaho.platform.api.repository.RepositoryFile;
+import org.pentaho.platform.api.repository.RepositoryFileAcl;
+import org.pentaho.platform.api.repository.RepositoryFilePermission;
+import org.pentaho.platform.api.repository.RepositoryFileSid;
+import org.pentaho.platform.api.repository.IPentahoContentRepository.IRepositoryEventHandler;
 import org.pentaho.platform.engine.core.system.PentahoSessionHolder;
 import org.pentaho.platform.engine.core.system.StandaloneSession;
 import org.pentaho.platform.engine.security.SecurityHelper;
-import org.pentaho.platform.repository.pcr.springsecurity.IPentahoMutableAclService;
-import org.pentaho.platform.repository.pcr.springsecurity.SpringSecurityRepositoryFilePermission;
 import org.springframework.security.Authentication;
 import org.springframework.security.GrantedAuthority;
 import org.springframework.security.GrantedAuthorityImpl;
-import org.springframework.security.acls.MutableAcl;
-import org.springframework.security.acls.Permission;
-import org.springframework.security.acls.domain.CumulativePermission;
-import org.springframework.security.acls.objectidentity.ObjectIdentity;
-import org.springframework.security.acls.objectidentity.ObjectIdentityImpl;
-import org.springframework.security.acls.sid.GrantedAuthoritySid;
-import org.springframework.security.acls.sid.PrincipalSid;
-import org.springframework.security.acls.sid.Sid;
 import org.springframework.security.providers.UsernamePasswordAuthenticationToken;
 import org.springframework.security.userdetails.User;
 import org.springframework.security.userdetails.UserDetails;
@@ -74,14 +68,14 @@ public class DefaultRepositoryEventHandler implements IPentahoContentRepository.
 
   private IRepositoryFileDao contentDao;
 
-  private IPentahoMutableAclService mutableAclService;
+  private IRepositoryFileAclDao mutableAclService;
 
   private boolean startedUp;
 
   // ~ Constructors ====================================================================================================
 
   public DefaultRepositoryEventHandler(final IRepositoryFileDao contentDao,
-      final IPentahoMutableAclService mutableAclService, final TransactionTemplate txnTemplate,
+      final IRepositoryFileAclDao mutableAclService, final TransactionTemplate txnTemplate,
       final String repositoryAdminUsername, final String repositoryAdminAuthorityName,
       final String commonAuthenticatedAuthorityName, final String tenantAuthenticatedAuthorityNameSuffix,
       final String tenantAdminAuthorityNameSuffix) {
@@ -156,9 +150,9 @@ public class DefaultRepositoryEventHandler implements IPentahoContentRepository.
                 .getPentahoRootFolderName()).folder(true).build(), false, repositoryAdminUsername,
                 "[system] create pentaho root folder");
             // allow all authenticated users to see the contents of this folder (and its ACL)
-            internalAddPermission(rootFolder, new GrantedAuthoritySid(commonAuthenticatedAuthorityName),
-                new CumulativePermission().set(SpringSecurityRepositoryFilePermission.READ).set(SpringSecurityRepositoryFilePermission.READ_ACL)
-                    .set(SpringSecurityRepositoryFilePermission.EXECUTE));
+            internalAddPermission(rootFolder, new RepositoryFileSid(commonAuthenticatedAuthorityName,
+                RepositoryFileSid.Type.ROLE), EnumSet.of(RepositoryFilePermission.READ,
+                RepositoryFilePermission.READ_ACL, RepositoryFilePermission.EXECUTE));
           }
         }
       });
@@ -181,11 +175,12 @@ public class DefaultRepositoryEventHandler implements IPentahoContentRepository.
           if (tenantRootFolder == null) {
             tenantRootFolder = internalCreateFolder(rootFolder, new RepositoryFile.Builder(tenantId).folder(true)
                 .build(), false, tenantAdminAuthorityName, "[system] created tenant root folder");
-            Sid ownerSid = new GrantedAuthoritySid(tenantAdminAuthorityName);
+            RepositoryFileSid ownerSid = new RepositoryFileSid(tenantAdminAuthorityName, RepositoryFileSid.Type.ROLE);
             internalSetOwner(tenantRootFolder, ownerSid);
             internalSetFullControl(tenantRootFolder, ownerSid);
-            internalAddPermission(tenantRootFolder, new GrantedAuthoritySid(tenantAuthenticatedAuthorityName),
-                new CumulativePermission().set(SpringSecurityRepositoryFilePermission.READ).set(SpringSecurityRepositoryFilePermission.READ_ACL));
+            internalAddPermission(tenantRootFolder, new RepositoryFileSid(tenantAuthenticatedAuthorityName,
+                RepositoryFileSid.Type.ROLE), EnumSet.of(RepositoryFilePermission.READ,
+                RepositoryFilePermission.READ_ACL));
           }
         }
       });
@@ -210,13 +205,15 @@ public class DefaultRepositoryEventHandler implements IPentahoContentRepository.
             RepositoryFile tenantPublicFolder = internalCreateFolder(tenantRootFolder, new RepositoryFile.Builder(
                 RepositoryPaths.getTenantPublicFolderName()).folder(true).versioned(true).build(), false,
                 tenantAdminAuthorityName, "[system] created tenant public folder");
-            Sid ownerSid = new GrantedAuthoritySid(tenantAdminAuthorityName);
+            RepositoryFileSid ownerSid = new RepositoryFileSid(tenantAdminAuthorityName, RepositoryFileSid.Type.ROLE);
             internalSetOwner(tenantPublicFolder, ownerSid);
-            internalAddPermission(tenantPublicFolder, new GrantedAuthoritySid(tenantAuthenticatedAuthorityName),
-                new CumulativePermission().set(SpringSecurityRepositoryFilePermission.READ).set(SpringSecurityRepositoryFilePermission.READ_ACL)
-                    .set(SpringSecurityRepositoryFilePermission.APPEND).set(SpringSecurityRepositoryFilePermission.DELETE_CHILD).set(
-                        SpringSecurityRepositoryFilePermission.WRITE).set(SpringSecurityRepositoryFilePermission.WRITE_ACL).set(
-                        SpringSecurityRepositoryFilePermission.EXECUTE));
+            internalAddPermission(tenantPublicFolder, new RepositoryFileSid(tenantAuthenticatedAuthorityName,
+                RepositoryFileSid.Type.ROLE),
+
+            EnumSet.of(RepositoryFilePermission.READ, RepositoryFilePermission.READ_ACL,
+                RepositoryFilePermission.APPEND, RepositoryFilePermission.DELETE_CHILD, RepositoryFilePermission.WRITE,
+                RepositoryFilePermission.WRITE_ACL, RepositoryFilePermission.EXECUTE));
+
             // home folder inherits ACEs from parent ACL
             RepositoryFile tenantHomeFolder = internalCreateFolder(tenantRootFolder, new RepositoryFile.Builder(
                 RepositoryPaths.getTenantHomeFolderName()).folder(true).build(), true, tenantAdminAuthorityName,
@@ -242,7 +239,7 @@ public class DefaultRepositoryEventHandler implements IPentahoContentRepository.
             // user home folder is versioned
             userHomeFolder = internalCreateFolder(tenantHomeFolder, new RepositoryFile.Builder(username).folder(true)
                 .versioned(true).build(), false, username, "[system] created user home folder");
-            Sid ownerSid = new PrincipalSid(username);
+            RepositoryFileSid ownerSid = new RepositoryFileSid(username);
             internalSetOwner(userHomeFolder, ownerSid);
             internalSetFullControl(userHomeFolder, ownerSid);
           }
@@ -268,37 +265,28 @@ public class DefaultRepositoryEventHandler implements IPentahoContentRepository.
     return newFile;
   }
 
-  private void internalSetFullControl(final RepositoryFile file, final Sid sid) {
+  private void internalSetFullControl(final RepositoryFile file, final RepositoryFileSid sid) {
     Assert.notNull(file);
     Assert.notNull(sid);
-    mutableAclService.setFullControl(new ObjectIdentityImpl(RepositoryFile.class, file.getId()), sid,
-        SpringSecurityRepositoryFilePermission.ALL);
+    mutableAclService.setFullControl(file.getId(), sid, RepositoryFilePermission.ALL);
   }
 
-  private MutableAcl internalCreateAcl(final RepositoryFile file, final boolean entriesInheriting,
+  private RepositoryFileAcl internalCreateAcl(final RepositoryFile file, final boolean entriesInheriting,
       final String ownerUsername) {
     Assert.notNull(file);
 
-    ObjectIdentity parentOid = null;
-    if (file.getParentId() != null) {
-      parentOid = new ObjectIdentityImpl(RepositoryFile.class, file.getParentId());
-    }
-    return mutableAclService.createAndInitializeAcl(new ObjectIdentityImpl(RepositoryFile.class, file.getId()),
-        parentOid, entriesInheriting, new PrincipalSid(ownerUsername), SpringSecurityRepositoryFilePermission.ALL);
+    return mutableAclService.createAcl(file.getId(), entriesInheriting, new RepositoryFileSid(ownerUsername),
+        RepositoryFilePermission.ALL);
   }
 
-  private void internalAddPermission(final RepositoryFile file, final Sid recipient, final Permission permission,
-      final boolean granting) {
+  private void internalAddPermission(final RepositoryFile file, final RepositoryFileSid recipient,
+      final EnumSet<RepositoryFilePermission> permissions) {
     Assert.notNull(file);
     Assert.notNull(recipient);
-    Assert.notNull(permission);
+    Assert.notNull(permissions);
+    Assert.notEmpty(permissions);
 
-    mutableAclService.addPermission(new ObjectIdentityImpl(RepositoryFile.class, file.getId()), recipient, permission,
-        granting);
-  }
-
-  private void internalAddPermission(final RepositoryFile file, final Sid recipient, final Permission permission) {
-    internalAddPermission(file, recipient, permission, true);
+    mutableAclService.addPermission(file.getId(), recipient, permissions);
   }
 
   private IPentahoSession createRepositoryAdminPentahoSession() {
@@ -333,15 +321,13 @@ public class DefaultRepositoryEventHandler implements IPentahoContentRepository.
     return tenantId + tenantAdminAuthorityNameSuffix;
   }
 
-  private void internalSetOwner(final RepositoryFile file, final Sid owner) {
+  private void internalSetOwner(final RepositoryFile file, final RepositoryFileSid owner) {
     Assert.notNull(file);
     Assert.notNull(owner);
 
-    Serializable fileId = file.getId();
-    ObjectIdentity oid = new ObjectIdentityImpl(RepositoryFile.class, fileId);
-    MutableAcl acl = (MutableAcl) mutableAclService.readAclById(oid);
-    acl.setOwner(owner);
-    mutableAclService.updateAcl(acl);
+    RepositoryFileAcl acl = mutableAclService.readAclById(file.getId());
+    RepositoryFileAcl newAcl = new RepositoryFileAcl.Builder(acl).owner(owner).build();
+    mutableAclService.updateAcl(newAcl);
   }
 
   /**
