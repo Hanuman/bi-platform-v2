@@ -815,6 +815,9 @@ public class PentahoContentRepositoryTest implements ApplicationContextAware {
     login(USERNAME_PAT, TENANT_ID_DUFF);
     assertFalse(repo.hasAccess(RepositoryPaths.getTenantPublicFolderPath(TENANT_ID_ACME), EnumSet
         .of(RepositoryFilePermission.READ)));
+    // false is returned if path does not exist
+    assertFalse(repo.hasAccess(RepositoryPaths.getPentahoRootFolderPath() + RepositoryFile.SEPARATOR + "doesnotexist",
+        EnumSet.of(RepositoryFilePermission.READ)));
   }
 
   @Test

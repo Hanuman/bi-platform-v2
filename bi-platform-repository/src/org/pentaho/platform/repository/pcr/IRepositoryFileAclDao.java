@@ -18,6 +18,14 @@ public interface IRepositoryFileAclDao {
 
   List<RepositoryFileAcl.Ace> getEffectiveAces(final RepositoryFile file);
 
+  /**
+   * Returns {@code true} if the user has all of the permissions. The implementation should return {@code false} if 
+   * either the user does not have access or the file does not exist.
+   * 
+   * @param absPath absolute path to file
+   * @param permissions permissions to check
+   * @return {@code true} if user has access
+   */
   boolean hasAccess(final String absPath, final EnumSet<RepositoryFilePermission> permissions);
 
   RepositoryFileAcl readAclById(final Serializable id);

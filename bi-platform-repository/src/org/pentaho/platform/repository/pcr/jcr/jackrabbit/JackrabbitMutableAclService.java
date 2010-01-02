@@ -8,6 +8,7 @@ import java.util.EnumSet;
 import java.util.List;
 
 import javax.jcr.Node;
+import javax.jcr.PathNotFoundException;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
@@ -27,7 +28,6 @@ import org.pentaho.platform.api.repository.RepositoryFile;
 import org.pentaho.platform.api.repository.RepositoryFileAcl;
 import org.pentaho.platform.api.repository.RepositoryFilePermission;
 import org.pentaho.platform.api.repository.RepositoryFileSid;
-import org.pentaho.platform.api.repository.RepositoryFileAcl.Ace;
 import org.pentaho.platform.engine.core.system.PentahoSessionHolder;
 import org.pentaho.platform.repository.pcr.IRepositoryFileAclDao;
 import org.pentaho.platform.repository.pcr.jcr.JcrRepositoryFileUtils;
@@ -98,7 +98,12 @@ public class JackrabbitMutableAclService implements IRepositoryFileAclDao {
         SessionImpl jrSession = (SessionImpl) session;
 
         Privilege[] privs = permissionConversionHelper.pentahoPermissionsToJackrabbitPrivileges(jrSession, permissions);
-        return jrSession.getAccessControlManager().hasPrivileges(absPath, privs);
+        try {
+          return jrSession.getAccessControlManager().hasPrivileges(absPath, privs);
+        } catch (PathNotFoundException e) {
+          // never throw an exception if the path does not exist; just return false
+          return false;  
+        }
       }
     });
   }
