@@ -5,6 +5,7 @@ import java.io.Serializable;
 import java.security.Principal;
 import java.security.acl.Group;
 import java.util.EnumSet;
+import java.util.List;
 
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
@@ -22,9 +23,11 @@ import org.apache.jackrabbit.core.security.authorization.JackrabbitAccessControl
 import org.apache.jackrabbit.core.security.authorization.JackrabbitAccessControlList;
 import org.pentaho.commons.security.jackrabbit.IPentahoJackrabbitAccessControlList;
 import org.pentaho.platform.api.engine.IPentahoSession;
+import org.pentaho.platform.api.repository.RepositoryFile;
 import org.pentaho.platform.api.repository.RepositoryFileAcl;
 import org.pentaho.platform.api.repository.RepositoryFilePermission;
 import org.pentaho.platform.api.repository.RepositoryFileSid;
+import org.pentaho.platform.api.repository.RepositoryFileAcl.Ace;
 import org.pentaho.platform.engine.core.system.PentahoSessionHolder;
 import org.pentaho.platform.repository.pcr.IRepositoryFileAclDao;
 import org.pentaho.platform.repository.pcr.jcr.JcrRepositoryFileUtils;
@@ -72,6 +75,19 @@ public class JackrabbitMutableAclService implements IRepositoryFileAclDao {
 
   // ~ Methods =========================================================================================================
 
+  /**
+   * {@inheritDoc}
+   */
+  public synchronized List<RepositoryFileAcl.Ace> getEffectiveAces(final RepositoryFile file) {
+    Assert.notNull(file);
+    Assert.notNull(file.getId());
+    RepositoryFileAcl acl = readAclById(file.getId());
+    while (acl.isEntriesInheriting()) {
+      acl = readAclById(acl.getParentId());
+    }
+    return acl.getAces();
+  }
+  
   /**
    * {@inheritDoc}
    */
@@ -145,11 +161,6 @@ public class JackrabbitMutableAclService implements IRepositoryFileAclDao {
     IPentahoSession pentahoSession = PentahoSessionHolder.getSession();
     Assert.state(pentahoSession != null);
     return pentahoSession.getName();
-  }
-
-  private boolean isReferenceable(final PentahoJcrConstants pentahoJcrConstants, final Node node)
-      throws RepositoryException {
-    return node.isNodeType(pentahoJcrConstants.getMIX_REFERENCEABLE());
   }
 
   private RepositoryFileAcl toAcl(final SessionImpl jrSession, final PentahoJcrConstants pentahoJcrConstants,

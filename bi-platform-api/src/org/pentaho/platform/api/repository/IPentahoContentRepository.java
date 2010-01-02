@@ -133,6 +133,14 @@ public interface IPentahoContentRepository {
    * @return {@code true} if user has all permissions given
    */
   boolean hasAccess(final String absPath, final EnumSet<RepositoryFilePermission> permissions);
+  
+  /**
+   * Returns the list of access control entries that will be used to make an access control decision.
+   * 
+   * @param file file whose effective ACEs to get
+   * @return list of ACEs
+   */
+  List<RepositoryFileAcl.Ace> getEffectiveAces(final RepositoryFile file);
 
   // ~ Version methods =================================================================================================
 

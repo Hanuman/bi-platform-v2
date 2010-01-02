@@ -818,6 +818,18 @@ public class PentahoContentRepositoryTest implements ApplicationContextAware {
   }
 
   @Test
+  public void testGetEffectiveAces() throws Exception {
+    repo.getRepositoryEventHandler().onStartup();
+    login(USERNAME_SUZY, TENANT_ID_ACME);
+    RepositoryFile acmePublicFolder = repo.getFile(RepositoryPaths.getTenantPublicFolderPath());
+    List<RepositoryFileAcl.Ace> effectiveAces1 = repo.getEffectiveAces(acmePublicFolder);
+    RepositoryFile newFolder = new RepositoryFile.Builder("test").folder(true).versioned(true).build();
+    newFolder = repo.createFolder(acmePublicFolder, newFolder);
+    List<RepositoryFileAcl.Ace> effectiveAces2 = repo.getEffectiveAces(newFolder);
+    assertEquals(effectiveAces1, effectiveAces2);
+  }
+
+  @Test
   public void testSetAcl() throws Exception {
     repo.getRepositoryEventHandler().onStartup();
     login(USERNAME_SUZY, TENANT_ID_ACME);

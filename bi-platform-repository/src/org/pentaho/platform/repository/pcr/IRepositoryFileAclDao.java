@@ -2,7 +2,9 @@ package org.pentaho.platform.repository.pcr;
 
 import java.io.Serializable;
 import java.util.EnumSet;
+import java.util.List;
 
+import org.pentaho.platform.api.repository.RepositoryFile;
 import org.pentaho.platform.api.repository.RepositoryFileAcl;
 import org.pentaho.platform.api.repository.RepositoryFilePermission;
 import org.pentaho.platform.api.repository.RepositoryFileSid;
@@ -13,6 +15,8 @@ import org.pentaho.platform.api.repository.RepositoryFileSid;
  * @author mlowery
  */
 public interface IRepositoryFileAclDao {
+
+  List<RepositoryFileAcl.Ace> getEffectiveAces(final RepositoryFile file);
 
   boolean hasAccess(final String absPath, final EnumSet<RepositoryFilePermission> permissions);
 

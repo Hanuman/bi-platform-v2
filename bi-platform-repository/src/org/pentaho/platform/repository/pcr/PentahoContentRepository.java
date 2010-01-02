@@ -13,6 +13,7 @@ import org.pentaho.platform.api.repository.RepositoryFileAcl;
 import org.pentaho.platform.api.repository.RepositoryFilePermission;
 import org.pentaho.platform.api.repository.RepositoryFileSid;
 import org.pentaho.platform.api.repository.VersionSummary;
+import org.pentaho.platform.api.repository.RepositoryFileAcl.Ace;
 import org.pentaho.platform.engine.core.system.PentahoSessionHolder;
 import org.springframework.util.Assert;
 
@@ -31,29 +32,33 @@ public class PentahoContentRepository implements IPentahoContentRepository {
 
   private IRepositoryFileDao contentDao;
 
-  private IRepositoryFileAclDao mutableAclService;
+  private IRepositoryFileAclDao aclDao;
 
   private IRepositoryEventHandler repositoryEventHandler;
 
   // ~ Constructors ====================================================================================================
 
-  public PentahoContentRepository(final IRepositoryFileDao contentDao,
-      final IRepositoryFileAclDao mutableAclService, final IRepositoryEventHandler repositoryEventHandler) {
+  public PentahoContentRepository(final IRepositoryFileDao contentDao, final IRepositoryFileAclDao aclDao,
+      final IRepositoryEventHandler repositoryEventHandler) {
     super();
     Assert.notNull(contentDao);
-    Assert.notNull(mutableAclService);
+    Assert.notNull(aclDao);
     Assert.notNull(repositoryEventHandler);
     this.contentDao = contentDao;
-    this.mutableAclService = mutableAclService;
+    this.aclDao = aclDao;
     this.repositoryEventHandler = repositoryEventHandler;
   }
 
   // ~ Methods =========================================================================================================
 
-  public synchronized boolean hasAccess(final String absPath, final EnumSet<RepositoryFilePermission> permissions) {
-    return mutableAclService.hasAccess(absPath, permissions);  
+  public synchronized List<Ace> getEffectiveAces(final RepositoryFile file) {
+    return aclDao.getEffectiveAces(file);
   }
   
+  public synchronized boolean hasAccess(final String absPath, final EnumSet<RepositoryFilePermission> permissions) {
+    return aclDao.hasAccess(absPath, permissions);
+  }
+
   public synchronized IRepositoryEventHandler getRepositoryEventHandler() {
     return repositoryEventHandler;
   }
@@ -166,7 +171,7 @@ public class PentahoContentRepository implements IPentahoContentRepository {
   public synchronized RepositoryFileAcl getAcl(final RepositoryFile file) {
     Assert.notNull(file);
     Assert.notNull(file.getId());
-    return mutableAclService.readAclById(file.getId());
+    return aclDao.readAclById(file.getId());
   }
 
   /**
@@ -214,7 +219,7 @@ public class PentahoContentRepository implements IPentahoContentRepository {
   public synchronized void setAcl(final RepositoryFileAcl acl) {
     Assert.notNull(acl);
     Assert.notNull(acl.getId());
-    mutableAclService.updateAcl(acl);
+    aclDao.updateAcl(acl);
   }
 
   /**
@@ -258,7 +263,7 @@ public class PentahoContentRepository implements IPentahoContentRepository {
   private RepositoryFileAcl internalCreateAcl(final RepositoryFile file, final boolean entriesInheriting) {
     Assert.notNull(file);
 
-    return mutableAclService.createAcl(file.getId(), entriesInheriting, new RepositoryFileSid(internalGetUsername()),
+    return aclDao.createAcl(file.getId(), entriesInheriting, new RepositoryFileSid(internalGetUsername()),
         RepositoryFilePermission.ALL);
   }
 
