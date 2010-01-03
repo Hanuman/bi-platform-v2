@@ -22,6 +22,17 @@ public interface IRepositoryFileDao {
   RepositoryFile getFile(final String absPath);
 
   /**
+   * Same as {@link #getFile(String)} except that if {@code loadMaps} is {@code true}, the maps for localized strings 
+   * will be loaded as well. (Normally these are not loaded.) Use {@code true} in editing tools that can show the maps
+   * for editing purposes.
+   * 
+   * @param absPath absolute path to file
+   * @param loadMaps {@code true} to load localized string maps
+   * @return file or {@code null} if the file does not exist or access is denied
+   */
+  RepositoryFile getFile(final String absPath, final boolean loadMaps);
+  
+  /**
    * Gets content for read.
    * 
    * @param file to read

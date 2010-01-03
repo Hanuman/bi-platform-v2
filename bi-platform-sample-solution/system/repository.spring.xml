@@ -161,6 +161,7 @@
     </property>
     <property name="nodeDefinitions">
       <list>
+        <value>classpath:/org/pentaho/platform/repository/pcr/jcr/jackrabbit/pentahoLocalizedString.cnd</value>
         <value>classpath:/org/pentaho/platform/repository/pcr/jcr/jackrabbit/pentahoFile.cnd</value>
         <value>classpath:/org/pentaho/platform/repository/pcr/jcr/jackrabbit/pentahoResource.cnd</value>
         <value>classpath:/org/pentaho/platform/repository/pcr/jcr/jackrabbit/pentahoLockable.cnd</value>

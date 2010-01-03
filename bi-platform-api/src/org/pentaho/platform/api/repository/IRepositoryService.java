@@ -27,6 +27,17 @@ public interface IRepositoryService {
   RepositoryFile getFile(final String absPath);
 
   /**
+   * Same as {@link #getFile(String)} except that if {@code loadMaps} is {@code true}, the maps for localized strings 
+   * will be loaded as well. (Normally these are not loaded.) Use {@code true} in editing tools that can show the maps
+   * for editing purposes.
+   * 
+   * @param absPath absolute path to file
+   * @param loadMaps {@code true} to load localized string maps
+   * @return file or {@code null} if the file does not exist or access is denied
+   */
+  RepositoryFile getFile(final String absPath, final boolean loadMaps);
+
+  /**
    * Gets content for read.
    * 
    * @param file to read
@@ -120,14 +131,14 @@ public interface IRepositoryService {
    * @return access control list
    */
   RepositoryFileAcl getAcl(final RepositoryFile file);
-  
+
   /**
    * Sets an ACL.
    * 
    * @param acl ACL to set
    */
   void setAcl(final RepositoryFileAcl acl);
-  
+
   /**
    * Returns {@code true} if user has all permissions given.
    * 
@@ -136,7 +147,7 @@ public interface IRepositoryService {
    * @return {@code true} if user has all permissions given
    */
   boolean hasAccess(final String absPath, final EnumSet<RepositoryFilePermission> permissions);
-  
+
   /**
    * Returns the list of access control entries that will be used to make an access control decision.
    * 
@@ -155,7 +166,7 @@ public interface IRepositoryService {
    * @return list of version summaries (never {@code null})
    */
   List<VersionSummary> getVersionSummaries(final RepositoryFile file);
-  
+
   /**
    * Gets file as it was at the given version. Use this method to test for file existence too.
    * 
@@ -203,7 +214,7 @@ public interface IRepositoryService {
      * @param tenantId new tenant id
      */
     void onNewTenant(final String tenantId);
-    
+
     /**
      * To be called before any users belonging to the current tenant call into the {@link IRepositoryService}. 
      */

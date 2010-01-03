@@ -16,17 +16,17 @@ public class PentahoJcrConstants extends JcrConstants {
   /**
    * Pentaho item name namespace.
    */
-  private static final String PHO_NS = "http://www.pentaho.org/jcr/1.0";
+  public static final String PHO_NS = "http://www.pentaho.org/jcr/1.0";
 
   /**
    * Pentaho node type namespace.
    */
-  protected static final String PHO_NT_NS = "http://www.pentaho.org/jcr/nt/1.0";
+  public static final String PHO_NT_NS = "http://www.pentaho.org/jcr/nt/1.0";
 
   /**
    * Pentaho mixin type namespace.
    */
-  protected static final String PHO_MIX_NS = "http://www.pentaho.org/jcr/mix/1.0";
+  public static final String PHO_MIX_NS = "http://www.pentaho.org/jcr/mix/1.0";
 
   private static final String PHO_MIX_PENTAHOFILE = "pentahoFile";
 
@@ -54,6 +54,17 @@ public class PentahoJcrConstants extends JcrConstants {
 
   private static final String PHO_ACLOWNERNAME = "aclOwnerName";
 
+  private static final String PHO_TITLE = "title";
+  
+  private static final String PHO_DESCRIPTION = "description";
+  
+  /**
+   * Same abstraction as {@code Locale.ROOT}.
+   */
+  private static final String PHO_ROOTLOCALE = "rootLocale";
+
+  private static final String PHO_NT_LOCALIZEDSTRING = "localizedString";
+  
   // ~ Instance fields =================================================================================================
 
   // ~ Constructors ====================================================================================================
@@ -118,6 +129,22 @@ public class PentahoJcrConstants extends JcrConstants {
   
   public String getPHO_LASTMODIFIED() {
     return resolveName(PHO_NS, PHO_LASTMODIFIED);
+  }
+
+  public String getPHO_TITLE() {
+    return resolveName(PHO_NS, PHO_TITLE);
+  }
+
+  public String getPHO_DESCRIPTION() {
+    return resolveName(PHO_NS, PHO_DESCRIPTION);
+  }
+
+  public String getPHO_ROOTLOCALE() {
+    return resolveName(PHO_NS, PHO_ROOTLOCALE);
+  }
+
+  public String getPHO_NT_LOCALIZEDSTRING() {
+    return resolveName(PHO_NT_NS, PHO_NT_LOCALIZEDSTRING);
   }
 
 }

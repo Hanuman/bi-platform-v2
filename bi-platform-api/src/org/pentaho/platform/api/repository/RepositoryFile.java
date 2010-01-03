@@ -1,7 +1,10 @@
 package org.pentaho.platform.api.repository;
 
 import java.io.Serializable;
+import java.util.Collections;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.apache.commons.lang.builder.ToStringBuilder;
 
@@ -21,6 +24,12 @@ public class RepositoryFile implements Comparable<RepositoryFile>, Serializable 
   private static final long serialVersionUID = -6955142003557786114L;
 
   public static final String SEPARATOR = "/"; //$NON-NLS-1$
+
+  /**
+   * Key used in {@link #titleMap} or {@link #descriptionMap} that indicates what string to use when no locale 
+   * information is available.
+   */
+  public static final String ROOT_LOCALE = "rootLocale"; //$NON-NLS-1$
 
   // ~ Instance fields =================================================================================================
 
@@ -80,6 +89,28 @@ public class RepositoryFile implements Comparable<RepositoryFile>, Serializable 
    * The owner of this file. Usually plays a role in access control. Read-only.
    */
   private RepositoryFileSid owner;
+
+  /**
+   * A title for the file for the current locale. If none specified, the file's name is returned. Read-only.
+   */
+  private String title;
+
+  /**
+   * A description of the file for the current locale. Read-only.
+   */
+  private String description;
+
+  /**
+   * A map for titles. Keys are locale strings and values are titles. Write-only. {@code null} value means that no 
+   * title will be created or updated.
+   */
+  private Map<String, String> titleMap;
+
+  /**
+   * A map for descriptions. Keys are locale strings and values are descriptions. Write-only. {@code null} value means 
+   * that no description will be created or updated.
+   */
+  private Map<String, String> descriptionMap;
 
   // ~ Constructors ====================================================================================================
 
@@ -160,6 +191,27 @@ public class RepositoryFile implements Comparable<RepositoryFile>, Serializable 
     return owner;
   }
 
+  /**
+   * Returns title for current locale or file name if not available.
+   */
+  public String getTitle() {
+    return title != null ? title : name;
+  }
+
+  public String getDescription() {
+    return description;
+  }
+
+  public Map<String, String> getTitleMap() {
+    // defensive copy
+    return titleMap == null ? null : new HashMap<String, String>(titleMap);
+  }
+
+  public Map<String, String> getDescriptionMap() {
+    // defensive copy
+    return descriptionMap == null ? null : new HashMap<String, String>(descriptionMap);
+  }
+
   @Override
   public String toString() {
     // TODO mlowery remove this to be GWT-compatible
@@ -167,6 +219,7 @@ public class RepositoryFile implements Comparable<RepositoryFile>, Serializable 
   }
 
   public static class Builder {
+
     private String name;
 
     private Serializable id;
@@ -197,9 +250,18 @@ public class RepositoryFile implements Comparable<RepositoryFile>, Serializable 
 
     private RepositoryFileSid owner;
 
+    private String title;
+
+    private String description;
+
+    private Map<String, String> titleMap;
+
+    private Map<String, String> descriptionMap;
+
     public Builder(final String name) {
       assertHasText(name);
       this.name = name;
+      this.clearTitleMap();
     }
 
     public Builder(final String name, final Serializable id, final Serializable parentId) {
@@ -208,6 +270,7 @@ public class RepositoryFile implements Comparable<RepositoryFile>, Serializable 
       this.name = name;
       this.id = id;
       this.parentId = parentId;
+      this.clearTitleMap();
     }
 
     public Builder(final RepositoryFile other) {
@@ -215,7 +278,8 @@ public class RepositoryFile implements Comparable<RepositoryFile>, Serializable 
       this.absolutePath(other.absolutePath).createdDate(other.createdDate).folder(other.folder).lastModificationDate(
           other.lastModifiedDate).versioned(other.versioned).hidden(other.hidden).versionId(other.versionId).locked(
           other.locked).lockDate(other.lockDate).lockOwner(other.lockOwner).lockMessage(other.lockMessage).owner(
-          other.owner);
+          other.owner).title(other.title).description(other.description).titleMap(other.titleMap).descriptionMap(
+          other.descriptionMap);
     }
 
     public RepositoryFile build() {
@@ -232,6 +296,10 @@ public class RepositoryFile implements Comparable<RepositoryFile>, Serializable 
       result.lockMessage = this.lockMessage;
       result.lockDate = this.lockDate;
       result.owner = this.owner;
+      result.title = this.title;
+      result.description = this.description;
+      result.titleMap = this.titleMap;
+      result.descriptionMap = this.descriptionMap;
       return result;
     }
 
@@ -296,6 +364,67 @@ public class RepositoryFile implements Comparable<RepositoryFile>, Serializable 
     public Builder owner(final RepositoryFileSid owner) {
       this.owner = owner;
       return this;
+    }
+
+    public Builder title(final String title) {
+      this.title = title;
+      return this;
+    }
+
+    public Builder description(final String description) {
+      this.description = description;
+      return this;
+    }
+
+    public Builder titleMap(final Map<String, String> titleMap) {
+      // defensive copy
+      this.titleMap = (titleMap != null ? new HashMap<String, String>(titleMap) : null);
+      return this;
+    }
+
+    public Builder clearTitleMap() {
+      if (this.titleMap != null) {
+        this.titleMap.clear();
+      }
+      return this;
+    }
+
+    public Builder title(final String localeString, final String title) {
+      initTitleMap();
+      this.titleMap.put(localeString, title);
+      return this;
+    }
+
+    private void initTitleMap() {
+      if (this.titleMap == null) {
+        this.titleMap = new HashMap<String, String>();
+        this.titleMap.put(ROOT_LOCALE, this.name);
+      }
+    }
+
+    public Builder descriptionMap(final Map<String, String> descriptionMap) {
+      // defensive copy
+      this.descriptionMap = (descriptionMap != null ? new HashMap<String, String>(descriptionMap) : descriptionMap);
+      return this;
+    }
+
+    public Builder clearDescriptionMap() {
+      if (this.descriptionMap != null) {
+        this.descriptionMap.clear();
+      }
+      return this;
+    }
+
+    public Builder description(final String localeString, final String description) {
+      initDescriptionMap();
+      this.descriptionMap.put(localeString, description);
+      return this;
+    }
+
+    private void initDescriptionMap() {
+      if (this.descriptionMap == null) {
+        this.descriptionMap = new HashMap<String, String>();
+      }
     }
 
     /**

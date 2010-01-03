@@ -69,9 +69,18 @@ public class DefaultRepositoryService implements IRepositoryService {
   public synchronized RepositoryFile getFile(final String absPath) {
     Assert.hasText(absPath);
 
-    return repositoryFileDao.getFile(absPath);
+    return repositoryFileDao.getFile(absPath, false);
   }
 
+  /**
+   * {@inheritDoc}
+   */
+  public synchronized RepositoryFile getFile(final String absPath, final boolean loadMaps) {
+    Assert.hasText(absPath);
+
+    return repositoryFileDao.getFile(absPath, loadMaps);
+  }
+  
   /**
    * {@inheritDoc}
    */

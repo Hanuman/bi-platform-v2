@@ -201,6 +201,17 @@ public class JcrRepositoryFileDao implements IRepositoryFileDao, InitializingBea
    * {@inheritDoc}
    */
   public RepositoryFile getFile(final String absPath) {
+    return internalGetFile(absPath, false);
+  }
+  
+  /**
+   * {@inheritDoc}
+   */
+  public RepositoryFile getFile(final String absPath, final boolean loadMaps) {
+    return internalGetFile(absPath, loadMaps);
+  }
+
+  private RepositoryFile internalGetFile(final String absPath, final boolean loadMaps) {
     Assert.hasText(absPath);
     Assert.isTrue(absPath.startsWith(RepositoryFile.SEPARATOR));
     return (RepositoryFile) jcrTemplate.execute(new JcrCallback() {
@@ -215,10 +226,9 @@ public class JcrRepositoryFileDao implements IRepositoryFileDao, InitializingBea
           fileNode = null;
         }
         return fileNode != null ? JcrRepositoryFileUtils.nodeToFile(session, pentahoJcrConstants, nodeIdStrategy,
-            ownerLookupHelper, (Node) fileNode) : null;
+            ownerLookupHelper, (Node) fileNode, loadMaps) : null;
       }
     });
-
   }
 
   /**

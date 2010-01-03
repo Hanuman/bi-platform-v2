@@ -16,6 +16,7 @@ import java.util.Date;
 import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import org.apache.commons.io.IOUtils;
@@ -142,6 +143,28 @@ public class DefaultRepositoryServiceTest implements ApplicationContextAware {
     // make sure pentaho root folder exists
     final String rootFolderPath = RepositoryPaths.getPentahoRootFolderPath();
     assertNotNull(SimpleJcrTestUtils.getItem(testJcrTemplate, rootFolderPath));
+  }
+
+  @Test
+  public void testGetFileWithLoadedMaps() throws Exception {
+    repo.getRepositoryEventHandler().onStartup();
+    login(USERNAME_SUZY, TENANT_ID_ACME);
+    final String fileName = "helloworld.sample";
+    RepositoryFile newFile = createSampleFile(RepositoryPaths.getUserHomeFolderPath(), fileName, "blah",
+        false, 123);
+    assertEquals(fileName, newFile.getTitle());
+    RepositoryFile.Builder builder = new RepositoryFile.Builder(newFile);
+    final String EN_US_VALUE = "Hello World Sample";
+    builder.title(Locale.getDefault().toString(), EN_US_VALUE);
+    final String ROOT_LOCALE_VALUE = "Hello World";
+    builder.title(RepositoryFile.ROOT_LOCALE, ROOT_LOCALE_VALUE);
+    final SampleRepositoryFileData modContent = new SampleRepositoryFileData("blah", false, 123);
+    repo.updateFile(builder.build(), modContent);
+    RepositoryFile updatedFileWithMaps = repo.getFile(RepositoryPaths.getUserHomeFolderPath()
+        + RepositoryFile.SEPARATOR + "helloworld.sample", true);
+
+    assertEquals(EN_US_VALUE, updatedFileWithMaps.getTitleMap().get(Locale.getDefault().toString()));
+    assertEquals(ROOT_LOCALE_VALUE, updatedFileWithMaps.getTitleMap().get(RepositoryFile.ROOT_LOCALE));
   }
 
   /**
@@ -405,7 +428,7 @@ public class DefaultRepositoryServiceTest implements ApplicationContextAware {
     };
     repo.createFile(parentFolder, new RepositoryFile.Builder("helloworld.xaction").build(), content);
   }
-  
+
   @Test(expected = IllegalArgumentException.class)
   public void testCreateFileNoExtension() throws Exception {
     repo.getRepositoryEventHandler().onStartup();
@@ -711,7 +734,10 @@ public class DefaultRepositoryServiceTest implements ApplicationContextAware {
     final SampleRepositoryFileData modData = new SampleRepositoryFileData(modSampleString, modSampleBoolean,
         modSampleInteger);
 
-    repo.updateFile(newFile, modData);
+    RepositoryFile.Builder builder = new RepositoryFile.Builder(newFile);
+    final String desc = "Hello World description";
+    builder.description(RepositoryFile.ROOT_LOCALE, desc);
+    repo.updateFile(builder.build(), modData);
 
     List<VersionSummary> versionSummaries = repo.getVersionSummaries(newFile);
     RepositoryFile v1 = repo.getFile(versionSummaries.get(0));
@@ -726,6 +752,9 @@ public class DefaultRepositoryServiceTest implements ApplicationContextAware {
     assertEquals("1.3", v2.getVersionId());
     assertEquals(absolutePath, v1.getAbsolutePath());
     assertEquals(absolutePath, v2.getAbsolutePath());
+    assertNull(v1.getDescription());
+    assertEquals(desc, v2.getDescription());
+    
     System.out.println("or: " + newFile);
     System.out.println("v1: " + v1);
     System.out.println("v2: " + v2);
