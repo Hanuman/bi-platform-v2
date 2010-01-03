@@ -25,10 +25,6 @@ public class SimpleRepositoryFileData implements IRepositoryFileData {
 
   // ~ Constructors ====================================================================================================
 
-  public SimpleRepositoryFileData(final InputStream data, final String encoding) {
-    this(data, encoding, null);
-  }
-
   public SimpleRepositoryFileData(final InputStream stream, final String encoding, final String mimeType) {
     super();
     this.stream = stream;
