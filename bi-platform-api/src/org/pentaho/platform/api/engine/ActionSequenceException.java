@@ -165,8 +165,10 @@ public class ActionSequenceException extends Exception {
 
   public void setActionDefinition(IActionDefinition actionDefinition) {
     this.actionDefinition = actionDefinition;
-    setStepDescription(actionDefinition.getDescription());
-    setActionClass(actionDefinition.getComponentName());
+    if (actionDefinition != null) {
+      setStepDescription(actionDefinition.getDescription());
+      setActionClass(actionDefinition.getComponentName());
+    }
   }
 
   public Integer getLoopIndex() {
@@ -195,7 +197,8 @@ public class ActionSequenceException extends Exception {
       s.println(prefix + "LOOP ON: " + ((IActionLoop) statement).getLoopOn());
     } else if (statement instanceof IActionDefinition) {
       String actionDesc = StringUtils.defaultString(((IActionDefinition) statement).getDescription(), "");
-      s.println(prefix + "EXECUTING ACTION: " + actionDesc + " (" + ((IActionDefinition) statement).getComponentName() + ")");
+      s.println(prefix + "EXECUTING ACTION: " + actionDesc + " (" + ((IActionDefinition) statement).getComponentName()
+          + ")");
     } else if (statement instanceof IActionControlStatement) {
       s.println(prefix + "UNKNOWN CONTROL STATEMENT");
     } else if (statement instanceof IActionControlStatement) {
