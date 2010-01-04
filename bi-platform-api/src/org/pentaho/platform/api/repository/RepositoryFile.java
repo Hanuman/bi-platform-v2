@@ -1,7 +1,6 @@
 package org.pentaho.platform.api.repository;
 
 import java.io.Serializable;
-import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -91,7 +90,7 @@ public class RepositoryFile implements Comparable<RepositoryFile>, Serializable 
   private RepositoryFileSid owner;
 
   /**
-   * A title for the file for the current locale. If none specified, the file's name is returned. Read-only.
+   * A title for the file for the current locale. If locale not available, the file's name is returned. Read-only.
    */
   private String title;
 
@@ -111,6 +110,12 @@ public class RepositoryFile implements Comparable<RepositoryFile>, Serializable 
    * that no description will be created or updated.
    */
   private Map<String, String> descriptionMap;
+  
+  /**
+   * The locale string with which locale-sensitive fields (like title) are populated. Used in {@link #equals(Object)} 
+   * calculation to guarantee caching works correctly. Read-only.
+   */
+  private String locale;
 
   // ~ Constructors ====================================================================================================
 
@@ -212,6 +217,10 @@ public class RepositoryFile implements Comparable<RepositoryFile>, Serializable 
     return descriptionMap == null ? null : new HashMap<String, String>(descriptionMap);
   }
 
+  public String getLocale() {
+    return locale;
+  }
+  
   @Override
   public String toString() {
     // TODO mlowery remove this to be GWT-compatible
@@ -257,6 +266,8 @@ public class RepositoryFile implements Comparable<RepositoryFile>, Serializable 
     private Map<String, String> titleMap;
 
     private Map<String, String> descriptionMap;
+    
+    private String locale;
 
     public Builder(final String name) {
       assertHasText(name);
@@ -279,7 +290,7 @@ public class RepositoryFile implements Comparable<RepositoryFile>, Serializable 
           other.lastModifiedDate).versioned(other.versioned).hidden(other.hidden).versionId(other.versionId).locked(
           other.locked).lockDate(other.lockDate).lockOwner(other.lockOwner).lockMessage(other.lockMessage).owner(
           other.owner).title(other.title).description(other.description).titleMap(other.titleMap).descriptionMap(
-          other.descriptionMap);
+          other.descriptionMap).locale(other.locale);
     }
 
     public RepositoryFile build() {
@@ -300,6 +311,7 @@ public class RepositoryFile implements Comparable<RepositoryFile>, Serializable 
       result.description = this.description;
       result.titleMap = this.titleMap;
       result.descriptionMap = this.descriptionMap;
+      result.locale = this.locale;
       return result;
     }
 
@@ -426,6 +438,11 @@ public class RepositoryFile implements Comparable<RepositoryFile>, Serializable 
         this.descriptionMap = new HashMap<String, String>();
       }
     }
+    
+    public Builder locale(final String locale) {
+      this.locale = locale;
+      return this;
+    }
 
     /**
      * Implemented here to maintain GWT-compatibility.
@@ -465,7 +482,7 @@ public class RepositoryFile implements Comparable<RepositoryFile>, Serializable 
       return 0;
     }
     // either this or other has a null id; fall back on name
-    return name.compareTo(other.name);
+    return getTitle().compareTo(other.getTitle());
   }
 
   @Override
@@ -473,6 +490,7 @@ public class RepositoryFile implements Comparable<RepositoryFile>, Serializable 
     final int prime = 31;
     int result = 1;
     result = prime * result + ((id == null) ? 0 : id.hashCode());
+    result = prime * result + ((locale == null) ? 0 : locale.hashCode());
     result = prime * result + ((versionId == null) ? 0 : versionId.hashCode());
     return result;
   }
@@ -491,6 +509,11 @@ public class RepositoryFile implements Comparable<RepositoryFile>, Serializable 
         return false;
     } else if (!id.equals(other.id))
       return false;
+    if (locale == null) {
+      if (other.locale != null)
+        return false;
+    } else if (!locale.equals(other.locale))
+      return false;
     if (versionId == null) {
       if (other.versionId != null)
         return false;
@@ -498,5 +521,5 @@ public class RepositoryFile implements Comparable<RepositoryFile>, Serializable 
       return false;
     return true;
   }
-
+  
 }

@@ -19,7 +19,6 @@ import javax.jcr.Property;
 import javax.jcr.PropertyIterator;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
-import javax.jcr.Value;
 import javax.jcr.lock.Lock;
 import javax.jcr.version.Version;
 import javax.jcr.version.VersionHistory;
@@ -76,13 +75,14 @@ public class JcrRepositoryFileUtils {
     String description = null;
     Map<String, String> titleMap = null;
     Map<String, String> descriptionMap = null;
+    String locale = null;
 
     id = getNodeId(session, pentahoJcrConstants, nodeIdStrategy, node);
     parentId = getParentId(session, pentahoJcrConstants, nodeIdStrategy, node);
     name = getNodeName(session, pentahoJcrConstants, node);
     absolutePath = getAbsolutePath(session, pentahoJcrConstants, nodeIdStrategy, node);
 
-    if (isFolder(pentahoJcrConstants, node)) {
+    if (isPentahoFolder(pentahoJcrConstants, node)) {
       folder = true;
     }
 
@@ -102,7 +102,9 @@ public class JcrRepositoryFileUtils {
           lastModified = tmpCal.getTime();
         }
       }
+    }
 
+    if (isPentahoHierarchyNode(session, pentahoJcrConstants, node)) {
       if (node.hasNode(pentahoJcrConstants.getPHO_TITLE())) {
         title = getLocalizedString(session, pentahoJcrConstants, node.getNode(pentahoJcrConstants.getPHO_TITLE()));
       }
@@ -123,6 +125,8 @@ public class JcrRepositoryFileUtils {
       }
     }
 
+    locale = getLocale().toString();
+
     versioned = isVersioned(session, pentahoJcrConstants, node);
     if (versioned) {
       versionId = getVersionId(pentahoJcrConstants, node);
@@ -141,16 +145,22 @@ public class JcrRepositoryFileUtils {
     RepositoryFile file = new RepositoryFile.Builder(name, id, parentId).createdDate(created).lastModificationDate(
         lastModified).folder(folder).versioned(versioned).absolutePath(absolutePath).versionId(versionId)
         .locked(locked).lockDate(lockDate).lockMessage(lockMessage).lockOwner(lockOwner).owner(owner).title(title)
-        .description(description).titleMap(titleMap).descriptionMap(descriptionMap).build();
+        .description(description).titleMap(titleMap).descriptionMap(descriptionMap).locale(locale).build();
 
     return file;
+  }
+
+  private static Locale getLocale() {
+    // TODO get locale from somewhere else
+    return Locale.getDefault();
   }
 
   private static String getLocalizedString(final Session session, final PentahoJcrConstants pentahoJcrConstants,
       final Node localizedStringNode) throws RepositoryException {
     Assert.isTrue(isLocalizedString(session, pentahoJcrConstants, localizedStringNode));
-    // TODO get locale from somewhere else
-    Locale locale = Locale.getDefault();
+
+    Locale locale = getLocale();
+
     final String UNDERSCORE = "_"; //$NON-NLS-1$
     boolean hasLanguage = StringUtils.hasText(locale.getLanguage());
     boolean hasCountry = StringUtils.hasText(locale.getCountry());
@@ -288,7 +298,7 @@ public class JcrRepositoryFileUtils {
     // guard against using a file retrieved from a more lenient session inside a more strict session
     Assert.notNull(parentFolderNode);
 
-    Node folderNode = parentFolderNode.addNode(folder.getName(), pentahoJcrConstants.getNT_FOLDER());
+    Node folderNode = parentFolderNode.addNode(folder.getName(), pentahoJcrConstants.getPHO_NT_PENTAHOFOLDER());
 
     if (folder.isVersioned()) {
       //      folderNode.setProperty(addPentahoPrefix(session, PentahoJcrConstants.PENTAHO_VERSIONED), true);
@@ -314,8 +324,7 @@ public class JcrRepositoryFileUtils {
     // guard against using a file retrieved from a more lenient session inside a more strict session
     Assert.notNull(parentFolderNode);
 
-    Node fileNode = parentFolderNode.addNode(file.getName(), pentahoJcrConstants.getNT_FILE());
-    fileNode.addMixin(pentahoJcrConstants.getPHO_MIX_PENTAHOFILE());
+    Node fileNode = parentFolderNode.addNode(file.getName(), pentahoJcrConstants.getPHO_NT_PENTAHOFILE());
     fileNode.setProperty(pentahoJcrConstants.getPHO_LASTMODIFIED(), Calendar.getInstance());
     if (file.getTitleMap() != null && !file.getTitleMap().isEmpty()) {
       Node titleNode = fileNode.addNode(pentahoJcrConstants.getPHO_TITLE(), pentahoJcrConstants
@@ -384,7 +393,7 @@ public class JcrRepositoryFileUtils {
       Version version = fileNode.getVersionHistory().getVersion(file.getVersionId().toString());
       fileNode = getNodeAtVersion(pentahoJcrConstants, version);
     }
-    Assert.isTrue(!isFolder(pentahoJcrConstants, fileNode));
+    Assert.isTrue(!isPentahoFolder(pentahoJcrConstants, fileNode));
 
     return transformer.fromContentNode(session, pentahoJcrConstants, nodeIdStrategy, fileNode);
   }
@@ -393,14 +402,14 @@ public class JcrRepositoryFileUtils {
       final NodeIdStrategy nodeIdStrategy, final IOwnerLookupHelper ownerLookupHelper, final RepositoryFile folder)
       throws RepositoryException, IOException {
     Node folderNode = nodeIdStrategy.findNodeById(session, folder.getId());
-    Assert.isTrue(isFolder(pentahoJcrConstants, folderNode));
+    Assert.isTrue(isPentahoFolder(pentahoJcrConstants, folderNode));
 
     List<RepositoryFile> children = new ArrayList<RepositoryFile>();
-    // get all immediate child nodes that are of type NT_FOLDER, NT_FILE, or NT_LINKEDFILE
+    // get all immediate child nodes that are of type PHO_NT_PENTAHOFOLDER or PHO_NT_PENTAHOFILE
     NodeIterator nodeIterator = folderNode.getNodes();
     while (nodeIterator.hasNext()) {
       Node node = nodeIterator.nextNode();
-      if (isFolder(pentahoJcrConstants, node) || isFileOrLinkedFile(pentahoJcrConstants, node)) {
+      if (isSupportedNodeType(pentahoJcrConstants, node)) {
         children.add(nodeToFile(session, pentahoJcrConstants, nodeIdStrategy, ownerLookupHelper, node));
       }
     }
@@ -408,14 +417,27 @@ public class JcrRepositoryFileUtils {
     return children;
   }
 
-  public static boolean isFolder(final PentahoJcrConstants pentahoJcrConstants, final Node node)
+  public static boolean isPentahoFolder(final PentahoJcrConstants pentahoJcrConstants, final Node node)
       throws RepositoryException {
     Assert.notNull(node);
     if (node.isNodeType(pentahoJcrConstants.getNT_FROZENNODE())) {
       String nodeTypeName = node.getProperty(pentahoJcrConstants.getJCR_FROZENPRIMARYTYPE()).getString();
-      return pentahoJcrConstants.getNT_FOLDER().equals(nodeTypeName);
+      return pentahoJcrConstants.getPHO_NT_PENTAHOFOLDER().equals(nodeTypeName);
     } else {
-      return node.isNodeType(pentahoJcrConstants.getNT_FOLDER());
+      return node.isNodeType(pentahoJcrConstants.getPHO_NT_PENTAHOFOLDER());
+    }
+  }
+
+  private static boolean isPentahoHierarchyNode(final Session session, final PentahoJcrConstants pentahoJcrConstants,
+      final Node node) throws RepositoryException {
+    Assert.notNull(node);
+    if (node.isNodeType(pentahoJcrConstants.getNT_FROZENNODE())) {
+      String nodeTypeName = node.getProperty(pentahoJcrConstants.getJCR_FROZENPRIMARYTYPE()).getString();
+      // TODO mlowery add PENTAHOLINKEDFILE here when it is available
+      return pentahoJcrConstants.getPHO_NT_PENTAHOFOLDER().equals(nodeTypeName)
+          || pentahoJcrConstants.getPHO_NT_PENTAHOFILE().equals(nodeTypeName);
+    } else {
+      return node.isNodeType(pentahoJcrConstants.getPHO_NT_PENTAHOHIERARCHYNODE());
     }
   }
 
@@ -433,33 +455,17 @@ public class JcrRepositoryFileUtils {
     return locked;
   }
 
-  private static boolean isFileOrLinkedFile(final PentahoJcrConstants pentahoJcrConstants, final Node node)
-      throws RepositoryException {
-    Assert.notNull(node);
-    Assert.notNull(node);
-    if (node.isNodeType(pentahoJcrConstants.getNT_FROZENNODE())) {
-      String nodeTypeName = node.getProperty(pentahoJcrConstants.getJCR_FROZENPRIMARYTYPE()).getString();
-      return pentahoJcrConstants.getNT_LINKEDFILE().equals(nodeTypeName)
-          || pentahoJcrConstants.getNT_FILE().equals(nodeTypeName);
-    } else {
-      return node.isNodeType(pentahoJcrConstants.getNT_LINKEDFILE())
-          || node.isNodeType(pentahoJcrConstants.getNT_FILE());
-    }
-  }
-
   private static boolean isPentahoFile(final Session session, final PentahoJcrConstants pentahoJcrConstants,
       final Node node) throws RepositoryException {
     Assert.notNull(node);
     if (node.isNodeType(pentahoJcrConstants.getNT_FROZENNODE())) {
-      Value[] mixinTypeNames = node.getProperty(pentahoJcrConstants.getJCR_FROZENMIXINTYPES()).getValues();
-      for (Value v : mixinTypeNames) {
-        if (pentahoJcrConstants.getPHO_MIX_PENTAHOFILE().equals(v.getString())) {
-          return true;
-        }
+      String primaryTypeName = node.getProperty(pentahoJcrConstants.getJCR_FROZENPRIMARYTYPE()).getString();
+      if (pentahoJcrConstants.getPHO_NT_PENTAHOFILE().equals(primaryTypeName)) {
+        return true;
       }
       return false;
     } else {
-      return node.isNodeType(pentahoJcrConstants.getPHO_MIX_PENTAHOFILE());
+      return node.isNodeType(pentahoJcrConstants.getPHO_NT_PENTAHOFILE());
     }
   }
 
@@ -493,14 +499,11 @@ public class JcrRepositoryFileUtils {
     Assert.notNull(node);
     if (node.isNodeType(pentahoJcrConstants.getNT_FROZENNODE())) {
       String nodeTypeName = node.getProperty(pentahoJcrConstants.getJCR_FROZENPRIMARYTYPE()).getString();
-      return pentahoJcrConstants.getNT_FOLDER().equals(nodeTypeName)
-          || pentahoJcrConstants.getNT_LINKEDFILE().equals(nodeTypeName)
-          || pentahoJcrConstants.getNT_FILE().equals(nodeTypeName)
-          || pentahoJcrConstants.getNT_RESOURCE().equals(nodeTypeName);
+      return pentahoJcrConstants.getPHO_NT_PENTAHOFILE().equals(nodeTypeName)
+          || pentahoJcrConstants.getPHO_NT_PENTAHOFOLDER().equals(nodeTypeName);
     } else {
-      return node.isNodeType(pentahoJcrConstants.getNT_FOLDER())
-          || node.isNodeType(pentahoJcrConstants.getNT_LINKEDFILE())
-          || node.isNodeType(pentahoJcrConstants.getNT_FILE()) || node.isNodeType(pentahoJcrConstants.getNT_RESOURCE());
+      return node.isNodeType(pentahoJcrConstants.getPHO_NT_PENTAHOFILE())
+          || node.isNodeType(pentahoJcrConstants.getPHO_NT_PENTAHOFOLDER());
     }
   }
 

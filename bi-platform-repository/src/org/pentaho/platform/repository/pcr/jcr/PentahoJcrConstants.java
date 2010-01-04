@@ -28,18 +28,24 @@ public class PentahoJcrConstants extends JcrConstants {
    */
   public static final String PHO_MIX_NS = "http://www.pentaho.org/jcr/mix/1.0";
 
-  private static final String PHO_MIX_PENTAHOFILE = "pentahoFile";
-
   private static final String PHO_MIX_LOCKABLE = "pentahoLockable";
 
   private static final String PHO_MIX_VERSIONABLE = "pentahoVersionable";
 
+  private static final String PHO_NT_PENTAHOFILE = "pentahoFile";
+
+  private static final String PHO_NT_PENTAHOFOLDER = "pentahoFolder";
+
   private static final String PHO_NT_INTERNALFOLDER = "pentahoInternalFolder";
 
   private static final String PHO_NT_LOCKTOKENSTORAGE = "pentahoLockTokenStorage";
-  
+
+  private static final String PHO_NT_LOCALIZEDSTRING = "localizedString";
+
+  private static final String PHO_NT_PENTAHOHIERARCHYNODE = "pentahoHierarchyNode";
+
   private static final String PHO_LASTMODIFIED = "lastModified";
-  
+
   private static final String PHO_LOCKMESSAGE = "lockMessage";
 
   private static final String PHO_LOCKDATE = "lockDate";
@@ -55,16 +61,14 @@ public class PentahoJcrConstants extends JcrConstants {
   private static final String PHO_ACLOWNERNAME = "aclOwnerName";
 
   private static final String PHO_TITLE = "title";
-  
+
   private static final String PHO_DESCRIPTION = "description";
-  
+
   /**
    * Same abstraction as {@code Locale.ROOT}.
    */
   private static final String PHO_ROOTLOCALE = "rootLocale";
 
-  private static final String PHO_NT_LOCALIZEDSTRING = "localizedString";
-  
   // ~ Instance fields =================================================================================================
 
   // ~ Constructors ====================================================================================================
@@ -79,10 +83,10 @@ public class PentahoJcrConstants extends JcrConstants {
 
   // ~ Methods ========================================================================================================= 
 
-  public String getPHO_MIX_PENTAHOFILE() {
-    return resolveName(PHO_MIX_NS, PHO_MIX_PENTAHOFILE);
+  public String getPHO_NT_PENTAHOFILE() {
+    return resolveName(PHO_NT_NS, PHO_NT_PENTAHOFILE);
   }
-  
+
   public String getPHO_MIX_LOCKABLE() {
     return resolveName(PHO_MIX_NS, PHO_MIX_LOCKABLE);
   }
@@ -126,7 +130,7 @@ public class PentahoJcrConstants extends JcrConstants {
   public String getPHO_ACLOWNERNAME() {
     return resolveName(PHO_NS, PHO_ACLOWNERNAME);
   }
-  
+
   public String getPHO_LASTMODIFIED() {
     return resolveName(PHO_NS, PHO_LASTMODIFIED);
   }
@@ -145,6 +149,14 @@ public class PentahoJcrConstants extends JcrConstants {
 
   public String getPHO_NT_LOCALIZEDSTRING() {
     return resolveName(PHO_NT_NS, PHO_NT_LOCALIZEDSTRING);
+  }
+
+  public String getPHO_NT_PENTAHOFOLDER() {
+    return resolveName(PHO_NT_NS, PHO_NT_PENTAHOFOLDER);
+  }
+
+  public String getPHO_NT_PENTAHOHIERARCHYNODE() {
+    return resolveName(PHO_NT_NS, PHO_NT_PENTAHOHIERARCHYNODE);
   }
 
 }

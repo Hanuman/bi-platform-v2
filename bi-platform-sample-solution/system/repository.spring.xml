@@ -27,8 +27,8 @@
     <property name="transactionAttributeSource">
       <value>
         org.pentaho.platform.api.repository.IRepositoryService.getFile=PROPAGATION_REQUIRED,readOnly
-        org.pentaho.platform.api.repository.IRepositoryService.getContentForRead=PROPAGATION_REQUIRED,readOnly
-        org.pentaho.platform.api.repository.IRepositoryService.getContentForExecute=PROPAGATION_REQUIRED,readOnly
+        org.pentaho.platform.api.repository.IRepositoryService.getDataForRead=PROPAGATION_REQUIRED,readOnly
+        org.pentaho.platform.api.repository.IRepositoryService.getDataForExecute=PROPAGATION_REQUIRED,readOnly
         org.pentaho.platform.api.repository.IRepositoryService.createFile=PROPAGATION_REQUIRED
         org.pentaho.platform.api.repository.IRepositoryService.createFolder=PROPAGATION_REQUIRED
         org.pentaho.platform.api.repository.IRepositoryService.getChildren=PROPAGATION_REQUIRED,readOnly
@@ -121,8 +121,8 @@
     <property name="objectDefinitionSource">
       <value>
         org.pentaho.platform.api.repository.IRepositoryService.getFile=VOTE_ROLE_FILE_Authenticated
-        org.pentaho.platform.api.repository.IRepositoryService.getContentForRead=VOTE_ROLE_FILE_Authenticated
-        org.pentaho.platform.api.repository.IRepositoryService.getContentForExecute=VOTE_ROLE_FILE_Authenticated
+        org.pentaho.platform.api.repository.IRepositoryService.getDataForRead=VOTE_ROLE_FILE_Authenticated
+        org.pentaho.platform.api.repository.IRepositoryService.getDataForExecute=VOTE_ROLE_FILE_Authenticated
         org.pentaho.platform.api.repository.IRepositoryService.createFile=VOTE_ROLE_FILE_Authenticated
         org.pentaho.platform.api.repository.IRepositoryService.createFolder=VOTE_ROLE_FILE_Authenticated
         org.pentaho.platform.api.repository.IRepositoryService.getChildren=VOTE_ROLE_FILE_Authenticated
@@ -162,7 +162,9 @@
     <property name="nodeDefinitions">
       <list>
         <value>classpath:/org/pentaho/platform/repository/pcr/jcr/jackrabbit/pentahoLocalizedString.cnd</value>
+        <value>classpath:/org/pentaho/platform/repository/pcr/jcr/jackrabbit/pentahoHierarchyNode.cnd</value>
         <value>classpath:/org/pentaho/platform/repository/pcr/jcr/jackrabbit/pentahoFile.cnd</value>
+        <value>classpath:/org/pentaho/platform/repository/pcr/jcr/jackrabbit/pentahoFolder.cnd</value>
         <value>classpath:/org/pentaho/platform/repository/pcr/jcr/jackrabbit/pentahoLockable.cnd</value>
         <value>classpath:/org/pentaho/platform/repository/pcr/jcr/jackrabbit/pentahoInternalFolder.cnd</value>
         <value>classpath:/org/pentaho/platform/repository/pcr/jcr/jackrabbit/pentahoLockTokenStorage.cnd</value>

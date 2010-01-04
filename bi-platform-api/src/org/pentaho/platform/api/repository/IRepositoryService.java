@@ -38,22 +38,22 @@ public interface IRepositoryService {
   RepositoryFile getFile(final String absPath, final boolean loadMaps);
 
   /**
-   * Gets content for read.
+   * Gets data for read.
    * 
    * @param file to read
-   * @param contentClass class that implements {@link IRepositoryFileData}
-   * @return content
+   * @param dataClass class that implements {@link IRepositoryFileData}
+   * @return data
    */
-  <T extends IRepositoryFileData> T getContentForRead(final RepositoryFile file, final Class<T> contentClass);
+  <T extends IRepositoryFileData> T getDataForRead(final RepositoryFile file, final Class<T> dataClass);
 
   /**
-   * Gets content for execute.
+   * Gets data for execute.
    * 
    * @param file to execute
-   * @param contentClass class that implements {@link IRepositoryFileData}
-   * @return content
+   * @param dataClass class that implements {@link IRepositoryFileData}
+   * @return data
    */
-  <T extends IRepositoryFileData> T getContentForExecute(final RepositoryFile file, final Class<T> contentClass);
+  <T extends IRepositoryFileData> T getDataForExecute(final RepositoryFile file, final Class<T> dataClass);
 
   /**
    * Creates a file.

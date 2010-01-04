@@ -122,17 +122,17 @@ public class DefaultRepositoryService implements IRepositoryService {
    * Security.
    * </p>
    * 
-   * @see #getContentForRead(RepositoryFile, Class)
+   * @see #getDataForRead(RepositoryFile, Class)
    */
-  public synchronized <T extends IRepositoryFileData> T getContentForExecute(RepositoryFile file,
+  public synchronized <T extends IRepositoryFileData> T getDataForExecute(RepositoryFile file,
       Class<T> contentClass) {
-    return getContentForRead(file, contentClass);
+    return getDataForRead(file, contentClass);
   }
 
   /**
    * {@inheritDoc}
    */
-  public synchronized <T extends IRepositoryFileData> T getContentForRead(RepositoryFile file, Class<T> contentClass) {
+  public synchronized <T extends IRepositoryFileData> T getDataForRead(RepositoryFile file, Class<T> contentClass) {
     Assert.notNull(file);
     Assert.notNull(file.getId());
     return repositoryFileDao.getContent(file, contentClass);

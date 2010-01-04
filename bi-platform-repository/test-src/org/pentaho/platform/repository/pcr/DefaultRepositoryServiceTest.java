@@ -384,7 +384,7 @@ public class DefaultRepositoryServiceTest implements ApplicationContextAware {
     assertNotNull(foundFile.getCreatedDate());
     assertNotNull(foundFile.getLastModifiedDate());
 
-    SimpleRepositoryFileData contentFromRepo = repo.getContentForRead(foundFile, SimpleRepositoryFileData.class);
+    SimpleRepositoryFileData contentFromRepo = repo.getDataForRead(foundFile, SimpleRepositoryFileData.class);
     assertEquals(expectedEncoding, contentFromRepo.getEncoding());
     assertEquals(expectedMimeType, contentFromRepo.getMimeType());
     assertEquals(expectedDataString, IOUtils.toString(contentFromRepo.getStream(), expectedEncoding));
@@ -412,7 +412,7 @@ public class DefaultRepositoryServiceTest implements ApplicationContextAware {
     assertNotNull(foundFile.getCreatedDate());
     assertNotNull(foundFile.getLastModifiedDate());
 
-    SampleRepositoryFileData data = repo.getContentForRead(foundFile, SampleRepositoryFileData.class);
+    SampleRepositoryFileData data = repo.getDataForRead(foundFile, SampleRepositoryFileData.class);
 
     assertEquals(sampleString, data.getSampleString());
     assertEquals(sampleBoolean, data.getSampleBoolean());
@@ -483,7 +483,7 @@ public class DefaultRepositoryServiceTest implements ApplicationContextAware {
 
     repo.updateFile(newFile, modContent);
 
-    SampleRepositoryFileData modData = repo.getContentForRead(repo.getFile(RepositoryPaths.getUserHomeFolderPath()
+    SampleRepositoryFileData modData = repo.getDataForRead(repo.getFile(RepositoryPaths.getUserHomeFolderPath()
         + RepositoryFile.SEPARATOR + fileName), SampleRepositoryFileData.class);
 
     assertEquals(modSampleString, modData.getSampleString());
@@ -758,8 +758,8 @@ public class DefaultRepositoryServiceTest implements ApplicationContextAware {
     System.out.println("or: " + newFile);
     System.out.println("v1: " + v1);
     System.out.println("v2: " + v2);
-    SampleRepositoryFileData c1 = repo.getContentForRead(v1, SampleRepositoryFileData.class);
-    SampleRepositoryFileData c2 = repo.getContentForRead(v2, SampleRepositoryFileData.class);
+    SampleRepositoryFileData c1 = repo.getDataForRead(v1, SampleRepositoryFileData.class);
+    SampleRepositoryFileData c2 = repo.getDataForRead(v2, SampleRepositoryFileData.class);
     assertEquals(origSampleString, c1.getSampleString());
     assertEquals(origSampleBoolean, c1.getSampleBoolean());
     assertEquals(origSampleInteger, c1.getSampleInteger());

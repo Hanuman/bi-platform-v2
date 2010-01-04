@@ -31,7 +31,7 @@ public interface ITransformer<T extends IRepositoryFileData> {
    * @param session JCR session
    * @param pentahoJcrConstants constants
    * @param nodeIdStrategy node id strategy to use
-   * @param fileNode node of type nt:file or nt:linkedFile
+   * @param fileNode node of type pho_nt:pentahoFile or pho_nt:pentahoLinkedFile
    * @return an {@link IRepositoryFileData} instance
    * @throws RepositoryException if anything goes wrong
    * @throws IOException if anything goes wrong
@@ -46,7 +46,7 @@ public interface ITransformer<T extends IRepositoryFileData> {
    * @param pentahoJcrConstants constants
    * @param nodeIdStrategy node id strategy to use
    * @param data data to create
-   * @param fileNode node of type nt:file or nt:linkedFile
+   * @param fileNode node of type pho_nt:pentahoFile or pho_nt:pentahoLinkedFile
    * @return an {@link IRepositoryFileData} instance
    * @throws RepositoryException if anything goes wrong
    * @throws IOException if anything goes wrong
@@ -62,7 +62,7 @@ public interface ITransformer<T extends IRepositoryFileData> {
    * @param pentahoJcrConstants constants
    * @param nodeIdStrategy node id strategy to use
    * @param data data to update
-   * @param fileNode node of type nt:file or nt:linkedFile
+   * @param fileNode node of type pho_nt:pentahoFile or pho_nt:pentahoLinkedFile
    * @return an {@link IRepositoryFileData} instance
    * @throws RepositoryException if anything goes wrong
    * @throws IOException if anything goes wrong
