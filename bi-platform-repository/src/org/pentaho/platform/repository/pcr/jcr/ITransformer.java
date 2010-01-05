@@ -30,45 +30,40 @@ public interface ITransformer<T extends IRepositoryFileData> {
    * 
    * @param session JCR session
    * @param pentahoJcrConstants constants
-   * @param nodeIdStrategy node id strategy to use
    * @param fileNode node of type pho_nt:pentahoFile or pho_nt:pentahoLinkedFile
    * @return an {@link IRepositoryFileData} instance
    * @throws RepositoryException if anything goes wrong
    * @throws IOException if anything goes wrong
    */
-  T fromContentNode(final Session session, final PentahoJcrConstants pentahoJcrConstants,
-      final NodeIdStrategy nodeIdStrategy, final Node fileNode) throws RepositoryException, IOException;
+  T fromContentNode(final Session session, final PentahoJcrConstants pentahoJcrConstants, final Node fileNode)
+      throws RepositoryException, IOException;
 
   /**
    * Creates a JCR node subtree representing the given {@code content}.
    * 
    * @param session JCR session
    * @param pentahoJcrConstants constants
-   * @param nodeIdStrategy node id strategy to use
    * @param data data to create
    * @param fileNode node of type pho_nt:pentahoFile or pho_nt:pentahoLinkedFile
    * @return an {@link IRepositoryFileData} instance
    * @throws RepositoryException if anything goes wrong
    * @throws IOException if anything goes wrong
    */
-  void createContentNode(final Session session, final PentahoJcrConstants pentahoJcrConstants,
-      final NodeIdStrategy nodeIdStrategy, final T data, final Node fileNode) throws RepositoryException,
-      IOException;
+  void createContentNode(final Session session, final PentahoJcrConstants pentahoJcrConstants, final T data,
+      final Node fileNode) throws RepositoryException, IOException;
 
   /**
    * Updates a JCR node subtree representing the given {@code content}.
    * 
    * @param session JCR session
    * @param pentahoJcrConstants constants
-   * @param nodeIdStrategy node id strategy to use
    * @param data data to update
    * @param fileNode node of type pho_nt:pentahoFile or pho_nt:pentahoLinkedFile
    * @return an {@link IRepositoryFileData} instance
    * @throws RepositoryException if anything goes wrong
    * @throws IOException if anything goes wrong
    */
-  void updateContentNode(final Session session, final PentahoJcrConstants pentahoJcrConstants,
-      final NodeIdStrategy nodeIdStrategy, final T data, final Node fileNode) throws RepositoryException,
-      IOException;
+  void updateContentNode(final Session session, final PentahoJcrConstants pentahoJcrConstants, final T data,
+      final Node fileNode) throws RepositoryException, IOException;
 
 }

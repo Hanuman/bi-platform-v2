@@ -1,5 +1,6 @@
 package org.pentaho.platform.repository.pcr;
 
+import java.io.Serializable;
 import java.util.EnumSet;
 
 import org.apache.commons.logging.Log;
@@ -150,7 +151,7 @@ public class DefaultRepositoryEventHandler implements IRepositoryService.IReposi
                 .getPentahoRootFolderName()).folder(true).build(), false, repositoryAdminUsername,
                 "[system] create pentaho root folder");
             // allow all authenticated users to see the contents of this folder (and its ACL)
-            internalAddPermission(rootFolder, new RepositoryFileSid(commonAuthenticatedAuthorityName,
+            internalAddPermission(rootFolder.getId(), new RepositoryFileSid(commonAuthenticatedAuthorityName,
                 RepositoryFileSid.Type.ROLE), EnumSet.of(RepositoryFilePermission.READ,
                 RepositoryFilePermission.READ_ACL, RepositoryFilePermission.EXECUTE));
           }
@@ -171,14 +172,15 @@ public class DefaultRepositoryEventHandler implements IRepositoryService.IReposi
       txnTemplate.execute(new TransactionCallbackWithoutResult() {
         public void doInTransactionWithoutResult(final TransactionStatus status) {
           RepositoryFile rootFolder = repositoryFileDao.getFile(RepositoryPaths.getPentahoRootFolderPath());
-          RepositoryFile tenantRootFolder = repositoryFileDao.getFile(RepositoryPaths.getTenantRootFolderPath(tenantId));
+          RepositoryFile tenantRootFolder = repositoryFileDao
+              .getFile(RepositoryPaths.getTenantRootFolderPath(tenantId));
           if (tenantRootFolder == null) {
-            tenantRootFolder = internalCreateFolder(rootFolder, new RepositoryFile.Builder(tenantId).folder(true)
-                .build(), false, tenantAdminAuthorityName, "[system] created tenant root folder");
+            tenantRootFolder = internalCreateFolder(rootFolder.getId(), new RepositoryFile.Builder(tenantId).folder(
+                true).build(), false, tenantAdminAuthorityName, "[system] created tenant root folder");
             RepositoryFileSid ownerSid = new RepositoryFileSid(tenantAdminAuthorityName, RepositoryFileSid.Type.ROLE);
             internalSetOwner(tenantRootFolder, ownerSid);
-            internalSetFullControl(tenantRootFolder, ownerSid);
-            internalAddPermission(tenantRootFolder, new RepositoryFileSid(tenantAuthenticatedAuthorityName,
+            internalSetFullControl(tenantRootFolder.getId(), ownerSid);
+            internalAddPermission(tenantRootFolder.getId(), new RepositoryFileSid(tenantAuthenticatedAuthorityName,
                 RepositoryFileSid.Type.ROLE), EnumSet.of(RepositoryFilePermission.READ,
                 RepositoryFilePermission.READ_ACL));
           }
@@ -198,16 +200,16 @@ public class DefaultRepositoryEventHandler implements IRepositoryService.IReposi
     try {
       txnTemplate.execute(new TransactionCallbackWithoutResult() {
         public void doInTransactionWithoutResult(final TransactionStatus status) {
-          RepositoryFile tenantRootFolder = repositoryFileDao.getFile(RepositoryPaths.getTenantRootFolderPath(tenantId));
+          RepositoryFile tenantRootFolder = repositoryFileDao
+              .getFile(RepositoryPaths.getTenantRootFolderPath(tenantId));
           Assert.notNull(tenantRootFolder);
           if (repositoryFileDao.getFile(RepositoryPaths.getTenantPublicFolderPath(tenantId)) == null) {
-            // public folder is versioned
-            RepositoryFile tenantPublicFolder = internalCreateFolder(tenantRootFolder, new RepositoryFile.Builder(
-                RepositoryPaths.getTenantPublicFolderName()).folder(true).versioned(true).build(), false,
-                tenantAdminAuthorityName, "[system] created tenant public folder");
+            RepositoryFile tenantPublicFolder = internalCreateFolder(tenantRootFolder.getId(),
+                new RepositoryFile.Builder(RepositoryPaths.getTenantPublicFolderName()).folder(true)
+                    .build(), false, tenantAdminAuthorityName, "[system] created tenant public folder");
             RepositoryFileSid ownerSid = new RepositoryFileSid(tenantAdminAuthorityName, RepositoryFileSid.Type.ROLE);
             internalSetOwner(tenantPublicFolder, ownerSid);
-            internalAddPermission(tenantPublicFolder, new RepositoryFileSid(tenantAuthenticatedAuthorityName,
+            internalAddPermission(tenantPublicFolder.getId(), new RepositoryFileSid(tenantAuthenticatedAuthorityName,
                 RepositoryFileSid.Type.ROLE),
 
             EnumSet.of(RepositoryFilePermission.READ, RepositoryFilePermission.READ_ACL,
@@ -215,9 +217,9 @@ public class DefaultRepositoryEventHandler implements IRepositoryService.IReposi
                 RepositoryFilePermission.WRITE_ACL, RepositoryFilePermission.EXECUTE));
 
             // home folder inherits ACEs from parent ACL
-            RepositoryFile tenantHomeFolder = internalCreateFolder(tenantRootFolder, new RepositoryFile.Builder(
-                RepositoryPaths.getTenantHomeFolderName()).folder(true).build(), true, tenantAdminAuthorityName,
-                "[system] created tenant home folder");
+            RepositoryFile tenantHomeFolder = internalCreateFolder(tenantRootFolder.getId(),
+                new RepositoryFile.Builder(RepositoryPaths.getTenantHomeFolderName()).folder(true).build(), true,
+                tenantAdminAuthorityName, "[system] created tenant home folder");
             internalSetOwner(tenantHomeFolder, ownerSid);
           }
         }
@@ -233,15 +235,16 @@ public class DefaultRepositoryEventHandler implements IRepositoryService.IReposi
     try {
       txnTemplate.execute(new TransactionCallbackWithoutResult() {
         public void doInTransactionWithoutResult(final TransactionStatus status) {
-          RepositoryFile userHomeFolder = repositoryFileDao.getFile(RepositoryPaths.getUserHomeFolderPath(tenantId, username));
+          RepositoryFile userHomeFolder = repositoryFileDao.getFile(RepositoryPaths.getUserHomeFolderPath(tenantId,
+              username));
           if (userHomeFolder == null) {
-            RepositoryFile tenantHomeFolder = repositoryFileDao.getFile(RepositoryPaths.getTenantHomeFolderPath(tenantId));
-            // user home folder is versioned
-            userHomeFolder = internalCreateFolder(tenantHomeFolder, new RepositoryFile.Builder(username).folder(true)
-                .versioned(true).build(), false, username, "[system] created user home folder");
+            RepositoryFile tenantHomeFolder = repositoryFileDao.getFile(RepositoryPaths
+                .getTenantHomeFolderPath(tenantId));
+            userHomeFolder = internalCreateFolder(tenantHomeFolder.getId(), new RepositoryFile.Builder(username)
+                .folder(true).build(), false, username, "[system] created user home folder");
             RepositoryFileSid ownerSid = new RepositoryFileSid(username);
             internalSetOwner(userHomeFolder, ownerSid);
-            internalSetFullControl(userHomeFolder, ownerSid);
+            internalSetFullControl(userHomeFolder.getId(), ownerSid);
           }
         }
       });
@@ -255,38 +258,38 @@ public class DefaultRepositoryEventHandler implements IRepositoryService.IReposi
     txnTemplate.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRES_NEW);
   }
 
-  private RepositoryFile internalCreateFolder(final RepositoryFile parentFolder, final RepositoryFile file,
+  private RepositoryFile internalCreateFolder(final Serializable parentFolderId, final RepositoryFile file,
       final boolean inheritAces, final String ownerUsername, final String versionMessage) {
     Assert.notNull(file);
 
-    RepositoryFile newFile = repositoryFileDao.createFolder(parentFolder, file, versionMessage);
-    internalCreateAcl(newFile, inheritAces, ownerUsername);
+    RepositoryFile newFile = repositoryFileDao.createFolder(parentFolderId, file, versionMessage);
+    internalCreateAcl(newFile.getId(), inheritAces, ownerUsername);
 
     return newFile;
   }
 
-  private void internalSetFullControl(final RepositoryFile file, final RepositoryFileSid sid) {
-    Assert.notNull(file);
+  private void internalSetFullControl(final Serializable fileId, final RepositoryFileSid sid) {
+    Assert.notNull(fileId);
     Assert.notNull(sid);
-    repositoryFileAclDao.setFullControl(file.getId(), sid, RepositoryFilePermission.ALL);
+    repositoryFileAclDao.setFullControl(fileId, sid, RepositoryFilePermission.ALL);
   }
 
-  private RepositoryFileAcl internalCreateAcl(final RepositoryFile file, final boolean entriesInheriting,
+  private RepositoryFileAcl internalCreateAcl(final Serializable fileId, final boolean entriesInheriting,
       final String ownerUsername) {
-    Assert.notNull(file);
+    Assert.notNull(fileId);
 
-    return repositoryFileAclDao.createAcl(file.getId(), entriesInheriting, new RepositoryFileSid(ownerUsername),
+    return repositoryFileAclDao.createAcl(fileId, entriesInheriting, new RepositoryFileSid(ownerUsername),
         RepositoryFilePermission.ALL);
   }
 
-  private void internalAddPermission(final RepositoryFile file, final RepositoryFileSid recipient,
+  private void internalAddPermission(final Serializable fileId, final RepositoryFileSid recipient,
       final EnumSet<RepositoryFilePermission> permissions) {
-    Assert.notNull(file);
+    Assert.notNull(fileId);
     Assert.notNull(recipient);
     Assert.notNull(permissions);
     Assert.notEmpty(permissions);
 
-    repositoryFileAclDao.addPermission(file.getId(), recipient, permissions);
+    repositoryFileAclDao.addPermission(fileId, recipient, permissions);
   }
 
   private IPentahoSession createRepositoryAdminPentahoSession() {

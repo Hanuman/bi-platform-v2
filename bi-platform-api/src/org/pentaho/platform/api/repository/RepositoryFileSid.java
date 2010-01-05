@@ -9,7 +9,7 @@ import java.io.Serializable;
  * Same abstraction as {@code org.springframework.security.acls.sid.Sid}.
  * </p>
  */
-public class RepositoryFileSid implements Serializable {
+public class RepositoryFileSid /*implements Serializable*/ {
 
   // ~ Static fields/initializers ======================================================================================
 

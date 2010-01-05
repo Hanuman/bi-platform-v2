@@ -16,7 +16,7 @@ import java.util.List;
  * 
  * @author mlowery
  */
-public class RepositoryFileAcl implements Serializable {
+public class RepositoryFileAcl /*implements Serializable*/ {
 
   // ~ Static fields/initializers ======================================================================================
 

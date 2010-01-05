@@ -1,18 +1,11 @@
 package org.pentaho.platform.api.repository;
 
+import java.io.Serializable;
 import java.util.EnumSet;
 import java.util.List;
 
 /**
  * Entry point into the content repository.
- * 
- * <p>
- * With the exception of the {@code create} methods, all {@code RepositoryFile} instances should be retrieved 
- * from this service and not created outside of this service. For example, to get a stream for read, use
- * <pre>{@code
- * InputStream stream = getContentForRead(getFile("/pentaho/acme/public/myfile.xml"));
- * }</pre>
- * </p>
  * 
  * @author mlowery
  */
@@ -26,6 +19,8 @@ public interface IRepositoryService {
    */
   RepositoryFile getFile(final String absPath);
 
+  RepositoryFile getFileById(final Serializable fileId);
+
   /**
    * Same as {@link #getFile(String)} except that if {@code loadMaps} is {@code true}, the maps for localized strings 
    * will be loaded as well. (Normally these are not loaded.) Use {@code true} in editing tools that can show the maps
@@ -37,59 +32,83 @@ public interface IRepositoryService {
    */
   RepositoryFile getFile(final String absPath, final boolean loadMaps);
 
-  /**
-   * Gets data for read.
-   * 
-   * @param file to read
-   * @param dataClass class that implements {@link IRepositoryFileData}
-   * @return data
-   */
-  <T extends IRepositoryFileData> T getDataForRead(final RepositoryFile file, final Class<T> dataClass);
+  RepositoryFile getFileById(final Serializable fileId, final boolean loadMaps);
 
   /**
-   * Gets data for execute.
+   * Gets data at base version for read.
    * 
-   * @param file to execute
+   * @param fileId file id
    * @param dataClass class that implements {@link IRepositoryFileData}
    * @return data
    */
-  <T extends IRepositoryFileData> T getDataForExecute(final RepositoryFile file, final Class<T> dataClass);
+  <T extends IRepositoryFileData> T getDataForRead(final Serializable fileId, final Class<T> dataClass);
+
+  /**
+   * Gets data at given version for read.
+   * 
+   * @param fileId file id
+   * @param versionId version id
+   * @param dataClass class that implements {@link IRepositoryFileData}
+   * @return data
+   */
+  <T extends IRepositoryFileData> T getDataForRead(final Serializable fileId, final Serializable versionId,
+      final Class<T> dataClass);
+
+  /**
+   * Gets data at base version for execute.
+   * 
+   * @param fileId file id
+   * @param dataClass class that implements {@link IRepositoryFileData}
+   * @return data
+   */
+  <T extends IRepositoryFileData> T getDataForExecute(final Serializable fileId, final Class<T> dataClass);
+
+  /**
+   * Gets data at given version for read.
+   * 
+   * @param fileId file id
+   * @param versionId version id
+   * @param dataClass class that implements {@link IRepositoryFileData}
+   * @return data
+   */
+  <T extends IRepositoryFileData> T getDataForExecute(final Serializable fileId, final Serializable versionId,
+      final Class<T> dataClass);
 
   /**
    * Creates a file.
    * 
-   * @param parentFolder parent folder (may be {@code null})
+   * @param parentFolderAbsPath parent folder absolute path
    * @param file file to create
    * @param content file content
    * @param versionMessageAndLabel optional version comment [0] and label [1] to be applied to parentFolder
    * @return file that is equal to given file except with id populated
    */
-  RepositoryFile createFile(final RepositoryFile parentFolder, final RepositoryFile file,
+  RepositoryFile createFile(final Serializable parentFolderId, final RepositoryFile file,
       final IRepositoryFileData content, final String... versionMessageAndLabel);
 
   /**
    * Creates a folder.
    * 
-   * @param parentFolder parent folder (may be {@code null})
+   * @param parentFolderAbsPath parent folder absolute path
    * @param file file to create
    * @param versionMessageAndLabel optional version comment [0] and label [1] to be applied to parentFolder
    * @return file that is equal to given file except with id populated
    */
-  RepositoryFile createFolder(final RepositoryFile parentFolder, final RepositoryFile file,
+  RepositoryFile createFolder(final Serializable parentFolderId, final RepositoryFile file,
       final String... versionMessageAndLabel);
 
   /**
    * Returns the children of this folder.
    * 
-   * @param folder folder whose children to fetch
+   * @param folderAbsPath absolute path of folder whose children to fetch
    * @return list of children (never {@code null})
    */
-  List<RepositoryFile> getChildren(final RepositoryFile folder);
+  List<RepositoryFile> getChildren(final Serializable folderId);
 
   /**
    * Updates a file and/or the content of a file.
    * 
-   * @param file updated file (not a folder)
+   * @param file updated file (not a folder); must have non-null id
    * @param content updated content
    * @param versionMessageAndLabel optional version comment [0] and label [1]
    * @return updated file (possible with new version number)
@@ -100,44 +119,44 @@ public interface IRepositoryService {
   /**
    * Deletes a file or folder.
    * 
-   * @param file file to delete
+   * @param absPath file to delete
    * @param versionMessageAndLabel optional version comment [0] and label [1]
    */
-  void deleteFile(final RepositoryFile file, final String... versionMessageAndLabel);
+  void deleteFile(final Serializable fileId, final String... versionMessageAndLabel);
 
   // ~ Lock methods ====================================================================================================
 
   /**
    * Locks a file.
    * 
-   * @param file file to lock
+   * @param absPath absolute path to file
    * @param lock message
    */
-  void lockFile(final RepositoryFile file, final String message);
+  void lockFile(final Serializable fileId, final String message);
 
   /**
    * Unlocks a file.
    * 
-   * @param file file to unlock
+   * @param absPath absolute path to file
    */
-  void unlockFile(final RepositoryFile file);
+  void unlockFile(final Serializable fileId);
 
   // ~ Access read/write methods =======================================================================================
 
   /**
    * Returns ACL for file.
    * 
-   * @param file file whose ACL to get
+   * @param absPath absolute path to file
    * @return access control list
    */
-  RepositoryFileAcl getAcl(final RepositoryFile file);
+  RepositoryFileAcl getAcl(final Serializable fileId);
 
   /**
-   * Sets an ACL.
+   * Updates an ACL.
    * 
-   * @param acl ACL to set
+   * @param acl ACL to set; must have non-null id
    */
-  void setAcl(final RepositoryFileAcl acl);
+  void updateAcl(final RepositoryFileAcl acl);
 
   /**
    * Returns {@code true} if user has all permissions given.
@@ -151,10 +170,10 @@ public interface IRepositoryService {
   /**
    * Returns the list of access control entries that will be used to make an access control decision.
    * 
-   * @param file file whose effective ACEs to get
+   * @param absPath absolute path to file
    * @return list of ACEs
    */
-  List<RepositoryFileAcl.Ace> getEffectiveAces(final RepositoryFile file);
+  List<RepositoryFileAcl.Ace> getEffectiveAces(final Serializable fileId);
 
   // ~ Version methods =================================================================================================
 
@@ -162,18 +181,19 @@ public interface IRepositoryService {
    * Returns a list of version summary instances. The first version in the list is the root version. The last version
    * in the list is the base version. Branching and merging are not supported so this is a simple list.
    * 
-   * @param file file whose versions to get
+   * @param absPath absolute path to file
    * @return list of version summaries (never {@code null})
    */
-  List<VersionSummary> getVersionSummaries(final RepositoryFile file);
+  List<VersionSummary> getVersionSummaries(final Serializable fileId);
 
   /**
    * Gets file as it was at the given version. Use this method to test for file existence too.
    * 
-   * @param versionSummary version of file to retrieve
+   * @param final String absPath
+   * @param versionId version id
    * @return file or {@code null} if the file does not exist or access is denied
    */
-  RepositoryFile getFile(final VersionSummary versionSummary);
+  RepositoryFile getFile(final Serializable fileId, final Serializable versionId);
 
   /**
    * Returns the associated {@link IRepositoryEventHandler}.

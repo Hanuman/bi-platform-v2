@@ -11,7 +11,6 @@ import javax.jcr.Session;
 import org.pentaho.platform.api.repository.IRepositoryFileData;
 import org.pentaho.platform.repository.pcr.SimpleRepositoryFileData;
 import org.pentaho.platform.repository.pcr.jcr.ITransformer;
-import org.pentaho.platform.repository.pcr.jcr.NodeIdStrategy;
 import org.pentaho.platform.repository.pcr.jcr.PentahoJcrConstants;
 import org.springframework.util.StringUtils;
 
@@ -42,13 +41,12 @@ public class SimpleRepositoryFileDataTransformer implements ITransformer<SimpleR
   public boolean supports(final String extension, final Class<? extends IRepositoryFileData> clazz) {
     return clazz.isAssignableFrom(SimpleRepositoryFileData.class);
   }
-  
+
   /**
    * {@inheritDoc}
    */
   public void createContentNode(final Session session, final PentahoJcrConstants pentahoJcrConstants,
-      final NodeIdStrategy nodeIdStrategy, final SimpleRepositoryFileData data, final Node fileNode)
-      throws RepositoryException, IOException {
+      final SimpleRepositoryFileData data, final Node fileNode) throws RepositoryException, IOException {
 
     Node resourceNode = fileNode.addNode(pentahoJcrConstants.getJCR_CONTENT(), pentahoJcrConstants.getNT_RESOURCE());
 
@@ -67,7 +65,7 @@ public class SimpleRepositoryFileDataTransformer implements ITransformer<SimpleR
    * {@inheritDoc}
    */
   public SimpleRepositoryFileData fromContentNode(final Session session, final PentahoJcrConstants pentahoJcrConstants,
-      final NodeIdStrategy nodeIdStrategy, final Node fileNode) throws RepositoryException, IOException {
+      final Node fileNode) throws RepositoryException, IOException {
     String encoding = null;
     Node resourceNode = fileNode.getNode(pentahoJcrConstants.getJCR_CONTENT());
     if (resourceNode.hasProperty(pentahoJcrConstants.getJCR_ENCODING())) {
@@ -82,8 +80,7 @@ public class SimpleRepositoryFileDataTransformer implements ITransformer<SimpleR
    * {@inheritDoc}
    */
   public void updateContentNode(final Session session, final PentahoJcrConstants pentahoJcrConstants,
-      final NodeIdStrategy nodeIdStrategy, final SimpleRepositoryFileData data, final Node fileNode)
-      throws RepositoryException, IOException {
+      final SimpleRepositoryFileData data, final Node fileNode) throws RepositoryException, IOException {
     Node resourceNode = fileNode.getNode(pentahoJcrConstants.getJCR_CONTENT());
 
     // mandatory property on nt:resource; give them a value to satisfy Jackrabbit

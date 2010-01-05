@@ -1,6 +1,7 @@
 package org.pentaho.platform.repository.pcr.jcr;
 
 import java.io.IOException;
+import java.io.Serializable;
 import java.util.List;
 
 import javax.jcr.Item;
@@ -35,8 +36,6 @@ public class JcrRepositoryFileDao implements IRepositoryFileDao, InitializingBea
 
   private JcrTemplate jcrTemplate;
 
-  private NodeIdStrategy nodeIdStrategy;
-
   private List<ITransformer<IRepositoryFileData>> transformers;
 
   private ILockTokenHelper lockTokenHelper = new DefaultLockTokenHelper();
@@ -51,87 +50,58 @@ public class JcrRepositoryFileDao implements IRepositoryFileDao, InitializingBea
     Assert.notNull(transformers);
     this.jcrTemplate = jcrTemplate;
     this.transformers = transformers;
-    this.nodeIdStrategy = new UuidNodeIdStrategy(jcrTemplate);
   }
 
   // ~ Methods =========================================================================================================
 
-  private RepositoryFile internalCreateFolder(final RepositoryFile parentFolder, final RepositoryFile folder,
+  private RepositoryFile internalCreateFolder(final Serializable parentFolderId, final RepositoryFile folder,
       final String... versionMessageAndLabel) {
     Assert.notNull(folder);
     Assert.hasText(folder.getName());
     Assert.isTrue(!folder.getName().contains(RepositoryFile.SEPARATOR));
     Assert.isTrue(folder.isFolder());
-    if (parentFolder != null) {
-      Assert.hasText(parentFolder.getName());
-    }
 
     return (RepositoryFile) jcrTemplate.execute(new JcrCallback() {
       public Object doInJcr(final Session session) throws RepositoryException, IOException {
         PentahoJcrConstants pentahoJcrConstants = new PentahoJcrConstants(session);
-        JcrRepositoryFileUtils.checkoutNearestVersionableFileIfNecessary(session, pentahoJcrConstants, nodeIdStrategy,
-            parentFolder);
-        Node folderNode = JcrRepositoryFileUtils.createFolderNode(session, pentahoJcrConstants, nodeIdStrategy,
-            parentFolder, folder);
+        JcrRepositoryFileUtils.checkoutNearestVersionableFileIfNecessary(session, pentahoJcrConstants, parentFolderId);
+        Node folderNode = JcrRepositoryFileUtils.createFolderNode(session, pentahoJcrConstants, parentFolderId, folder);
         session.save();
         if (folder.isVersioned()) {
-          JcrRepositoryFileUtils.checkinNearestVersionableNodeIfNecessary(session, pentahoJcrConstants, nodeIdStrategy,
-              folderNode, versionMessageAndLabel);
+          JcrRepositoryFileUtils.checkinNearestVersionableNodeIfNecessary(session, pentahoJcrConstants, folderNode,
+              versionMessageAndLabel);
         }
-        JcrRepositoryFileUtils.checkinNearestVersionableFileIfNecessary(session, pentahoJcrConstants, nodeIdStrategy,
-            parentFolder, "[system] added child folder '" + folder.getName() + "' to "
-                + (parentFolder == null ? "/" : parentFolder.getAbsolutePath()));
-        return JcrRepositoryFileUtils.nodeToFile(session, pentahoJcrConstants, nodeIdStrategy, ownerLookupHelper,
-            folderNode);
+        JcrRepositoryFileUtils.checkinNearestVersionableFileIfNecessary(session, pentahoJcrConstants, parentFolderId,
+            "[system] added child folder '" + folder.getName() + "' to " + parentFolderId);
+        return JcrRepositoryFileUtils.nodeToFile(session, pentahoJcrConstants, ownerLookupHelper, folderNode);
       }
     });
   }
 
-  private RepositoryFile internalCreateFile(final RepositoryFile parentFolder, final RepositoryFile file,
+  private RepositoryFile internalCreateFile(final Serializable parentFolderId, final RepositoryFile file,
       final IRepositoryFileData content, final String... versionMessageAndLabel) {
     Assert.notNull(file);
     Assert.hasText(file.getName());
     Assert.isTrue(!file.isFolder());
     Assert.notNull(content);
-    if (parentFolder != null) {
-      Assert.hasText(parentFolder.getName());
-    }
 
     return (RepositoryFile) jcrTemplate.execute(new JcrCallback() {
       public Object doInJcr(final Session session) throws RepositoryException, IOException {
         PentahoJcrConstants pentahoJcrConstants = new PentahoJcrConstants(session);
-        JcrRepositoryFileUtils.checkoutNearestVersionableFileIfNecessary(session, pentahoJcrConstants, nodeIdStrategy,
-            parentFolder);
-        Node fileNode = JcrRepositoryFileUtils.createFileNode(session, pentahoJcrConstants, nodeIdStrategy,
-            parentFolder, file, content, findTransformer(getFileExtension(file.getName()), content.getClass()));
+        JcrRepositoryFileUtils.checkoutNearestVersionableFileIfNecessary(session, pentahoJcrConstants, parentFolderId);
+        Node fileNode = JcrRepositoryFileUtils.createFileNode(session, pentahoJcrConstants, parentFolderId, file,
+            content, findTransformer(JcrRepositoryFileUtils.getFileExtension(file.getName()), content.getClass()));
         session.save();
         if (file.isVersioned()) {
-          JcrRepositoryFileUtils.checkinNearestVersionableNodeIfNecessary(session, pentahoJcrConstants, nodeIdStrategy,
-              fileNode, versionMessageAndLabel);
+          JcrRepositoryFileUtils.checkinNearestVersionableNodeIfNecessary(session, pentahoJcrConstants, fileNode,
+              versionMessageAndLabel);
         }
-        JcrRepositoryFileUtils.checkinNearestVersionableFileIfNecessary(session, pentahoJcrConstants, nodeIdStrategy,
-            parentFolder, "[system] added child file '" + file.getName() + "' to "
-                + (parentFolder == null ? "/" : parentFolder.getAbsolutePath()));
-        return JcrRepositoryFileUtils.nodeToFile(session, pentahoJcrConstants, nodeIdStrategy, ownerLookupHelper,
-            fileNode);
+        JcrRepositoryFileUtils.checkinNearestVersionableFileIfNecessary(session, pentahoJcrConstants, parentFolderId,
+            "[system] added child file '" + file.getName() + "' to "
+                + (parentFolderId == null ? "root" : parentFolderId));
+        return JcrRepositoryFileUtils.nodeToFile(session, pentahoJcrConstants, ownerLookupHelper, fileNode);
       }
     });
-  }
-
-  /**
-   * File names can contain more than one period but the very first period starting from the left will be used to find
-   * the files
-   * @param fileName
-   * @return
-   */
-  private String getFileExtension(final String fileName) {
-    final String DOT = "."; //$NON-NLS-1$
-    Assert.hasText(fileName);
-    Assert.isTrue(fileName.contains(DOT), "file names must have an extension");
-    int firstDotIndex = fileName.indexOf(DOT);
-    String extension = fileName.substring(firstDotIndex + 1);
-    Assert.hasText(extension, "file names must have an extension");
-    return extension;
   }
 
   private RepositoryFile internalUpdateFile(final RepositoryFile file, final IRepositoryFileData content,
@@ -144,15 +114,13 @@ public class JcrRepositoryFileDao implements IRepositoryFileDao, InitializingBea
     return (RepositoryFile) jcrTemplate.execute(new JcrCallback() {
       public Object doInJcr(final Session session) throws RepositoryException, IOException {
         PentahoJcrConstants pentahoJcrConstants = new PentahoJcrConstants(session);
-        JcrRepositoryFileUtils.checkoutNearestVersionableFileIfNecessary(session, pentahoJcrConstants, nodeIdStrategy,
-            file);
-        JcrRepositoryFileUtils.updateFileNode(session, pentahoJcrConstants, nodeIdStrategy, file, content,
-            findTransformer(getFileExtension(file.getName()), content.getClass()));
+        JcrRepositoryFileUtils.checkoutNearestVersionableFileIfNecessary(session, pentahoJcrConstants, file.getId());
+        JcrRepositoryFileUtils.updateFileNode(session, pentahoJcrConstants, file, content, findTransformer(
+            JcrRepositoryFileUtils.getFileExtension(session, file.getId()), content.getClass()));
         session.save();
-        JcrRepositoryFileUtils.checkinNearestVersionableFileIfNecessary(session, pentahoJcrConstants, nodeIdStrategy,
-            file, versionMessageAndLabel);
-        return JcrRepositoryFileUtils.nodeIdToFile(session, pentahoJcrConstants, nodeIdStrategy, ownerLookupHelper,
-            file.getId());
+        JcrRepositoryFileUtils.checkinNearestVersionableFileIfNecessary(session, pentahoJcrConstants, file.getId(),
+            versionMessageAndLabel);
+        return JcrRepositoryFileUtils.nodeIdToFile(session, pentahoJcrConstants, ownerLookupHelper, file.getId());
       }
     });
   }
@@ -171,30 +139,51 @@ public class JcrRepositoryFileDao implements IRepositoryFileDao, InitializingBea
   /**
    * {@inheritDoc}
    */
-  public RepositoryFile createFile(final RepositoryFile parentFolder, final RepositoryFile file,
+  public RepositoryFile createFile(final Serializable parentFolderId, final RepositoryFile file,
       final IRepositoryFileData content, final String... versionMessageAndLabel) {
     Assert.notNull(file);
     Assert.isTrue(!file.isFolder());
-    return internalCreateFile(parentFolder, file, content, versionMessageAndLabel);
+    return internalCreateFile(parentFolderId, file, content, versionMessageAndLabel);
   }
 
   /**
    * {@inheritDoc}
    */
-  public RepositoryFile createFolder(final RepositoryFile parentFolder, final RepositoryFile folder,
+  public RepositoryFile createFolder(final Serializable parentFolderId, final RepositoryFile folder,
       final String... versionMessageAndLabel) {
     Assert.notNull(folder);
     Assert.isTrue(folder.isFolder());
-    return internalCreateFolder(parentFolder, folder, versionMessageAndLabel);
+    return internalCreateFolder(parentFolderId, folder, versionMessageAndLabel);
   }
 
   public void afterPropertiesSet() throws Exception {
     Assert.notNull(jcrTemplate, "jcrTemplate required");
   }
 
-  public void setNodeIdStrategy(final NodeIdStrategy nodeIdStrategy) {
-    Assert.notNull(nodeIdStrategy);
-    this.nodeIdStrategy = nodeIdStrategy;
+  /**
+   * {@inheritDoc}
+   */
+  public RepositoryFile getFileById(final Serializable fileId) {
+    return internalGetFileById(fileId, false);
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  public RepositoryFile getFileById(final Serializable fileId, final boolean loadMaps) {
+    return internalGetFileById(fileId, loadMaps);
+  }
+
+  private RepositoryFile internalGetFileById(final Serializable fileId, final boolean loadMaps) {
+    Assert.notNull(fileId);
+    return (RepositoryFile) jcrTemplate.execute(new JcrCallback() {
+      public Object doInJcr(final Session session) throws RepositoryException, IOException {
+        PentahoJcrConstants pentahoJcrConstants = new PentahoJcrConstants(session);
+        Node fileNode = session.getNodeByUUID(fileId.toString());
+        return fileNode != null ? JcrRepositoryFileUtils.nodeToFile(session, pentahoJcrConstants, ownerLookupHelper,
+            fileNode, loadMaps) : null;
+      }
+    });
   }
 
   /**
@@ -203,7 +192,7 @@ public class JcrRepositoryFileDao implements IRepositoryFileDao, InitializingBea
   public RepositoryFile getFile(final String absPath) {
     return internalGetFile(absPath, false);
   }
-  
+
   /**
    * {@inheritDoc}
    */
@@ -225,8 +214,8 @@ public class JcrRepositoryFileDao implements IRepositoryFileDao, InitializingBea
         } catch (PathNotFoundException e) {
           fileNode = null;
         }
-        return fileNode != null ? JcrRepositoryFileUtils.nodeToFile(session, pentahoJcrConstants, nodeIdStrategy,
-            ownerLookupHelper, (Node) fileNode, loadMaps) : null;
+        return fileNode != null ? JcrRepositoryFileUtils.nodeToFile(session, pentahoJcrConstants, ownerLookupHelper,
+            (Node) fileNode, loadMaps) : null;
       }
     });
   }
@@ -235,15 +224,14 @@ public class JcrRepositoryFileDao implements IRepositoryFileDao, InitializingBea
    * {@inheritDoc}
    */
   @SuppressWarnings("unchecked")
-  public <T extends IRepositoryFileData> T getContent(final RepositoryFile file, final Class<T> contentClass) {
-    Assert.notNull(file);
-    Assert.notNull(file.getId());
-    Assert.isTrue(!file.isFolder());
+  public <T extends IRepositoryFileData> T getData(final Serializable fileId, final Serializable versionId,
+      final Class<T> contentClass) {
+    Assert.notNull(fileId);
     return (T) jcrTemplate.execute(new JcrCallback() {
       public Object doInJcr(final Session session) throws RepositoryException, IOException {
         PentahoJcrConstants pentahoJcrConstants = new PentahoJcrConstants(session);
-        return JcrRepositoryFileUtils.getContent(session, pentahoJcrConstants, nodeIdStrategy, file, findTransformer(
-            getFileExtension(file.getName()), contentClass));
+        return JcrRepositoryFileUtils.getContent(session, pentahoJcrConstants, fileId, versionId, findTransformer(
+            JcrRepositoryFileUtils.getFileExtension(session, fileId), contentClass));
       }
     });
 
@@ -253,15 +241,12 @@ public class JcrRepositoryFileDao implements IRepositoryFileDao, InitializingBea
    * {@inheritDoc}
    */
   @SuppressWarnings("unchecked")
-  public List<RepositoryFile> getChildren(final RepositoryFile folder) {
-    Assert.notNull(folder);
-    Assert.notNull(folder.getId());
-    Assert.notNull(folder.isFolder());
+  public List<RepositoryFile> getChildren(final Serializable folderId) {
+    Assert.notNull(folderId);
     return (List<RepositoryFile>) jcrTemplate.execute(new JcrCallback() {
       public Object doInJcr(final Session session) throws RepositoryException, IOException {
         PentahoJcrConstants pentahoJcrConstants = new PentahoJcrConstants(session);
-        return JcrRepositoryFileUtils.getChildren(session, pentahoJcrConstants, nodeIdStrategy, ownerLookupHelper,
-            folder);
+        return JcrRepositoryFileUtils.getChildren(session, pentahoJcrConstants, ownerLookupHelper, folderId);
       }
     });
   }
@@ -279,21 +264,19 @@ public class JcrRepositoryFileDao implements IRepositoryFileDao, InitializingBea
   /**
    * {@inheritDoc}
    */
-  public void deleteFile(final RepositoryFile file, final String... versionMessageAndLabel) {
-    Assert.notNull(file);
-    Assert.notNull(file.getId());
-    Assert.notNull(file.getParentId());
+  public void deleteFile(final Serializable fileId, final String... versionMessageAndLabel) {
+    Assert.notNull(fileId);
     jcrTemplate.execute(new JcrCallback() {
       public Object doInJcr(final Session session) throws RepositoryException, IOException {
         PentahoJcrConstants pentahoJcrConstants = new PentahoJcrConstants(session);
-        RepositoryFile parentFolder = JcrRepositoryFileUtils.getFileById(session, pentahoJcrConstants, nodeIdStrategy,
-            ownerLookupHelper, file.getParentId());
-        JcrRepositoryFileUtils.checkoutNearestVersionableFileIfNecessary(session, pentahoJcrConstants, nodeIdStrategy,
-            parentFolder);
-        JcrRepositoryFileUtils.deleteFile(session, pentahoJcrConstants, nodeIdStrategy, file, lockTokenHelper);
+        RepositoryFile parentFolder = JcrRepositoryFileUtils.getFileById(session, pentahoJcrConstants,
+            ownerLookupHelper, JcrRepositoryFileUtils.getParentId(session, fileId));
+        JcrRepositoryFileUtils.checkoutNearestVersionableFileIfNecessary(session, pentahoJcrConstants, parentFolder
+            .getId());
+        JcrRepositoryFileUtils.deleteFile(session, pentahoJcrConstants, fileId, lockTokenHelper);
         session.save();
-        JcrRepositoryFileUtils.checkinNearestVersionableFileIfNecessary(session, pentahoJcrConstants, nodeIdStrategy,
-            parentFolder, versionMessageAndLabel);
+        JcrRepositoryFileUtils.checkinNearestVersionableFileIfNecessary(session, pentahoJcrConstants, parentFolder
+            .getId(), versionMessageAndLabel);
         return null;
       }
     });
@@ -302,14 +285,12 @@ public class JcrRepositoryFileDao implements IRepositoryFileDao, InitializingBea
   /**
    * {@inheritDoc}
    */
-  public void lockFile(final RepositoryFile file, final String message) {
-    Assert.notNull(file);
-    Assert.notNull(file.getId());
-    Assert.isTrue(!file.isFolder());
+  public void lockFile(final Serializable fileId, final String message) {
+    Assert.notNull(fileId);
     jcrTemplate.execute(new JcrCallback() {
       public Object doInJcr(final Session session) throws RepositoryException, IOException {
         PentahoJcrConstants pentahoJcrConstants = new PentahoJcrConstants(session);
-        JcrRepositoryFileUtils.lockFile(session, pentahoJcrConstants, nodeIdStrategy, file, message, lockTokenHelper);
+        JcrRepositoryFileUtils.lockFile(session, pentahoJcrConstants, fileId, message, lockTokenHelper);
         return null;
       }
     });
@@ -318,14 +299,12 @@ public class JcrRepositoryFileDao implements IRepositoryFileDao, InitializingBea
   /**
    * {@inheritDoc}
    */
-  public void unlockFile(final RepositoryFile file) {
-    Assert.notNull(file);
-    Assert.notNull(file.getId());
-    Assert.isTrue(!file.isFolder());
+  public void unlockFile(final Serializable fileId) {
+    Assert.notNull(fileId);
     jcrTemplate.execute(new JcrCallback() {
       public Object doInJcr(final Session session) throws RepositoryException, IOException {
         PentahoJcrConstants pentahoJcrConstants = new PentahoJcrConstants(session);
-        JcrRepositoryFileUtils.unlockFile(session, pentahoJcrConstants, nodeIdStrategy, file, lockTokenHelper);
+        JcrRepositoryFileUtils.unlockFile(session, pentahoJcrConstants, fileId, lockTokenHelper);
         return null;
       }
     });
@@ -334,13 +313,12 @@ public class JcrRepositoryFileDao implements IRepositoryFileDao, InitializingBea
   /**
    * {@inheritDoc}
    */
-  public List<VersionSummary> getVersionSummaries(final RepositoryFile file) {
-    Assert.notNull(file);
-    Assert.notNull(file.getId());
+  public List<VersionSummary> getVersionSummaries(final Serializable fileId) {
+    Assert.notNull(fileId);
     return (List<VersionSummary>) jcrTemplate.execute(new JcrCallback() {
       public Object doInJcr(final Session session) throws RepositoryException, IOException {
         PentahoJcrConstants pentahoJcrConstants = new PentahoJcrConstants(session);
-        return JcrRepositoryFileUtils.getVersionSummaries(session, pentahoJcrConstants, nodeIdStrategy, file);
+        return JcrRepositoryFileUtils.getVersionSummaries(session, pentahoJcrConstants, fileId);
       }
     });
   }
@@ -348,15 +326,14 @@ public class JcrRepositoryFileDao implements IRepositoryFileDao, InitializingBea
   /**
    * {@inheritDoc}
    */
-  public RepositoryFile getFile(final VersionSummary versionSummary) {
-    Assert.notNull(versionSummary);
-    Assert.notNull(versionSummary.getId());
-    Assert.notNull(versionSummary.getVersionedFileId());
+  public RepositoryFile getFile(final Serializable fileId, final Serializable versionId) {
+    Assert.notNull(fileId);
+    Assert.notNull(versionId);
     return (RepositoryFile) jcrTemplate.execute(new JcrCallback() {
       public Object doInJcr(final Session session) throws RepositoryException, IOException {
         PentahoJcrConstants pentahoJcrConstants = new PentahoJcrConstants(session);
-        return JcrRepositoryFileUtils.getFileAtVersion(session, pentahoJcrConstants, nodeIdStrategy, ownerLookupHelper,
-            versionSummary);
+        return JcrRepositoryFileUtils.getFileAtVersion(session, pentahoJcrConstants, ownerLookupHelper, fileId,
+            versionId);
       }
     });
   }

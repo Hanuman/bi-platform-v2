@@ -44,23 +44,22 @@ public class DefaultLockTokenHelper implements ILockTokenHelper {
 
   // ~ Methods =========================================================================================================
 
-  public void addLockToken(final Session session, final PentahoJcrConstants pentahoJcrConstants,
-      final NodeIdStrategy nodeIdStrategy, final Lock lock) throws RepositoryException {
-    Node lockTokensNode = getOrCreateLockTokensNode(session, pentahoJcrConstants, nodeIdStrategy);
-    JcrRepositoryFileUtils.checkoutNearestVersionableNodeIfNecessary(session, pentahoJcrConstants, nodeIdStrategy,
-        lockTokensNode);
+  public void addLockToken(final Session session, final PentahoJcrConstants pentahoJcrConstants, final Lock lock)
+      throws RepositoryException {
+    Node lockTokensNode = getOrCreateLockTokensNode(session, pentahoJcrConstants);
+    JcrRepositoryFileUtils.checkoutNearestVersionableNodeIfNecessary(session, pentahoJcrConstants, lockTokensNode);
     Node newLockTokenNode = lockTokensNode.addNode(lock.getNode().getUUID(), pentahoJcrConstants
         .getPHO_NT_LOCKTOKENSTORAGE());
     newLockTokenNode.setProperty(pentahoJcrConstants.getPHO_LOCKEDNODEREF(), lock.getNode());
     newLockTokenNode.setProperty(pentahoJcrConstants.getPHO_LOCKTOKEN(), lock.getLockToken());
     session.save();
-    JcrRepositoryFileUtils.checkinNearestVersionableNodeIfNecessary(session, pentahoJcrConstants, nodeIdStrategy,
-        lockTokensNode, "[system] added lock token");
+    JcrRepositoryFileUtils.checkinNearestVersionableNodeIfNecessary(session, pentahoJcrConstants, lockTokensNode,
+        "[system] added lock token");
   }
 
-  public List<String> getLockTokens(final Session session, final PentahoJcrConstants pentahoJcrConstants,
-      final NodeIdStrategy nodeIdStrategy) throws RepositoryException {
-    Node lockTokensNode = getOrCreateLockTokensNode(session, pentahoJcrConstants, nodeIdStrategy);
+  public List<String> getLockTokens(final Session session, final PentahoJcrConstants pentahoJcrConstants)
+      throws RepositoryException {
+    Node lockTokensNode = getOrCreateLockTokensNode(session, pentahoJcrConstants);
     NodeIterator nodes = lockTokensNode.getNodes();
     List<String> lockTokens = new ArrayList<String>();
     while (nodes.hasNext()) {
@@ -69,12 +68,11 @@ public class DefaultLockTokenHelper implements ILockTokenHelper {
     return lockTokens;
   }
 
-  public void removeLockToken(final Session session, final PentahoJcrConstants pentahoJcrConstants,
-      final NodeIdStrategy nodeIdStrategy, final Lock lock) throws RepositoryException {
-    Node lockTokensNode = getOrCreateLockTokensNode(session, pentahoJcrConstants, nodeIdStrategy);
+  public void removeLockToken(final Session session, final PentahoJcrConstants pentahoJcrConstants, final Lock lock)
+      throws RepositoryException {
+    Node lockTokensNode = getOrCreateLockTokensNode(session, pentahoJcrConstants);
     NodeIterator nodes = lockTokensNode.getNodes();
-    JcrRepositoryFileUtils.checkoutNearestVersionableNodeIfNecessary(session, pentahoJcrConstants, nodeIdStrategy,
-        lockTokensNode);
+    JcrRepositoryFileUtils.checkoutNearestVersionableNodeIfNecessary(session, pentahoJcrConstants, lockTokensNode);
     while (nodes.hasNext()) {
       Node node = nodes.nextNode();
       if (node.getName().equals(lock.getNode().getUUID())) {
@@ -82,8 +80,8 @@ public class DefaultLockTokenHelper implements ILockTokenHelper {
       }
     }
     session.save();
-    JcrRepositoryFileUtils.checkinNearestVersionableNodeIfNecessary(session, pentahoJcrConstants, nodeIdStrategy,
-        lockTokensNode, "[system] removed lock token");
+    JcrRepositoryFileUtils.checkinNearestVersionableNodeIfNecessary(session, pentahoJcrConstants, lockTokensNode,
+        "[system] removed lock token");
   }
 
   private String internalGetTenantId() {
@@ -98,8 +96,8 @@ public class DefaultLockTokenHelper implements ILockTokenHelper {
     return pentahoSession.getName();
   }
 
-  private Node getOrCreateLockTokensNode(final Session session, final PentahoJcrConstants pentahoJcrConstants,
-      final NodeIdStrategy nodeIdStrategy) throws RepositoryException {
+  private Node getOrCreateLockTokensNode(final Session session, final PentahoJcrConstants pentahoJcrConstants)
+      throws RepositoryException {
     String tenantId = internalGetTenantId();
     String username = internalGetUsername();
     Item item = session.getItem(MessageFormat.format(PATTERN_USER_HOME_FOLDER_PATH, tenantId, username));
@@ -108,13 +106,13 @@ public class DefaultLockTokenHelper implements ILockTokenHelper {
     if (userHomeFolderNode.hasNode(FOLDER_NAME_LOCK_TOKENS)) {
       return userHomeFolderNode.getNode(FOLDER_NAME_LOCK_TOKENS);
     } else {
-      JcrRepositoryFileUtils.checkoutNearestVersionableNodeIfNecessary(session, pentahoJcrConstants, nodeIdStrategy,
-          userHomeFolderNode);
+      JcrRepositoryFileUtils
+          .checkoutNearestVersionableNodeIfNecessary(session, pentahoJcrConstants, userHomeFolderNode);
       Node lockTokensNode = userHomeFolderNode.addNode(FOLDER_NAME_LOCK_TOKENS, pentahoJcrConstants
           .getPHO_NT_INTERNALFOLDER());
       session.save();
-      JcrRepositoryFileUtils.checkinNearestVersionableNodeIfNecessary(session, pentahoJcrConstants, nodeIdStrategy,
-          userHomeFolderNode, "[system] created .lockTokens folder");
+      JcrRepositoryFileUtils.checkinNearestVersionableNodeIfNecessary(session, pentahoJcrConstants, userHomeFolderNode,
+          "[system] created .lockTokens folder");
       return lockTokensNode;
     }
   }

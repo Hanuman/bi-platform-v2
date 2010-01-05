@@ -27,6 +27,7 @@
     <property name="transactionAttributeSource">
       <value>
         org.pentaho.platform.api.repository.IRepositoryService.getFile=PROPAGATION_REQUIRED,readOnly
+        org.pentaho.platform.api.repository.IRepositoryService.getFileById=PROPAGATION_REQUIRED,readOnly
         org.pentaho.platform.api.repository.IRepositoryService.getDataForRead=PROPAGATION_REQUIRED,readOnly
         org.pentaho.platform.api.repository.IRepositoryService.getDataForExecute=PROPAGATION_REQUIRED,readOnly
         org.pentaho.platform.api.repository.IRepositoryService.createFile=PROPAGATION_REQUIRED
@@ -36,7 +37,7 @@
         org.pentaho.platform.api.repository.IRepositoryService.getAcl=PROPAGATION_REQUIRED,readOnly
         org.pentaho.platform.api.repository.IRepositoryService.hasAccess=PROPAGATION_REQUIRED,readOnly
         org.pentaho.platform.api.repository.IRepositoryService.getEffectiveAces=PROPAGATION_REQUIRED,readOnly
-        org.pentaho.platform.api.repository.IRepositoryService.setAcl=PROPAGATION_REQUIRED
+        org.pentaho.platform.api.repository.IRepositoryService.updateAcl=PROPAGATION_REQUIRED
         org.pentaho.platform.api.repository.IRepositoryService.deleteFile=PROPAGATION_REQUIRED
         org.pentaho.platform.api.repository.IRepositoryService.lockFile=PROPAGATION_REQUIRED
         org.pentaho.platform.api.repository.IRepositoryService.unlockFile=PROPAGATION_REQUIRED
@@ -121,6 +122,7 @@
     <property name="objectDefinitionSource">
       <value>
         org.pentaho.platform.api.repository.IRepositoryService.getFile=VOTE_ROLE_FILE_Authenticated
+        org.pentaho.platform.api.repository.IRepositoryService.getFileById=VOTE_ROLE_FILE_Authenticated
         org.pentaho.platform.api.repository.IRepositoryService.getDataForRead=VOTE_ROLE_FILE_Authenticated
         org.pentaho.platform.api.repository.IRepositoryService.getDataForExecute=VOTE_ROLE_FILE_Authenticated
         org.pentaho.platform.api.repository.IRepositoryService.createFile=VOTE_ROLE_FILE_Authenticated
@@ -130,7 +132,7 @@
         org.pentaho.platform.api.repository.IRepositoryService.getAcl=VOTE_ROLE_FILE_Authenticated
         org.pentaho.platform.api.repository.IRepositoryService.hasAccess=VOTE_ROLE_FILE_Authenticated
         org.pentaho.platform.api.repository.IRepositoryService.getEffectiveAces=VOTE_ROLE_FILE_Authenticated
-        org.pentaho.platform.api.repository.IRepositoryService.setAcl=VOTE_ROLE_FILE_Authenticated
+        org.pentaho.platform.api.repository.IRepositoryService.updateAcl=VOTE_ROLE_FILE_Authenticated
         org.pentaho.platform.api.repository.IRepositoryService.deleteFile=VOTE_ROLE_FILE_Authenticated
         org.pentaho.platform.api.repository.IRepositoryService.lockFile=VOTE_ROLE_FILE_Authenticated
         org.pentaho.platform.api.repository.IRepositoryService.unlockFile=VOTE_ROLE_FILE_Authenticated

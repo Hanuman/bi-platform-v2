@@ -24,16 +24,13 @@ import org.apache.jackrabbit.core.security.authorization.JackrabbitAccessControl
 import org.apache.jackrabbit.core.security.authorization.JackrabbitAccessControlList;
 import org.pentaho.commons.security.jackrabbit.IPentahoJackrabbitAccessControlList;
 import org.pentaho.platform.api.engine.IPentahoSession;
-import org.pentaho.platform.api.repository.RepositoryFile;
 import org.pentaho.platform.api.repository.RepositoryFileAcl;
 import org.pentaho.platform.api.repository.RepositoryFilePermission;
 import org.pentaho.platform.api.repository.RepositoryFileSid;
 import org.pentaho.platform.engine.core.system.PentahoSessionHolder;
 import org.pentaho.platform.repository.pcr.IRepositoryFileAclDao;
 import org.pentaho.platform.repository.pcr.jcr.JcrRepositoryFileUtils;
-import org.pentaho.platform.repository.pcr.jcr.NodeIdStrategy;
 import org.pentaho.platform.repository.pcr.jcr.PentahoJcrConstants;
-import org.pentaho.platform.repository.pcr.jcr.UuidNodeIdStrategy;
 import org.springframework.extensions.jcr.JcrCallback;
 import org.springframework.extensions.jcr.JcrTemplate;
 import org.springframework.util.Assert;
@@ -61,8 +58,6 @@ public class JackrabbitRepositoryFileAclDao implements IRepositoryFileAclDao {
 
   private JcrTemplate jcrTemplate;
 
-  private NodeIdStrategy nodeIdStrategy;
-
   private IPermissionConversionHelper permissionConversionHelper = new DefaultPermissionConversionHelper();
 
   // ~ Constructors ====================================================================================================
@@ -70,7 +65,6 @@ public class JackrabbitRepositoryFileAclDao implements IRepositoryFileAclDao {
   public JackrabbitRepositoryFileAclDao(final JcrTemplate jcrTemplate) {
     super();
     this.jcrTemplate = jcrTemplate;
-    this.nodeIdStrategy = new UuidNodeIdStrategy(jcrTemplate);
   }
 
   // ~ Methods =========================================================================================================
@@ -78,16 +72,15 @@ public class JackrabbitRepositoryFileAclDao implements IRepositoryFileAclDao {
   /**
    * {@inheritDoc}
    */
-  public synchronized List<RepositoryFileAcl.Ace> getEffectiveAces(final RepositoryFile file) {
-    Assert.notNull(file);
-    Assert.notNull(file.getId());
-    RepositoryFileAcl acl = readAclById(file.getId());
+  public synchronized List<RepositoryFileAcl.Ace> getEffectiveAces(final Serializable id) {
+    Assert.notNull(id);
+    RepositoryFileAcl acl = readAclById(id);
     while (acl.isEntriesInheriting()) {
       acl = readAclById(acl.getParentId());
     }
     return acl.getAces();
   }
-  
+
   /**
    * {@inheritDoc}
    */
@@ -102,7 +95,7 @@ public class JackrabbitRepositoryFileAclDao implements IRepositoryFileAclDao {
           return jrSession.getAccessControlManager().hasPrivileges(absPath, privs);
         } catch (PathNotFoundException e) {
           // never throw an exception if the path does not exist; just return false
-          return false;  
+          return false;
         }
       }
     });
@@ -120,13 +113,12 @@ public class JackrabbitRepositoryFileAclDao implements IRepositoryFileAclDao {
     return (RepositoryFileAcl) jcrTemplate.execute(new JcrCallback() {
       public Object doInJcr(final Session session) throws RepositoryException, IOException {
         PentahoJcrConstants pentahoJcrConstants = new PentahoJcrConstants(session);
-        Node node = nodeIdStrategy.findNodeById(session, id);
+        Node node = session.getNodeByUUID(id.toString());
         if (node == null) {
           throw new RepositoryException(String.format("node with id [%s] not found", id));
         }
 
-        JcrRepositoryFileUtils.checkoutNearestVersionableNodeIfNecessary(session, pentahoJcrConstants, nodeIdStrategy,
-            node);
+        JcrRepositoryFileUtils.checkoutNearestVersionableNodeIfNecessary(session, pentahoJcrConstants, node);
 
         Assert.isInstanceOf(SessionImpl.class, session);
         SessionImpl jrSession = (SessionImpl) session;
@@ -147,8 +139,8 @@ public class JackrabbitRepositoryFileAclDao implements IRepositoryFileAclDao {
         }
 
         session.save();
-        JcrRepositoryFileUtils.checkinNearestVersionableNodeIfNecessary(session, pentahoJcrConstants, nodeIdStrategy,
-            node, "[system] created ACL");
+        JcrRepositoryFileUtils.checkinNearestVersionableNodeIfNecessary(session, pentahoJcrConstants, node,
+            "[system] created ACL");
 
         return toAcl(jrSession, pentahoJcrConstants, id);
       }
@@ -171,7 +163,7 @@ public class JackrabbitRepositoryFileAclDao implements IRepositoryFileAclDao {
   private RepositoryFileAcl toAcl(final SessionImpl jrSession, final PentahoJcrConstants pentahoJcrConstants,
       final Serializable id) throws RepositoryException {
 
-    Node node = nodeIdStrategy.findNodeById(jrSession, id);
+    Node node = jrSession.getNodeByUUID(id.toString());
     if (node == null) {
       throw new RepositoryException(String.format("node with id [%s] not found", id));
     }
@@ -182,7 +174,7 @@ public class JackrabbitRepositoryFileAclDao implements IRepositoryFileAclDao {
     Serializable parentId = null;
 
     if (!node.getParent().isSame(jrSession.getRootNode())) {
-      parentId = nodeIdStrategy.getId(node.getParent());
+      parentId = node.getParent().getUUID();
     }
 
     Assert.isInstanceOf(IPentahoJackrabbitAccessControlList.class, acPolicy);
@@ -217,11 +209,6 @@ public class JackrabbitRepositoryFileAclDao implements IRepositoryFileAclDao {
     }
     return aclBuilder.build();
 
-  }
-
-  public void setNodeIdStrategy(final NodeIdStrategy nodeIdStrategy) {
-    Assert.notNull(nodeIdStrategy);
-    this.nodeIdStrategy = nodeIdStrategy;
   }
 
   public void setPermissionConversionHelper(final IPermissionConversionHelper permissionConversionHelper) {
@@ -284,13 +271,12 @@ public class JackrabbitRepositoryFileAclDao implements IRepositoryFileAclDao {
         PentahoJcrConstants pentahoJcrConstants = new PentahoJcrConstants(session);
         Assert.isTrue(session instanceof SessionImpl);
         SessionImpl jrSession = (SessionImpl) session;
-        Node node = nodeIdStrategy.findNodeById(session, acl.getId());
+        Node node = session.getNodeByUUID(acl.getId().toString());
         if (node == null) {
           throw new RepositoryException(String.format("node with id [%s] not found", acl.getId()));
         }
 
-        JcrRepositoryFileUtils.checkoutNearestVersionableNodeIfNecessary(session, pentahoJcrConstants, nodeIdStrategy,
-            node);
+        JcrRepositoryFileUtils.checkoutNearestVersionableNodeIfNecessary(session, pentahoJcrConstants, node);
 
         String absPath = node.getPath();
         AccessControlManager acMgr = jrSession.getAccessControlManager();
@@ -318,8 +304,8 @@ public class JackrabbitRepositoryFileAclDao implements IRepositoryFileAclDao {
         }
         acMgr.setPolicy(absPath, acList);
         session.save();
-        JcrRepositoryFileUtils.checkinNearestVersionableNodeIfNecessary(session, pentahoJcrConstants, nodeIdStrategy,
-            node, "[system] updated ACL");
+        JcrRepositoryFileUtils.checkinNearestVersionableNodeIfNecessary(session, pentahoJcrConstants, node,
+            "[system] updated ACL");
         return readAclById(acl.getId());
       }
     });

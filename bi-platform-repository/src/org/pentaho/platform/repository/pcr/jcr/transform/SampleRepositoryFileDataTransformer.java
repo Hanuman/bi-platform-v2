@@ -8,9 +8,7 @@ import javax.jcr.Session;
 
 import org.pentaho.platform.api.repository.IRepositoryFileData;
 import org.pentaho.platform.repository.pcr.SampleRepositoryFileData;
-import org.pentaho.platform.repository.pcr.SimpleRepositoryFileData;
 import org.pentaho.platform.repository.pcr.jcr.ITransformer;
-import org.pentaho.platform.repository.pcr.jcr.NodeIdStrategy;
 import org.pentaho.platform.repository.pcr.jcr.PentahoJcrConstants;
 
 public class SampleRepositoryFileDataTransformer implements ITransformer<SampleRepositoryFileData> {
@@ -46,8 +44,7 @@ public class SampleRepositoryFileDataTransformer implements ITransformer<SampleR
    * {@inheritDoc}
    */
   public void createContentNode(final Session session, final PentahoJcrConstants pentahoJcrConstants,
-      final NodeIdStrategy nodeIdStrategy, final SampleRepositoryFileData data, final Node fileNode)
-      throws RepositoryException, IOException {
+      final SampleRepositoryFileData data, final Node fileNode) throws RepositoryException, IOException {
     Node unstructuredNode = fileNode.addNode(pentahoJcrConstants.getJCR_CONTENT(), pentahoJcrConstants
         .getNT_UNSTRUCTURED());
     unstructuredNode.setProperty(PROPERTY_NAME_SAMPLE_STRING, data.getSampleString());
@@ -59,7 +56,7 @@ public class SampleRepositoryFileDataTransformer implements ITransformer<SampleR
    * {@inheritDoc}
    */
   public SampleRepositoryFileData fromContentNode(final Session session, final PentahoJcrConstants pentahoJcrConstants,
-      final NodeIdStrategy nodeIdStrategy, final Node fileNode) throws RepositoryException, IOException {
+      final Node fileNode) throws RepositoryException, IOException {
     Node unstructuredNode = fileNode.getNode(pentahoJcrConstants.getJCR_CONTENT());
     String sampleString = unstructuredNode.getProperty(PROPERTY_NAME_SAMPLE_STRING).getString();
     boolean sampleBoolean = unstructuredNode.getProperty(PROPERTY_NAME_SAMPLE_BOOLEAN).getBoolean();
@@ -71,8 +68,7 @@ public class SampleRepositoryFileDataTransformer implements ITransformer<SampleR
    * {@inheritDoc}
    */
   public void updateContentNode(final Session session, final PentahoJcrConstants pentahoJcrConstants,
-      final NodeIdStrategy nodeIdStrategy, final SampleRepositoryFileData data, final Node fileNode)
-      throws RepositoryException, IOException {
+      final SampleRepositoryFileData data, final Node fileNode) throws RepositoryException, IOException {
     Node unstructuredNode = fileNode.getNode(pentahoJcrConstants.getJCR_CONTENT());
     unstructuredNode.setProperty(PROPERTY_NAME_SAMPLE_STRING, data.getSampleString());
     unstructuredNode.setProperty(PROPERTY_NAME_SAMPLE_BOOLEAN, data.getSampleBoolean());

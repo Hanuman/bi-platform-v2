@@ -4,7 +4,6 @@ import java.io.Serializable;
 import java.util.EnumSet;
 import java.util.List;
 
-import org.pentaho.platform.api.repository.RepositoryFile;
 import org.pentaho.platform.api.repository.RepositoryFileAcl;
 import org.pentaho.platform.api.repository.RepositoryFilePermission;
 import org.pentaho.platform.api.repository.RepositoryFileSid;
@@ -16,7 +15,7 @@ import org.pentaho.platform.api.repository.RepositoryFileSid;
  */
 public interface IRepositoryFileAclDao {
 
-  List<RepositoryFileAcl.Ace> getEffectiveAces(final RepositoryFile file);
+  List<RepositoryFileAcl.Ace> getEffectiveAces(final Serializable id);
 
   /**
    * Returns {@code true} if the user has all of the permissions. The implementation should return {@code false} if 
@@ -30,7 +29,7 @@ public interface IRepositoryFileAclDao {
 
   RepositoryFileAcl readAclById(final Serializable id);
 
-  RepositoryFileAcl updateAcl(RepositoryFileAcl acl);
+  RepositoryFileAcl updateAcl(final RepositoryFileAcl acl);
 
   /**
    * Creates a new ACL and initializes it. {@link #updateAcl(RepositoryFileAcl)} should not need to be called after this method

@@ -22,8 +22,8 @@ public interface ILockTokenHelper {
    * @param pentahoJcrConstants constants
    * @param lock recently created lock; can get the locked node and lock token from this object
    */
-  void addLockToken(final Session session, final PentahoJcrConstants pentahoJcrConstants,
-      final NodeIdStrategy nodeIdStrategy, final Lock lock) throws RepositoryException;
+  void addLockToken(final Session session, final PentahoJcrConstants pentahoJcrConstants, final Lock lock)
+      throws RepositoryException;
 
   /**
    * Returns all lock tokens belonging to the session's user. Lock tokens can then be added to the session by calling
@@ -33,8 +33,8 @@ public interface ILockTokenHelper {
    * @param pentahoJcrConstants constants
    * @return list of tokens
    */
-  List<String> getLockTokens(final Session session, final PentahoJcrConstants pentahoJcrConstants,
-      final NodeIdStrategy nodeIdStrategy) throws RepositoryException;
+  List<String> getLockTokens(final Session session, final PentahoJcrConstants pentahoJcrConstants)
+      throws RepositoryException;
 
   /**
    * Removes a lock token
@@ -43,6 +43,6 @@ public interface ILockTokenHelper {
    * @param pentahoJcrConstants constants
    * @param lock lock whose token is to be removed; can get the locked node and lock token from this object
    */
-  void removeLockToken(final Session session, final PentahoJcrConstants pentahoJcrConstants,
-      final NodeIdStrategy nodeIdStrategy, final Lock lock) throws RepositoryException;
+  void removeLockToken(final Session session, final PentahoJcrConstants pentahoJcrConstants, final Lock lock)
+      throws RepositoryException;
 }

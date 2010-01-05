@@ -16,7 +16,7 @@ import org.apache.commons.lang.builder.ToStringBuilder;
  * 
  * @author mlowery
  */
-public class RepositoryFile implements Comparable<RepositoryFile>, Serializable {
+public class RepositoryFile implements Comparable<RepositoryFile>/*, Serializable*/ {
 
   // ~ Static fields/initializers ======================================================================================
 
