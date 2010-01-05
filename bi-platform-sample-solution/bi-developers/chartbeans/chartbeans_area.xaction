@@ -13,11 +13,11 @@
   <inputs/>
 
   <outputs>
-    <chartContent type="content"> 
+    <outputstream type="string"> 
       <destinations> 
         <response>content</response> 
       </destinations> 
-    </chartContent> 
+    </outputstream> 
   </outputs>
 
   <resources> 
@@ -43,7 +43,7 @@
         <live><![CDATA[true]]></live>  
         <query><![CDATA[SELECT PRODUCTS.PRODUCTLINE AS LINE,
 				ORDERFACT.YEAR_ID AS "YEAR",
-                        SUM(ORDERFACT.TOTALPRICE) AS "PRICE"
+                        CAST(SUM(ORDERFACT.TOTALPRICE) AS INTEGER) AS "PRICE"
                         FROM
      				PRODUCTS INNER JOIN ORDERFACT ON PRODUCTS.PRODUCTCODE = ORDERFACT.PRODUCTCODE
      				INNER JOIN CUSTOMER_W_TER ON ORDERFACT.CUSTOMERNUMBER = CUSTOMER_W_TER.CUSTOMERNUMBER 
@@ -54,18 +54,18 @@
 
     
     <action-definition>
-      <component-name>ChartBeansAction</component-name>
+      <component-name>ChartBeansComponent</component-name>
       <action-inputs>
-	  <valueColumn type="string"/> 
-	  <categoryColumn type="string"/> 
-	  <seriesColumn type="string"/> 
-        <chartData type="result-set" mapping="new_result"/>
+	  <value-column type="string"/> 
+	  <category-column type="string"/> 
+	  <series-column type="string"/> 
+        <chartdata type="result-set" mapping="new_result"/>
       </action-inputs>
       <action-resources> 
-        <chartModelXmlStream type="resource" mapping="area"/>
+        <chart-model-xml type="resource" mapping="area"/>
       </action-resources>
       <action-outputs>
-        <chartContent type="content"/>
+        <outputstream/>
       </action-outputs>
       <component-definition/> 
       <action-name>ChartBeans Area Chart</action-name>  
