@@ -8,6 +8,8 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -17,9 +19,11 @@ import java.util.EnumSet;
 import java.util.List;
 import java.util.Locale;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.jackrabbit.api.jsr283.security.Privilege;
 import org.junit.After;
+import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -39,6 +43,7 @@ import org.pentaho.platform.repository.pcr.jcr.SimpleJcrTestUtils;
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.DataRetrievalFailureException;
 import org.springframework.extensions.jcr.JcrTemplate;
@@ -91,6 +96,8 @@ public class DefaultRepositoryServiceTest implements ApplicationContextAware {
 
   private String tenantAuthenticatedAuthorityNameSuffix;
 
+  private boolean startupCalled;
+
   // ~ Constructors ==================================================================================================== 
 
   public DefaultRepositoryServiceTest() throws Exception {
@@ -101,12 +108,21 @@ public class DefaultRepositoryServiceTest implements ApplicationContextAware {
 
   @BeforeClass
   public static void setUpClass() throws Exception {
+    // folder cannot be deleted at teardown shutdown hooks have not yet necessarily completed
+    // parent folder must match jcrRepository.homeDir bean property in repository-test-override.spring.xml
+    FileUtils.deleteDirectory(new File("/tmp/jackrabbit-test"));
     PentahoSessionHolder.setStrategyName(PentahoSessionHolder.MODE_GLOBAL);
+  }
+
+  @AfterClass
+  public static void tearDownClass() throws Exception {
+
   }
 
   @Before
   public void setUp() throws Exception {
     logout();
+    startupCalled = true;
   }
 
   @After
@@ -114,6 +130,10 @@ public class DefaultRepositoryServiceTest implements ApplicationContextAware {
     loginAsRepositoryAdmin();
     SimpleJcrTestUtils.deleteItem(testJcrTemplate, RepositoryPaths.getPentahoRootFolderPath());
     logout();
+
+    if (startupCalled) {
+      repo.getRepositoryEventHandler().onShutdown();
+    }
 
     // null out fields to get back memory
     repo = null;
@@ -127,6 +147,7 @@ public class DefaultRepositoryServiceTest implements ApplicationContextAware {
 
   @Test(expected = IllegalStateException.class)
   public void testNotStartedUp() throws Exception {
+    startupCalled = false;
     login(USERNAME_SUZY, TENANT_ID_ACME);
   }
 

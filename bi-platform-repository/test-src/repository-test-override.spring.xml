@@ -18,7 +18,7 @@
 
   <bean id="jcrRepository" class="org.springframework.extensions.jcr.jackrabbit.RepositoryFactoryBean">
     <property name="configuration" value="/jackrabbit-test-repo.xml" />
-    <property name="homeDir" value="file:/tmp" />
+    <property name="homeDir" value="file:/tmp/jackrabbit-test" />
   </bean>
   
   
