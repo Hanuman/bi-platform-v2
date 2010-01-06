@@ -71,10 +71,40 @@ public class PublisherUtil {
    *          The userid to authenticate to the server
    * @param serverPassword
    *          The password to authenticate with the server
+   * @param overwrite
+   *          Whether the server should overwrite the file if it exists already
    * @return Server response as a string
    */
   public static int publish(final String publishURL, final String publishPath, final File publishFiles[],
       final String publishPassword, final String serverUserid, final String serverPassword, final boolean overwrite) {
+    return PublisherUtil.publish( publishURL, publishPath, publishFiles, publishPassword, serverUserid, serverPassword, false );
+  }
+  
+  /**
+   * Publishes a list of files and a datasource to the server with basic authentication to the server
+   * 
+   * @param publishURL
+   *          The URL of the Pentaho server
+   * @param publishPath
+   *          The path in the solution to place the files
+   * @param publishFiles
+   *          Array of File objects to post to the server
+   * @param dataSource
+   *          The datasource to publish to the server
+   * @param publishPassword
+   *          The publishing password for the server
+   * @param serverUserid
+   *          The userid to authenticate to the server
+   * @param serverPassword
+   *          The password to authenticate with the server
+   * @param overwrite
+   *          Whether the server should overwrite the file if it exists already
+   * @param mkdirs
+   *          Whether the server should create any missing folders on the publish path
+   * @return Server response as a string
+   */
+  public static int publish(final String publishURL, final String publishPath, final File publishFiles[],
+      final String publishPassword, final String serverUserid, final String serverPassword, final boolean overwrite, final boolean mkdirs) {
     int status = -1;
     System.setProperty("org.apache.commons.logging.Log", "org.apache.commons.logging.impl.SimpleLog"); //$NON-NLS-1$ //$NON-NLS-2$
     System.setProperty("org.apache.commons.logging.simplelog.showdatetime", "true"); //$NON-NLS-1$ //$NON-NLS-2$
@@ -88,6 +118,7 @@ public class PublisherUtil {
 
     fullURL += "&publishKey=" + PublisherUtil.getPasswordKey(publishPassword); //$NON-NLS-1$
     fullURL += "&overwrite=" + overwrite; //$NON-NLS-1$
+    fullURL += "&mkdirs=" + mkdirs; //$NON-NLS-1$
 
     PostMethod filePost = new PostMethod(fullURL);
     Part[] parts = new Part[publishFiles.length];
