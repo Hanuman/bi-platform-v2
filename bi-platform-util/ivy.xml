@@ -32,7 +32,6 @@
         <!-- dependency org="pentaho" name="pentaho-bi-platform-data-access"     rev="TRUNK-SNAPSHOT" changing="true"/>
         <dependency org="pentaho" name="pentaho-database-gwt"     rev="TRUNK-SNAPSHOT" changing="true"/ -->
         <dependency org="pentaho" name="pentaho-connections"     rev="${dependency.pentaho-connections.revision}" changing="true"/>
-        <dependency org="pentaho" name="pentaho-commons-util"     rev="${dependency.pentaho-commons-util.revision}" changing="true"/>
         <dependency org="${ivy.artifact.group}" name="pentaho-bi-platform-api" rev="${project.revision}" changing="true"  conf="default->default"/>
     </dependencies>
     
