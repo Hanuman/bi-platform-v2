@@ -90,5 +90,13 @@ simply check that a token in the JCR Credentials exists and matches a set of kno
 implies a trust relationship between the web application and the Jackrabbit repository. There is one token per 
 application.
 </p>
+
+<h2>Current user and tenant</h2>
+
+<p>
+The current user and tenant is controlled by the IPentahoSession instance in the PentahoSessionHolder. Usually this is
+updated when a new user logs in. This implementation sometimes changes the current IPentahoSession instance temporarily
+to do superuser activities like creating the root folder.
+</p>
 </body>
 </html>
