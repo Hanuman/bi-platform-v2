@@ -34,6 +34,14 @@ owner could be read with merely the READ privilege. Similary, that property coul
 MODIFY_PROPERTIES privilege. Therefore, using a custom property is insufficient.
 </p>
 
+<p>
+To put it another way, certain operations (e.g. access control reading and writing) do not use the standard JCR 
+Item/Node/Property API, even though Jackrabbit implements ACLs as properties. This is because Jackrabbit implements them 
+as "protected properties." The specification requires the reading and writing of protected properties to go through a 
+"feature-specific API" (e.g. AccessControlManager.setPolicy). See section 16.3.12 in JSR-283 
+"Interaction with Protected Properties."
+</p>
+
 <h2>Explicit ACE inheritance</h2>
 
 <p>
@@ -70,6 +78,17 @@ JCR versioning was extended to add "message" (aka "comment") and "author" proper
 
 <p>
 All Pentaho file and folder nodes can have localizable properties. Examples are title and description.
+</p>
+
+<h2>Pre-Authentication</h2>
+
+<p>
+In web applications, many times a user is already authenticated by the time he accesses the Jackrabbit repository. In 
+this case, we don't care about checking the password. In fact, sometimes the user's password is not available to the web
+application. (This can happen if the web application participates in a SSO system.) In a pre-authentication scenario, we 
+simply check that a token in the JCR Credentials exists and matches a set of known tokens. If there is a match, that 
+implies a trust relationship between the web application and the Jackrabbit repository. There is one token per 
+application.
 </p>
 </body>
 </html>
