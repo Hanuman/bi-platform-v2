@@ -216,6 +216,9 @@ public class JackrabbitRepositoryFileAclDao implements IRepositoryFileAclDao {
     this.permissionConversionHelper = permissionConversionHelper;
   }
 
+  /**
+   * Converts between {@code RepositoryFilePermission} and {@code Privilege} instances.
+   */
   public static interface IPermissionConversionHelper {
     Privilege[] pentahoPermissionsToJackrabbitPrivileges(final SessionImpl jrSession,
         final EnumSet<RepositoryFilePermission> permission) throws RepositoryException;

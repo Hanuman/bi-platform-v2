@@ -19,7 +19,8 @@ import org.pentaho.platform.engine.core.system.PentahoSessionHolder;
 import org.springframework.util.Assert;
 
 /**
- * Default implementation of {@link IRepositoryService}.
+ * Default implementation of {@link IRepositoryService}. Delegates to {@link IRepositoryFileDao} and 
+ * {@link IRepositoryFileAclDao}.
  * 
  * @author mlowery
  */

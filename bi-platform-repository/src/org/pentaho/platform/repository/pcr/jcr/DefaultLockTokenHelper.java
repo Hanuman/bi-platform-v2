@@ -30,6 +30,7 @@ public class DefaultLockTokenHelper implements ILockTokenHelper {
 
   private static final Log logger = LogFactory.getLog(DefaultLockTokenHelper.class);
 
+  // TODO mlowery make this use RepositoryPaths
   private final String PATTERN_USER_HOME_FOLDER_PATH = "/pentaho/{0}/home/{1}"; //$NON-NLS-1$
 
   private final String FOLDER_NAME_LOCK_TOKENS = ".lockTokens"; //$NON-NLS-1$

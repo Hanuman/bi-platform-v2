@@ -8,7 +8,8 @@ import org.pentaho.platform.api.repository.RepositoryFile;
 import org.pentaho.platform.api.repository.VersionSummary;
 
 /**
- * A data access object for reading and writing {@code RepositoryFile} instances.
+ * A data access object for reading and writing {@code RepositoryFile} instances. The methods in this interface closely
+ * resemble those in {@link IRepositoryService}.
  * 
  * @author mlowery
  */
