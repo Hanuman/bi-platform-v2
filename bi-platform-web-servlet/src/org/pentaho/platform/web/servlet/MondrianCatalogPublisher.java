@@ -92,6 +92,7 @@ public class MondrianCatalogPublisher extends RepositoryFilePublisher {
     String jndiName = req.getParameter("jndiName");//$NON-NLS-1$
 
     boolean overwrite = Boolean.valueOf(req.getParameter("overwrite")).booleanValue(); //$NON-NLS-1$
+    boolean mkdirs = Boolean.valueOf(req.getParameter("mkdirs")).booleanValue(); //$NON-NLS-1$
     boolean enableXmla = Boolean.valueOf(req.getParameter("enableXmla")).booleanValue(); //$NON-NLS-1$
 
     List<FileItem> fileItems = Collections.emptyList();
@@ -107,7 +108,7 @@ public class MondrianCatalogPublisher extends RepositoryFilePublisher {
     int status = ISolutionRepository.FILE_ADD_FAILED;
     try {
       status = doPublish(fileItems, publishPath, publishKey, null, null, null, null, null,
-        overwrite, pentahoSession);
+        overwrite, mkdirs, pentahoSession);
     } catch (Exception e) {
       MondrianCatalogPublisher.logger.error(Messages.getInstance().getErrorString("MondrianCatalogPublisher.ERROR_0005_PUBLISH_EXCEPTION"), e); //$NON-NLS-1$
     }

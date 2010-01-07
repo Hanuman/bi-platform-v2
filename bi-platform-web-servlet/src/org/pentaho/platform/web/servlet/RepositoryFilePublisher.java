@@ -22,10 +22,12 @@
 
 package org.pentaho.platform.web.servlet;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
+import java.util.StringTokenizer;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -40,6 +42,7 @@ import org.apache.commons.logging.LogFactory;
 import org.dom4j.Document;
 import org.dom4j.Node;
 import org.pentaho.platform.api.engine.IPentahoSession;
+import org.pentaho.platform.api.engine.ISolutionFile;
 import org.pentaho.platform.api.engine.PentahoAccessControlException;
 import org.pentaho.platform.api.repository.ISolutionRepository;
 import org.pentaho.platform.engine.core.system.PentahoSystem;
@@ -88,6 +91,7 @@ public class RepositoryFilePublisher extends ServletBase {
     String jdbcUserId = request.getParameter("jdbcUserId");//$NON-NLS-1$
     String jdbcPassword = request.getParameter("jdbcPassword");//$NON-NLS-1$
     boolean overwrite = Boolean.valueOf(request.getParameter("overwrite")).booleanValue(); //$NON-NLS-1$
+    boolean mkdirs = Boolean.valueOf(request.getParameter("mkdirs")).booleanValue(); //$NON-NLS-1$
 
     List<FileItem> fileItems = Collections.emptyList();
     try {
@@ -101,7 +105,7 @@ public class RepositoryFilePublisher extends ServletBase {
     }
 
     int status = doPublish(fileItems, publishPath, publishKey, jndiName, jdbcDriver, jdbcUrl, jdbcUserId, jdbcPassword,
-        overwrite, pentahoSession);
+        overwrite, mkdirs, pentahoSession);
     response.getWriter().println(status);
     } finally {
       PentahoSystem.systemExitPoint();
@@ -117,7 +121,7 @@ public class RepositoryFilePublisher extends ServletBase {
 
   protected int doPublish(final List<FileItem> fileItems, final String publishPath, final String publishKey,
       final String jndiName, final String jdbcDriver, final String jdbcUrl, final String jdbcUserId,
-      final String jdbcPassword, final boolean overwrite, final IPentahoSession pentahoSession) {
+      final String jdbcPassword, final boolean overwrite, final boolean mkdirs, final IPentahoSession pentahoSession) {
     ISolutionRepository repository = PentahoSystem.get(ISolutionRepository.class, pentahoSession);
     int status = ISolutionRepository.FILE_ADD_SUCCESSFUL;
 
@@ -126,6 +130,7 @@ public class RepositoryFilePublisher extends ServletBase {
     if ((publishPath != null) && (publishPath.endsWith("/") || publishPath.endsWith("\\"))) { //$NON-NLS-1$ //$NON-NLS-2$
       cleanPublishPath = publishPath.substring(0, publishPath.length() - 1);
     }
+    cleanPublishPath = cleanPublishPath.replace( '\\' , ISolutionRepository.SEPARATOR );
 
     if (RepositoryFilePublisher.checkPublisherKey(publishKey)) {
 
@@ -135,13 +140,52 @@ public class RepositoryFilePublisher extends ServletBase {
         PentahoSystem.systemEntryPoint();
 
         Iterator<FileItem> itr = fileItems.iterator();
+        
+        ISolutionFile folder = repository.getSolutionFile(cleanPublishPath, ISolutionRepository.ACTION_CREATE);
+        if( folder == null ) {
+          if( mkdirs ) {
+            // we need to create the folder first
+            System.out.println("creating folders");
+            // check to see if the publish path exists
+            StringTokenizer tokenizer = new StringTokenizer( cleanPublishPath, ""+ISolutionRepository.SEPARATOR ); //$NON-NLS-1$
+            StringBuilder testPath = new StringBuilder(); 
+            int idx = 1;
+            while( tokenizer.hasMoreTokens() ) {
+              String folderName = tokenizer.nextToken();
+              testPath.append( ISolutionRepository.SEPARATOR ).append( folderName );
+              ISolutionFile testFolder = repository.getSolutionFile(testPath.toString(), ISolutionRepository.ACTION_CREATE);
+              if( idx == 1 && testFolder == null ) {
+                // we do not allow creation of top-level folders
+                status = ISolutionRepository.FILE_ADD_FAILED;
+                break;
+              } 
+              else if( testFolder == null ) {
+                // create this one
+                String newFolderPath = PentahoSystem.getApplicationContext().getSolutionPath(testPath.toString());
+                File newFolder = new File(newFolderPath);
+                repository.createFolder(newFolder);
+              }
+              idx++;
+            }
+          } else {
+            // the folder does not exist
+            status = ISolutionRepository.FILE_ADD_FAILED;
+          }
+        } 
+        if(status == ISolutionRepository.FILE_ADD_SUCCESSFUL) {
+          while (itr.hasNext() && (status == ISolutionRepository.FILE_ADD_SUCCESSFUL)) {
+            FileItem fi = itr.next();
 
-        while (itr.hasNext() && (status == ISolutionRepository.FILE_ADD_SUCCESSFUL)) {
-          FileItem fi = itr.next();
-
-          status = repository.publish(solutionPath, cleanPublishPath, fi.getName(), fi.get(), overwrite);
+            status = repository.publish(solutionPath, cleanPublishPath, fi.getName(), fi.get(), overwrite);
+          }
         }
+
       } catch (PentahoAccessControlException e) {
+        status = ISolutionRepository.FILE_ADD_FAILED;
+        if (RepositoryFilePublisher.logger.isErrorEnabled()) {
+          RepositoryFilePublisher.logger.error("an error occurred", e);
+        }
+      } catch (IOException e) {
         status = ISolutionRepository.FILE_ADD_FAILED;
         if (RepositoryFilePublisher.logger.isErrorEnabled()) {
           RepositoryFilePublisher.logger.error("an error occurred", e);
