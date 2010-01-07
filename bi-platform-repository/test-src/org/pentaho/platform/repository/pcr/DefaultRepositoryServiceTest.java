@@ -386,6 +386,7 @@ public class DefaultRepositoryServiceTest implements ApplicationContextAware {
     final SimpleRepositoryFileData content = new SimpleRepositoryFileData(dataStream, expectedEncoding,
         expectedMimeType);
     Date beginTime = Calendar.getInstance().getTime();
+    Thread.sleep(1000); // when the test runs too fast, begin and lastModifiedDate are the same; manual pause
     RepositoryFile newFile = repo.createFile(parentFolder.getId(), new RepositoryFile.Builder(expectedName).build(),
         content);
     Date endTime = Calendar.getInstance().getTime();
