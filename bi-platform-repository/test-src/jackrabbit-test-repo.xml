@@ -22,7 +22,7 @@
      - org.apache.jackrabbit.core.config.RepositoryConfigTest.java
      -
 -->
-<Repository>
+Repository>
     <!--
         virtual file system where the repository stores global state
         (e.g. registered namespaces, custom node types, etc.)

@@ -17,7 +17,7 @@
   <sec:authentication-manager alias="authenticationManager" />
 
   <bean id="jcrRepository" class="org.springframework.extensions.jcr.jackrabbit.RepositoryFactoryBean">
-    <property name="configuration" value="/jackrabbit-test-repo.xml" />
+    <property name="configuration" value="classpath:/jackrabbit-test-repo.xml" />
     <property name="homeDir" value="file:/tmp/jackrabbit-test" />
   </bean>
   
