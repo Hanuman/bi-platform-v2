@@ -21,6 +21,8 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 
+import org.pentaho.commons.connection.IPentahoStreamSource;
+import org.pentaho.commons.connection.SimpleStreamSource;
 import org.pentaho.platform.api.engine.IContentListener;
 
 public class BufferedContentItem extends SimpleContentItem {
@@ -41,7 +43,6 @@ public class BufferedContentItem extends SimpleContentItem {
 
   @Override
   public void closeOutputStream() {
-
     inputStream = new ByteArrayInputStream(outputStream.toByteArray());
     if (listener != null) {
       listener.close();
@@ -56,7 +57,17 @@ public class BufferedContentItem extends SimpleContentItem {
   @Override
   public void setMimeType(final String mimeType) {
     super.setMimeType(mimeType);
-    listener.setMimeType(mimeType);
+    if (listener != null) {
+      listener.setMimeType(mimeType);
+    }
   }
 
+  @Override
+  public IPentahoStreamSource getDataSource() {
+    if( inputStream == null ) {
+      inputStream = new ByteArrayInputStream(outputStream.toByteArray());
+    }
+    return new SimpleStreamSource( getName(), getMimeType(), inputStream, outputStream );
+  }
+  
 }
