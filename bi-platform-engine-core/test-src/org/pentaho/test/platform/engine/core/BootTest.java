@@ -28,20 +28,6 @@ import org.pentaho.platform.engine.core.system.boot.PlatformInitializationExcept
 @SuppressWarnings( { "all" })
 public class BootTest {
 
-  @Test(expected = PlatformInitializationException.class)
-  public void testMissingSolutionEngine() throws PlatformInitializationException {
-    PentahoSystemBoot boot = new PentahoSystemBoot();
-    boot.setFilePath("test-src/solution");
-    IPentahoObjectFactory factory = boot.getFactory();
-    assertNotNull("object factory is null", factory);
-
-    assertTrue("object factory not definable", factory instanceof IPentahoDefinableObjectFactory);
-
-    IPentahoDefinableObjectFactory definable = (IPentahoDefinableObjectFactory) factory;
-
-    boot.start();
-  }
-
   @Test
   public void testBoot() throws Exception {
     PentahoSystemBoot boot = new PentahoSystemBoot();
