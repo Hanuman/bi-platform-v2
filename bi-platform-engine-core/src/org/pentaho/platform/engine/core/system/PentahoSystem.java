@@ -173,7 +173,6 @@ public class PentahoSystem {
   // the console
 
   static {
-    PentahoSystem.RequiredObjects.add(PentahoSystem.SOLUTION_ENGINE);
 
     PentahoSystem.KnownOptionalObjects.add(PentahoSystem.SOLUTION_REPOSITORY);
     PentahoSystem.KnownOptionalObjects.add(PentahoSystem.ACL_VOTER);
