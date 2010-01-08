@@ -32,6 +32,8 @@ public class BufferedContentItem extends SimpleContentItem {
   private InputStream inputStream;
 
   private IContentListener listener;
+  
+  private String name;
 
   public BufferedContentItem(final IContentListener listener) {
     super();
@@ -67,7 +69,17 @@ public class BufferedContentItem extends SimpleContentItem {
     if( inputStream == null ) {
       inputStream = new ByteArrayInputStream(outputStream.toByteArray());
     }
-    return new SimpleStreamSource( getName(), getMimeType(), inputStream, outputStream );
+   return new SimpleStreamSource( getName(), getMimeType(), inputStream, outputStream );
   }
-  
+
+  @Override
+  public void setName( String name ) {
+    this.name = name;
+  }
+
+  @Override
+  public String getName() {
+    return name;
+  }
+
 }
