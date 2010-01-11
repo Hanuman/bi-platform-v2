@@ -272,7 +272,7 @@ public class MondrianCatalogHelper implements IMondrianCatalogService {
 
   protected Map<String, MondrianCatalogComplementInfo> makeCatalogComplementInfoMap(final DOMWrapper doc) {
 
-    HashMap<String, MondrianCatalogComplementInfo> map = new HashMap();
+    HashMap<String, MondrianCatalogComplementInfo> map = new HashMap<String, MondrianCatalogComplementInfo>();
 
     DOMWrapper dataSource = doc.getElementChildren()[0];
     DOMWrapper catalogs = null;
@@ -280,7 +280,7 @@ public class MondrianCatalogHelper implements IMondrianCatalogService {
     // Search Catalogs
     for (int i = 0; i < dataSource.getElementChildren().length; i++) {
       DOMWrapper element = dataSource.getElementChildren()[i];
-      if (element.getTagName().equals("Catalogs")) {
+      if (element.getTagName().equals("Catalogs")) { //$NON-NLS-1$
         catalogs = element;
         break;
       }
@@ -289,18 +289,22 @@ public class MondrianCatalogHelper implements IMondrianCatalogService {
     // Generate the map. We need the name and the variables
     for (int i = 0; i < catalogs.getElementChildren().length; i++) {
       final DOMWrapper catalog = catalogs.getElementChildren()[i];
-      if (catalog.getTagName() != "Catalog") {
+      if (!"Catalog".equals(catalog.getTagName())) { //$NON-NLS-1$
         continue;
       }
 
-      final String roleVariable = getDOMWrapperElementText(catalog, "RoleVariable");
-      final String whereCondition = getDOMWrapperElementText(catalog, "WhereCondition");
-
       MondrianCatalogComplementInfo complementInfo = new MondrianCatalogComplementInfo();
-      complementInfo.setWhereCondition(whereCondition);
-      map.put(getDOMWrapperElementText(catalog, "Definition"), complementInfo);
+
+      // Iterate through whereConditions
+      for (int j = 0; j < catalog.getElementChildren().length; j++) {
+        final DOMWrapper whereNode = catalog.getElementChildren()[j];
+        if ("WhereCondition".equals(whereNode.getTagName())) { //$NON-NLS-1$
+          complementInfo.addWhereCondition(whereNode.getAttribute("cube"), whereNode.getText()); //$NON-NLS-1$
+        }
     }
 
+      map.put(getDOMWrapperElementText(catalog, "Definition"), complementInfo); //$NON-NLS-1$
+    }
 
     return map;
   }

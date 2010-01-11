@@ -205,6 +205,7 @@ public class MondrianModelComponent extends ComponentBase {
    * @param modelPath
    * @param jndi
    * @param cubeName
+   * @param roleName
    * @return mdx string that represents the initial query
    * @throws Throwable
    * @deprecated
@@ -238,7 +239,7 @@ public class MondrianModelComponent extends ComponentBase {
 
     String measuresMdx = null;
     String columnsMdx = null;
-    String whereMdx = "";
+    String whereMdx = ""; //$NON-NLS-1$
     StringBuffer rowsMdx = new StringBuffer();
 
     // Get catalog info, if exists
@@ -293,10 +294,10 @@ public class MondrianModelComponent extends ComponentBase {
       // If we have any whereConditions block, we need to find which hierarchies they are in
       // and not include them in the rows
       HashSet<Hierarchy> whereHierarchies = new HashSet<Hierarchy>();
-      if (catalogComplementInfo != null && catalogComplementInfo.getWhereCondition() != null &&
-          !catalogComplementInfo.getWhereCondition().equals("")) {
+      if (catalogComplementInfo != null && catalogComplementInfo.getWhereCondition(cube.getName()) != null &&
+          !catalogComplementInfo.getWhereCondition(cube.getName()).equals("")) { //$NON-NLS-1$
 
-        final String rawString = catalogComplementInfo.getWhereCondition();
+        final String rawString = catalogComplementInfo.getWhereCondition(cube.getName());
 
         // Caveat - It's possible that we have in the where condition a hierarchy that we don't have access
         // permissions; In this case, we'll ditch the where condition at all. Same for any error that
@@ -306,7 +307,7 @@ public class MondrianModelComponent extends ComponentBase {
         try {
 
           // According to Julian, the better way to resolve the names is to build a query
-          final String queryStr = "select " + rawString + " on columns, {} on rows from " + cube.getName();
+          final String queryStr = "select " + rawString + " on columns, {} on rows from " + cube.getName();  //$NON-NLS-1$ //$NON-NLS-2$
           final Query query = connection.parseQuery(queryStr);
 
 
@@ -324,7 +325,7 @@ public class MondrianModelComponent extends ComponentBase {
           }
 
           if (isWhereValid) {
-            whereMdx = " WHERE " + rawString;
+            whereMdx = " WHERE " + rawString; //$NON-NLS-1$
           }
         } catch (Exception e) {
           // We found an error in the where slicer, so we'll just act like it wasn't here
