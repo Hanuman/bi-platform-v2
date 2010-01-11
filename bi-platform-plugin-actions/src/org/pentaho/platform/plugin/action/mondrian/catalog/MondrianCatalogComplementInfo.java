@@ -1,27 +1,51 @@
 package org.pentaho.platform.plugin.action.mondrian.catalog;
 
+import java.util.HashMap;
+
 /**
- *
  * Class to contain extra attributes that we want to connect to the Mondrian Catalog
- * @author Pedro Alves
  *
+ * @author Pedro Alves
  */
 public class MondrianCatalogComplementInfo {
 
+  private HashMap<String, WhereConditionBean> whereConditions;
 
-    private String whereCondition;
+  public MondrianCatalogComplementInfo() {
+    this.whereConditions = new HashMap<String, WhereConditionBean>();
+  }
 
-    public MondrianCatalogComplementInfo() {
+  public HashMap<String, WhereConditionBean> getWhereConditions() {
+    return whereConditions;
+  }
+
+  public void addWhereCondition(final String cube, final String condition) {
+    whereConditions.put(cube, new WhereConditionBean(cube, condition));
+  }
+
+  public String getWhereCondition(final String cube) {
+    if (whereConditions.containsKey(cube)) {
+      return whereConditions.get(cube).getCondition();
+    }
+    return null;
+  }
+
+  private class WhereConditionBean {
+
+    private String cube;
+    private String condition;
+
+    private WhereConditionBean(final String cube, final String condition) {
+      this.cube = cube;
+      this.condition = condition;
     }
 
-
-    public String getWhereCondition() {
-        return whereCondition;
+    public String getCube() {
+      return cube;
     }
 
-    public void setWhereCondition(final String whereCondition) {
-        this.whereCondition = whereCondition;
+    public String getCondition() {
+      return condition;
     }
-
-
+  }
 }
