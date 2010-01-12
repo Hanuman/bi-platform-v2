@@ -57,4 +57,13 @@ public interface IDeleteHelper {
    */
   List<RepositoryFile> getDeletedFiles(final Session session, final PentahoJcrConstants pentahoJcrConstants)
       throws RepositoryException;
+
+  /**
+   * Returns the ID of the original parent folder. Can be used by caller to checkout parent folder before calling 
+   * {@link #undeleteFile(Session, PentahoJcrConstants, Serializable)}.
+   * 
+   * @param fileId file id of deleted file
+   */
+  Serializable getOriginalParentFolderId(final Session session, final PentahoJcrConstants pentahoJcrConstants,
+      final Serializable fileId) throws RepositoryException;
 }

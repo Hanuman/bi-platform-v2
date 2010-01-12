@@ -190,4 +190,17 @@ public class DefaultDeleteHelper implements IDeleteHelper {
         + fileToUndeleteNode.getName());
   }
 
+  /**
+   * {@inheritDoc}
+   */
+  public Serializable getOriginalParentFolderId(final Session session, final PentahoJcrConstants pentahoJcrConstants,
+      final Serializable fileId) throws RepositoryException {
+    final String prefix = session.getNamespacePrefix(PentahoJcrConstants.PHO_NS);
+    Node fileToUndeleteNode = session.getNodeByUUID(fileId.toString());
+    // determine original location
+    Node trashFolderIdNode = fileToUndeleteNode.getParent().getParent();
+    // strip off the prefix and colon
+    return trashFolderIdNode.getName().substring(prefix.length() + 1);
+  }
+
 }

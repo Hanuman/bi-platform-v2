@@ -411,12 +411,12 @@ public class JcrRepositoryFileDao implements IRepositoryFileDao {
     jcrTemplate.execute(new JcrCallback() {
       public Object doInJcr(final Session session) throws RepositoryException, IOException {
         PentahoJcrConstants pentahoJcrConstants = new PentahoJcrConstants(session);
-//        Serializable parentFolderId = JcrRepositoryFileUtils.getParentId(session, fileId);
-//        JcrRepositoryFileUtils.checkoutNearestVersionableFileIfNecessary(session, pentahoJcrConstants, parentFolderId);
+        Serializable parentFolderId = deleteHelper.getOriginalParentFolderId(session, pentahoJcrConstants, fileId);
+        JcrRepositoryFileUtils.checkoutNearestVersionableFileIfNecessary(session, pentahoJcrConstants, parentFolderId);
         deleteHelper.undeleteFile(session, pentahoJcrConstants, fileId);
         session.save();
-//        JcrRepositoryFileUtils.checkinNearestVersionableFileIfNecessary(session, pentahoJcrConstants, parentFolderId,
-//            versionMessageAndLabel);
+        JcrRepositoryFileUtils.checkinNearestVersionableFileIfNecessary(session, pentahoJcrConstants, parentFolderId,
+            versionMessageAndLabel);
         return null;
       }
     });
