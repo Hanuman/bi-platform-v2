@@ -38,10 +38,14 @@
         org.pentaho.platform.api.repository.IRepositoryService.hasAccess=PROPAGATION_REQUIRED,readOnly
         org.pentaho.platform.api.repository.IRepositoryService.getEffectiveAces=PROPAGATION_REQUIRED,readOnly
         org.pentaho.platform.api.repository.IRepositoryService.updateAcl=PROPAGATION_REQUIRED
-        org.pentaho.platform.api.repository.IRepositoryService.deleteFile=PROPAGATION_REQUIRED
         org.pentaho.platform.api.repository.IRepositoryService.lockFile=PROPAGATION_REQUIRED
         org.pentaho.platform.api.repository.IRepositoryService.unlockFile=PROPAGATION_REQUIRED
         org.pentaho.platform.api.repository.IRepositoryService.getVersionSummaries=PROPAGATION_REQUIRED,readOnly
+        org.pentaho.platform.api.repository.IRepositoryService.deleteFile=PROPAGATION_REQUIRED
+        org.pentaho.platform.api.repository.IRepositoryService.undeleteFile=PROPAGATION_REQUIRED
+        org.pentaho.platform.api.repository.IRepositoryService.permanentlyDeleteFile=PROPAGATION_REQUIRED
+        org.pentaho.platform.api.repository.IRepositoryService.getDeletedFiles=PROPAGATION_REQUIRED,readOnly
+        org.pentaho.platform.api.repository.IRepositoryService.getDeletedFiles=PROPAGATION_REQUIRED,readOnly
       </value>
     </property>
   </bean>
@@ -133,10 +137,14 @@
         org.pentaho.platform.api.repository.IRepositoryService.hasAccess=VOTE_ROLE_FILE_Authenticated
         org.pentaho.platform.api.repository.IRepositoryService.getEffectiveAces=VOTE_ROLE_FILE_Authenticated
         org.pentaho.platform.api.repository.IRepositoryService.updateAcl=VOTE_ROLE_FILE_Authenticated
-        org.pentaho.platform.api.repository.IRepositoryService.deleteFile=VOTE_ROLE_FILE_Authenticated
         org.pentaho.platform.api.repository.IRepositoryService.lockFile=VOTE_ROLE_FILE_Authenticated
         org.pentaho.platform.api.repository.IRepositoryService.unlockFile=VOTE_ROLE_FILE_Authenticated
         org.pentaho.platform.api.repository.IRepositoryService.getVersionSummaries=VOTE_ROLE_FILE_Authenticated
+        org.pentaho.platform.api.repository.IRepositoryService.deleteFile=VOTE_ROLE_FILE_Authenticated
+        org.pentaho.platform.api.repository.IRepositoryService.undeleteFile=VOTE_ROLE_FILE_Authenticated
+        org.pentaho.platform.api.repository.IRepositoryService.permanentlyDeleteFile=VOTE_ROLE_FILE_Authenticated
+        org.pentaho.platform.api.repository.IRepositoryService.getDeletedFiles=VOTE_ROLE_FILE_Authenticated
+        org.pentaho.platform.api.repository.IRepositoryService.getDeletedFiles=VOTE_ROLE_FILE_Authenticated
       </value>
     </property>
   </bean>
@@ -161,14 +169,15 @@
         <prop key="pho_mix">http://www.pentaho.org/jcr/mix/1.0</prop>
       </props>
     </property>
+    <!-- order matters! -->
     <property name="nodeDefinitions">
       <list>
+        <value>classpath:/org/pentaho/platform/repository/pcr/jcr/jackrabbit/pentahoInternalFolder.cnd</value>
         <value>classpath:/org/pentaho/platform/repository/pcr/jcr/jackrabbit/pentahoLocalizedString.cnd</value>
         <value>classpath:/org/pentaho/platform/repository/pcr/jcr/jackrabbit/pentahoHierarchyNode.cnd</value>
         <value>classpath:/org/pentaho/platform/repository/pcr/jcr/jackrabbit/pentahoFile.cnd</value>
         <value>classpath:/org/pentaho/platform/repository/pcr/jcr/jackrabbit/pentahoFolder.cnd</value>
         <value>classpath:/org/pentaho/platform/repository/pcr/jcr/jackrabbit/pentahoLockable.cnd</value>
-        <value>classpath:/org/pentaho/platform/repository/pcr/jcr/jackrabbit/pentahoInternalFolder.cnd</value>
         <value>classpath:/org/pentaho/platform/repository/pcr/jcr/jackrabbit/pentahoLockTokenStorage.cnd</value>
         <value>classpath:/org/pentaho/platform/repository/pcr/jcr/jackrabbit/pentahoVersionable.cnd</value>
         <value>classpath:/org/pentaho/platform/repository/pcr/jcr/jackrabbit/pentahoAcl.cnd</value>
@@ -190,7 +199,19 @@
         <bean class="org.pentaho.platform.repository.pcr.jcr.transform.SimpleRepositoryFileDataTransformer" />
       </list>
     </constructor-arg>
+    <constructor-arg ref="ownerLookupHelper" />
+    <constructor-arg ref="lockTokenHelper" />
+    <constructor-arg>
+      <bean class="org.pentaho.platform.repository.pcr.jcr.DefaultDeleteHelper">
+        <constructor-arg ref="ownerLookupHelper" />
+        <constructor-arg ref="lockTokenHelper" />
+      </bean>
+    </constructor-arg>
   </bean>
+
+  <bean id="lockTokenHelper" class="org.pentaho.platform.repository.pcr.jcr.DefaultLockTokenHelper" />
+
+  <bean id="ownerLookupHelper" class="org.pentaho.platform.repository.pcr.jcr.DefaultOwnerLookupHelper" />
 
   <bean class="org.pentaho.platform.repository.pcr.spring.RepositoryEventHandlerAuthenticationSuccessListener">
     <constructor-arg ref="repositoryService" />

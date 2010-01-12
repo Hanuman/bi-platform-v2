@@ -564,6 +564,10 @@ public class DefaultRepositoryServiceTest implements ApplicationContextAware {
     newFolder = repo.createFolder(parentFolder.getId(), newFolder);
     assertTrue(newFolder.isVersioned());
     assertNotNull(newFolder.getVersionId());
+    RepositoryFile newFolder2 = repo.createFolder(newFolder.getId(), new RepositoryFile.Builder("test2").folder(true).build());
+    RepositoryFile newFile = createSampleFile(newFolder2.getAbsolutePath(), "helloworld.sample", "sdfdf", false, 5);
+    repo.lockFile(newFile.getId(), "lock within versioned folder");
+    repo.unlockFile(newFile.getId());
   }
 
   @Test
@@ -644,6 +648,42 @@ public class DefaultRepositoryServiceTest implements ApplicationContextAware {
   }
 
   @Test
+  public void testUndeleteFile() throws Exception {
+    repo.getRepositoryEventHandler().onStartup();
+    login(USERNAME_SUZY, TENANT_ID_ACME);
+    final String parentFolderPath = RepositoryPaths.getTenantPublicFolderPath();
+    RepositoryFile parentFolder = repo.getFile(parentFolderPath);
+    final String fileName = "helloworld.sample";
+    RepositoryFile newFile = createSampleFile(parentFolderPath, fileName, "dfdfd", true, 3);
+
+    assertEquals(0, repo.getDeletedFiles().size());
+    repo.deleteFile(newFile.getId());
+    assertEquals(1, repo.getDeletedFiles(parentFolder.getId()).size());
+    assertEquals(newFile.getId(), repo.getDeletedFiles(parentFolder.getId()).get(0).getId());
+    assertEquals(1, repo.getDeletedFiles().size());
+    assertEquals(newFile, repo.getDeletedFiles().get(0));
+
+    login(USERNAME_TIFFANY, TENANT_ID_ACME);
+    // tiffany shouldn't see suzy's deleted file
+    assertEquals(0, repo.getDeletedFiles(parentFolder.getId()).size());
+    assertEquals(0, repo.getDeletedFiles().size());
+
+    login(USERNAME_SUZY, TENANT_ID_ACME);
+    repo.undeleteFile(newFile.getId());
+    assertEquals(0, repo.getDeletedFiles(parentFolder.getId()).size());
+    assertEquals(0, repo.getDeletedFiles().size());
+    
+    repo.deleteFile(newFile.getId());
+    repo.permanentlyDeleteFile(newFile.getId());
+    try {
+      repo.undeleteFile(newFile.getId());
+      fail();
+    } catch (Exception e) {
+        
+    }
+  }
+
+  @Test
   public void testDeleteLockedFile() throws Exception {
     repo.getRepositoryEventHandler().onStartup();
     login(USERNAME_SUZY, TENANT_ID_ACME);
@@ -665,7 +705,13 @@ public class DefaultRepositoryServiceTest implements ApplicationContextAware {
     repo.lockFile(newFile.getId(), lockMessage);
 
     repo.deleteFile(newFile.getId());
-
+    // lock only removed when file is permanently deleted
+    assertNotNull(SimpleJcrTestUtils.getItem(testJcrTemplate, RepositoryPaths.getUserHomeFolderPath() + "/.lockTokens/"
+        + newFile.getId()));
+    repo.undeleteFile(newFile.getId());
+    repo.deleteFile(newFile.getId());
+    repo.permanentlyDeleteFile(newFile.getId());
+    
     // make sure lock token node has been removed
     assertNull(SimpleJcrTestUtils.getItem(testJcrTemplate, RepositoryPaths.getUserHomeFolderPath() + "/.lockTokens/"
         + newFile.getId()));

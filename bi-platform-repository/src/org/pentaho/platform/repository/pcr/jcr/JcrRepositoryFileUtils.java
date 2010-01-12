@@ -39,20 +39,19 @@ import org.springframework.util.StringUtils;
  */
 public class JcrRepositoryFileUtils {
   public static RepositoryFile getFileById(final Session session, final PentahoJcrConstants pentahoJcrConstants,
-      final IOwnerLookupHelper ownerLookupHelper, final Serializable fileId) throws RepositoryException, IOException {
+      final IOwnerLookupHelper ownerLookupHelper, final Serializable fileId) throws RepositoryException {
     Node fileNode = session.getNodeByUUID(fileId.toString());
     Assert.notNull(fileNode);
     return nodeToFile(session, pentahoJcrConstants, ownerLookupHelper, fileNode);
   }
 
   public static RepositoryFile nodeToFile(final Session session, final PentahoJcrConstants pentahoJcrConstants,
-      final IOwnerLookupHelper ownerLookupHelper, final Node node) throws RepositoryException, IOException {
+      final IOwnerLookupHelper ownerLookupHelper, final Node node) throws RepositoryException {
     return nodeToFile(session, pentahoJcrConstants, ownerLookupHelper, node, false);
   }
 
   public static RepositoryFile nodeToFile(final Session session, final PentahoJcrConstants pentahoJcrConstants,
-      final IOwnerLookupHelper ownerLookupHelper, final Node node, final boolean loadMaps) throws RepositoryException,
-      IOException {
+      final IOwnerLookupHelper ownerLookupHelper, final Node node, final boolean loadMaps) throws RepositoryException {
     Assert.isTrue(isSupportedNodeType(pentahoJcrConstants, node));
 
     Serializable id = null;
@@ -283,7 +282,7 @@ public class JcrRepositoryFileUtils {
   }
 
   public static Node createFolderNode(final Session session, final PentahoJcrConstants pentahoJcrConstants,
-      final Serializable parentFolderId, final RepositoryFile folder) throws RepositoryException, IOException {
+      final Serializable parentFolderId, final RepositoryFile folder) throws RepositoryException {
     Node parentFolderNode;
     if (parentFolderId != null) {
       parentFolderNode = session.getNodeByUUID(parentFolderId.toString());
@@ -307,7 +306,7 @@ public class JcrRepositoryFileUtils {
 
   public static Node createFileNode(final Session session, final PentahoJcrConstants pentahoJcrConstants,
       final Serializable parentFolderId, final RepositoryFile file, final IRepositoryFileData content,
-      final ITransformer<IRepositoryFileData> transformer) throws RepositoryException, IOException {
+      final ITransformer<IRepositoryFileData> transformer) throws RepositoryException {
 
     Node parentFolderNode;
     if (parentFolderId != null) {
@@ -346,7 +345,7 @@ public class JcrRepositoryFileUtils {
 
   public static Node updateFileNode(final Session session, final PentahoJcrConstants pentahoJcrConstants,
       final RepositoryFile file, final IRepositoryFileData content, final ITransformer<IRepositoryFileData> transformer)
-      throws RepositoryException, IOException {
+      throws RepositoryException {
 
     Node fileNode = session.getNodeByUUID(file.getId().toString());
     // guard against using a file retrieved from a more lenient session inside a more strict session
@@ -381,7 +380,7 @@ public class JcrRepositoryFileUtils {
 
   public static IRepositoryFileData getContent(final Session session, final PentahoJcrConstants pentahoJcrConstants,
       final Serializable fileId, final Serializable versionId, final ITransformer<IRepositoryFileData> transformer)
-      throws RepositoryException, IOException {
+      throws RepositoryException {
     Node fileNode = session.getNodeByUUID(fileId.toString());
     if (isVersioned(session, pentahoJcrConstants, fileNode)) {
       Version version = null;
@@ -398,7 +397,7 @@ public class JcrRepositoryFileUtils {
   }
 
   public static List<RepositoryFile> getChildren(final Session session, final PentahoJcrConstants pentahoJcrConstants,
-      final IOwnerLookupHelper ownerLookupHelper, final Serializable folderId) throws RepositoryException, IOException {
+      final IOwnerLookupHelper ownerLookupHelper, final Serializable folderId) throws RepositoryException {
     Node folderNode = session.getNodeByUUID(folderId.toString());
     Assert.isTrue(isPentahoFolder(pentahoJcrConstants, folderNode));
 
@@ -595,7 +594,22 @@ public class JcrRepositoryFileUtils {
   }
 
   public static void deleteFile(final Session session, final PentahoJcrConstants pentahoJcrConstants,
-      final Serializable fileId, final ILockTokenHelper lockTokenHelper) throws RepositoryException, IOException {
+      final Serializable fileId, final ILockTokenHelper lockTokenHelper) throws RepositoryException {
+    Node fileNode = session.getNodeByUUID(fileId.toString());
+    // guard against using a file retrieved from a more lenient session inside a more strict session
+    Assert.notNull(fileNode);
+    // technically, the node can be locked when it is deleted; however, we want to avoid an orphaned lock token; delete
+    // it first
+    if (fileNode.isLocked()) {
+      Lock lock = fileNode.getLock();
+      // don't need lock token anymore
+      lockTokenHelper.removeLockToken(session, pentahoJcrConstants, lock);
+    }
+    fileNode.remove();
+  }
+  
+  public static void permanentlyDeleteFile(final Session session, final PentahoJcrConstants pentahoJcrConstants,
+      final Serializable fileId, final ILockTokenHelper lockTokenHelper) throws RepositoryException {
     Node fileNode = session.getNodeByUUID(fileId.toString());
     // guard against using a file retrieved from a more lenient session inside a more strict session
     Assert.notNull(fileNode);
@@ -611,7 +625,7 @@ public class JcrRepositoryFileUtils {
 
   public static void lockFile(final Session session, final PentahoJcrConstants pentahoJcrConstants,
       final Serializable fileId, final String message, final ILockTokenHelper lockTokenHelper)
-      throws RepositoryException, IOException {
+      throws RepositoryException {
     // locks are always deep in this impl
     final boolean isDeep = true;
     // locks are always open-scoped since a session is short-lived and all work occurs in a transaction
@@ -625,18 +639,18 @@ public class JcrRepositoryFileUtils {
     lockTokenHelper.addLockToken(session, pentahoJcrConstants, lock);
 
     // add custom lock properties
-    checkoutNearestVersionableNodeIfNecessary(session, pentahoJcrConstants, fileNode);
     if (StringUtils.hasText(message)) {
       fileNode.setProperty(pentahoJcrConstants.getPHO_LOCKMESSAGE(), message);
     }
     fileNode.setProperty(pentahoJcrConstants.getPHO_LOCKDATE(), Calendar.getInstance());
-    session.save();
-    checkinNearestVersionableNodeIfNecessary(session, pentahoJcrConstants, fileNode, "[system] locked file with id="
-        + fileId);
   }
 
+  /**
+   * TODO mlowery see if Jackrabbit locking behavior can be overridden so that lock message and date can be "protected"
+   * properties--which wouldn't require checkouts
+   */
   public static void unlockFile(final Session session, final PentahoJcrConstants pentahoJcrConstants,
-      final Serializable fileId, final ILockTokenHelper lockTokenHelper) throws RepositoryException, IOException {
+      final Serializable fileId, final ILockTokenHelper lockTokenHelper) throws RepositoryException {
     Node fileNode = session.getNodeByUUID(fileId.toString());
     List<String> lockTokens = lockTokenHelper.getLockTokens(session, pentahoJcrConstants);
     for (String lockToken : lockTokens) {
@@ -647,24 +661,20 @@ public class JcrRepositoryFileUtils {
     lockTokenHelper.removeLockToken(session, pentahoJcrConstants, lock);
     fileNode.unlock();
     // remove custom lock properties
-    checkoutNearestVersionableNodeIfNecessary(session, pentahoJcrConstants, fileNode);
     if (fileNode.hasProperty(pentahoJcrConstants.getPHO_LOCKMESSAGE())) {
       fileNode.getProperty(pentahoJcrConstants.getPHO_LOCKMESSAGE()).remove();
     }
     fileNode.getProperty(pentahoJcrConstants.getPHO_LOCKDATE()).remove();
-    session.save();
-    checkinNearestVersionableNodeIfNecessary(session, pentahoJcrConstants, fileNode, "[system] unlocked file with id="
-        + fileId);
   }
 
   public static Object nodeIdToFile(final Session session, final PentahoJcrConstants pentahoJcrConstants,
-      final IOwnerLookupHelper ownerLookupHelper, final Serializable fileId) throws RepositoryException, IOException {
+      final IOwnerLookupHelper ownerLookupHelper, final Serializable fileId) throws RepositoryException {
     Node fileNode = session.getNodeByUUID(fileId.toString());
     return nodeToFile(session, pentahoJcrConstants, ownerLookupHelper, fileNode);
   }
 
   public static Object getVersionSummaries(final Session session, final PentahoJcrConstants pentahoJcrConstants,
-      final Serializable fileId) throws RepositoryException, IOException {
+      final Serializable fileId) throws RepositoryException {
     Node fileNode = session.getNodeByUUID(fileId.toString());
     VersionHistory versionHistory = fileNode.getVersionHistory();
     // get root version but don't include it in version summaries; from JSR-170 specification section 8.2.5:
@@ -704,7 +714,7 @@ public class JcrRepositoryFileUtils {
 
   public static RepositoryFile getFileAtVersion(final Session session, final PentahoJcrConstants pentahoJcrConstants,
       final IOwnerLookupHelper ownerLookupHelper, final Serializable fileId, final Serializable versionId)
-      throws RepositoryException, IOException {
+      throws RepositoryException {
     Node fileNode = session.getNodeByUUID(fileId.toString());
     Version version = fileNode.getVersionHistory().getVersion(versionId.toString());
     return nodeToFile(session, pentahoJcrConstants, ownerLookupHelper, getNodeAtVersion(pentahoJcrConstants, version));

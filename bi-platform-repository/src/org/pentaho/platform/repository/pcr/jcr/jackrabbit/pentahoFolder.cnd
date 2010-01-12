@@ -10,3 +10,5 @@ Pentaho folder node type.
 <pho_mix='http://www.pentaho.org/jcr/mix/1.0'>
 
 [pho_nt:pentahoFolder] > nt:folder, pho_nt:pentahoHierarchyNode
+  // pentahoInternalFolders are never versioned
+  + * (pho_nt:pentahoInternalFolder) ignore

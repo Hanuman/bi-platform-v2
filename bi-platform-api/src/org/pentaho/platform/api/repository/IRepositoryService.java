@@ -117,12 +117,37 @@ public interface IRepositoryService {
       final String... versionMessageAndLabel);
 
   /**
-   * Deletes a file or folder.
+   * Deletes a file in a recoverable manner.
    * 
-   * @param absPath file to delete
+   * @param fileId file id
    * @param versionMessageAndLabel optional version comment [0] and label [1]
    */
   void deleteFile(final Serializable fileId, final String... versionMessageAndLabel);
+
+  void undeleteFile(final Serializable fileId, final String... versionMessageAndLabel);
+  
+  /**
+   * Deletes a file in an unrecoverable manner.
+   * 
+   * @param fileId file id
+   * @param versionMessageAndLabel optional version comment [0] and label [1]
+   */
+  void permanentlyDeleteFile(final Serializable fileId, final String... versionMessageAndLabel);
+  
+  /**
+   * Gets all deleted files for the current user in this folder.
+   * 
+   * @param folderId folder id
+   * @return list of deleted files
+   */
+  List<RepositoryFile> getDeletedFiles(final Serializable folderId);
+  
+  /**
+   * Gets all deleted files for the current user. This is the "recycle bin" view.
+   * 
+   * @return list of deleted files
+   */
+  List<RepositoryFile> getDeletedFiles();
 
   // ~ Lock methods ====================================================================================================
 

@@ -38,6 +38,14 @@ public interface IRepositoryFileDao {
 
   void deleteFile(final Serializable fileId, final String... versionMessageAndLabel);
 
+  void undeleteFile(final Serializable fileId, final String... versionMessageAndLabel);
+  
+  void permanentlyDeleteFile(final Serializable fileId, final String... versionMessageAndLabel);
+  
+  List<RepositoryFile> getDeletedFiles(final Serializable folderId);
+  
+  List<RepositoryFile> getDeletedFiles();
+  
   void lockFile(final Serializable fileId, final String message);
 
   void unlockFile(final Serializable fileId);

@@ -1,10 +1,8 @@
 package org.pentaho.platform.repository.pcr.jcr;
 
-import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.jcr.Item;
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
@@ -13,14 +11,13 @@ import javax.jcr.lock.Lock;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.pentaho.platform.api.engine.IPentahoSession;
-import org.pentaho.platform.engine.core.system.PentahoSessionHolder;
-import org.springframework.util.Assert;
+import org.pentaho.platform.repository.pcr.RepositoryPaths;
 
 /**
  * Default implementation of {@link ILockTokenHelper}. If user {@code suzy} in tenant {@code acme} locks a file with 
  * UUID {@code abc} then this implementation will store the lock token {@code xyz} as 
- * {@code /pentaho/acme/home/suzy/.lockTokens/abc/xyz}.
+ * {@code /pentaho/acme/home/suzy/.lockTokens/abc/xyz}. It is assumed that {@code /pentaho/acme/home/suzy} is never 
+ * versioned! Putting lock token storage beneath the user's home folder provides access control.
  * 
  * @author mlowery
  */
@@ -29,9 +26,6 @@ public class DefaultLockTokenHelper implements ILockTokenHelper {
   // ~ Static fields/initializers ======================================================================================
 
   private static final Log logger = LogFactory.getLog(DefaultLockTokenHelper.class);
-
-  // TODO mlowery make this use RepositoryPaths
-  private final String PATTERN_USER_HOME_FOLDER_PATH = "/pentaho/{0}/home/{1}"; //$NON-NLS-1$
 
   private final String FOLDER_NAME_LOCK_TOKENS = ".lockTokens"; //$NON-NLS-1$
 
@@ -48,14 +42,10 @@ public class DefaultLockTokenHelper implements ILockTokenHelper {
   public void addLockToken(final Session session, final PentahoJcrConstants pentahoJcrConstants, final Lock lock)
       throws RepositoryException {
     Node lockTokensNode = getOrCreateLockTokensNode(session, pentahoJcrConstants);
-    JcrRepositoryFileUtils.checkoutNearestVersionableNodeIfNecessary(session, pentahoJcrConstants, lockTokensNode);
     Node newLockTokenNode = lockTokensNode.addNode(lock.getNode().getUUID(), pentahoJcrConstants
         .getPHO_NT_LOCKTOKENSTORAGE());
     newLockTokenNode.setProperty(pentahoJcrConstants.getPHO_LOCKEDNODEREF(), lock.getNode());
     newLockTokenNode.setProperty(pentahoJcrConstants.getPHO_LOCKTOKEN(), lock.getLockToken());
-    session.save();
-    JcrRepositoryFileUtils.checkinNearestVersionableNodeIfNecessary(session, pentahoJcrConstants, lockTokensNode,
-        "[system] added lock token");
   }
 
   public List<String> getLockTokens(final Session session, final PentahoJcrConstants pentahoJcrConstants)
@@ -73,48 +63,25 @@ public class DefaultLockTokenHelper implements ILockTokenHelper {
       throws RepositoryException {
     Node lockTokensNode = getOrCreateLockTokensNode(session, pentahoJcrConstants);
     NodeIterator nodes = lockTokensNode.getNodes();
-    JcrRepositoryFileUtils.checkoutNearestVersionableNodeIfNecessary(session, pentahoJcrConstants, lockTokensNode);
     while (nodes.hasNext()) {
       Node node = nodes.nextNode();
       if (node.getName().equals(lock.getNode().getUUID())) {
         node.remove();
       }
     }
-    session.save();
-    JcrRepositoryFileUtils.checkinNearestVersionableNodeIfNecessary(session, pentahoJcrConstants, lockTokensNode,
-        "[system] removed lock token");
-  }
-
-  private String internalGetTenantId() {
-    IPentahoSession pentahoSession = PentahoSessionHolder.getSession();
-    Assert.state(pentahoSession != null, "this method cannot be called with a null IPentahoSession");
-    return (String) pentahoSession.getAttribute(IPentahoSession.TENANT_ID_KEY);
-  }
-
-  private String internalGetUsername() {
-    IPentahoSession pentahoSession = PentahoSessionHolder.getSession();
-    Assert.state(pentahoSession != null, "this method cannot be called with a null IPentahoSession");
-    return pentahoSession.getName();
   }
 
   private Node getOrCreateLockTokensNode(final Session session, final PentahoJcrConstants pentahoJcrConstants)
       throws RepositoryException {
-    String tenantId = internalGetTenantId();
-    String username = internalGetUsername();
-    Item item = session.getItem(MessageFormat.format(PATTERN_USER_HOME_FOLDER_PATH, tenantId, username));
-    Assert.isTrue(item.isNode());
-    Node userHomeFolderNode = (Node) item;
+    Node userHomeFolderNode = (Node) session.getItem(RepositoryPaths.getUserHomeFolderPath());
+
     if (userHomeFolderNode.hasNode(FOLDER_NAME_LOCK_TOKENS)) {
       return userHomeFolderNode.getNode(FOLDER_NAME_LOCK_TOKENS);
     } else {
-      JcrRepositoryFileUtils
-          .checkoutNearestVersionableNodeIfNecessary(session, pentahoJcrConstants, userHomeFolderNode);
       Node lockTokensNode = userHomeFolderNode.addNode(FOLDER_NAME_LOCK_TOKENS, pentahoJcrConstants
           .getPHO_NT_INTERNALFOLDER());
-      session.save();
-      JcrRepositoryFileUtils.checkinNearestVersionableNodeIfNecessary(session, pentahoJcrConstants, userHomeFolderNode,
-          "[system] created .lockTokens folder");
       return lockTokensNode;
     }
   }
+
 }

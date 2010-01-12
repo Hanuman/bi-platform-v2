@@ -209,6 +209,37 @@ public class DefaultRepositoryService implements IRepositoryService {
   /**
    * {@inheritDoc}
    */
+  public synchronized List<RepositoryFile> getDeletedFiles(final Serializable folderId) {
+    Assert.notNull(folderId);
+    return repositoryFileDao.getDeletedFiles(folderId);
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  public synchronized List<RepositoryFile> getDeletedFiles() {
+    return repositoryFileDao.getDeletedFiles();
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  public synchronized void permanentlyDeleteFile(final Serializable fileId, final String... versionMessageAndLabel) {
+    Assert.notNull(fileId);
+    repositoryFileDao.permanentlyDeleteFile(fileId, versionMessageAndLabel);
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  public synchronized void undeleteFile(final Serializable fileId, final String... versionMessageAndLabel) {
+    Assert.notNull(fileId);
+    repositoryFileDao.undeleteFile(fileId, versionMessageAndLabel);
+  }
+
+  /**
+   * {@inheritDoc}
+   */
   public synchronized RepositoryFileAcl getAcl(final Serializable fileId) {
     Assert.notNull(fileId);
     return repositoryFileAclDao.readAclById(fileId);

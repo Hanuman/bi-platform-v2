@@ -46,7 +46,7 @@ public class SimpleRepositoryFileDataTransformer implements ITransformer<SimpleR
    * {@inheritDoc}
    */
   public void createContentNode(final Session session, final PentahoJcrConstants pentahoJcrConstants,
-      final SimpleRepositoryFileData data, final Node fileNode) throws RepositoryException, IOException {
+      final SimpleRepositoryFileData data, final Node fileNode) throws RepositoryException {
 
     Node resourceNode = fileNode.addNode(pentahoJcrConstants.getJCR_CONTENT(), pentahoJcrConstants.getNT_RESOURCE());
 
@@ -65,7 +65,7 @@ public class SimpleRepositoryFileDataTransformer implements ITransformer<SimpleR
    * {@inheritDoc}
    */
   public SimpleRepositoryFileData fromContentNode(final Session session, final PentahoJcrConstants pentahoJcrConstants,
-      final Node fileNode) throws RepositoryException, IOException {
+      final Node fileNode) throws RepositoryException {
     String encoding = null;
     Node resourceNode = fileNode.getNode(pentahoJcrConstants.getJCR_CONTENT());
     if (resourceNode.hasProperty(pentahoJcrConstants.getJCR_ENCODING())) {
@@ -80,7 +80,7 @@ public class SimpleRepositoryFileDataTransformer implements ITransformer<SimpleR
    * {@inheritDoc}
    */
   public void updateContentNode(final Session session, final PentahoJcrConstants pentahoJcrConstants,
-      final SimpleRepositoryFileData data, final Node fileNode) throws RepositoryException, IOException {
+      final SimpleRepositoryFileData data, final Node fileNode) throws RepositoryException {
     Node resourceNode = fileNode.getNode(pentahoJcrConstants.getJCR_CONTENT());
 
     // mandatory property on nt:resource; give them a value to satisfy Jackrabbit
