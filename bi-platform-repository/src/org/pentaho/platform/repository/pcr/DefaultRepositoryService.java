@@ -264,6 +264,15 @@ public class DefaultRepositoryService implements IRepositoryService {
   /**
    * {@inheritDoc}
    */
+  public synchronized VersionSummary getVersionSummary(Serializable fileId, Serializable versionId) {
+    Assert.notNull(fileId);
+    Assert.notNull(versionId);
+    return repositoryFileDao.getVersionSummary(fileId, versionId);
+  }
+  
+  /**
+   * {@inheritDoc}
+   */
   public synchronized List<VersionSummary> getVersionSummaries(final Serializable fileId) {
     Assert.notNull(fileId);
     return repositoryFileDao.getVersionSummaries(fileId);

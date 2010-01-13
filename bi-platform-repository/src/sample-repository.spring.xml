@@ -40,6 +40,7 @@
         org.pentaho.platform.api.repository.IRepositoryService.updateAcl=PROPAGATION_REQUIRED
         org.pentaho.platform.api.repository.IRepositoryService.lockFile=PROPAGATION_REQUIRED
         org.pentaho.platform.api.repository.IRepositoryService.unlockFile=PROPAGATION_REQUIRED
+        org.pentaho.platform.api.repository.IRepositoryService.getVersionSummary=PROPAGATION_REQUIRED,readOnly
         org.pentaho.platform.api.repository.IRepositoryService.getVersionSummaries=PROPAGATION_REQUIRED,readOnly
         org.pentaho.platform.api.repository.IRepositoryService.deleteFile=PROPAGATION_REQUIRED
         org.pentaho.platform.api.repository.IRepositoryService.undeleteFile=PROPAGATION_REQUIRED
@@ -140,6 +141,7 @@
         org.pentaho.platform.api.repository.IRepositoryService.updateAcl=VOTE_ROLE_FILE_Authenticated
         org.pentaho.platform.api.repository.IRepositoryService.lockFile=VOTE_ROLE_FILE_Authenticated
         org.pentaho.platform.api.repository.IRepositoryService.unlockFile=VOTE_ROLE_FILE_Authenticated
+        org.pentaho.platform.api.repository.IRepositoryService.getVersionSummary=VOTE_ROLE_FILE_Authenticated
         org.pentaho.platform.api.repository.IRepositoryService.getVersionSummaries=VOTE_ROLE_FILE_Authenticated
         org.pentaho.platform.api.repository.IRepositoryService.deleteFile=VOTE_ROLE_FILE_Authenticated
         org.pentaho.platform.api.repository.IRepositoryService.undeleteFile=VOTE_ROLE_FILE_Authenticated

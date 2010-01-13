@@ -759,6 +759,27 @@ public class DefaultRepositoryServiceTest implements ApplicationContextAware {
   }
 
   @Test
+  public void testGetVersionSummary() throws Exception {
+    repo.getRepositoryEventHandler().onStartup();
+    login(USERNAME_SUZY, TENANT_ID_ACME);
+
+    final String parentFolderPath = RepositoryPaths.getUserHomeFolderPath();
+    final String fileName = "helloworld.sample";
+
+    final String origSampleString = "Hello World!";
+    final boolean origSampleBoolean = false;
+    final int origSampleInteger = 1024;
+
+    RepositoryFile newFile = createSampleFile(parentFolderPath, fileName, origSampleString, origSampleBoolean,
+        origSampleInteger, true);
+
+    VersionSummary v1 = repo.getVersionSummary(newFile.getId(), newFile.getVersionId());
+    assertNotNull(v1);
+    assertEquals(USERNAME_SUZY, v1.getAuthor());
+    assertEquals(new Date().getDate(), v1.getDate().getDate());
+  }
+  
+  @Test
   public void testGetFileByVersionSummary() throws Exception {
     repo.getRepositoryEventHandler().onStartup();
     login(USERNAME_SUZY, TENANT_ID_ACME);

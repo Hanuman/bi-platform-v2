@@ -212,6 +212,15 @@ public interface IRepositoryService {
   // ~ Version methods =================================================================================================
 
   /**
+   * Returns a version summary for the given file id and version id.
+   * 
+   * @param fileId file id
+   * @param versionId version id
+   * @return version summary
+   */
+  VersionSummary getVersionSummary(Serializable fileId, Serializable versionId);
+  
+  /**
    * Returns a list of version summary instances. The first version in the list is the root version. The last version
    * in the list is the base version. Branching and merging are not supported so this is a simple list.
    * 
@@ -219,7 +228,7 @@ public interface IRepositoryService {
    * @return list of version summaries (never {@code null})
    */
   List<VersionSummary> getVersionSummaries(final Serializable fileId);
-
+  
   /**
    * Gets file as it was at the given version. Use this method to test for file existence too.
    * 
@@ -286,4 +295,5 @@ public interface IRepositoryService {
      */
     void onNewUser();
   }
+
 }

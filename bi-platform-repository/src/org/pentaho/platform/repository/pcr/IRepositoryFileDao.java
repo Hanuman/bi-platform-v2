@@ -52,6 +52,8 @@ public interface IRepositoryFileDao {
 
   List<VersionSummary> getVersionSummaries(final Serializable fileId);
   
+  VersionSummary getVersionSummary(final Serializable fileId, final Serializable versionId);
+  
   RepositoryFile getFile(final Serializable fileId, final Serializable versionId);
   
   void moveFile(final Serializable fileId, final String destAbsPath, final String... versionMessageAndLabel);

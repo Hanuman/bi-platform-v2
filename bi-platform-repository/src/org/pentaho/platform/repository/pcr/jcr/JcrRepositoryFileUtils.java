@@ -452,8 +452,8 @@ public class JcrRepositoryFileUtils {
     return locked;
   }
 
-  public static boolean isPentahoFile(final PentahoJcrConstants pentahoJcrConstants,
-      final Node node) throws RepositoryException {
+  public static boolean isPentahoFile(final PentahoJcrConstants pentahoJcrConstants, final Node node)
+      throws RepositoryException {
     Assert.notNull(node);
     if (node.isNodeType(pentahoJcrConstants.getNT_FROZENNODE())) {
       String primaryTypeName = node.getProperty(pentahoJcrConstants.getJCR_FROZENPRIMARYTYPE()).getString();
@@ -607,7 +607,7 @@ public class JcrRepositoryFileUtils {
     }
     fileNode.remove();
   }
-  
+
   public static void permanentlyDeleteFile(final Session session, final PentahoJcrConstants pentahoJcrConstants,
       final Serializable fileId, final ILockTokenHelper lockTokenHelper) throws RepositoryException {
     Node fileNode = session.getNodeByUUID(fileId.toString());
@@ -686,19 +686,24 @@ public class JcrRepositoryFileUtils {
     List<VersionSummary> versionSummaries = new ArrayList<VersionSummary>();
     while (successors != null && successors.length > 0) {
       version = successors[0]; // branching not supported
-      List<String> labels = Arrays.asList(versionHistory.getVersionLabels(version));
-      // get custom Pentaho properties (i.e. author and message)
-      Node nodeAtVersion = getNodeAtVersion(pentahoJcrConstants, version);
-      String author = nodeAtVersion.getProperty(pentahoJcrConstants.getPHO_VERSIONAUTHOR()).getString();
-      String message = null;
-      if (nodeAtVersion.hasProperty(pentahoJcrConstants.getPHO_VERSIONMESSAGE())) {
-        message = nodeAtVersion.getProperty(pentahoJcrConstants.getPHO_VERSIONMESSAGE()).getString();
-      }
-      versionSummaries.add(new VersionSummary(version.getName(), versionHistory.getVersionableUUID(), version
-          .getCreated().getTime(), author, message, labels));
+      versionSummaries.add(toVersionSummary(pentahoJcrConstants, versionHistory, version));
       successors = version.getSuccessors();
     }
     return versionSummaries;
+  }
+
+  private static VersionSummary toVersionSummary(final PentahoJcrConstants pentahoJcrConstants,
+      final VersionHistory versionHistory, final Version version) throws RepositoryException {
+    List<String> labels = Arrays.asList(versionHistory.getVersionLabels(version));
+    // get custom Pentaho properties (i.e. author and message)
+    Node nodeAtVersion = getNodeAtVersion(pentahoJcrConstants, version);
+    String author = nodeAtVersion.getProperty(pentahoJcrConstants.getPHO_VERSIONAUTHOR()).getString();
+    String message = null;
+    if (nodeAtVersion.hasProperty(pentahoJcrConstants.getPHO_VERSIONMESSAGE())) {
+      message = nodeAtVersion.getProperty(pentahoJcrConstants.getPHO_VERSIONMESSAGE()).getString();
+    }
+    return new VersionSummary(version.getName(), versionHistory.getVersionableUUID(), version.getCreated().getTime(),
+        author, message, labels);
   }
 
   /**
@@ -743,5 +748,13 @@ public class JcrRepositoryFileUtils {
   public static Serializable getParentId(final Session session, final Serializable fileId) throws RepositoryException {
     Node node = session.getNodeByUUID(fileId.toString());
     return node.getParent().getUUID();
+  }
+
+  public static Object getVersionSummary(final Session session, final PentahoJcrConstants pentahoJcrConstants,
+      final Serializable fileId, final Serializable versionId) throws RepositoryException {
+    Node fileNode = session.getNodeByUUID(fileId.toString());
+    VersionHistory versionHistory = fileNode.getVersionHistory();
+    Version version = versionHistory.getVersion(versionId.toString());
+    return toVersionSummary(pentahoJcrConstants, versionHistory, version);
   }
 }
