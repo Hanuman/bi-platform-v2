@@ -20,7 +20,7 @@
  */
 package org.pentaho.commons.util.repository.type;
 
-public class PropertiesBase {
+public abstract class PropertiesBase {
 
   public static final String OBJECTID="ObjectId"; //$NON-NLS-1$
   public static final String URI="Uri"; //$NON-NLS-1$
@@ -36,4 +36,5 @@ public class PropertiesBase {
   public PropertiesBase( String name ) {
     this.name = name;
   }
+  
 }

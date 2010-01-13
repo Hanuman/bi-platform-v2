@@ -34,11 +34,10 @@ public class PropertyInteger extends CmisProperty {
   }
   
   @Override
-  public Object getValue() {
+  public Integer getValue() {
     return value;
   }
 
-  @Override
   public void setValue(Object value) {
     this.value = (Integer) value;
   }

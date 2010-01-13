@@ -36,11 +36,10 @@ public class PropertyDateTime extends CmisProperty {
   }
   
   @Override
-  public Object getValue() {
+  public Calendar getValue() {
     return value;
   }
 
-  @Override
   public void setValue(Object value) {
     this.value = (Calendar)value;
   }

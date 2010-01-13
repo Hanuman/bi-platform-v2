@@ -20,16 +20,10 @@
  */
 package org.pentaho.commons.util.repository.type;
 
-public class FailedToDelete {
+public interface CmisEnum {
 
-  private String objectId;
-
-  public String getObjectId() {
-    return objectId;
-  }
-
-  public void setObjectId(String objectId) {
-    this.objectId = objectId;
-  }
+  public String getValue();
+  
+  public void setValue( String name );
   
 }

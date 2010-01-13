@@ -1,61 +1,3 @@
-package org.pentaho.commons.util.repository.type;
-
-public class ContentStream {
-
-  private int length;
-  
-  private String mimeType;
-  
-  private String filename;
-  
-  private String uri;
-  
-  private String stream;
-
-  public int getLength() {
-    return length;
-  }
-
-  public void setLength(int length) {
-    this.length = length;
-  }
-
-  public String getMimeType() {
-    return mimeType;
-  }
-
-  public void setMimeType(String mimeType) {
-    this.mimeType = mimeType;
-  }
-
-  public String getFilename() {
-    return filename;
-  }
-
-  public void setFilename(String filename) {
-    this.filename = filename;
-  }
-
-  public String getUri() {
-    return uri;
-  }
-
-  public void setUri(String uri) {
-    this.uri = uri;
-  }
-
-  public String getStream() {
-    return stream;
-  }
-
-  public void setStream(String stream) {
-    this.stream = stream;
-  }
-
-  public void encodeBytes( byte[] bytes ) {
-    // TODO Base64 encode this
-  }
-
   /*
    * This program is free software; you can redistribute it and/or modify it under the 
    * terms of the GNU Lesser General Public License, version 2.1 as published by the Free Software 
@@ -76,9 +18,32 @@ public class ContentStream {
    * @author James Dixon
    * 
    */
-  public byte[] decodeBytes() {
-    // TODO convert Base64 stream into a byte array
-    return null;
-  }
+package org.pentaho.commons.util.repository.type;
+
+public interface ContentStream {
+
+  public int getLength();
+
+  public void setLength(int length);
+
+  public String getMimeType();
+
+  public void setMimeType(String mimeType);
+
+  public String getFilename();
+
+  public void setFilename(String filename);
+
+  public String getUri();
+
+  public void setUri(String uri);
+
+  public String getStream();
+
+  public void setStream(String stream);
+
+  public void base64EncodeBytes( byte[] bytes );
+
+  public byte[] decodeBase64Stream();
   
 }

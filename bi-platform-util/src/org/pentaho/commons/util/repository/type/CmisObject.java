@@ -24,7 +24,7 @@ import java.math.BigDecimal;
 import java.util.Calendar;
 import java.util.List;
 
-public class CmisObject {
+public interface CmisObject {
 
   public static final String OBJECT_TYPE_FOLDER = "Folder"; //$NON-NLS-1$
   
@@ -33,93 +33,39 @@ public class CmisObject {
   public static final String NAME = "Name";  //$NON-NLS-1$
   
   public static final String VISIBLE = "Visible";  //$NON-NLS-1$
-  
-  private CmisProperties properties;
-  
-  private AllowableActions allowableActions;
-  
-  private List<CmisObject> relationship;
-  
-  private List<CmisObject> child;
 
-  public CmisProperties getProperties() {
-    return properties;
-  }
+  public CmisProperties getProperties();
 
-  public void setProperties(CmisProperties properties) {
-    this.properties = properties;
-  }
+  public void setProperties(CmisProperties properties);
 
-  public AllowableActions getAllowableActions() {
-    return allowableActions;
-  }
+  public AllowableActions getAllowableActions();
 
-  public void setAllowableActions(AllowableActions allowableActions) {
-    this.allowableActions = allowableActions;
-  }
+  public void setAllowableActions(AllowableActions allowableActions);
 
-  public List<CmisObject> getRelationship() {
-    return relationship;
-  }
+  public List<CmisObject> getRelationship();
 
-  public void setRelationship(List<CmisObject> relationship) {
-    this.relationship = relationship;
-  }
+  public void setRelationship(List<CmisObject> relationship);
 
-  public List<CmisObject> getChild() {
-    return child;
-  }
+  public List<CmisObject> getChild();
 
-  public void setChild(List<CmisObject> child) {
-    this.child = child;
-  }
+  public void setChild(List<CmisObject> child);
   
-  public String findStringProperty( String name ) {
-    return (String) findProperty( name, new PropertyType(PropertyType.STRING) ).getValue();
-  }
+  public String findStringProperty( String name, String defaultValue );
   
-  public Boolean findBooleanProperty( String name ) {
-    return (Boolean) findProperty( name, new PropertyType(PropertyType.BOOLEAN) ).getValue();
-  }
+  public Boolean findBooleanProperty( String name, boolean defaultValue );
   
-  public Calendar findDateTimeProperty( String name ) {
-    return (Calendar) findProperty( name, new PropertyType(PropertyType.DATETIME) ).getValue();
-  }
+  public Calendar findDateTimeProperty( String name, Calendar defaultValue );
   
-  public BigDecimal findDecimalProperty( String name ) {
-    return (BigDecimal) findProperty( name, new PropertyType(PropertyType.DECIMAL) ).getValue();
-  }
+  public BigDecimal findDecimalProperty( String name, BigDecimal defaultValue );
   
-  public String findHtmlProperty( String name ) {
-    return (String) findProperty( name, new PropertyType(PropertyType.HTML) ).getValue();
-  }
+  public String findHtmlProperty( String name, String defaultValue );
   
-  public String findIdProperty( String name ) {
-    return (String) findProperty( name, new PropertyType(PropertyType.ID) ).getValue();
-  }
+  public String findIdProperty( String name, String defaultValue );
   
-  public Integer findIntegerProperty( String name ) {
-    return (Integer) findProperty( name, new PropertyType(PropertyType.INTEGER) ).getValue();
-  }
+  public Integer findIntegerProperty( String name, Integer defaultValue );
   
-  public String findUriProperty( String name ) {
-    return (String) findProperty( name, new PropertyType(PropertyType.URI) ).getValue();
-  }
+  public String findUriProperty( String name, String defaultValue );
   
-  public String findXmlProperty( String name ) {
-    return (String) findProperty( name, new PropertyType(PropertyType.XML) ).getValue();
-  }
-  
-
-  
-  private CmisProperty findProperty( String name, PropertyType type ) {
-    if( properties != null ) {
-      for( CmisProperty aProperty : properties.getProperties() ) {
-        if( aProperty.getName().equals(name) && aProperty.getPropertyType().getType().equals( type.getType() ) )
-          return aProperty;
-      }
-    }
-    return null;
-  }
-  
+  public String findXmlProperty( String name, String defaultValue );
+    
 }

@@ -38,13 +38,12 @@ public class PropertyString extends CmisProperty {
   }
   
   @Override
-  public Object getValue() {
+  public String getValue() {
     return value;
   }
 
-  @Override
-  public void setValue(Object value) {
-    this.value = (String) value;
+  public void setValue(String value) {
+    this.value = value;
   }
 
 }

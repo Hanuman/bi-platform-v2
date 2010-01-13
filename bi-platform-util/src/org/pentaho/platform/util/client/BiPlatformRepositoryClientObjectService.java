@@ -38,7 +38,6 @@ import org.pentaho.commons.util.repository.type.AllowableActions;
 import org.pentaho.commons.util.repository.type.CmisObject;
 import org.pentaho.commons.util.repository.type.CmisProperties;
 import org.pentaho.commons.util.repository.type.ContentStream;
-import org.pentaho.commons.util.repository.type.FailedToDelete;
 import org.pentaho.commons.util.repository.type.ReturnVersion;
 import org.pentaho.commons.util.repository.type.UnfileNonfolderObjects;
 import org.pentaho.commons.util.repository.type.VersioningState;
@@ -86,7 +85,7 @@ public class BiPlatformRepositoryClientObjectService implements IObjectService {
     throw new OperationNotSupportedException();
   }
 
-  public List<FailedToDelete> deleteTree(String arg0, String arg1, UnfileNonfolderObjects arg2, boolean arg3)
+  public List<String> deleteTree(String arg0, String arg1, UnfileNonfolderObjects arg2, boolean arg3)
       throws OperationNotSupportedException {
 
     throw new OperationNotSupportedException();

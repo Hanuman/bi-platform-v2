@@ -36,11 +36,10 @@ public class PropertyDecimal extends CmisProperty {
   }
   
   @Override
-  public Object getValue() {
+  public BigDecimal getValue() {
     return value;
   }
 
-  @Override
   public void setValue(Object value) {
     this.value = (BigDecimal)value;
   }

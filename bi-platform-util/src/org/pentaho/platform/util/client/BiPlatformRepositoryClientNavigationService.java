@@ -30,6 +30,7 @@ import java.util.StringTokenizer;
 import org.dom4j.Attribute;
 import org.dom4j.Document;
 import org.dom4j.Element;
+import org.pentaho.commons.util.repository.GetCheckedoutDocsResponse;
 import org.pentaho.commons.util.repository.INavigationService;
 import org.pentaho.commons.util.repository.exception.ConstraintViolationException;
 import org.pentaho.commons.util.repository.exception.FilterNotValidException;
@@ -41,6 +42,7 @@ import org.pentaho.commons.util.repository.exception.PermissionDeniedException;
 import org.pentaho.commons.util.repository.exception.RuntimeException;
 import org.pentaho.commons.util.repository.exception.UpdateConflictException;
 import org.pentaho.commons.util.repository.type.CmisObject;
+import org.pentaho.commons.util.repository.type.CmisObjectImpl;
 import org.pentaho.commons.util.repository.type.CmisProperties;
 import org.pentaho.commons.util.repository.type.CmisProperty;
 import org.pentaho.commons.util.repository.type.PropertiesBase;
@@ -110,7 +112,7 @@ public class BiPlatformRepositoryClientNavigationService implements INavigationS
     
   private CmisObject createCmisObjectFromElement( Element element, int depth ) {
     
-    CmisObject object = new CmisObject();
+    CmisObject object = new CmisObjectImpl();
     CmisProperties properties = new CmisProperties();
     List<CmisProperty> propList = properties.getProperties();
     
@@ -377,16 +379,16 @@ public class BiPlatformRepositoryClientNavigationService implements INavigationS
           ok = true;
         } 
         else if( TypesOfFileableObjects.FOLDERS.equals(type.getValue()) && 
-            CmisObject.OBJECT_TYPE_FOLDER.equals( object.findStringProperty(PropertiesBase.OBJECTTYPEID) ) ) {
+            CmisObject.OBJECT_TYPE_FOLDER.equals( object.findStringProperty(PropertiesBase.OBJECTTYPEID, null) ) ) {
           ok = true;
         }
         else if( TypesOfFileableObjects.DOCUMENTS.equals(type.getValue()) && 
-            !CmisObject.OBJECT_TYPE_FOLDER.equals( object.findStringProperty(PropertiesBase.OBJECTTYPEID) ) ) {
+            !CmisObject.OBJECT_TYPE_FOLDER.equals( object.findStringProperty(PropertiesBase.OBJECTTYPEID, null) ) ) {
           // TODO support policies
           ok = true;
         }
         if( ok && filters != null ) {
-          String objectType = object.findStringProperty(PropertiesBase.OBJECTTYPEID);
+          String objectType = object.findStringProperty(PropertiesBase.OBJECTTYPEID, null);
           if( !filters.contains( objectType ) ) {
             ok = false;
           }
@@ -409,7 +411,7 @@ public class BiPlatformRepositoryClientNavigationService implements INavigationS
           objects.add( object );
           // see if we have to recurse
         }
-        if( depth > 0 && level < depth && CmisObject.OBJECT_TYPE_FOLDER.equals( object.findStringProperty(PropertiesBase.OBJECTTYPEID) ) ) {
+        if( depth > 0 && level < depth && CmisObject.OBJECT_TYPE_FOLDER.equals( object.findStringProperty(PropertiesBase.OBJECTTYPEID, null) ) ) {
 
           addChildren(objects, (Element) element, type, filters, maxItems, skipCount, depth, level+1);
           
@@ -467,7 +469,7 @@ public class BiPlatformRepositoryClientNavigationService implements INavigationS
     }
     
     
-    public void getCheckedoutDocs(
+    public GetCheckedoutDocsResponse getCheckedoutDocs(
         String repositoryId,
         String folderId,
         String filter,
@@ -492,8 +494,8 @@ public class BiPlatformRepositoryClientNavigationService implements INavigationS
     public String getRepositoryPath( CmisObject object ) {
       
       // the id is the path and file name
-      String id = object.findIdProperty( PropertiesBase.OBJECTID );
-      String typeId = object.findStringProperty(PropertiesBase.OBJECTTYPEID);
+      String id = object.findIdProperty( PropertiesBase.OBJECTID, null );
+      String typeId = object.findStringProperty(PropertiesBase.OBJECTTYPEID, null);
       if( CmisObject.OBJECT_TYPE_FOLDER.equals( typeId ) ) {
         return id;
       } else {
@@ -508,11 +510,11 @@ public class BiPlatformRepositoryClientNavigationService implements INavigationS
 
     public String getRepositoryFilename( CmisObject object ) {
       
-      String typeId = object.findStringProperty(PropertiesBase.OBJECTTYPEID);
+      String typeId = object.findStringProperty(PropertiesBase.OBJECTTYPEID, null);
       if( CmisObject.OBJECT_TYPE_FOLDER.equals( typeId ) ) {
         return ""; //$NON-NLS-1$
       } else {
-        String name = object.findStringProperty(CmisObject.NAME);
+        String name = object.findStringProperty(CmisObject.NAME, null);
         return name;
       }
     }

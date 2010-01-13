@@ -26,10 +26,6 @@ public abstract class CmisProperty {
   
   private PropertyType propertyType;
   
-  public abstract Object getValue();
-  
-  public abstract void setValue( Object value );
-
   public CmisProperty( String name, PropertyType propertyType ) {
     setName( name );
     setPropertyType(propertyType);
@@ -51,4 +47,6 @@ public abstract class CmisProperty {
     this.propertyType = propertyType;
   }
     
+  public abstract <T> T getValue();
+
 }
