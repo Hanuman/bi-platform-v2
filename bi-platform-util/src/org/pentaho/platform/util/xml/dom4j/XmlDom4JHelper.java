@@ -16,19 +16,19 @@
  */
 package org.pentaho.platform.util.xml.dom4j;
 
+import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.StringWriter;
 import java.io.UnsupportedEncodingException;
 import java.io.Writer;
-import java.nio.charset.Charset;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
@@ -47,11 +47,15 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.dom4j.Document;
 import org.dom4j.DocumentException;
+import org.dom4j.DocumentHelper;
+import org.dom4j.Element;
 import org.dom4j.Node;
+import org.dom4j.io.OutputFormat;
 import org.dom4j.io.SAXReader;
+import org.dom4j.io.XMLWriter;
+import org.dom4j.tree.DefaultElement;
 import org.pentaho.platform.api.util.XmlParseException;
 import org.pentaho.platform.util.messages.Messages;
-import org.pentaho.platform.util.xml.XmlHelper;
 import org.xml.sax.EntityResolver;
 
 // TODO sbarkdull, exernalize strings, comment methods
@@ -81,142 +85,46 @@ public class XmlDom4JHelper {
    * 
    * @param str
    *          String containing the XML that will be used to create the Document
-   * @param encoding
-   *          String specifying the character encoding. The encoding of the xml
-   *          String can be discovered by calling CleanXmlHelper.getEncoding().
    * @param resolver EntityResolver an instance of an EntityResolver that will resolve
    * any external URIs. See the docs on EntityResolver. null is an acceptable value.
    * @return <code>Document</code> initialized with the xml in
    *         <code>strXml</code>.
-   * @throws DocumentException
-   * @throws UnsupportedEncodingException
-   */
-  public static Document getDocFromString(final String strXml, final String encoding, final EntityResolver resolver) throws XmlParseException{
-    byte[] bytes = null;
-    Document document = null;
-    InputStream inStrm = null;
-    try {
-      if (null != encoding) {
-        bytes = strXml.getBytes(encoding);
-      } else {
-        // doh, we don't know the encoding, cross your fingers and hope for the best
-        bytes = strXml.getBytes();
-      }
-      inStrm = new ByteArrayInputStream(bytes);
-      document = XmlDom4JHelper.getDocFromStream(inStrm, encoding, resolver);
-    } catch (DocumentException e) {
-      throw  new XmlParseException(Messages.getInstance().getErrorString("XmlDom4JHelper.ERROR_0001_UNABLE_TO_GET_DOCUMENT_FROM_STRING"), e); //$NON-NLS-1$
-    } catch (UnsupportedEncodingException e) {
-      throw  new XmlParseException(Messages.getInstance().getErrorString("XmlDom4JHelper.ERROR_0002_UNSUPPORTED_ENCODING"), e); //$NON-NLS-1$
-    } finally {
-      XmlDom4JHelper.closeInputStream(inStrm);
-    }
-    return document;
-  }
-
-  /**
-   * Create a <code>Document</code> from <code>str</code>.
-   * 
-   * @param str
-   *          String containing the XML that will be used to create the Document
-   *          can be discovered by calling CleanXmlHelper.getEncoding().
-   * @param resolver EntityResolver an instance of an EntityResolver that will resolve
-   * any external URIs. See the docs on EntityResolver. null is an acceptable value.
-   * 
-   * @return <code>Document</code> initialized with the xml in
-   *         <code>strXml</code>.
-   * @throws DocumentException
+   * @throws XmlParseException
    */
   public static Document getDocFromString(final String strXml, final EntityResolver resolver) throws XmlParseException{
-    String encoding = XmlHelper.getEncoding(strXml);
-    return XmlDom4JHelper.getDocFromString(strXml, encoding, resolver);
-  }
-
-  /**
-   * Create a <code>Document</code> from the contents of a file.
-   * 
-   * @param path
-   *          String containing the path to the file containing XML that will be
-   *          used to create the Document.
-   * @param resolver EntityResolver an instance of an EntityResolver that will resolve
-   * any external URIs. See the docs on EntityResolver. null is an acceptable value.
-   * @return <code>Document</code> initialized with the xml in
-   *         <code>strXml</code>.
-   * @throws DocumentException
-   *           if the document isn't valid
-   * @throws IOException 
-   */
-  public static Document getDocFromFile(final String path, final EntityResolver resolver) throws DocumentException,
-      IOException {
-    File file = new File(path);
-    return XmlDom4JHelper.getDocFromFile(file, resolver);
-  }
-
-  /**
-   * Create a <code>Document</code> from the contents of a file.
-   * 
-   * @param path
-   *          String containing the path to the file containing XML that will be
-   *          used to create the Document.
-   * @param resolver EntityResolver an instance of an EntityResolver that will resolve
-   * any external URIs. See the docs on EntityResolver. null is an acceptable value.
-   * @return <code>Document</code> initialized with the xml in
-   *         <code>strXml</code>.
-   * @throws DocumentException
-   *           if the document isn't valid
-   * @throws IOException 
-   *           if the file doesn't exist
-   */
-  public static Document getDocFromFile(final File file, final EntityResolver resolver) throws DocumentException,
-      IOException {
-
-    InputStream fInStrm = null;
     Document document = null;
     try {
-      String encoding = XmlHelper.getEncoding(file);
-      fInStrm = new FileInputStream(file);
-      document = XmlDom4JHelper.getDocFromStream(fInStrm, encoding, resolver);
-    } finally {
-      XmlDom4JHelper.closeInputStream(fInStrm);
+      document = XmlDom4JHelper.getDocFromStream(new ByteArrayInputStream(strXml.getBytes()), resolver);
+    } catch (DocumentException e) {
+      throw  new XmlParseException(Messages.getInstance().getErrorString("XmlDom4JHelper.ERROR_0001_UNABLE_TO_GET_DOCUMENT_FROM_STRING"), e); //$NON-NLS-1$
+    } catch (IOException e) {
+      throw  new XmlParseException(Messages.getInstance().getErrorString("XmlDom4JHelper.ERROR_0002_UNSUPPORTED_ENCODING"), e); //$NON-NLS-1$
     }
     return document;
   }
 
+
   /**
-   * Create a <code>Document</code> from the contents of an input stream,
-   * where the input stream contains valid XML.
+   * Create a <code>Document</code> from the contents of a file.
    * 
-   * NOTE: the method Document getDocFromStream(InputStream inStream) should
-   * be preferred over this method since it examines the XML for the encoding
-   * specified in the processing instruction. This relieves the caller of the
-   * burden of discovering the encoding, but also assumes that the encoding
-   * in the XML is specified properly.
-   * 
-   * @param inStream InputStream
-   *          input stream to read the XML from
-   * @param encoding String the character encoding of the bytes in <param>inStream</param>. For instance: UTF-8
-   *          Can be null.
+   * @param path
+   *          String containing the path to the file containing XML that will be
+   *          used to create the Document.
    * @param resolver EntityResolver an instance of an EntityResolver that will resolve
    * any external URIs. See the docs on EntityResolver. null is an acceptable value.
    * @return <code>Document</code> initialized with the xml in
    *         <code>strXml</code>.
    * @throws DocumentException
    *           if the document isn't valid
-   * @throws FileNotFoundException
+   * @throws IOException 
    *           if the file doesn't exist
    */
-  private static Document getDocFromStream(final InputStream inStream, final String encoding,
-      final EntityResolver resolver) throws DocumentException {
-
-    SAXReader rdr = new SAXReader();
-    if (null != encoding) {
-      rdr.setEncoding(encoding);
+  public static Document getDocFromFile(final File file, final EntityResolver resolver) throws DocumentException, IOException {
+    SAXReader reader = new SAXReader();
+    if (resolver != null) {
+      reader.setEntityResolver(resolver);
     }
-    if (null != resolver) {
-      rdr.setEntityResolver(resolver);
-    }
-    Document document = rdr.read(inStream);
-    return document;
+    return reader.read(file);
   }
 
   /**
@@ -231,8 +139,11 @@ public class XmlDom4JHelper {
   public static Document getDocFromStream(final InputStream inStream, final EntityResolver resolver)
       throws DocumentException, IOException {
 
-    String encoding = XmlHelper.getEncoding(inStream);
-    return XmlDom4JHelper.getDocFromStream(inStream, encoding, resolver);
+    SAXReader reader = new SAXReader();
+    if (resolver != null) {
+      reader.setEntityResolver(resolver);
+    }
+    return reader.read(inStream);
   }
 
   /**
@@ -366,186 +277,24 @@ public class XmlDom4JHelper {
    * 
    * @param doc
    *          Document to be written
-   * @param filePath
-   *          path identifying the File that will be the output of the Document
+   * @param outputStream
+   *          the output stream
    * @param encoding
    *          String specifying the character encoding. Can be null, in which
    *          case the default encoding will be used. See
    *          http://java.sun.com/j2se/1.5.0/docs/api/java/io/OutputStreamWriter.html
    * @throws IOException
-   *           if unable to obtain a FileWriter on the specified file
    */
-  public static void saveDomToFile(final Document doc, final String filePath, final String encoding) throws IOException {
-    File file = new File(filePath);
-    XmlDom4JHelper.saveDomToFile(doc, file, encoding);
-  }
-
-  /**
-   * Write an XML document to a file using the specified character encoding.
-   * 
-   * @param doc
-   *          Document to be written
-   * @param file
-   *          File that will be the output of the Document
-   * @param encoding
-   *          String specifying the character encoding. Can be null, in which
-   *          case the default encoding will be used. See
-   *          http://java.sun.com/j2se/1.5.0/docs/api/java/io/OutputStreamWriter.html
-   * @throws IOException
-   *           if unable to obtain a FileWriter on the specified file
-   */
-  public static void saveDomToFile(final Document doc, final File file, final String encoding) throws IOException {
-    Writer fWriter = null;
-    if (null != encoding) {
-      fWriter = new OutputStreamWriter(new FileOutputStream(file), encoding);
-    } else {
-      fWriter = new OutputStreamWriter(new FileOutputStream(file));
+  public static void saveDom(final Document doc, final OutputStream outputStream, String encoding) throws IOException {
+    OutputFormat format = OutputFormat.createPrettyPrint();
+    if (encoding != null) {
+      doc.setXMLEncoding(encoding);
+      format.setEncoding(encoding);
     }
-    XmlDom4JHelper.saveDomToWriter(doc, fWriter);
-  }
-
-  public static void saveDomToWriter(final Document doc, final Writer writer) throws IOException {
-    writer.write(doc.asXML());
-  }
-
-  // TODO sbarkdull, move to junit test class
-  public static void main(final String[] args) {
-
-    String strXml = "<?xml version=\"1.0\" encoding=\"UTF-8\"?><root><b>first</b><b>second</b></root>"; //$NON-NLS-1$
-    try {
-      Document d = XmlDom4JHelper.getDocFromString(strXml, null);
-      String enc = d.getXMLEncoding();
-      System.out.println("encoding: " + enc); //$NON-NLS-1$
-    } catch (Exception e3) {
-      // TODO Auto-generated catch block
-      e3.printStackTrace();
-    }
-
-    String defaultEncoding = (new OutputStreamWriter(new ByteArrayOutputStream())).getEncoding();
-    Charset cs = Charset.defaultCharset();
-    System.out.println("default Char set: " + cs.name() + " " + defaultEncoding); //$NON-NLS-1$//$NON-NLS-2$
-
-    ByteArrayInputStream s = new ByteArrayInputStream(strXml.getBytes());
-    try {
-      // must be repeatable
-      for (int ii = 0; ii < 5; ++ii) {
-        String pi = XmlHelper.readEncodingProcessingInstruction(s);
-        String encoding = XmlHelper.getEncoding(pi);
-        System.out.println("encoding: " + encoding); //$NON-NLS-1$
-      }
-      s.close();
-    } catch (IOException e2) {
-      // TODO Auto-generated catch block
-      e2.printStackTrace();
-    }
-
-    try {
-      Document doc = XmlDom4JHelper.getDocFromString(strXml, null);
-      Node n = doc.selectSingleNode("/root/b[text()='first']"); //$NON-NLS-1$
-      System.out.println(n.getText());
-
-    } catch (Exception e1) {
-      // TODO Auto-generated catch block
-      e1.printStackTrace();
-      System.exit(1);
-    }
-
-    /*
-     char[] cbuf = new char[ BUFF_SIZE ];
-     File f = null;
-     Reader rdr = null;
-     try
-     {
-     f = new File( "C:\\projects\\pentaho1.6\\pentaho-solutions\\system\\pentaho.xml" );
-     rdr = new FileReader( f );
-     rdr.read(cbuf);
-     } catch (FileNotFoundException e) {
-     // TODO Auto-generated catch block
-     e.printStackTrace();
-     } catch (IOException e) {
-     // TODO Auto-generated catch block
-     e.printStackTrace();
-     }
-     finally
-     {
-     try {
-     rdr.close();
-     }catch( Exception ignore){}
-     }
-     String strEnc = String.valueOf( cbuf );
-     //strEnc = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<pentaho-system></pentaho-system>";
-     //strEnc = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n";
-     String re = ".*";
-     re = "<\\?xml.*encoding=('|\")([^'\"]*)\\1.*\\?>.*";
-     boolean b = strEnc.matches( re );
-     
-     Pattern p = Pattern.compile( re, Pattern.DOTALL );
-     Matcher m = p.matcher(strEnc);
-     boolean matches = m.matches();
-     for ( int ii=0; ii<=m.groupCount(); ++ii )
-     {
-     System.out.println( m.group( ii ) );
-     }
-     String enc = null;
-     try {
-     enc = getEncoding( f );
-     } catch (IOException e1) {
-     // TODO Auto-generated catch block
-     e1.printStackTrace();
-     }
-     */
-
-    String[] xmls = { "", //$NON-NLS-1$
-        "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<pentaho-system></pentaho-system>", //$NON-NLS-1$
-        "<?xml version=\"1.0\" encoding=\"windows-1252\"?>\n<root></root>", //$NON-NLS-1$
-        "<?xml encoding=\"UTF-8\" version=\"1.0\"?><root></root>", //$NON-NLS-1$
-        "<?xml encoding=\"UTF-8\" version='1.0'?><root></root>", //$NON-NLS-1$
-        "<?xml encoding='UTF-8' version=\"1.0\"?><root></root>", //$NON-NLS-1$
-        "<?xml encoding='UTF-8' version='1.0'?><root></root>", //$NON-NLS-1$
-        "<?xml encoding='UTF-8\" version='1.0'?><root></root>", //$NON-NLS-1$
-        "<?xml version=\"1.0\"?><root></root>", //$NON-NLS-1$
-        "bart simpson was here", //$NON-NLS-1$
-        "<root>encoding=bad</root>" //$NON-NLS-1$
-    };
-
-    for (String element : xmls) {
-      String enc = XmlHelper.getEncoding(element);
-      System.out.println("2xml: {0} enc: {1}" + element + " enc: " + enc); //$NON-NLS-1$ //$NON-NLS-2$
-      enc = ""; //$NON-NLS-1$
-    }
-
-    // performance test
-    final int numTries = 10000;
-    // big file
-    String nm = "C:\\projects\\pentaho\\pentaho-reportwizard\\samples\\data\\ClassicCars.xml"; //$NON-NLS-1$
-    nm = "C:\\projects\\pentaho1.6\\pentaho-solutions\\system\\pentaho.xml";//$NON-NLS-1$ 
-    // small file
-    // String nm = "C:\\projects\\pentaho\\my-solutions\\index.xml";
-    String xml = null;
-    try {
-      xml = XmlDom4JHelper.getDocFromFile(nm, null).asXML();
-    } catch (Exception e) {
-      // TODO Auto-generated catch block
-      e.printStackTrace();
-    }
-
-    // let's run a test to see if getEncoding is reasonably fast
-    long start0 = System.currentTimeMillis();
-    for (int ii = 0; ii < numTries; ++ii) {
-      XmlHelper.getEncoding(xml);
-    }
-    long end0 = System.currentTimeMillis();
-    System.out.println("time: " + (end0 - start0)); //$NON-NLS-1$
-
-    long start1 = System.currentTimeMillis();
-    for (int ii = 0; ii < numTries; ++ii) {
-      for (int jj = 0; jj < xml.length(); ++jj) {
-        xml.charAt(jj);
-      }
-    }
-    long end1 = System.currentTimeMillis();
-    System.out.println("time: " + (end1 - start1)); //$NON-NLS-1$
-    // end reasonably fast test
+    
+    XMLWriter writer = new XMLWriter(outputStream, format);
+    writer.write(doc);
+    writer.close();
   }
 
   /**
@@ -600,5 +349,5 @@ public class XmlDom4JHelper {
     }
     return node.getText();
   }
-
+  
 }

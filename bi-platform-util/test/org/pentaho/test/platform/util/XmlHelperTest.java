@@ -16,9 +16,13 @@
  */
 package org.pentaho.test.platform.util;
 
+import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -30,6 +34,10 @@ import junit.framework.TestCase;
 
 import org.apache.commons.lang.StringUtils;
 import org.dom4j.Document;
+import org.dom4j.DocumentException;
+import org.dom4j.DocumentHelper;
+import org.dom4j.Element;
+import org.dom4j.tree.DefaultElement;
 import org.pentaho.platform.util.JarEntityResolver;
 import org.pentaho.platform.util.messages.LocaleHelper;
 import org.pentaho.platform.util.xml.XmlHelper;
@@ -227,6 +235,18 @@ public class XmlHelperTest extends TestCase {
     }
   }
 
+  public void testEncoding() {
+    String unicodeElementText = new String(new char[] {'\uAA93', '\uAA94', '\uAA95'});
+    try {
+      doEncodingTest("rootElement", "hello", "UTF-8");
+      doEncodingTest("rootElement", "hello", "UTF-16");
+      doEncodingTest("rootElement", unicodeElementText, "UTF-8");
+      doEncodingTest("rootElement", unicodeElementText, "UTF-16");
+    } catch (Exception e) {
+      fail();
+    }
+  }
+  
   public void testFailureTransformXML3() {
     try {
       String parameterXsl = "DefaultParameterForm.xsl"; //$NON-NLS-1$
@@ -260,6 +280,41 @@ public class XmlHelperTest extends TestCase {
     }
   }
 
+  public void doEncodingTest(String rootElementName, String rootElementText, String encoding) throws IOException, DocumentException {
+    // Create the test document.
+    Element rootElement = new DefaultElement(rootElementName);
+    Document document = DocumentHelper.createDocument(rootElement);
+    rootElement.setText(rootElementText);
+        
+    // Write out the document to a byte array.
+    ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+    XmlDom4JHelper.saveDom(document, outputStream, encoding);
+    
+    // Read in the document from the byte array, and make sure it's decoded properly.
+    InputStream inputStream = new ByteArrayInputStream(outputStream.toByteArray());
+    
+    // Read in the XML string using a java reader and make sure the decoded string 
+    // contains the same strings as the encoded dom4j document.
+    BufferedReader in = new BufferedReader(new InputStreamReader(inputStream, encoding));
+    StringBuffer stringBuffer = new StringBuffer();
+    int intValue = in.read();
+    while (intValue != -1) {
+      stringBuffer.append((char)intValue);
+      intValue = in.read();
+    }
+    assertTrue(stringBuffer.toString().indexOf(rootElementName) != -1);
+    assertTrue(stringBuffer.toString().indexOf(rootElementText) != -1);
+    
+    inputStream.reset();
+    
+    // Read in the XML string using the dom4j api and make sure the decoded xml 
+    // contains the same strings as the original document.
+    document = XmlDom4JHelper.getDocFromStream(inputStream);
+    System.out.println(document.asXML());
+    assertEquals(rootElementName, document.getRootElement().getName());
+    assertEquals(rootElementText, document.getRootElement().getText());
+  }
+  
   public static void main(final String[] args) {
   }
 
