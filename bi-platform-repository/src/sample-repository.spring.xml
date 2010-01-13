@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd">
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:util="http://www.springframework.org/schema/util"
+  xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-2.0.xsd">
 
   <!-- An access decision voter that reads VOTE_ROLE_FILE_* configuration settings -->
   <bean id="roleVoter" class="org.pentaho.platform.engine.security.PentahoSubstringRoleVoter">
@@ -195,12 +195,7 @@
 
   <bean id="repositoryFileDao" class="org.pentaho.platform.repository.pcr.jcr.JcrRepositoryFileDao">
     <constructor-arg ref="jcrTemplate" />
-    <constructor-arg>
-      <list>
-        <bean class="org.pentaho.platform.repository.pcr.jcr.transform.SampleRepositoryFileDataTransformer" />
-        <bean class="org.pentaho.platform.repository.pcr.jcr.transform.SimpleRepositoryFileDataTransformer" />
-      </list>
-    </constructor-arg>
+    <constructor-arg ref="transformers" />
     <constructor-arg ref="ownerLookupHelper" />
     <constructor-arg ref="lockTokenHelper" />
     <constructor-arg>
@@ -210,6 +205,11 @@
       </bean>
     </constructor-arg>
   </bean>
+
+  <util:list id="transformers">
+    <bean class="org.pentaho.platform.repository.pcr.jcr.transform.SampleRepositoryFileDataTransformer" />
+    <bean class="org.pentaho.platform.repository.pcr.jcr.transform.SimpleRepositoryFileDataTransformer" />
+  </util:list>
 
   <bean id="lockTokenHelper" class="org.pentaho.platform.repository.pcr.jcr.DefaultLockTokenHelper" />
 
