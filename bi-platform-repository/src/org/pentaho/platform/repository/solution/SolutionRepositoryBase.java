@@ -516,20 +516,9 @@ public abstract class SolutionRepositoryBase extends PentahoMessenger implements
   }
 
   public Document getResourceAsDocument(final IActionSequenceResource actionResource, final int actionOperation) throws IOException {
-    // TODO support locales here
-
-    // figure out what the XML string says the encoding is
-    byte[] b = getResourceAsBytes(actionResource, true, actionOperation);
-    String tmpXml = new String(b);
-    String encoding = XmlHelper.getEncoding(tmpXml);
-    if (null == encoding) {
-      encoding = LocaleHelper.getSystemEncoding();
-    }
-    // now apply the correct encoding when we translate the bytes to a String
-    String xml = new String(b, encoding);
     Document document = null;
     try {
-      document = XmlDom4JHelper.getDocFromString(xml, loader);
+      document = XmlDom4JHelper.getDocFromStream(getResourceInputStream(actionResource, true, actionOperation), loader);
     } catch (Throwable t) {
       error(Messages.getInstance().getErrorString("SolutionRepository.ERROR_0009_INVALID_DOCUMENT", actionResource.getAddress()), t); //$NON-NLS-1$
       return null;

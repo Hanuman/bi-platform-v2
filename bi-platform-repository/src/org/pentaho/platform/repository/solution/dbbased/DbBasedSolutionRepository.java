@@ -11,6 +11,7 @@
  */
 package org.pentaho.platform.repository.solution.dbbased;
 
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -54,11 +55,11 @@ import org.pentaho.platform.api.repository.ISolutionRepository;
 import org.pentaho.platform.api.repository.ISubscriptionRepository;
 import org.pentaho.platform.api.repository.RepositoryException;
 import org.pentaho.platform.engine.core.system.PentahoSystem;
-import org.pentaho.platform.engine.security.SpringSecurityPermissionMgr;
 import org.pentaho.platform.engine.security.SecurityHelper;
 import org.pentaho.platform.engine.security.SimplePermissionMask;
 import org.pentaho.platform.engine.security.SimpleRole;
 import org.pentaho.platform.engine.security.SimpleSession;
+import org.pentaho.platform.engine.security.SpringSecurityPermissionMgr;
 import org.pentaho.platform.engine.services.actionsequence.SequenceDefinition;
 import org.pentaho.platform.engine.services.solution.SolutionReposHelper;
 import org.pentaho.platform.repository.hibernate.HibernateUtil;
@@ -168,7 +169,7 @@ public class DbBasedSolutionRepository extends SolutionRepositoryBase implements
     Document document = null;
     if (file.getData() != null) {
       try {
-        document = XmlDom4JHelper.getDocFromString(new String(file.getData()), this.getResourceLoader());
+        document = XmlDom4JHelper.getDocFromStream(new ByteArrayInputStream(file.getData()), this.getResourceLoader());
       } catch (Throwable t) {
         error(Messages.getInstance().getErrorString("SolutionRepository.ERROR_0017_INVALID_XML_DOCUMENT", documentPath), t); //$NON-NLS-1$
         return null;
