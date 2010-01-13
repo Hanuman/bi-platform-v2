@@ -49,6 +49,8 @@ public abstract class AbstractAxisConfigurator extends PentahoBase implements Ax
 
   public abstract Log getLogger();
   
+  public abstract void addService( IServiceConfig ws );
+  
   public AbstractAxisConfigurator() {
     init();
   }

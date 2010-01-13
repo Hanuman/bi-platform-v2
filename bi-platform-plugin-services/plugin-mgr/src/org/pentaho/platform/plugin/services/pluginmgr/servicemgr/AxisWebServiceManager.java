@@ -25,6 +25,7 @@ import org.apache.axis2.engine.AxisConfigurator;
 import org.pentaho.platform.api.engine.IServiceConfig;
 import org.pentaho.platform.api.engine.ServiceInitializationException;
 import org.pentaho.platform.engine.core.system.PentahoSessionHolder;
+import org.pentaho.platform.plugin.services.webservices.AbstractAxisConfigurator;
 import org.pentaho.platform.plugin.services.webservices.AxisUtil;
 import org.pentaho.platform.plugin.services.webservices.SystemSolutionAxisConfigurator;
 
@@ -44,21 +45,25 @@ public class AxisWebServiceManager extends AbstractServiceTypeManager {
 
   private SystemSolutionAxisConfigurator configurator = new SystemSolutionAxisConfigurator();
 
+  protected AbstractAxisConfigurator getConfigurator() {
+    return configurator;
+  }
+  
   /* (non-Javadoc)
    * @see org.pentaho.platform.plugin.services.pluginmgr.IServiceManager#defineService(org.pentaho.platform.plugin.services.pluginmgr.WebServiceDefinition)
    */
   @Override
   public void registerService(final IServiceConfig wsConfig) {
     super.registerService(wsConfig);
-    configurator.addService(wsConfig);
+    getConfigurator().addService(wsConfig);
   }
 
   /* (non-Javadoc)
    * @see org.pentaho.platform.plugin.services.pluginmgr.IServiceManager#initServices()
    */
   public void initServices() throws ServiceInitializationException {
-    configurator.setSession(PentahoSessionHolder.getSession());
-    AxisConfigurator axisConfigurator = configurator;
+    getConfigurator().setSession(PentahoSessionHolder.getSession());
+    AxisConfigurator axisConfigurator = getConfigurator();
 
     //create the axis configuration and make it accessible to content generators via static member
     ConfigurationContext configContext = null;
