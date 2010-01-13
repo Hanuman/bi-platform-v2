@@ -269,14 +269,14 @@ public class BiPlatformRepositoryClientTest extends TestCase {
 
     assertEquals( 7, objects.size() );
     CmisObject document = objects.get(0);
-    String documentId = document.findIdProperty(PropertiesBase.OBJECTID);
+    String documentId = document.findIdProperty(PropertiesBase.OBJECTID, null);
     assertEquals( "admin/AuditReportList.url", documentId);
 
     objects = navigationService.getChildren(BiPlatformRepositoryClient.PLATFORMORIG, "/admin", types, "xaction", false, false, 0, 0);
 
     assertEquals( 7, objects.size() );
     document = objects.get(0);
-    documentId = document.findIdProperty(PropertiesBase.OBJECTID);
+    documentId = document.findIdProperty(PropertiesBase.OBJECTID, null);
     assertEquals( "admin/clean_repository.xaction", documentId);
 
     objects = navigationService.getChildren(BiPlatformRepositoryClient.PLATFORMORIG, "/admin", types, "url,xaction", false, false, 0, 0);
@@ -297,11 +297,11 @@ public class BiPlatformRepositoryClientTest extends TestCase {
     assertEquals( 2, objects.size() );
     
     CmisObject document = objects.get(0);
-    String documentId = document.findIdProperty(PropertiesBase.OBJECTID);
+    String documentId = document.findIdProperty(PropertiesBase.OBJECTID, null);
     assertEquals( "admin/AuditReportList.url", documentId);
     
     document = objects.get(1);
-    documentId = document.findIdProperty(PropertiesBase.OBJECTID);
+    documentId = document.findIdProperty(PropertiesBase.OBJECTID, null);
     assertEquals( "admin/AuditReports.url", documentId);
 
     objects = navigationService.getChildren(BiPlatformRepositoryClient.PLATFORMORIG, "/admin", types, null, false, false, 2, 2);
@@ -309,11 +309,11 @@ public class BiPlatformRepositoryClientTest extends TestCase {
     assertEquals( 2, objects.size() );
     
     document = objects.get(0);
-    documentId = document.findIdProperty(PropertiesBase.OBJECTID);
+    documentId = document.findIdProperty(PropertiesBase.OBJECTID, null);
     assertEquals( "admin/clean_repository.xaction", documentId);
 
     document = objects.get(1);
-    documentId = document.findIdProperty(PropertiesBase.OBJECTID);
+    documentId = document.findIdProperty(PropertiesBase.OBJECTID, null);
     assertEquals( "admin/clear_mondrian_schema_cache.xaction", documentId);
 
   }
@@ -346,8 +346,8 @@ public class BiPlatformRepositoryClientTest extends TestCase {
     assertEquals( 14, objects.size() );
 
     CmisObject document = objects.get(0);
-    String name = document.findStringProperty(CmisObject.NAME);
-    String documentId = document.findIdProperty(PropertiesBase.OBJECTID);
+    String name = document.findStringProperty(CmisObject.NAME, null);
+    String documentId = document.findIdProperty(PropertiesBase.OBJECTID, null);
     
     assertEquals( "AuditReportList.url", name);
     assertEquals( "admin/AuditReportList.url", documentId);
@@ -355,10 +355,10 @@ public class BiPlatformRepositoryClientTest extends TestCase {
     CmisObject parent = navigationService.getObjectParent(BiPlatformRepositoryClient.PLATFORMORIG, documentId, null, false, false).get(0);
 
     assertNotNull( parent );
-    assertEquals( "admin", parent.findStringProperty(CmisObject.NAME));
-    assertEquals( "Admin Services", parent.findStringProperty(CmisObject.LOCALIZEDNAME));
-    assertEquals( "admin", parent.findIdProperty(PropertiesBase.OBJECTID));
-    assertEquals( CmisObject.OBJECT_TYPE_FOLDER, parent.findStringProperty(PropertiesBase.OBJECTTYPEID));
+    assertEquals( "admin", parent.findStringProperty(CmisObject.NAME, null));
+    assertEquals( "Admin Services", parent.findStringProperty(CmisObject.LOCALIZEDNAME, null));
+    assertEquals( "admin", parent.findIdProperty(PropertiesBase.OBJECTID, null));
+    assertEquals( CmisObject.OBJECT_TYPE_FOLDER, parent.findStringProperty(PropertiesBase.OBJECTTYPEID, null));
     
   }
   
@@ -374,18 +374,18 @@ public class BiPlatformRepositoryClientTest extends TestCase {
     assertEquals( 2, objects.size() );
 
     CmisObject folder = objects.get(0);
-    String folderId = folder.findIdProperty(PropertiesBase.OBJECTID);
+    String folderId = folder.findIdProperty(PropertiesBase.OBJECTID, null);
     
-    assertEquals( "audit", folder.findStringProperty(CmisObject.NAME));
+    assertEquals( "audit", folder.findStringProperty(CmisObject.NAME, null));
     assertEquals( "admin/audit", folderId);
     
     CmisObject parent = navigationService.getFolderParent(BiPlatformRepositoryClient.PLATFORMORIG, folderId, null, false, false, false).get(0);
 
     assertNotNull( parent );
-    assertEquals( "admin", parent.findStringProperty(CmisObject.NAME));
-    assertEquals( "Admin Services", parent.findStringProperty(CmisObject.LOCALIZEDNAME));
-    assertEquals( "admin", parent.findIdProperty(PropertiesBase.OBJECTID));
-    assertEquals( CmisObject.OBJECT_TYPE_FOLDER, parent.findStringProperty(PropertiesBase.OBJECTTYPEID));
+    assertEquals( "admin", parent.findStringProperty(CmisObject.NAME, null));
+    assertEquals( "Admin Services", parent.findStringProperty(CmisObject.LOCALIZEDNAME, null));
+    assertEquals( "admin", parent.findIdProperty(PropertiesBase.OBJECTID, null));
+    assertEquals( CmisObject.OBJECT_TYPE_FOLDER, parent.findStringProperty(PropertiesBase.OBJECTTYPEID, null));
     
   }
   
@@ -401,15 +401,15 @@ public class BiPlatformRepositoryClientTest extends TestCase {
     
     assertEquals( 6, objects.size() );
     
-    assertEquals( "admin", objects.get(0).findStringProperty(CmisObject.NAME));
-    assertEquals( "Admin Services", objects.get(0).findStringProperty(CmisObject.LOCALIZEDNAME));
-    assertEquals( "admin", objects.get(0).findIdProperty(PropertiesBase.OBJECTID));
-    assertEquals( CmisObject.OBJECT_TYPE_FOLDER, objects.get(0).findStringProperty(PropertiesBase.OBJECTTYPEID));
+    assertEquals( "admin", objects.get(0).findStringProperty(CmisObject.NAME, null));
+    assertEquals( "Admin Services", objects.get(0).findStringProperty(CmisObject.LOCALIZEDNAME, null));
+    assertEquals( "admin", objects.get(0).findIdProperty(PropertiesBase.OBJECTID, null));
+    assertEquals( CmisObject.OBJECT_TYPE_FOLDER, objects.get(0).findStringProperty(PropertiesBase.OBJECTTYPEID, null));
     
-    assertEquals( "bi-developers", objects.get(1).findStringProperty(CmisObject.NAME));
-    assertEquals( "BI Developer Examples", objects.get(1).findStringProperty(CmisObject.LOCALIZEDNAME));
-    assertEquals( "bi-developers", objects.get(1).findIdProperty(PropertiesBase.OBJECTID));
-    assertEquals( CmisObject.OBJECT_TYPE_FOLDER, objects.get(1).findStringProperty(PropertiesBase.OBJECTTYPEID));
+    assertEquals( "bi-developers", objects.get(1).findStringProperty(CmisObject.NAME, null));
+    assertEquals( "BI Developer Examples", objects.get(1).findStringProperty(CmisObject.LOCALIZEDNAME, null));
+    assertEquals( "bi-developers", objects.get(1).findIdProperty(PropertiesBase.OBJECTID, null));
+    assertEquals( CmisObject.OBJECT_TYPE_FOLDER, objects.get(1).findStringProperty(PropertiesBase.OBJECTTYPEID, null));
     
   }
   
@@ -426,15 +426,15 @@ public class BiPlatformRepositoryClientTest extends TestCase {
     
     assertEquals( 6, objects.size() );
     
-    assertEquals( "admin", objects.get(0).findStringProperty(CmisObject.NAME));
-    assertEquals( "Admin Services", objects.get(0).findStringProperty(CmisObject.LOCALIZEDNAME));
-    assertEquals( "admin", objects.get(0).findIdProperty(PropertiesBase.OBJECTID));
-    assertEquals( CmisObject.OBJECT_TYPE_FOLDER, objects.get(0).findStringProperty(PropertiesBase.OBJECTTYPEID));
+    assertEquals( "admin", objects.get(0).findStringProperty(CmisObject.NAME, null));
+    assertEquals( "Admin Services", objects.get(0).findStringProperty(CmisObject.LOCALIZEDNAME, null));
+    assertEquals( "admin", objects.get(0).findIdProperty(PropertiesBase.OBJECTID, null));
+    assertEquals( CmisObject.OBJECT_TYPE_FOLDER, objects.get(0).findStringProperty(PropertiesBase.OBJECTTYPEID, null));
     
-    assertEquals( "bi-developers", objects.get(1).findStringProperty(CmisObject.NAME));
-    assertEquals( "BI Developer Examples", objects.get(1).findStringProperty(CmisObject.LOCALIZEDNAME));
-    assertEquals( "bi-developers", objects.get(1).findIdProperty(PropertiesBase.OBJECTID));
-    assertEquals( CmisObject.OBJECT_TYPE_FOLDER, objects.get(1).findStringProperty(PropertiesBase.OBJECTTYPEID));
+    assertEquals( "bi-developers", objects.get(1).findStringProperty(CmisObject.NAME, null));
+    assertEquals( "BI Developer Examples", objects.get(1).findStringProperty(CmisObject.LOCALIZEDNAME, null));
+    assertEquals( "bi-developers", objects.get(1).findIdProperty(PropertiesBase.OBJECTID, null));
+    assertEquals( CmisObject.OBJECT_TYPE_FOLDER, objects.get(1).findStringProperty(PropertiesBase.OBJECTTYPEID, null));
     
   }
 

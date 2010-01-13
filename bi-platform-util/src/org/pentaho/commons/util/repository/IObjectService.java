@@ -36,7 +36,6 @@ import org.pentaho.commons.util.repository.type.AllowableActions;
 import org.pentaho.commons.util.repository.type.CmisObject;
 import org.pentaho.commons.util.repository.type.CmisProperties;
 import org.pentaho.commons.util.repository.type.ContentStream;
-import org.pentaho.commons.util.repository.type.FailedToDelete;
 import org.pentaho.commons.util.repository.type.ReturnVersion;
 import org.pentaho.commons.util.repository.type.UnfileNonfolderObjects;
 import org.pentaho.commons.util.repository.type.VersioningState;
@@ -130,7 +129,7 @@ public interface IObjectService {
       String objectId ) throws 
       OperationNotSupportedException;
  
-  public List<FailedToDelete> deleteTree(
+  public List<String> deleteTree(
       String repositoryId,
       String folderId,
       UnfileNonfolderObjects unfileNonfolderObjects,

@@ -107,7 +107,7 @@ public interface INavigationService {
     FolderNotValidException;
     
   
-  public void getCheckedoutDocs(
+  public GetCheckedoutDocsResponse getCheckedoutDocs(
       String repositoryId,
       String folderId,
       String filter,

@@ -20,6 +20,30 @@
  */
 package org.pentaho.commons.util.repository;
 
-public class GetObjectParentsRequest {
+import java.util.List;
 
+import org.pentaho.commons.util.repository.type.CmisObject;
+
+public class GetCheckedoutDocsResponse {
+
+  private List<CmisObject> docs;
+  
+  private boolean hasMoreItems;
+
+  public List<CmisObject> getDocs() {
+    return docs;
+  }
+
+  public void setDocs(List<CmisObject> docs) {
+    this.docs = docs;
+  }
+
+  public boolean isHasMoreItems() {
+    return hasMoreItems;
+  }
+
+  public void setHasMoreItems(boolean hasMoreItems) {
+    this.hasMoreItems = hasMoreItems;
+  }
+  
 }
