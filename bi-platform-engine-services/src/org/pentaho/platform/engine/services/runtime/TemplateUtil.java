@@ -48,13 +48,26 @@ import org.pentaho.platform.util.DateMath;
 
 public class TemplateUtil {
 
-  private final static String PARAMETER_PATTERN = "\\{([^\\}\\{\\s]*)\\}"; //$NON-NLS-1$
+  private final static String PARAMETER_PATTERN = "\\{([^\\}\\{$^]*)\\}"; //$NON-NLS-1$
 
-  private final static String DATE_EXPR_PATTERN = "([\\+\\-]?(\\d*):(\\p{Alpha}{1,2}))([ \t]+[\\+\\-]?(\\d*):(\\p{Alpha}{1,2}))*([ \t]*;(.*))?"; //$NON-NLS-1$
+  private final static String DATE_EXPR_PATTERN = "([\\+\\-\\s]?(\\d)+:[YMWDhms][ES]?[\\s]?)+((\\s)?;.*)?"; //$NON-NLS-1$
+
+//  private final static String DATE_EXPR_PATTERN2 = "(DATEMATH\\(['\"])?([\\+\\-]?\\d:[YMWDhms][MS]?[\\s]?)+((\\s)?;.*)?.*"; //$NON-NLS-1$
+
+  private final static String DATEMATH_EXPR_PATTERN = "DATEMATH\\((\\s*)['\"].*['\"](\\s)*\\)"; //$NON-NLS-1$
+  private final static String DATEMATH_VAR_PATTERN = "DATEMATH:.*"; //$NON-NLS-1$
+
+  private final static String DATE_PATTERN = "\\d\\d\\d\\d-\\d\\d-\\d\\d"; //$NON-NLS-1$
 
   private static final Pattern parameterExpressionPattern = Pattern.compile(TemplateUtil.PARAMETER_PATTERN);
 
   private static final Pattern dateExpressionPattern = Pattern.compile(TemplateUtil.DATE_EXPR_PATTERN);
+
+  private static final Pattern dateMathExpressionPattern = Pattern.compile(TemplateUtil.DATEMATH_EXPR_PATTERN);
+
+  private static final Pattern dateMathVarPattern = Pattern.compile(TemplateUtil.DATEMATH_VAR_PATTERN);
+
+  private static final Pattern datePattern = Pattern.compile(TemplateUtil.DATE_PATTERN);
 
   private static final List<String> SystemInputs = new ArrayList<String>();
 
@@ -133,13 +146,17 @@ public class TemplateUtil {
       int start = parameterMatcher.start();
       String parameter = parameterMatcher.group(1);
       String value = null;
-      int pos1 = parameter.indexOf(":col:");//$NON-NLS-1$ 
-      if (pos1 > -1) {
+      int colonPosition = parameter.indexOf(':');
+      boolean hasSpaces = parameter.indexOf(' ') != -1;
+      boolean isTableTemplate = !hasSpaces && parameter.indexOf(":col:") != -1; //$NON-NLS-1$
+      boolean isComponentResoved = !hasSpaces && colonPosition != -1;
+      boolean isNamedParameter = !hasSpaces;
+      boolean isDateParamter = hasSpaces;
+      if (isTableTemplate) {
         TemplateUtil.applyTableTemplate(template, inputs, parameterPattern, results);
         return results.toString();
       }
-      pos1 = parameter.indexOf(':');
-      if (pos1 > -1) {
+      if( isComponentResoved ) {
         // Allow alternate parameter resolution to be provided by the
         // component.
         if (resolver != null) {
@@ -168,23 +185,18 @@ public class TemplateUtil {
           }
         }
       }
-      if (value == null) {
+      else if (isNamedParameter) {
         // TODO support type conversion
         value = inputs.getProperty(parameter);
         if (value == null) {
           TemplateUtil.logger.warn(Messages.getInstance().getString("TemplateUtil.NOT_FOUND", parameter)); //$NON-NLS-1$
-        }
-        
+        }        
       }
 
       results.append(template.substring(copyStart, start));
       copyStart = parameterMatcher.end();
-      if (value == null) {
-        Matcher dateMatcher = TemplateUtil.dateExpressionPattern.matcher(parameter);
-
-        if (dateMatcher.matches()) {
-          value = DateMath.calculateDateString(null, parameter);
-        }
+      if (isDateParamter || value == null) {
+        value = TemplateUtil.matchDateRegex( parameter, inputs );
       }
 
       if (value == null) {
@@ -345,6 +357,81 @@ public class TemplateUtil {
   }
 
   /**
+   * Uses regex matching to see if the input parameter appears to be a date expression
+   * @param parameter
+   * @return the value of the calculated date
+   */
+  public static String matchDateRegex( String parameter ) {
+    return matchDateRegex( parameter, null );
+  }
+
+  /**
+   * Uses regex matching to see if the input parameter appears to be a date expression
+   * @param parameter
+   * @return the value of the calculated date
+   */
+  public static String matchDateRegex( String parameter, final Properties inputs ) {
+
+    // try a 'expression' pattern
+    Matcher dateMatcher = TemplateUtil.dateExpressionPattern.matcher(parameter);
+    String value = null;
+    if (dateMatcher.matches()) {
+      if( parameter.indexOf(';') != -1 ) {
+        value = DateMath.calculateDateString(null, parameter);
+      } else {
+        // default to yyyy-MM-dd format for date strings
+        value = DateMath.calculateDateString(null, parameter+";yyyy-MM-dd"); //$NON-NLS-1$
+      }
+    }
+    if (value == null) {
+      // try a 'DATEMATH("expression")' pattern
+      dateMatcher = TemplateUtil.dateMathExpressionPattern.matcher(parameter);
+
+      if (dateMatcher.matches()) {
+        // remove the 'DATEMATH' part, look for the first single or double quote
+        int pos = parameter.indexOf( '\'' );
+        if( pos == -1 ) {
+          pos = parameter.indexOf( '"' );
+        }
+        if( pos != -1 ) {
+          parameter = parameter.substring( pos+1 );
+          // now look for the last one
+          pos = parameter.lastIndexOf( '\'' );
+          if( pos == -1 ) {
+            pos = parameter.lastIndexOf( '"' );
+          }
+          if( pos != -1 ) {
+            parameter = parameter.substring( 0, pos );
+            value = TemplateUtil.matchDateRegex(parameter, inputs);
+          }
+        }
+      }
+    }
+    if( value == null ) {
+      // try a DATEMATH:varname
+      dateMatcher = TemplateUtil.dateMathVarPattern.matcher(parameter);
+      if (dateMatcher.matches()) {
+        int pos = parameter.indexOf( ':' );
+        parameter = parameter.substring(pos+1);
+        parameter = inputs.getProperty( parameter );
+        if( parameter != null ) {
+          value = TemplateUtil.matchDateRegex(parameter, inputs);
+        }
+      }
+
+    }
+    if( value == null ) {
+      // try a date in yyyy-MM-dd format
+      dateMatcher = TemplateUtil.datePattern.matcher(parameter);
+      if (dateMatcher.matches()) {
+        value = parameter;
+      }      
+    }
+    return value;
+    
+  }
+  
+  /**
    * Acts as a facade for a {@link IRuntimeContext} to access the input values
    * as from a {@link java.util.Properties Properties}. The class only
    * overrides the {@link #getProperty(String)} method, as its is the only
@@ -353,8 +440,6 @@ public class TemplateUtil {
    */
   private static class InputProperties extends Properties {
     private static final long serialVersionUID = 1L;
-
-    Pattern dateExpressionRegexPattern = Pattern.compile(TemplateUtil.DATE_EXPR_PATTERN);
 
     private IRuntimeContext context;
 
@@ -504,15 +589,9 @@ public class TemplateUtil {
         value = super.getProperty(name);
       }
       if (value == null) {
-        Matcher dateMatcher = dateExpressionRegexPattern.matcher(name);
-        if (dateMatcher.matches()) {
-          value = DateMath.calculateDateString(null, name);
-        }
+        value = TemplateUtil.matchDateRegex( name, null );
       } else {
-        Matcher dateMatcher = dateExpressionRegexPattern.matcher(value);
-        if (dateMatcher.matches()) {
-          value = DateMath.calculateDateString(null, value);
-        }
+        value = TemplateUtil.matchDateRegex( value, null );
       }
 
       return value;
