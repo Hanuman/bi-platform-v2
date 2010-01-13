@@ -149,6 +149,15 @@ public interface IRepositoryService {
    */
   List<RepositoryFile> getDeletedFiles();
 
+  /**
+   * Moves and/or renames file.
+   * 
+   * @param fileId if of file or folder to move and/or rename
+   * @param destAbsPath absolute path to destination; if only moving then destAbsPath will be an existing path
+   * @param versionMessageAndLabel optional version comment [0] and label [1]
+   */
+  void moveFile(final Serializable fileId, final String destAbsPath, final String... versionMessageAndLabel);
+  
   // ~ Lock methods ====================================================================================================
 
   /**

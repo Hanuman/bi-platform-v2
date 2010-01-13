@@ -287,6 +287,15 @@ public class DefaultRepositoryService implements IRepositoryService {
   }
 
   /**
+   * {@inheritDoc}
+   */
+  public void moveFile(Serializable fileId, String destAbsPath, String... versionMessageAndLabel) {
+    Assert.notNull(fileId);
+    Assert.hasText(destAbsPath);
+    repositoryFileDao.moveFile(fileId, destAbsPath, versionMessageAndLabel);
+  }
+  
+  /**
    * Returns the username of the current user.
    */
   private String internalGetUsername() {

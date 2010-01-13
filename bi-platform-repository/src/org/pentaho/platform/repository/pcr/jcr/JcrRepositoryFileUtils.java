@@ -91,7 +91,7 @@ public class JcrRepositoryFileUtils {
       }
     }
 
-    if (isPentahoFile(session, pentahoJcrConstants, node)) {
+    if (isPentahoFile(pentahoJcrConstants, node)) {
       // pho:lastModified nodes have OnParentVersion values of IGNORE; i.e. they don't exist in frozen nodes
       if (!node.isNodeType(pentahoJcrConstants.getNT_FROZENNODE())) {
         Calendar tmpCal = node.getProperty(pentahoJcrConstants.getPHO_LASTMODIFIED()).getDate();
@@ -452,7 +452,7 @@ public class JcrRepositoryFileUtils {
     return locked;
   }
 
-  private static boolean isPentahoFile(final Session session, final PentahoJcrConstants pentahoJcrConstants,
+  public static boolean isPentahoFile(final PentahoJcrConstants pentahoJcrConstants,
       final Node node) throws RepositoryException {
     Assert.notNull(node);
     if (node.isNodeType(pentahoJcrConstants.getNT_FROZENNODE())) {
@@ -491,7 +491,7 @@ public class JcrRepositoryFileUtils {
     }
   }
 
-  private static boolean isSupportedNodeType(final PentahoJcrConstants pentahoJcrConstants, final Node node)
+  public static boolean isSupportedNodeType(final PentahoJcrConstants pentahoJcrConstants, final Node node)
       throws RepositoryException {
     Assert.notNull(node);
     if (node.isNodeType(pentahoJcrConstants.getNT_FROZENNODE())) {

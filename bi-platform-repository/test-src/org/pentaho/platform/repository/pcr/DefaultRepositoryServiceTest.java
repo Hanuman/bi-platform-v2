@@ -9,7 +9,6 @@ import static org.junit.Assert.fail;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
-import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -43,7 +42,6 @@ import org.pentaho.platform.repository.pcr.jcr.SimpleJcrTestUtils;
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
-import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.DataRetrievalFailureException;
 import org.springframework.extensions.jcr.JcrTemplate;
@@ -59,8 +57,8 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = { "file:../bi-platform-sample-solution/system/repository.spring.xml",
-    "classpath:/repository-test-override.spring.xml" })
+@ContextConfiguration(locations = { "classpath:/sample-repository.spring.xml",
+    "classpath:/sample-repository-test-override.spring.xml" })
 //@SuppressWarnings("nls")
 public class DefaultRepositoryServiceTest implements ApplicationContextAware {
   // ~ Static fields/initializers ======================================================================================
@@ -564,7 +562,8 @@ public class DefaultRepositoryServiceTest implements ApplicationContextAware {
     newFolder = repo.createFolder(parentFolder.getId(), newFolder);
     assertTrue(newFolder.isVersioned());
     assertNotNull(newFolder.getVersionId());
-    RepositoryFile newFolder2 = repo.createFolder(newFolder.getId(), new RepositoryFile.Builder("test2").folder(true).build());
+    RepositoryFile newFolder2 = repo.createFolder(newFolder.getId(), new RepositoryFile.Builder("test2").folder(true)
+        .build());
     RepositoryFile newFile = createSampleFile(newFolder2.getAbsolutePath(), "helloworld.sample", "sdfdf", false, 5);
     repo.lockFile(newFile.getId(), "lock within versioned folder");
     repo.unlockFile(newFile.getId());
@@ -672,14 +671,14 @@ public class DefaultRepositoryServiceTest implements ApplicationContextAware {
     repo.undeleteFile(newFile.getId());
     assertEquals(0, repo.getDeletedFiles(parentFolder.getId()).size());
     assertEquals(0, repo.getDeletedFiles().size());
-    
+
     repo.deleteFile(newFile.getId());
     repo.permanentlyDeleteFile(newFile.getId());
     try {
       repo.undeleteFile(newFile.getId());
       fail();
     } catch (Exception e) {
-        
+
     }
   }
 
@@ -711,7 +710,7 @@ public class DefaultRepositoryServiceTest implements ApplicationContextAware {
     repo.undeleteFile(newFile.getId());
     repo.deleteFile(newFile.getId());
     repo.permanentlyDeleteFile(newFile.getId());
-    
+
     // make sure lock token node has been removed
     assertNull(SimpleJcrTestUtils.getItem(testJcrTemplate, RepositoryPaths.getUserHomeFolderPath() + "/.lockTokens/"
         + newFile.getId()));
@@ -913,6 +912,49 @@ public class DefaultRepositoryServiceTest implements ApplicationContextAware {
     repo.updateAcl(newAclBuilder.build());
     RepositoryFileAcl fetchedAcl = repo.getAcl(newFolder.getId());
     assertEquals(new RepositoryFileSid(USERNAME_TIFFANY), fetchedAcl.getOwner());
+  }
+
+  @Test
+  public void testMoveFile() throws Exception {
+    repo.getRepositoryEventHandler().onStartup();
+    login(USERNAME_SUZY, TENANT_ID_ACME);
+    RepositoryFile parentFolder = repo.getFile(RepositoryPaths.getTenantPublicFolderPath());
+    RepositoryFile moveTest1Folder = new RepositoryFile.Builder("moveTest1").folder(true).versioned(true).build();
+    moveTest1Folder = repo.createFolder(parentFolder.getId(), moveTest1Folder);
+    RepositoryFile moveTest2Folder = new RepositoryFile.Builder("moveTest2").folder(true).versioned(true).build();
+    moveTest2Folder = repo.createFolder(parentFolder.getId(), moveTest2Folder);
+    RepositoryFile testFolder = new RepositoryFile.Builder("test").folder(true).build();
+    testFolder = repo.createFolder(moveTest1Folder.getId(), testFolder);
+    // move folder into new folder
+    repo.moveFile(testFolder.getId(), moveTest2Folder.getAbsolutePath());
+    assertNull(repo.getFile(RepositoryPaths.getTenantPublicFolderPath() + RepositoryFile.SEPARATOR + "moveTest1"
+        + RepositoryFile.SEPARATOR + "test"));
+    assertNotNull(repo.getFile(RepositoryPaths.getTenantPublicFolderPath() + RepositoryFile.SEPARATOR + "moveTest2"
+        + RepositoryFile.SEPARATOR + "test"));
+    // rename within same folder
+    repo.moveFile(testFolder.getId(), moveTest2Folder.getAbsolutePath() + RepositoryFile.SEPARATOR + "newTest");
+    assertNull(repo.getFile(RepositoryPaths.getTenantPublicFolderPath() + RepositoryFile.SEPARATOR + "moveTest2"
+        + RepositoryFile.SEPARATOR + "test"));
+    assertNotNull(repo.getFile(RepositoryPaths.getTenantPublicFolderPath() + RepositoryFile.SEPARATOR + "moveTest2"
+        + RepositoryFile.SEPARATOR + "newTest"));
+
+    RepositoryFile newFile = createSampleFile(moveTest2Folder.getAbsolutePath(), "helloworld.sample", "ddfdf", false,
+        83);
+    try {
+      repo.moveFile(testFolder.getId(), moveTest2Folder.getAbsolutePath() + RepositoryFile.SEPARATOR + "doesnotexist"
+          + RepositoryFile.SEPARATOR + "newTest2");
+      fail();
+    } catch (IllegalArgumentException e) {
+      // moving a folder to a path with a non-existent parent folder is illegal
+    }
+    
+    try {
+      repo.moveFile(testFolder.getId(), newFile.getAbsolutePath());
+      fail();
+    } catch (IllegalArgumentException e) {
+      // moving a folder to a file is illegal
+    }
+
   }
 
   private RepositoryFile createSampleFile(final String parentFolderPath, final String fileName,

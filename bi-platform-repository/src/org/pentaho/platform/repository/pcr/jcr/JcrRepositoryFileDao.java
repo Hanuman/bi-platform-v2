@@ -422,4 +422,76 @@ public class JcrRepositoryFileDao implements IRepositoryFileDao {
     });
   }
 
+  /**
+   * {@inheritDoc}
+   */
+  public void moveFile(final Serializable fileId, final String destAbsPath, final String... versionMessageAndLabel) {
+    Assert.notNull(fileId);
+    jcrTemplate.execute(new JcrCallback() {
+      public Object doInJcr(final Session session) throws RepositoryException, IOException {
+        PentahoJcrConstants pentahoJcrConstants = new PentahoJcrConstants(session);
+        String cleanDestAbsPath = destAbsPath;
+        if (cleanDestAbsPath.endsWith(RepositoryFile.SEPARATOR)) {
+          cleanDestAbsPath.substring(0, cleanDestAbsPath.length() - 1);
+        }
+        Node srcFileNode = session.getNodeByUUID(fileId.toString());
+        Serializable srcParentFolderId = JcrRepositoryFileUtils.getParentId(session, fileId);
+        boolean appendFileName = false;
+        boolean destExists = true;
+        Node destFileNode = null;
+        Node destParentFolderNode = null;
+        try {
+          destFileNode = (Node) session.getItem(cleanDestAbsPath);
+        } catch (PathNotFoundException e) {
+          destExists = false;
+        }
+        if (destExists) {
+          // make sure it's a file or folder
+          Assert.isTrue(JcrRepositoryFileUtils.isSupportedNodeType(pentahoJcrConstants, destFileNode));
+          // existing item; make sure src is not a folder if dest is a file
+          Assert.isTrue(
+              !(JcrRepositoryFileUtils.isPentahoFolder(pentahoJcrConstants, srcFileNode) && JcrRepositoryFileUtils
+                  .isPentahoFile(pentahoJcrConstants, destFileNode)), "cannot overwrite file with folder");
+          if (JcrRepositoryFileUtils.isPentahoFolder(pentahoJcrConstants, destFileNode)) {
+            // existing item; caller is not renaming file, only moving it
+            appendFileName = true;
+            destParentFolderNode = destFileNode;
+          } else {
+            // get parent of existing dest item
+            int lastSlashIndex = cleanDestAbsPath.lastIndexOf(RepositoryFile.SEPARATOR);
+            Assert.isTrue(lastSlashIndex > 1, "illegal destination path");
+            String absPathToDestParentFolder = cleanDestAbsPath.substring(0, lastSlashIndex);
+            destParentFolderNode = (Node) session.getItem(absPathToDestParentFolder);
+          }
+        } else {
+          // destination doesn't exist; go up one level to a folder that does exist
+          int lastSlashIndex = cleanDestAbsPath.lastIndexOf(RepositoryFile.SEPARATOR);
+          Assert.isTrue(lastSlashIndex > 1, "illegal destination path");
+          String absPathToDestParentFolder = cleanDestAbsPath.substring(0, lastSlashIndex);
+          try {
+            destParentFolderNode = (Node) session.getItem(absPathToDestParentFolder);
+          } catch (PathNotFoundException e1) {
+            Assert.isTrue(false, "immediate parent folder of destination path must exist");
+          }
+          Assert.isTrue(JcrRepositoryFileUtils.isPentahoFolder(pentahoJcrConstants, destParentFolderNode),
+              "immediate parent of destination path is not a folder");
+        }
+        JcrRepositoryFileUtils.checkoutNearestVersionableFileIfNecessary(session, pentahoJcrConstants,
+            srcParentFolderId);
+        JcrRepositoryFileUtils.checkoutNearestVersionableNodeIfNecessary(session, pentahoJcrConstants,
+            destParentFolderNode);
+        session.move(srcFileNode.getPath(), appendFileName ? cleanDestAbsPath + RepositoryFile.SEPARATOR
+            + srcFileNode.getName() : cleanDestAbsPath);
+        session.save();
+        JcrRepositoryFileUtils.checkinNearestVersionableNodeIfNecessary(session, pentahoJcrConstants,
+            destParentFolderNode, versionMessageAndLabel);
+        // if it's a move within the same folder, then the next checkin is unnecessary
+        if (!destParentFolderNode.getUUID().equals(srcParentFolderId.toString())) {
+          JcrRepositoryFileUtils.checkinNearestVersionableFileIfNecessary(session, pentahoJcrConstants,
+              srcParentFolderId, versionMessageAndLabel);
+        }
+        return null;
+      }
+    });
+  }
 }
