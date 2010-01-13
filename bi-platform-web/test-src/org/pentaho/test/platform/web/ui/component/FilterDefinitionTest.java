@@ -75,7 +75,7 @@ public class FilterDefinitionTest extends BaseTest {
       this.sessionStartup( session );
 		Document doc = null;
 		try  {
-		     doc = XmlDom4JHelper.getDocFromFile(SOLUTION_PATH + "/test/filterPanel/test.filterpanel.xml", null); //$NON-NLS-1$
+		     doc = XmlDom4JHelper.getDocFromFile(new File(SOLUTION_PATH + "/test/filterPanel/test.filterpanel.xml"), null); //$NON-NLS-1$
 		} catch(Exception ee) {
 			ee.printStackTrace();
 	      	assertTrue( "Failed to get the document from a file.", false ); //$NON-NLS-1$
