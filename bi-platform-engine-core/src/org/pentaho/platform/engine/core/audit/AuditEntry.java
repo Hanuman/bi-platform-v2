@@ -22,6 +22,9 @@
 package org.pentaho.platform.engine.core.audit;
 
 import java.math.BigDecimal;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.pentaho.platform.api.engine.AuditException;
 import org.pentaho.platform.api.engine.IAuditEntry;
@@ -36,6 +39,9 @@ import org.pentaho.platform.engine.core.system.PentahoSystem;
  */
 public class AuditEntry {
 
+  private static final Map<String,Long> messageTypeCountMap = new HashMap<String,Long>();
+  private static final Date counterResetDateTime = new Date();
+  
   public static void auditJobDuration(final String jobId, final String instId, final String objId,
       final String objType, final String actor, final String messageType, final String messageName,
       final String messageTxtValue, final float duration) throws AuditException {
@@ -54,6 +60,12 @@ public class AuditEntry {
       auditEntry.auditAll(jobId, instId, objId, objType, actor, messageType, messageName, messageTxtValue,
           messageNumValue, duration);
     }
+    Long count = messageTypeCountMap.get( messageType );
+    if( count == null ) {
+      messageTypeCountMap.put( messageType, new Long(1) );
+    } else {
+      messageTypeCountMap.put( messageType, new Long( count.longValue() + 1) );
+    }
   }
 
   public static void auditJobTxtValue(final String jobId, final String instId, final String objId,
@@ -69,4 +81,17 @@ public class AuditEntry {
 
   }
 
+  public static void clearCounts() {
+    messageTypeCountMap.clear();
+    counterResetDateTime.setTime( (new Date()).getTime() );
+  }
+  
+  public static Map<String,Long> getCounts() {
+    return messageTypeCountMap;
+  }
+
+  public static Date getCounterResetDateTime() {
+    return counterResetDateTime;
+  }
+  
 }
