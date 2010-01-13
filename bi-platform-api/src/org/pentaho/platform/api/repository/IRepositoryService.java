@@ -215,7 +215,7 @@ public interface IRepositoryService {
    * Returns a version summary for the given file id and version id.
    * 
    * @param fileId file id
-   * @param versionId version id
+   * @param versionId version id (if {@code null}, returns the last version
    * @return version summary
    */
   VersionSummary getVersionSummary(Serializable fileId, Serializable versionId);

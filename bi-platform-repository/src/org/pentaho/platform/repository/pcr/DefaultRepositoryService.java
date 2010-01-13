@@ -266,7 +266,6 @@ public class DefaultRepositoryService implements IRepositoryService {
    */
   public synchronized VersionSummary getVersionSummary(Serializable fileId, Serializable versionId) {
     Assert.notNull(fileId);
-    Assert.notNull(versionId);
     return repositoryFileDao.getVersionSummary(fileId, versionId);
   }
   

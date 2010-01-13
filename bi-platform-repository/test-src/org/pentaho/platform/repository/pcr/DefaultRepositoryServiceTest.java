@@ -772,11 +772,25 @@ public class DefaultRepositoryServiceTest implements ApplicationContextAware {
 
     RepositoryFile newFile = createSampleFile(parentFolderPath, fileName, origSampleString, origSampleBoolean,
         origSampleInteger, true);
+    SampleRepositoryFileData newContent = repo.getDataForRead(newFile.getId(), SampleRepositoryFileData.class);
 
     VersionSummary v1 = repo.getVersionSummary(newFile.getId(), newFile.getVersionId());
     assertNotNull(v1);
     assertEquals(USERNAME_SUZY, v1.getAuthor());
     assertEquals(new Date().getDate(), v1.getDate().getDate());
+    
+    repo.updateFile(newFile, newContent);
+    
+    // gets last version summary
+    VersionSummary v2 = repo.getVersionSummary(newFile.getId(), null);
+    
+    assertNotNull(v2);
+    assertEquals(USERNAME_SUZY, v2.getAuthor());
+    assertEquals(new Date().getDate(), v2.getDate().getDate());
+    assertFalse(v1.equals(v2));
+    List<VersionSummary> sums = repo.getVersionSummaries(newFile.getId());
+    assertEquals(sums.get(0), v1);
+    assertEquals(sums.get(sums.size()-1), v2);
   }
   
   @Test

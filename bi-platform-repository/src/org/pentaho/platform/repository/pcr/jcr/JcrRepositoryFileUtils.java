@@ -387,7 +387,7 @@ public class JcrRepositoryFileUtils {
       if (versionId != null) {
         version = fileNode.getVersionHistory().getVersion(versionId.toString());
       } else {
-        version = fileNode.getVersionHistory().getBaseVersion();
+        version = fileNode.getBaseVersion();
       }
       fileNode = getNodeAtVersion(pentahoJcrConstants, version);
     }
@@ -754,7 +754,12 @@ public class JcrRepositoryFileUtils {
       final Serializable fileId, final Serializable versionId) throws RepositoryException {
     Node fileNode = session.getNodeByUUID(fileId.toString());
     VersionHistory versionHistory = fileNode.getVersionHistory();
-    Version version = versionHistory.getVersion(versionId.toString());
+    Version version = null;
+    if (versionId != null) {
+      version = versionHistory.getVersion(versionId.toString());
+    } else {
+      version = fileNode.getBaseVersion();
+    }
     return toVersionSummary(pentahoJcrConstants, versionHistory, version);
   }
 }

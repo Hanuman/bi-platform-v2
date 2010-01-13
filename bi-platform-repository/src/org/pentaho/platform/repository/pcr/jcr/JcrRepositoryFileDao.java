@@ -500,7 +500,6 @@ public class JcrRepositoryFileDao implements IRepositoryFileDao {
    */
   public VersionSummary getVersionSummary(final Serializable fileId, final Serializable versionId) {
     Assert.notNull(fileId);
-    Assert.notNull(versionId);
     return (VersionSummary) jcrTemplate.execute(new JcrCallback() {
       public Object doInJcr(final Session session) throws RepositoryException, IOException {
         PentahoJcrConstants pentahoJcrConstants = new PentahoJcrConstants(session);
