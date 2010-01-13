@@ -52,6 +52,8 @@ public class MimeHelper {
     MimeHelper.mimes.put("text/xaction+xml", ".xaction"); //$NON-NLS-1$ //$NON-NLS-2$
     MimeHelper.mimes.put("text/css", ".css"); //$NON-NLS-1$ //$NON-NLS-2$
     MimeHelper.mimes.put("text/javascript", ".js"); //$NON-NLS-1$ //$NON-NLS-2$
+    MimeHelper.mimes.put("text/xml", ".xml"); //$NON-NLS-1$ //$NON-NLS-2$
+    MimeHelper.mimes.put("application/x-shockwave-flash", ".swf"); //$NON-NLS-1$ //$NON-NLS-2$
 
     MimeHelper.extensions.put(".rtf", "application/rtf"); //$NON-NLS-1$ //$NON-NLS-2$
     MimeHelper.extensions.put(".doc", "application/msword"); //$NON-NLS-1$ //$NON-NLS-2$
@@ -82,6 +84,8 @@ public class MimeHelper {
     MimeHelper.extensions.put(".xaction", "text/xaction+xml"); //$NON-NLS-1$ //$NON-NLS-2$
     MimeHelper.extensions.put(".css", "text/css"); //$NON-NLS-1$ //$NON-NLS-2$
     MimeHelper.extensions.put(".js", "text/javascript"); //$NON-NLS-1$ //$NON-NLS-2$
+    MimeHelper.extensions.put(".xml", "text/xml"); //$NON-NLS-1$ //$NON-NLS-2$
+    MimeHelper.extensions.put(".swf", "application/x-shockwave-flash"); //$NON-NLS-1$ //$NON-NLS-2$
 
   }
 
