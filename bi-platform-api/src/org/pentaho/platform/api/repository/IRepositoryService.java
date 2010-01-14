@@ -167,6 +167,15 @@ public interface IRepositoryService {
   List<RepositoryFile> getDeletedFiles(final Serializable folderId);
   
   /**
+   * Gets all deleted files for the current user in this folder.
+   * 
+   * @param folderId folder id
+   * @param filter filter may be a full name or a partial name with one or more wildcard characters ("*")
+   * @return list of deleted files
+   */
+  List<RepositoryFile> getDeletedFiles(final Serializable folderId, final String filter);
+  
+  /**
    * Gets all deleted files for the current user. This is the "recycle bin" view.
    * 
    * @return list of deleted files

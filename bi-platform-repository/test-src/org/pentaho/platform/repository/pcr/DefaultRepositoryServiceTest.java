@@ -672,6 +672,8 @@ public class DefaultRepositoryServiceTest implements ApplicationContextAware {
     repo.deleteFile(newFile.getId());
     assertEquals(1, repo.getDeletedFiles(parentFolder.getId()).size());
     assertEquals(newFile.getId(), repo.getDeletedFiles(parentFolder.getId()).get(0).getId());
+    assertEquals(1, repo.getDeletedFiles(parentFolder.getId(), "*.sample").size());
+    assertEquals(0, repo.getDeletedFiles(parentFolder.getId(), "*.doesnotexist").size());
     assertEquals(1, repo.getDeletedFiles().size());
     assertEquals(newFile, repo.getDeletedFiles().get(0));
 

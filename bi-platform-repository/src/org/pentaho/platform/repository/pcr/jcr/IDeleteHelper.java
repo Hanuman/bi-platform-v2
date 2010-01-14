@@ -44,10 +44,11 @@ public interface IDeleteHelper {
    * Lists deleted files for this folder and user.
    * 
    * @param folderId
+   * @param filter filter may be a full name or a partial name with one or more wildcard characters ("*")
    * @return list of deleted files IDs for this folder and user
    */
   List<RepositoryFile> getDeletedFiles(final Session session, final PentahoJcrConstants pentahoJcrConstants,
-      final Serializable folderId) throws RepositoryException;
+      final Serializable folderId, final String filter) throws RepositoryException;
 
   /**
    * Lists deleted files for this user. In this case, the path field of each file is the original path where it was 

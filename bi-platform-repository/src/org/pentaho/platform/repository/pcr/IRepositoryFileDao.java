@@ -42,7 +42,7 @@ public interface IRepositoryFileDao {
   
   void permanentlyDeleteFile(final Serializable fileId, final String... versionMessageAndLabel);
   
-  List<RepositoryFile> getDeletedFiles(final Serializable folderId);
+  List<RepositoryFile> getDeletedFiles(final Serializable folderId, final String filter);
   
   List<RepositoryFile> getDeletedFiles();
   

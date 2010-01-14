@@ -130,18 +130,26 @@ public class DefaultDeleteHelper implements IDeleteHelper {
 
   /**
    * {@inheritDoc}
+   * 
+   * TODO mlowery true JCR queries might be better for performance
    */
   public List<RepositoryFile> getDeletedFiles(final Session session, final PentahoJcrConstants pentahoJcrConstants,
-      final Serializable folderId) throws RepositoryException {
+      final Serializable folderId, final String filter) throws RepositoryException {
     List<RepositoryFile> deletedFiles = new ArrayList<RepositoryFile>();
     Node trashFolderIdNode = getOrCreateTrashFolderIdNode(session, pentahoJcrConstants, folderId);
     NodeIterator nodes = trashFolderIdNode.getNodes();
     while (nodes.hasNext()) {
       Node trashFileIdNode = nodes.nextNode();
-      if (trashFileIdNode.getNodes().hasNext()) {
+      NodeIterator trashFileIdNodes = null;
+      if (filter != null) {
+        trashFileIdNodes = trashFileIdNode.getNodes(filter);
+      } else {
+        trashFileIdNodes = trashFileIdNode.getNodes(); 
+      }
+      if (trashFileIdNodes.hasNext()) {
         // each fileId node has at most one child that is the deleted file
         deletedFiles.add(JcrRepositoryFileUtils.nodeToFile(session, pentahoJcrConstants, ownerLookupHelper,
-            trashFileIdNode.getNodes().nextNode()));
+            trashFileIdNodes.nextNode()));
       }
     }
     return deletedFiles;
@@ -160,7 +168,7 @@ public class DefaultDeleteHelper implements IDeleteHelper {
       Node trashFolderIdNode = nodes.nextNode();
       // strip off the prefix and colon
       final String folderId = trashFolderIdNode.getName().substring(prefix.length() + 1);
-      deletedFiles.addAll(getDeletedFiles(session, pentahoJcrConstants, folderId));
+      deletedFiles.addAll(getDeletedFiles(session, pentahoJcrConstants, folderId, null));
     }
     return deletedFiles;
   }

@@ -361,12 +361,12 @@ public class JcrRepositoryFileDao implements IRepositoryFileDao {
    * {@inheritDoc}
    */
   @SuppressWarnings("unchecked")
-  public List<RepositoryFile> getDeletedFiles(final Serializable folderId) {
+  public List<RepositoryFile> getDeletedFiles(final Serializable folderId, final String filter) {
     Assert.notNull(folderId);
     return (List<RepositoryFile>) jcrTemplate.execute(new JcrCallback() {
       public Object doInJcr(final Session session) throws RepositoryException, IOException {
         PentahoJcrConstants pentahoJcrConstants = new PentahoJcrConstants(session);
-        return deleteHelper.getDeletedFiles(session, pentahoJcrConstants, folderId);
+        return deleteHelper.getDeletedFiles(session, pentahoJcrConstants, folderId, filter);
       }
     });
   }

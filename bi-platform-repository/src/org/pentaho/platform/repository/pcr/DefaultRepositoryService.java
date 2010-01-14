@@ -192,7 +192,7 @@ public class DefaultRepositoryService implements IRepositoryService {
     Assert.notNull(folderId);
     return repositoryFileDao.getChildren(folderId, filter);
   }
-  
+
   /**
    * {@inheritDoc}
    */
@@ -217,8 +217,15 @@ public class DefaultRepositoryService implements IRepositoryService {
    * {@inheritDoc}
    */
   public synchronized List<RepositoryFile> getDeletedFiles(final Serializable folderId) {
+    return getDeletedFiles(folderId, null);
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  public synchronized List<RepositoryFile> getDeletedFiles(final Serializable folderId, final String filter) {
     Assert.notNull(folderId);
-    return repositoryFileDao.getDeletedFiles(folderId);
+    return repositoryFileDao.getDeletedFiles(folderId, filter);
   }
 
   /**
@@ -275,7 +282,7 @@ public class DefaultRepositoryService implements IRepositoryService {
     Assert.notNull(fileId);
     return repositoryFileDao.getVersionSummary(fileId, versionId);
   }
-  
+
   /**
    * {@inheritDoc}
    */
@@ -309,7 +316,7 @@ public class DefaultRepositoryService implements IRepositoryService {
     Assert.hasText(destAbsPath);
     repositoryFileDao.moveFile(fileId, destAbsPath, versionMessageAndLabel);
   }
-  
+
   /**
    * Returns the username of the current user.
    */
