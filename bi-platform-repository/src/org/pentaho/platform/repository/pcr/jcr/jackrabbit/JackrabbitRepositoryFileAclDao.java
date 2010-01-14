@@ -71,6 +71,8 @@ public class JackrabbitRepositoryFileAclDao implements IRepositoryFileAclDao {
 
   /**
    * {@inheritDoc}
+   * 
+   * This is a hack since this code must move lock step with any changes in access control on the server.
    */
   public synchronized List<RepositoryFileAcl.Ace> getEffectiveAces(final Serializable id) {
     Assert.notNull(id);

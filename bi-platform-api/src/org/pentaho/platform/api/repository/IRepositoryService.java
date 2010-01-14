@@ -5,7 +5,8 @@ import java.util.EnumSet;
 import java.util.List;
 
 /**
- * Entry point into the content repository.
+ * Entry point into the unified repository. The finest grained object that can be read and written to this repository
+ * is a {@link RepositoryFile}.
  * 
  * @author mlowery
  */
@@ -248,7 +249,7 @@ public interface IRepositoryService {
    * Returns a version summary for the given file id and version id.
    * 
    * @param fileId file id
-   * @param versionId version id (if {@code null}, returns the last version
+   * @param versionId version id (if {@code null}, returns the last version)
    * @return version summary
    */
   VersionSummary getVersionSummary(Serializable fileId, Serializable versionId);
@@ -263,11 +264,11 @@ public interface IRepositoryService {
   List<VersionSummary> getVersionSummaries(final Serializable fileId);
   
   /**
-   * Gets file as it was at the given version. Use this method to test for file existence too.
+   * Gets file as it was at the given version.
    * 
    * @param fileId file id
    * @param versionId version id
-   * @return file or {@code null} if the file does not exist or access is denied
+   * @return file at version
    */
   RepositoryFile getFile(final Serializable fileId, final Serializable versionId);
 

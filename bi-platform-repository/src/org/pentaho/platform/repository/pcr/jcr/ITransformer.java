@@ -1,7 +1,5 @@
 package org.pentaho.platform.repository.pcr.jcr;
 
-import java.io.IOException;
-
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;

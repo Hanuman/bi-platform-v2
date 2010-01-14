@@ -65,7 +65,8 @@ to persist lock tokens for retrieval from subsequent sessions. See section 8.4.7
 </p>
 
 <p>
-JCR locking was extended to add "message" (aka "comment") and "date" properties in addition to "lock owner."
+JCR locking was extended to add "message" (aka "comment") and "date" properties in addition to the standard "lock 
+owner."
 </p>
 
 <h2>Versioning</h2>
@@ -97,6 +98,12 @@ application.
 The current user and tenant is controlled by the IPentahoSession instance in the PentahoSessionHolder. Usually this is
 updated when a new user logs in. This implementation sometimes changes the current IPentahoSession instance temporarily
 to do superuser activities like creating the root folder.
+</p>
+
+<h2>Delete/Undelete</h2>
+
+<p>
+In this implementation, recycle bin behavior is configurable.
 </p>
 </body>
 </html>

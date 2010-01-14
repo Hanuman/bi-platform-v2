@@ -1,6 +1,5 @@
 package org.pentaho.platform.api.repository;
 
-import java.io.Serializable;
 
 /**
  * Repository file security identifier (SID) used as file owners and permission recipients in access control entries.
