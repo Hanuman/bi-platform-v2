@@ -452,7 +452,7 @@ public class DefaultRepositoryServiceTest implements ApplicationContextAware {
   @Test
   public void testGetChildren() throws Exception {
     repo.getRepositoryEventHandler().onStartup();
-    login(USERNAME_SUZY, TENANT_ID_ACME);
+    login(USERNAME_SUZY, TENANT_ID_ACME); // creates acme tenant folder
     List<RepositoryFile> children = repo.getChildren(repo.getFile(RepositoryPaths.getPentahoRootFolderPath()).getId());
     assertEquals(1, children.size());
     RepositoryFile f0 = children.get(0);
@@ -463,6 +463,19 @@ public class DefaultRepositoryServiceTest implements ApplicationContextAware {
     assertEquals("home", f1.getName());
     RepositoryFile f2 = children.get(1);
     assertEquals("public", f2.getName());
+
+    children = repo.getChildren(repo.getFile(RepositoryPaths.getTenantRootFolderPath()).getId(), null);
+    assertEquals(2, children.size());
+    
+    children = repo.getChildren(repo.getFile(RepositoryPaths.getTenantRootFolderPath()).getId(), "*");
+    assertEquals(2, children.size());
+
+    children = repo.getChildren(repo.getFile(RepositoryPaths.getTenantRootFolderPath()).getId(), "*me");
+    assertEquals(1, children.size());
+
+    children = repo.getChildren(repo.getFile(RepositoryPaths.getTenantRootFolderPath()).getId(), "*Z*");
+    assertEquals(0, children.size());
+
   }
 
   /**
@@ -778,21 +791,21 @@ public class DefaultRepositoryServiceTest implements ApplicationContextAware {
     assertNotNull(v1);
     assertEquals(USERNAME_SUZY, v1.getAuthor());
     assertEquals(new Date().getDate(), v1.getDate().getDate());
-    
+
     repo.updateFile(newFile, newContent);
-    
+
     // gets last version summary
     VersionSummary v2 = repo.getVersionSummary(newFile.getId(), null);
-    
+
     assertNotNull(v2);
     assertEquals(USERNAME_SUZY, v2.getAuthor());
     assertEquals(new Date().getDate(), v2.getDate().getDate());
     assertFalse(v1.equals(v2));
     List<VersionSummary> sums = repo.getVersionSummaries(newFile.getId());
     assertEquals(sums.get(0), v1);
-    assertEquals(sums.get(sums.size()-1), v2);
+    assertEquals(sums.get(sums.size() - 1), v2);
   }
-  
+
   @Test
   public void testGetFileByVersionSummary() throws Exception {
     repo.getRepositoryEventHandler().onStartup();
@@ -982,7 +995,7 @@ public class DefaultRepositoryServiceTest implements ApplicationContextAware {
     } catch (IllegalArgumentException e) {
       // moving a folder to a path with a non-existent parent folder is illegal
     }
-    
+
     try {
       repo.moveFile(testFolder.getId(), newFile.getAbsolutePath());
       fail();

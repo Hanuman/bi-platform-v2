@@ -397,13 +397,19 @@ public class JcrRepositoryFileUtils {
   }
 
   public static List<RepositoryFile> getChildren(final Session session, final PentahoJcrConstants pentahoJcrConstants,
-      final IOwnerLookupHelper ownerLookupHelper, final Serializable folderId) throws RepositoryException {
+      final IOwnerLookupHelper ownerLookupHelper, final Serializable folderId, final String filter) throws RepositoryException {
     Node folderNode = session.getNodeByUUID(folderId.toString());
     Assert.isTrue(isPentahoFolder(pentahoJcrConstants, folderNode));
 
     List<RepositoryFile> children = new ArrayList<RepositoryFile>();
     // get all immediate child nodes that are of type PHO_NT_PENTAHOFOLDER or PHO_NT_PENTAHOFILE
-    NodeIterator nodeIterator = folderNode.getNodes();
+    NodeIterator nodeIterator = null;
+    if (filter != null) {
+      nodeIterator = folderNode.getNodes(filter);
+    } else {
+      nodeIterator = folderNode.getNodes();
+    }
+    
     while (nodeIterator.hasNext()) {
       Node node = nodeIterator.nextNode();
       if (isSupportedNodeType(pentahoJcrConstants, node)) {

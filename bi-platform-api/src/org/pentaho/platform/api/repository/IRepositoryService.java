@@ -19,6 +19,12 @@ public interface IRepositoryService {
    */
   RepositoryFile getFile(final String absPath);
 
+  /**
+   * Gets file. Use this method to test for file existence too.
+   * 
+   * @param fileId file id
+   * @return file or {@code null} if the file does not exist or access is denied
+   */
   RepositoryFile getFileById(final Serializable fileId);
 
   /**
@@ -32,6 +38,15 @@ public interface IRepositoryService {
    */
   RepositoryFile getFile(final String absPath, final boolean loadMaps);
 
+  /**
+   * Same as {@link #getFile(String)} except that if {@code loadMaps} is {@code true}, the maps for localized strings 
+   * will be loaded as well. (Normally these are not loaded.) Use {@code true} in editing tools that can show the maps
+   * for editing purposes.
+   * 
+   * @param fileId file id
+   * @param loadMaps {@code true} to load localized string maps
+   * @return file or {@code null} if the file does not exist or access is denied
+   */
   RepositoryFile getFileById(final Serializable fileId, final boolean loadMaps);
 
   /**
@@ -77,7 +92,7 @@ public interface IRepositoryService {
   /**
    * Creates a file.
    * 
-   * @param parentFolderAbsPath parent folder absolute path
+   * @param parentFolderId parent folder id
    * @param file file to create
    * @param content file content
    * @param versionMessageAndLabel optional version comment [0] and label [1] to be applied to parentFolder
@@ -89,7 +104,7 @@ public interface IRepositoryService {
   /**
    * Creates a folder.
    * 
-   * @param parentFolderAbsPath parent folder absolute path
+   * @param parentFolderId parent folder id
    * @param file file to create
    * @param versionMessageAndLabel optional version comment [0] and label [1] to be applied to parentFolder
    * @return file that is equal to given file except with id populated
@@ -100,10 +115,19 @@ public interface IRepositoryService {
   /**
    * Returns the children of this folder.
    * 
-   * @param folderAbsPath absolute path of folder whose children to fetch
+   * @param folderId id of folder whose children to fetch
    * @return list of children (never {@code null})
    */
   List<RepositoryFile> getChildren(final Serializable folderId);
+  
+  /**
+   * Returns the children of this folder that match the specified filter.
+   * 
+   * @param folderId id of folder whose children to fetch
+   * @param filter filter may be a full name or a partial name with one or more wildcard characters ("*")
+   * @return list of children (never {@code null})
+   */
+  List<RepositoryFile> getChildren(final Serializable folderId, final String filter);
 
   /**
    * Updates a file and/or the content of a file.
@@ -163,7 +187,7 @@ public interface IRepositoryService {
   /**
    * Locks a file.
    * 
-   * @param absPath absolute path to file
+   * @param fileId file id
    * @param lock message
    */
   void lockFile(final Serializable fileId, final String message);
@@ -180,7 +204,7 @@ public interface IRepositoryService {
   /**
    * Returns ACL for file.
    * 
-   * @param absPath absolute path to file
+   * @param fileId file id
    * @return access control list
    */
   RepositoryFileAcl getAcl(final Serializable fileId);
@@ -204,7 +228,7 @@ public interface IRepositoryService {
   /**
    * Returns the list of access control entries that will be used to make an access control decision.
    * 
-   * @param absPath absolute path to file
+   * @param fileId file id
    * @return list of ACEs
    */
   List<RepositoryFileAcl.Ace> getEffectiveAces(final Serializable fileId);
@@ -224,7 +248,7 @@ public interface IRepositoryService {
    * Returns a list of version summary instances. The first version in the list is the root version. The last version
    * in the list is the base version. Branching and merging are not supported so this is a simple list.
    * 
-   * @param absPath absolute path to file
+   * @param fileId file id
    * @return list of version summaries (never {@code null})
    */
   List<VersionSummary> getVersionSummaries(final Serializable fileId);
@@ -232,7 +256,7 @@ public interface IRepositoryService {
   /**
    * Gets file as it was at the given version. Use this method to test for file existence too.
    * 
-   * @param final String absPath
+   * @param fileId file id
    * @param versionId version id
    * @return file or {@code null} if the file does not exist or access is denied
    */

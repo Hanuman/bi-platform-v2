@@ -243,12 +243,12 @@ public class JcrRepositoryFileDao implements IRepositoryFileDao {
    * {@inheritDoc}
    */
   @SuppressWarnings("unchecked")
-  public List<RepositoryFile> getChildren(final Serializable folderId) {
+  public List<RepositoryFile> getChildren(final Serializable folderId, final String filter) {
     Assert.notNull(folderId);
     return (List<RepositoryFile>) jcrTemplate.execute(new JcrCallback() {
       public Object doInJcr(final Session session) throws RepositoryException, IOException {
         PentahoJcrConstants pentahoJcrConstants = new PentahoJcrConstants(session);
-        return JcrRepositoryFileUtils.getChildren(session, pentahoJcrConstants, ownerLookupHelper, folderId);
+        return JcrRepositoryFileUtils.getChildren(session, pentahoJcrConstants, ownerLookupHelper, folderId, filter);
       }
     });
   }
@@ -507,4 +507,5 @@ public class JcrRepositoryFileDao implements IRepositoryFileDao {
       }
     });
   }
+
 }

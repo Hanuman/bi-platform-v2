@@ -182,10 +182,17 @@ public class DefaultRepositoryService implements IRepositoryService {
    * {@inheritDoc}
    */
   public synchronized List<RepositoryFile> getChildren(final Serializable folderId) {
-    Assert.notNull(folderId);
-    return repositoryFileDao.getChildren(folderId);
+    return getChildren(folderId, null);
   }
 
+  /**
+   * {@inheritDoc}
+   */
+  public synchronized List<RepositoryFile> getChildren(final Serializable folderId, final String filter) {
+    Assert.notNull(folderId);
+    return repositoryFileDao.getChildren(folderId, filter);
+  }
+  
   /**
    * {@inheritDoc}
    */
