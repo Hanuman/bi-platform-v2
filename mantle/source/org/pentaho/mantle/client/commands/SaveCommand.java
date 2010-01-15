@@ -178,6 +178,13 @@ public class SaveCommand extends AbstractCommand {
         filename = filename.substring(0, filename.indexOf("analysisview.xaction")-1);
       }
       frame.controller.saveAs(actualFileName, filename, solution, path, overwrite);
+    } else if ((typeof(window[frame.fileSelected]) == "undefined")?  false: true) {
+      try {
+        frame.fileSelected(solution, path, name, name, overwrite);
+      } catch (e) {
+        //TODO: externalize message once a solution to do so is found.
+        $wnd.mantle_showMessage("Error","Error encountered while saving: "+e);
+      }
     } else {
       // trim off the waqr.xaction from the localized-name (waqr's save will put it back)
       if (filename.indexOf("waqr.xaction") != -1) {
