@@ -211,6 +211,7 @@
   <util:list id="transformers">
     <bean class="org.pentaho.platform.repository.pcr.jcr.transform.SampleRepositoryFileDataTransformer" />
     <bean class="org.pentaho.platform.repository.pcr.jcr.transform.SimpleRepositoryFileDataTransformer" />
+    <bean class="org.pentaho.platform.repository.pcr.data.node.NodeTransformer" />
   </util:list>
 
   <bean id="lockTokenHelper" class="org.pentaho.platform.repository.pcr.jcr.DefaultLockTokenHelper" />

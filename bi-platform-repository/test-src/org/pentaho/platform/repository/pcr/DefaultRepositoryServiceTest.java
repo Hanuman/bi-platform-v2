@@ -38,6 +38,9 @@ import org.pentaho.platform.api.repository.VersionSummary;
 import org.pentaho.platform.engine.core.system.PentahoSessionHolder;
 import org.pentaho.platform.engine.core.system.StandaloneSession;
 import org.pentaho.platform.engine.security.SecurityHelper;
+import org.pentaho.platform.repository.pcr.data.node.DataNode;
+import org.pentaho.platform.repository.pcr.data.node.DataProperty;
+import org.pentaho.platform.repository.pcr.data.node.NodeRepositoryFileData;
 import org.pentaho.platform.repository.pcr.jcr.SimpleJcrTestUtils;
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
@@ -430,6 +433,67 @@ public class DefaultRepositoryServiceTest implements ApplicationContextAware {
     assertEquals(sampleString, data.getSampleString());
     assertEquals(sampleBoolean, data.getSampleBoolean());
     assertEquals(sampleInteger, data.getSampleInteger());
+  }
+  
+  @Test
+  public void testCreateNodeFile() throws Exception {
+    repo.getRepositoryEventHandler().onStartup();
+    login(USERNAME_SUZY, TENANT_ID_ACME);
+    final String expectedName = "helloworld.doesnotmatter";
+    final String parentFolderPath = RepositoryPaths.getUserHomeFolderPath();
+    RepositoryFile parentFolder = repo.getFile(parentFolderPath);
+    final String expectedAbsolutePath = parentFolderPath + RepositoryFile.SEPARATOR + expectedName;
+
+    final Date EXP_DATE = new Date();
+    
+    DataNode node = new DataNode("kdjd");
+    node.setProperty("ddf", "ljsdfkjsdkf");
+    DataNode newChild1 = node.addNode("herfkmdx");
+    newChild1.setProperty("sdfs", true);
+    newChild1.setProperty("ks3", EXP_DATE);
+    newChild1.setProperty("ids32", 7.32D);
+    newChild1.setProperty("erere3", 9856684583L);
+    newChild1.setProperty("tttss4", "843skdfj33ksaljdfj");
+    DataNode newChild2 = node.addNode("pppqqqs2");
+    
+    NodeRepositoryFileData data = new NodeRepositoryFileData(node);
+    RepositoryFile newFile = repo.createFile(parentFolder.getId(), new RepositoryFile.Builder(expectedName).build(), data);
+    
+    assertNotNull(newFile.getId());
+    RepositoryFile foundFile = repo.getFile(expectedAbsolutePath);
+    assertNotNull(foundFile);
+    assertEquals(expectedName, foundFile.getName());
+
+    DataNode foundNode = repo.getDataForRead(foundFile.getId(), NodeRepositoryFileData.class).getNode();
+
+    assertEquals(node.getName(), foundNode.getName());
+    assertEquals(node.getProperty("ddf"), foundNode.getProperty("ddf"));
+    int actualPropCount = 0;
+    for (DataProperty prop : foundNode.getProperties()) {
+      actualPropCount++;
+    }
+    assertEquals(1, actualPropCount);
+    assertTrue(foundNode.hasNode("herfkmdx"));
+    DataNode foundChild1 = foundNode.getNode("herfkmdx");
+    assertEquals(newChild1.getName(), foundChild1.getName());
+    assertEquals(newChild1.getProperty("sdfs"), foundChild1.getProperty("sdfs"));
+    assertEquals(newChild1.getProperty("ks3"), foundChild1.getProperty("ks3"));
+    assertEquals(newChild1.getProperty("ids32"), foundChild1.getProperty("ids32"));
+    assertEquals(newChild1.getProperty("erere3"), foundChild1.getProperty("erere3"));
+    assertEquals(newChild1.getProperty("tttss4"), foundChild1.getProperty("tttss4"));
+    actualPropCount = 0;
+    for (DataProperty prop : newChild1.getProperties()) {
+      actualPropCount++;
+    }
+    assertEquals(5, actualPropCount);
+    DataNode foundChild2 = foundNode.getNode("pppqqqs2");
+    assertEquals(newChild2.getName(), foundChild2.getName());
+    actualPropCount = 0;
+    for (DataProperty prop : foundChild2.getProperties()) {
+      actualPropCount++;
+    }
+    assertEquals(0, actualPropCount);
+    
   }
 
   @Test(expected = IllegalArgumentException.class)
