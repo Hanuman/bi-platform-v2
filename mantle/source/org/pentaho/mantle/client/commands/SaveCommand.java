@@ -178,9 +178,9 @@ public class SaveCommand extends AbstractCommand {
         filename = filename.substring(0, filename.indexOf("analysisview.xaction")-1);
       }
       frame.controller.saveAs(actualFileName, filename, solution, path, overwrite);
-    } else if ((typeof(window[frame.fileSelected]) == "undefined")?  false: true) {
+    } else if ((typeof(window[frame.handle_puc_save]) == "undefined")?  false: true) {
       try {
-        frame.fileSelected(solution, path, name, name, overwrite);
+        frame.handle_puc_save(solution, path, name, name, overwrite);
       } catch (e) {
         //TODO: externalize message once a solution to do so is found.
         $wnd.mantle_showMessage("Error","Error encountered while saving: "+e);
