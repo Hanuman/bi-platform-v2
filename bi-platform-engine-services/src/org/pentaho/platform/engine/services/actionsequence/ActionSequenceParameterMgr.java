@@ -16,6 +16,7 @@ package org.pentaho.platform.engine.services.actionsequence;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
 
 import org.pentaho.actionsequence.dom.IActionInput;
 import org.pentaho.actionsequence.dom.IActionOutput;
@@ -103,4 +104,9 @@ public class ActionSequenceParameterMgr implements IActionParameterMgr {
    return null;
    }
    */
+
+  public InputStream getInputStream(IActionResource resource) throws FileNotFoundException {
+    // TODO Auto-generated method stub
+    return null;
+  }
 }
