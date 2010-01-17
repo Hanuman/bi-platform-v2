@@ -24,7 +24,7 @@ public class NodeTransformer implements ITransformer<NodeRepositoryFileData> {
       unstructuredNode = fileNode.getNode(pentahoJcrConstants.getJCR_CONTENT());
     } else {
       unstructuredNode = fileNode.addNode(pentahoJcrConstants.getJCR_CONTENT(), pentahoJcrConstants
-          .getNT_UNSTRUCTURED());
+          .getPHO_NT_INTERNALFOLDER());
     }
 
     // clear out all nodes since it's the quickest way to guarantee that existing nodes that should be deleted are 
@@ -51,7 +51,7 @@ public class NodeTransformer implements ITransformer<NodeRepositoryFileData> {
     if (jcrParentNode.hasNode(prefix + dataNode.getName())) {
       jcrNode = jcrParentNode.getNode(prefix + dataNode.getName());
     } else {
-      jcrNode = jcrParentNode.addNode(prefix + dataNode.getName(), pentahoJcrConstants.getNT_UNSTRUCTURED());
+      jcrNode = jcrParentNode.addNode(prefix + dataNode.getName(), pentahoJcrConstants.getPHO_NT_INTERNALFOLDER());
     }
     // set any properties represented by dataNode
     for (DataProperty dataProp : dataNode.getProperties()) {
@@ -109,6 +109,7 @@ public class NodeTransformer implements ITransformer<NodeRepositoryFileData> {
 
     DataNode dataNode = parentDataNode != null ? parentDataNode.addNode(jcrNode.getName().substring(prefix.length()))
         : new DataNode(jcrNode.getName().substring(prefix.length()));
+    dataNode.setId(jcrNode.getUUID());
 
     PropertyIterator props = jcrNode.getProperties(pattern);
     while (props.hasNext()) {

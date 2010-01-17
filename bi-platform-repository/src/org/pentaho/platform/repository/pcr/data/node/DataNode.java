@@ -1,5 +1,6 @@
 package org.pentaho.platform.repository.pcr.data.node;
 
+import java.io.Serializable;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -11,6 +12,8 @@ public class DataNode {
   };
   
   private String name;
+  
+  private Serializable id;
 
   private Map<String, DataNode> nodeNameToNodeMap = new HashMap<String, DataNode>();
 
@@ -124,6 +127,18 @@ public class DataNode {
   public String toString() {
     return "DataNode [name=" + name + ", nodeMap=" + nodeNameToNodeMap + ", propMap="
         + propNameToPropMap + "]";
+  }
+
+  public void setId(Serializable id) {
+    
+        this.id = id;
+      
+  }
+
+  public Serializable getId() {
+    
+        return id;
+      
   }
 
   

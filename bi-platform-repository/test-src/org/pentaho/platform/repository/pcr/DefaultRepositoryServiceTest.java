@@ -471,6 +471,7 @@ public class DefaultRepositoryServiceTest implements ApplicationContextAware {
     DataNode foundNode = repo.getDataForRead(foundFile.getId(), NodeRepositoryFileData.class).getNode();
 
     assertEquals(node.getName(), foundNode.getName());
+    assertNotNull(foundNode.getId());
     assertEquals(node.getProperty("ddf"), foundNode.getProperty("ddf"));
     int actualPropCount = 0;
     for (DataProperty prop : foundNode.getProperties()) {
@@ -479,6 +480,7 @@ public class DefaultRepositoryServiceTest implements ApplicationContextAware {
     assertEquals(1, actualPropCount);
     assertTrue(foundNode.hasNode("herfkmdx"));
     DataNode foundChild1 = foundNode.getNode("herfkmdx");
+    assertNotNull(foundChild1.getId());
     assertEquals(newChild1.getName(), foundChild1.getName());
     assertEquals(newChild1.getProperty("sdfs"), foundChild1.getProperty("sdfs"));
     assertEquals(newChild1.getProperty("ks3"), foundChild1.getProperty("ks3"));
@@ -501,6 +503,7 @@ public class DefaultRepositoryServiceTest implements ApplicationContextAware {
     }
     assertEquals(6, actualPropCount);
     DataNode foundChild2 = foundNode.getNode("pppqqqs2");
+    assertNotNull(foundChild2.getId());
     assertEquals(newChild2.getName(), foundChild2.getName());
     actualPropCount = 0;
     for (DataProperty prop : foundChild2.getProperties()) {
