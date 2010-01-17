@@ -17,7 +17,7 @@ import org.springframework.util.Assert;
 
 public class NodeTransformer implements ITransformer<NodeRepositoryFileData> {
 
-  private void createOrUpdateContentNode(final Session session, final PentahoJcrConstants pentahoJcrConstants,
+  protected void createOrUpdateContentNode(final Session session, final PentahoJcrConstants pentahoJcrConstants,
       final NodeRepositoryFileData data, final Node fileNode) throws RepositoryException {
     Node unstructuredNode = null;
     if (fileNode.hasNode(pentahoJcrConstants.getJCR_CONTENT())) {
@@ -25,6 +25,14 @@ public class NodeTransformer implements ITransformer<NodeRepositoryFileData> {
     } else {
       unstructuredNode = fileNode.addNode(pentahoJcrConstants.getJCR_CONTENT(), pentahoJcrConstants
           .getNT_UNSTRUCTURED());
+    }
+
+    // clear out all nodes since it's the quickest way to guarantee that existing nodes that should be deleted are 
+    // removed
+    final String pattern = session.getNamespacePrefix(PentahoJcrConstants.PHO_NS) + ":" + "*"; //$NON-NLS-1$ //$NON-NLS-2$
+    NodeIterator nodes = unstructuredNode.getNodes(pattern);
+    while (nodes.hasNext()) {
+      nodes.nextNode().remove();
     }
 
     internalCreateOrUpdate(session, pentahoJcrConstants, unstructuredNode, data.getNode());
