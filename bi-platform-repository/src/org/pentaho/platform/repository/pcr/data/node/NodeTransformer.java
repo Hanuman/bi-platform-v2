@@ -78,6 +78,10 @@ public class NodeTransformer implements ITransformer<NodeRepositoryFileData> {
           jcrNode.setProperty(prefix + dataProp.getName(), cal);
           break;
         }
+        case REF: {
+          jcrNode.setProperty(prefix + dataProp.getName(), session.getNodeByUUID(dataProp.getRef().getId().toString()));
+          break;
+        }
         default: {
           throw new IllegalArgumentException();
         }
@@ -128,6 +132,10 @@ public class NodeTransformer implements ITransformer<NodeRepositoryFileData> {
         }
         case PropertyType.DATE: {
           dataNode.setProperty(prop.getName().substring(prefix.length()), prop.getDate().getTime());
+          break;
+        }
+        case PropertyType.REFERENCE: {
+          dataNode.setProperty(prop.getName().substring(prefix.length()), new DataNodeRef(prop.getNode().getUUID()));
           break;
         }
         default: {

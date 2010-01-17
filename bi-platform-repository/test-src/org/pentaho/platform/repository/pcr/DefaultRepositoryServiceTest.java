@@ -39,6 +39,7 @@ import org.pentaho.platform.engine.core.system.PentahoSessionHolder;
 import org.pentaho.platform.engine.core.system.StandaloneSession;
 import org.pentaho.platform.engine.security.SecurityHelper;
 import org.pentaho.platform.repository.pcr.data.node.DataNode;
+import org.pentaho.platform.repository.pcr.data.node.DataNodeRef;
 import org.pentaho.platform.repository.pcr.data.node.DataProperty;
 import org.pentaho.platform.repository.pcr.data.node.NodeRepositoryFileData;
 import org.pentaho.platform.repository.pcr.jcr.SimpleJcrTestUtils;
@@ -444,6 +445,8 @@ public class DefaultRepositoryServiceTest implements ApplicationContextAware {
     RepositoryFile parentFolder = repo.getFile(parentFolderPath);
     final String expectedAbsolutePath = parentFolderPath + RepositoryFile.SEPARATOR + expectedName;
 
+    RepositoryFile sampleFile = createSampleFile(parentFolderPath, "helloworld2.sample", "dfdd", true, 83);
+    
     final Date EXP_DATE = new Date();
     
     DataNode node = new DataNode("kdjd");
@@ -454,6 +457,7 @@ public class DefaultRepositoryServiceTest implements ApplicationContextAware {
     newChild1.setProperty("ids32", 7.32D);
     newChild1.setProperty("erere3", 9856684583L);
     newChild1.setProperty("tttss4", "843skdfj33ksaljdfj");
+    newChild1.setProperty("urei2", new DataNodeRef(sampleFile.getId()));
     DataNode newChild2 = node.addNode("pppqqqs2");
     
     NodeRepositoryFileData data = new NodeRepositoryFileData(node);
@@ -481,11 +485,21 @@ public class DefaultRepositoryServiceTest implements ApplicationContextAware {
     assertEquals(newChild1.getProperty("ids32"), foundChild1.getProperty("ids32"));
     assertEquals(newChild1.getProperty("erere3"), foundChild1.getProperty("erere3"));
     assertEquals(newChild1.getProperty("tttss4"), foundChild1.getProperty("tttss4"));
+    assertEquals(newChild1.getProperty("urei2"), foundChild1.getProperty("urei2"));
+    
+    try {
+     SimpleJcrTestUtils.deleteItem(testJcrTemplate, sampleFile.getAbsolutePath());
+     fail();
+    } catch (Exception e) {
+      // should fail due to referential integrity (newFile payload has reference to sampleFile)
+    }
+    
+    
     actualPropCount = 0;
     for (DataProperty prop : newChild1.getProperties()) {
       actualPropCount++;
     }
-    assertEquals(5, actualPropCount);
+    assertEquals(6, actualPropCount);
     DataNode foundChild2 = foundNode.getNode("pppqqqs2");
     assertEquals(newChild2.getName(), foundChild2.getName());
     actualPropCount = 0;

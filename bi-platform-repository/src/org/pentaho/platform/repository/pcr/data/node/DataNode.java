@@ -63,6 +63,10 @@ public class DataNode {
     propNameToPropMap.put(name, new DataProperty(name, value, DataPropertyType.DATE));
   }
 
+  public void setProperty(final String name, DataNodeRef value) {
+    propNameToPropMap.put(name, new DataProperty(name, value, DataPropertyType.REF));
+  }
+  
   public boolean hasProperty(final String name) {
     return propNameToPropMap.containsKey(name);
   }
@@ -116,5 +120,12 @@ public class DataNode {
     return true;
   }
 
+  @Override
+  public String toString() {
+    return "DataNode [name=" + name + ", nodeMap=" + nodeNameToNodeMap + ", propMap="
+        + propNameToPropMap + "]";
+  }
+
+  
   
 }

@@ -33,6 +33,10 @@ public class DataProperty {
   public double getDouble() {
     return Double.valueOf(getString());
   }
+  
+  public DataNodeRef getRef() {
+    return new DataNodeRef(value.toString());
+  }
 
   public Date getDate() {
     if (!(value instanceof Date)) {
@@ -85,4 +89,11 @@ public class DataProperty {
       return false;
     return true;
   }
+
+  @Override
+  public String toString() {
+    return "DataProperty [name=" + name + ", type=" + type + ", value=" + value + "]";
+  }
+  
+  
 }
