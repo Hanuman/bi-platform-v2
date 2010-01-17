@@ -26,6 +26,10 @@ public class DataNode {
     nodeNameToNodeMap.put(child.getName(), child);
     return child;
   }
+  
+  public void addNode(final DataNode child) {
+    nodeNameToNodeMap.put(child.getName(), child);
+  }
 
   public Iterable<DataNode> getNodes() {
     return nodeNameToNodeMap.values();
