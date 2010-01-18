@@ -666,11 +666,15 @@ public class JcrRepositoryFileUtils {
     // don't need lock token anymore
     lockTokenHelper.removeLockToken(session, pentahoJcrConstants, lock);
     fileNode.unlock();
+    JcrRepositoryFileUtils.checkoutNearestVersionableFileIfNecessary(session, pentahoJcrConstants, fileId);
     // remove custom lock properties
     if (fileNode.hasProperty(pentahoJcrConstants.getPHO_LOCKMESSAGE())) {
       fileNode.getProperty(pentahoJcrConstants.getPHO_LOCKMESSAGE()).remove();
     }
     fileNode.getProperty(pentahoJcrConstants.getPHO_LOCKDATE()).remove();
+    session.save();
+    JcrRepositoryFileUtils.checkinNearestVersionableFileIfNecessary(session, pentahoJcrConstants, fileId,
+        "[system] unlocked file with id=" + fileId);
   }
 
   public static Object nodeIdToFile(final Session session, final PentahoJcrConstants pentahoJcrConstants,

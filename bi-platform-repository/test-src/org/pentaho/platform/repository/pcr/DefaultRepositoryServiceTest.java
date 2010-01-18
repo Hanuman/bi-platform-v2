@@ -712,7 +712,7 @@ public class DefaultRepositoryServiceTest implements ApplicationContextAware {
     final String fileName = "helloworld.xaction";
 
     final SimpleRepositoryFileData content = new SimpleRepositoryFileData(dataStream, encoding, mimeType);
-    RepositoryFile newFile = repo.createFile(parentFolder.getId(), new RepositoryFile.Builder(fileName).build(),
+    RepositoryFile newFile = repo.createFile(parentFolder.getId(), new RepositoryFile.Builder(fileName).versioned(true).build(),
         content);
     final String filePath = parentFolderPath + RepositoryFile.SEPARATOR + fileName;
     assertFalse(newFile.isLocked());

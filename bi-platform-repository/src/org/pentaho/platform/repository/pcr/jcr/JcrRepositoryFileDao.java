@@ -283,17 +283,19 @@ public class JcrRepositoryFileDao implements IRepositoryFileDao {
 
   /**
    * {@inheritDoc}
+   * 
+   * TODO mlowery fix this hack so that locked files don't have to be checked out to remove custom lock fields
    */
   public void unlockFile(final Serializable fileId) {
     Assert.notNull(fileId);
     jcrTemplate.execute(new JcrCallback() {
       public Object doInJcr(final Session session) throws RepositoryException, IOException {
         PentahoJcrConstants pentahoJcrConstants = new PentahoJcrConstants(session);
-        JcrRepositoryFileUtils.checkoutNearestVersionableFileIfNecessary(session, pentahoJcrConstants, fileId);
+//        JcrRepositoryFileUtils.checkoutNearestVersionableFileIfNecessary(session, pentahoJcrConstants, fileId);
         JcrRepositoryFileUtils.unlockFile(session, pentahoJcrConstants, fileId, lockTokenHelper);
-        session.save();
-        JcrRepositoryFileUtils.checkinNearestVersionableFileIfNecessary(session, pentahoJcrConstants, fileId,
-            "[system] unlocked file with id=" + fileId);
+//        session.save();
+//        JcrRepositoryFileUtils.checkinNearestVersionableFileIfNecessary(session, pentahoJcrConstants, fileId,
+//            "[system] unlocked file with id=" + fileId);
         return null;
       }
     });
