@@ -511,6 +511,15 @@ public class DefaultRepositoryServiceTest implements ApplicationContextAware {
     }
     assertEquals(0, actualPropCount);
     
+    // ordering
+    int i = 0;
+    for (DataNode currentNode : foundNode.getNodes()) {
+      if (i++ == 0) {
+        assertEquals(newChild1.getName(), currentNode.getName());
+      } else {
+        assertEquals(newChild2.getName(), currentNode.getName());
+      }
+    }
   }
 
   @Test(expected = IllegalArgumentException.class)

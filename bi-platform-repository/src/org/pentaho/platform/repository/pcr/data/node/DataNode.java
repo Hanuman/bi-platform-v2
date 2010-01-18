@@ -1,8 +1,10 @@
 package org.pentaho.platform.repository.pcr.data.node;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class DataNode {
@@ -16,6 +18,8 @@ public class DataNode {
   private Serializable id;
 
   private Map<String, DataNode> nodeNameToNodeMap = new HashMap<String, DataNode>();
+  
+  private List<DataNode> childNodes = new ArrayList<DataNode>();
 
   private Map<String, DataProperty> propNameToPropMap = new HashMap<String, DataProperty>();
 
@@ -26,16 +30,21 @@ public class DataNode {
 
   public DataNode addNode(final String name) {
     DataNode child = new DataNode(name);
-    nodeNameToNodeMap.put(child.getName(), child);
+    internalAddNode(child);
     return child;
   }
   
   public void addNode(final DataNode child) {
+    internalAddNode(child);
+  }
+  
+  protected void internalAddNode(final DataNode child) {
+    childNodes.add(child);
     nodeNameToNodeMap.put(child.getName(), child);
   }
 
   public Iterable<DataNode> getNodes() {
-    return nodeNameToNodeMap.values();
+    return childNodes; // maintain order of child nodes
   }
 
   public DataNode getNode(final String name) {
