@@ -70,7 +70,7 @@ public class DefaultUnifiedRepository implements IUnifiedRepository {
   /**
    * {@inheritDoc}
    */
-  public IRepositoryLifecycleManager getRepositoryEventHandler() {
+  public IRepositoryLifecycleManager getRepositoryLifecycleManager() {
     return repositoryEventHandler;
   }
 

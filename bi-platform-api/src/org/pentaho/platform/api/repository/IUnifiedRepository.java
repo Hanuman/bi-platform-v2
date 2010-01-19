@@ -286,7 +286,7 @@ public interface IUnifiedRepository {
    * Returns the associated {@link IRepositoryLifecycleManager}.
    * @return repository event handler
    */
-  IRepositoryLifecycleManager getRepositoryEventHandler();
+  IRepositoryLifecycleManager getRepositoryLifecycleManager();
 
   /**
    * Allows external code to alert the repository of lifecycle events like startup and new user.
@@ -294,7 +294,7 @@ public interface IUnifiedRepository {
    * <p>
    * Methods in this class are not called by the {@link IUnifiedRepository} implementation; they must be called 
    * by an external caller. A caller can get a reference to the {@link IRepositoryLifecycleManager} by calling 
-   * {@link IUnifiedRepository#getRepositoryEventHandler()}. Methods should be able to be called more than once 
+   * {@link IUnifiedRepository#getRepositoryLifecycleManager()}. Methods should be able to be called more than once 
    * with the same arguments with no adverse effects.
    * </p>
    * 

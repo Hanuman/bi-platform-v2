@@ -31,7 +31,7 @@ public class UnifiedRepositorySystemListener implements IPentahoSystemListener {
 
   public boolean startup(IPentahoSession session) {
     try {
-      PentahoSystem.get(IUnifiedRepository.class).getRepositoryEventHandler().startup();
+      PentahoSystem.get(IUnifiedRepository.class).getRepositoryLifecycleManager().startup();
       return true;
     } catch (Exception e) {
       logger.error("", e); //$NON-NLS-1$

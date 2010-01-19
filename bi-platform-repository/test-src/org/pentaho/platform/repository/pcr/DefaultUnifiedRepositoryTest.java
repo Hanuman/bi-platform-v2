@@ -136,7 +136,7 @@ public class DefaultUnifiedRepositoryTest implements ApplicationContextAware {
     logout();
 
     if (startupCalled) {
-      repo.getRepositoryEventHandler().shutdown();
+      repo.getRepositoryLifecycleManager().shutdown();
     }
 
     // null out fields to get back memory
@@ -157,7 +157,7 @@ public class DefaultUnifiedRepositoryTest implements ApplicationContextAware {
 
   @Test
   public void testOnStartup() throws Exception {
-    repo.getRepositoryEventHandler().startup();
+    repo.getRepositoryLifecycleManager().startup();
     loginAsRepositoryAdmin();
     // make sure pentaho root folder exists
     final String rootFolderPath = RepositoryPaths.getPentahoRootFolderPath();
@@ -166,7 +166,7 @@ public class DefaultUnifiedRepositoryTest implements ApplicationContextAware {
 
   @Test
   public void testGetFileWithLoadedMaps() throws Exception {
-    repo.getRepositoryEventHandler().startup();
+    repo.getRepositoryLifecycleManager().startup();
     login(USERNAME_SUZY, TENANT_ID_ACME);
     final String fileName = "helloworld.sample";
     RepositoryFile newFile = createSampleFile(RepositoryPaths.getUserHomeFolderPath(), fileName, "blah", false, 123);
@@ -190,7 +190,7 @@ public class DefaultUnifiedRepositoryTest implements ApplicationContextAware {
    */
   @Test
   public void testOnNewUser() throws Exception {
-    repo.getRepositoryEventHandler().startup();
+    repo.getRepositoryLifecycleManager().startup();
     login(USERNAME_SUZY, TENANT_ID_ACME);
     RepositoryFile suzyHomeFolder = repo.getFile(RepositoryPaths.getUserHomeFolderPath());
     assertNotNull(suzyHomeFolder);
@@ -216,7 +216,7 @@ public class DefaultUnifiedRepositoryTest implements ApplicationContextAware {
     final RepositoryFileSid commonAuthenticatedAuthoritySid = new RepositoryFileSid(commonAuthenticatedAuthorityName,
         RepositoryFileSid.Type.ROLE);
 
-    repo.getRepositoryEventHandler().startup();
+    repo.getRepositoryLifecycleManager().startup();
     login(USERNAME_SUZY, TENANT_ID_ACME);
 
     // pentaho root folder
@@ -270,7 +270,7 @@ public class DefaultUnifiedRepositoryTest implements ApplicationContextAware {
 
   @Test
   public void testGetFileAccessDenied() throws Exception {
-    repo.getRepositoryEventHandler().startup();
+    repo.getRepositoryLifecycleManager().startup();
     login(USERNAME_TIFFANY, TENANT_ID_ACME);
     RepositoryFile tiffanyHomeFolder = repo.getFile(RepositoryPaths.getUserHomeFolderPath());
     assertNotNull(tiffanyHomeFolder);
@@ -297,7 +297,7 @@ public class DefaultUnifiedRepositoryTest implements ApplicationContextAware {
 
   @Test
   public void testGetFileAdmin() throws Exception {
-    repo.getRepositoryEventHandler().startup();
+    repo.getRepositoryLifecycleManager().startup();
     login(USERNAME_TIFFANY, TENANT_ID_ACME);
     RepositoryFile tiffanyHomeFolder = repo.getFile(RepositoryPaths.getUserHomeFolderPath());
     repo.createFolder(tiffanyHomeFolder.getId(), new RepositoryFile.Builder("test").folder(true).build(), null);
@@ -307,7 +307,7 @@ public class DefaultUnifiedRepositoryTest implements ApplicationContextAware {
 
   @Test
   public void testGetFileNotExist() throws Exception {
-    repo.getRepositoryEventHandler().startup();
+    repo.getRepositoryLifecycleManager().startup();
     login(USERNAME_TIFFANY, TENANT_ID_ACME);
     RepositoryFile file2 = repo.getFile("/doesnotexist");
     assertNull(file2);
@@ -322,8 +322,8 @@ public class DefaultUnifiedRepositoryTest implements ApplicationContextAware {
 
   @Test
   public void testStartupTwice() throws Exception {
-    repo.getRepositoryEventHandler().startup();
-    repo.getRepositoryEventHandler().startup();
+    repo.getRepositoryLifecycleManager().startup();
+    repo.getRepositoryLifecycleManager().startup();
     login(USERNAME_SUZY, TENANT_ID_ACME);
     assertNotNull(SimpleJcrTestUtils.getItem(testJcrTemplate, RepositoryPaths.getPentahoRootFolderPath() + "[1]"));
     assertNull(SimpleJcrTestUtils.getItem(testJcrTemplate, RepositoryPaths.getPentahoRootFolderPath() + "[2]"));
@@ -331,14 +331,14 @@ public class DefaultUnifiedRepositoryTest implements ApplicationContextAware {
 
   @Test
   public void testOnNewUserTwice() throws Exception {
-    repo.getRepositoryEventHandler().startup();
+    repo.getRepositoryLifecycleManager().startup();
     login(USERNAME_SUZY, TENANT_ID_ACME);
     login(USERNAME_SUZY, TENANT_ID_ACME);
   }
 
   @Test
   public void testCreateFolder() throws Exception {
-    repo.getRepositoryEventHandler().startup();
+    repo.getRepositoryLifecycleManager().startup();
     login(USERNAME_SUZY, TENANT_ID_ACME);
     RepositoryFile parentFolder = repo.getFile(RepositoryPaths.getUserHomeFolderPath());
     RepositoryFile newFolder = new RepositoryFile.Builder("test").folder(true).build();
@@ -354,7 +354,7 @@ public class DefaultUnifiedRepositoryTest implements ApplicationContextAware {
 
   @Test(expected = DataRetrievalFailureException.class)
   public void testCreateFolderAccessDenied() throws Exception {
-    repo.getRepositoryEventHandler().startup();
+    repo.getRepositoryLifecycleManager().startup();
     login(USERNAME_SUZY, TENANT_ID_ACME);
     RepositoryFile parentFolder = repo.getFile(RepositoryPaths.getPentahoRootFolderPath());
     RepositoryFile newFolder = new RepositoryFile.Builder("test").folder(true).build();
@@ -363,7 +363,7 @@ public class DefaultUnifiedRepositoryTest implements ApplicationContextAware {
 
   @Test(expected = IllegalArgumentException.class)
   public void testCreateFolderAtRootIllegal() throws Exception {
-    repo.getRepositoryEventHandler().startup();
+    repo.getRepositoryLifecycleManager().startup();
     login(USERNAME_SUZY, TENANT_ID_ACME);
     RepositoryFile newFolder = new RepositoryFile.Builder("test").folder(true).build();
     repo.createFolder(null, newFolder, null);
@@ -371,7 +371,7 @@ public class DefaultUnifiedRepositoryTest implements ApplicationContextAware {
 
   @Test(expected = IllegalArgumentException.class)
   public void testCreateFileAtRootIllegal() throws Exception {
-    repo.getRepositoryEventHandler().startup();
+    repo.getRepositoryLifecycleManager().startup();
     login(USERNAME_SUZY, TENANT_ID_ACME);
     final String dataString = "Hello World!";
     final String encoding = "UTF-8";
@@ -384,7 +384,7 @@ public class DefaultUnifiedRepositoryTest implements ApplicationContextAware {
 
   @Test
   public void testCreateSimpleFile() throws Exception {
-    repo.getRepositoryEventHandler().startup();
+    repo.getRepositoryLifecycleManager().startup();
     login(USERNAME_SUZY, TENANT_ID_ACME);
     RepositoryFile parentFolder = repo.getFile(RepositoryPaths.getUserHomeFolderPath());
     final String expectedDataString = "Hello World!";
@@ -420,7 +420,7 @@ public class DefaultUnifiedRepositoryTest implements ApplicationContextAware {
 
   @Test
   public void testCreateSampleFile() throws Exception {
-    repo.getRepositoryEventHandler().startup();
+    repo.getRepositoryLifecycleManager().startup();
     login(USERNAME_SUZY, TENANT_ID_ACME);
     final String expectedName = "helloworld.sample";
     final String sampleString = "Ciao World!";
@@ -448,7 +448,7 @@ public class DefaultUnifiedRepositoryTest implements ApplicationContextAware {
 
   @Test
   public void testCreateNodeFile() throws Exception {
-    repo.getRepositoryEventHandler().startup();
+    repo.getRepositoryLifecycleManager().startup();
     login(USERNAME_SUZY, TENANT_ID_ACME);
     final String expectedName = "helloworld.doesnotmatter";
     final String parentFolderPath = RepositoryPaths.getUserHomeFolderPath();
@@ -534,7 +534,7 @@ public class DefaultUnifiedRepositoryTest implements ApplicationContextAware {
 
   @Test(expected = IllegalArgumentException.class)
   public void testCreateFileUnrecognizedContentType() throws Exception {
-    repo.getRepositoryEventHandler().startup();
+    repo.getRepositoryLifecycleManager().startup();
     login(USERNAME_SUZY, TENANT_ID_ACME);
     RepositoryFile parentFolder = repo.getFile(RepositoryPaths.getUserHomeFolderPath());
     IRepositoryFileData content = new IRepositoryFileData() {
@@ -544,14 +544,14 @@ public class DefaultUnifiedRepositoryTest implements ApplicationContextAware {
 
   @Test(expected = IllegalArgumentException.class)
   public void testCreateFileNoExtension() throws Exception {
-    repo.getRepositoryEventHandler().startup();
+    repo.getRepositoryLifecycleManager().startup();
     login(USERNAME_SUZY, TENANT_ID_ACME);
     createSampleFile(RepositoryPaths.getUserHomeFolderPath(), "helloworld", "blah", false, 123);
   }
 
   @Test
   public void testGetChildren() throws Exception {
-    repo.getRepositoryEventHandler().startup();
+    repo.getRepositoryLifecycleManager().startup();
     login(USERNAME_SUZY, TENANT_ID_ACME); // creates acme tenant folder
     List<RepositoryFile> children = repo.getChildren(repo.getFile(RepositoryPaths.getPentahoRootFolderPath()).getId());
     assertEquals(1, children.size());
@@ -583,7 +583,7 @@ public class DefaultUnifiedRepositoryTest implements ApplicationContextAware {
    */
   @Test
   public void testListHomeFolders() throws Exception {
-    repo.getRepositoryEventHandler().startup();
+    repo.getRepositoryLifecycleManager().startup();
     login(USERNAME_SUZY, TENANT_ID_ACME);
     login(USERNAME_TIFFANY, TENANT_ID_ACME);
     List<RepositoryFile> children = repo.getChildren(repo.getFile(RepositoryPaths.getTenantHomeFolderPath()).getId());
@@ -592,7 +592,7 @@ public class DefaultUnifiedRepositoryTest implements ApplicationContextAware {
 
   @Test
   public void testUpdateFile() throws Exception {
-    repo.getRepositoryEventHandler().startup();
+    repo.getRepositoryLifecycleManager().startup();
     login(USERNAME_SUZY, TENANT_ID_ACME);
 
     final String parentFolderPath = RepositoryPaths.getUserHomeFolderPath();
@@ -624,7 +624,7 @@ public class DefaultUnifiedRepositoryTest implements ApplicationContextAware {
    */
   @Test
   public void testTransactionRollback() throws Exception {
-    repo.getRepositoryEventHandler().startup();
+    repo.getRepositoryLifecycleManager().startup();
     login(USERNAME_SUZY, TENANT_ID_ACME);
 
     final String expectedName = "helloworld.sample";
@@ -648,7 +648,7 @@ public class DefaultUnifiedRepositoryTest implements ApplicationContextAware {
 
   @Test(expected = DataIntegrityViolationException.class)
   public void testCreateDuplicateFolder() throws Exception {
-    repo.getRepositoryEventHandler().startup();
+    repo.getRepositoryLifecycleManager().startup();
     login(USERNAME_SUZY, TENANT_ID_ACME);
     RepositoryFile parentFolder = repo.getFile(RepositoryPaths.getUserHomeFolderPath());
     RepositoryFile newFolder = new RepositoryFile.Builder("test").folder(true).build();
@@ -660,7 +660,7 @@ public class DefaultUnifiedRepositoryTest implements ApplicationContextAware {
 
   @Test
   public void testWriteToPublic() throws Exception {
-    repo.getRepositoryEventHandler().startup();
+    repo.getRepositoryLifecycleManager().startup();
     login(USERNAME_SUZY, TENANT_ID_ACME);
     final String parentFolderPath = RepositoryPaths.getTenantPublicFolderPath();
     assertNotNull(createSampleFile(parentFolderPath, "helloworld.sample", "Hello World!", false, 500));
@@ -668,7 +668,7 @@ public class DefaultUnifiedRepositoryTest implements ApplicationContextAware {
 
   @Test
   public void testCreateVersionedFolder() throws Exception {
-    repo.getRepositoryEventHandler().startup();
+    repo.getRepositoryLifecycleManager().startup();
     login(USERNAME_SUZY, TENANT_ID_ACME);
     RepositoryFile parentFolder = repo.getFile(RepositoryPaths.getUserHomeFolderPath());
     RepositoryFile newFolder = new RepositoryFile.Builder("test").folder(true).versioned(true).build();
@@ -684,7 +684,7 @@ public class DefaultUnifiedRepositoryTest implements ApplicationContextAware {
 
   @Test
   public void testCreateVersionedFile() throws Exception {
-    repo.getRepositoryEventHandler().startup();
+    repo.getRepositoryLifecycleManager().startup();
     login(USERNAME_SUZY, TENANT_ID_ACME);
     final String parentFolderPath = RepositoryPaths.getUserHomeFolderPath();
     RepositoryFile parentFolder = repo.getFile(parentFolderPath);
@@ -710,7 +710,7 @@ public class DefaultUnifiedRepositoryTest implements ApplicationContextAware {
 
   @Test
   public void testLockFile() throws Exception {
-    repo.getRepositoryEventHandler().startup();
+    repo.getRepositoryLifecycleManager().startup();
     login(USERNAME_SUZY, TENANT_ID_ACME);
     final String parentFolderPath = RepositoryPaths.getTenantPublicFolderPath();
     RepositoryFile parentFolder = repo.getFile(parentFolderPath);
@@ -761,7 +761,7 @@ public class DefaultUnifiedRepositoryTest implements ApplicationContextAware {
 
   @Test
   public void testUndeleteFile() throws Exception {
-    repo.getRepositoryEventHandler().startup();
+    repo.getRepositoryLifecycleManager().startup();
     login(USERNAME_SUZY, TENANT_ID_ACME);
     final String parentFolderPath = RepositoryPaths.getTenantPublicFolderPath();
     RepositoryFile parentFolder = repo.getFile(parentFolderPath);
@@ -799,7 +799,7 @@ public class DefaultUnifiedRepositoryTest implements ApplicationContextAware {
 
   @Test
   public void testDeleteLockedFile() throws Exception {
-    repo.getRepositoryEventHandler().startup();
+    repo.getRepositoryLifecycleManager().startup();
     login(USERNAME_SUZY, TENANT_ID_ACME);
     final String parentFolderPath = RepositoryPaths.getTenantPublicFolderPath();
     RepositoryFile parentFolder = repo.getFile(parentFolderPath);
@@ -833,7 +833,7 @@ public class DefaultUnifiedRepositoryTest implements ApplicationContextAware {
 
   @Test
   public void testGetVersionSummaries() throws Exception {
-    repo.getRepositoryEventHandler().startup();
+    repo.getRepositoryLifecycleManager().startup();
     login(USERNAME_SUZY, TENANT_ID_ACME);
     final String parentFolderPath = RepositoryPaths.getTenantPublicFolderPath();
     RepositoryFile parentFolder = repo.getFile(parentFolderPath);
@@ -860,7 +860,7 @@ public class DefaultUnifiedRepositoryTest implements ApplicationContextAware {
 
   @Test
   public void testCircumventApiToGetVersionHistoryNodeAccessDenied() throws Exception {
-    repo.getRepositoryEventHandler().startup();
+    repo.getRepositoryLifecycleManager().startup();
     login(USERNAME_SUZY, TENANT_ID_ACME);
     RepositoryFile parentFolder = repo.getFile(RepositoryPaths.getUserHomeFolderPath());
     RepositoryFile newFolder = new RepositoryFile.Builder("test").folder(true).versioned(true).build();
@@ -873,7 +873,7 @@ public class DefaultUnifiedRepositoryTest implements ApplicationContextAware {
 
   @Test
   public void testGetVersionSummary() throws Exception {
-    repo.getRepositoryEventHandler().startup();
+    repo.getRepositoryLifecycleManager().startup();
     login(USERNAME_SUZY, TENANT_ID_ACME);
 
     final String parentFolderPath = RepositoryPaths.getUserHomeFolderPath();
@@ -908,7 +908,7 @@ public class DefaultUnifiedRepositoryTest implements ApplicationContextAware {
 
   @Test
   public void testGetFileByVersionSummary() throws Exception {
-    repo.getRepositoryEventHandler().startup();
+    repo.getRepositoryLifecycleManager().startup();
     login(USERNAME_SUZY, TENANT_ID_ACME);
 
     final String parentFolderPath = RepositoryPaths.getUserHomeFolderPath();
@@ -964,7 +964,7 @@ public class DefaultUnifiedRepositoryTest implements ApplicationContextAware {
 
   @Test
   public void testOwnership() throws Exception {
-    repo.getRepositoryEventHandler().startup();
+    repo.getRepositoryLifecycleManager().startup();
     login(USERNAME_SUZY, TENANT_ID_ACME);
     RepositoryFile parentFolder = repo.getFile(RepositoryPaths.getTenantPublicFolderPath());
     RepositoryFile newFolder = new RepositoryFile.Builder("test").folder(true).versioned(true).build();
@@ -989,7 +989,7 @@ public class DefaultUnifiedRepositoryTest implements ApplicationContextAware {
 
   @Test
   public void testGetAcl() throws Exception {
-    repo.getRepositoryEventHandler().startup();
+    repo.getRepositoryLifecycleManager().startup();
     login(USERNAME_SUZY, TENANT_ID_ACME);
     RepositoryFile parentFolder = repo.getFile(RepositoryPaths.getTenantPublicFolderPath());
     RepositoryFile newFolder = new RepositoryFile.Builder("test").folder(true).versioned(true).build();
@@ -1008,7 +1008,7 @@ public class DefaultUnifiedRepositoryTest implements ApplicationContextAware {
 
   @Test
   public void testGetAcl2() throws Exception {
-    repo.getRepositoryEventHandler().startup();
+    repo.getRepositoryLifecycleManager().startup();
     login(USERNAME_SUZY, TENANT_ID_ACME);
     RepositoryFile parentFolder = repo.getFile(RepositoryPaths.getTenantPublicFolderPath());
     RepositoryFile newFolder = new RepositoryFile.Builder("test").folder(true).versioned(true).build();
@@ -1023,7 +1023,7 @@ public class DefaultUnifiedRepositoryTest implements ApplicationContextAware {
 
   @Test
   public void testHasAccess() throws Exception {
-    repo.getRepositoryEventHandler().startup();
+    repo.getRepositoryLifecycleManager().startup();
     login(USERNAME_SUZY, TENANT_ID_ACME);
     assertTrue(repo.hasAccess(RepositoryPaths.getTenantPublicFolderPath(), EnumSet.of(RepositoryFilePermission.READ)));
     login(USERNAME_PAT, TENANT_ID_DUFF);
@@ -1036,7 +1036,7 @@ public class DefaultUnifiedRepositoryTest implements ApplicationContextAware {
 
   @Test
   public void testGetEffectiveAces() throws Exception {
-    repo.getRepositoryEventHandler().startup();
+    repo.getRepositoryLifecycleManager().startup();
     login(USERNAME_SUZY, TENANT_ID_ACME);
     RepositoryFile acmePublicFolder = repo.getFile(RepositoryPaths.getTenantPublicFolderPath());
     List<RepositoryFileAcl.Ace> effectiveAces1 = repo.getEffectiveAces(acmePublicFolder.getId());
@@ -1048,7 +1048,7 @@ public class DefaultUnifiedRepositoryTest implements ApplicationContextAware {
 
   @Test
   public void testUpdateAcl() throws Exception {
-    repo.getRepositoryEventHandler().startup();
+    repo.getRepositoryLifecycleManager().startup();
     login(USERNAME_SUZY, TENANT_ID_ACME);
     RepositoryFile parentFolder = repo.getFile(RepositoryPaths.getTenantPublicFolderPath());
     RepositoryFile newFolder = new RepositoryFile.Builder("test").folder(true).versioned(true).build();
@@ -1065,7 +1065,7 @@ public class DefaultUnifiedRepositoryTest implements ApplicationContextAware {
 
   @Test
   public void testMoveFile() throws Exception {
-    repo.getRepositoryEventHandler().startup();
+    repo.getRepositoryLifecycleManager().startup();
     login(USERNAME_SUZY, TENANT_ID_ACME);
     RepositoryFile parentFolder = repo.getFile(RepositoryPaths.getTenantPublicFolderPath());
     RepositoryFile moveTest1Folder = new RepositoryFile.Builder("moveTest1").folder(true).versioned(true).build();
@@ -1185,8 +1185,8 @@ public class DefaultUnifiedRepositoryTest implements ApplicationContextAware {
     // this line necessary for Spring Security's MethodSecurityInterceptor
     SecurityContextHolder.getContext().setAuthentication(auth);
 
-    repo.getRepositoryEventHandler().newTenant();
-    repo.getRepositoryEventHandler().newUser();
+    repo.getRepositoryLifecycleManager().newTenant();
+    repo.getRepositoryLifecycleManager().newUser();
   }
 
   private void loginAsRepositoryAdmin() {
