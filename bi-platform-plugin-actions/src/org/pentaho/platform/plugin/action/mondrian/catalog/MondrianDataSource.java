@@ -18,10 +18,14 @@
 package org.pentaho.platform.plugin.action.mondrian.catalog;
 
 import java.io.Serializable;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import mondrian.olap.Util;
 import mondrian.olap.Util.PropertyList;
+import mondrian.util.Pair;
 
 import org.apache.commons.lang.builder.ToStringBuilder;
 
@@ -73,7 +77,7 @@ public class MondrianDataSource implements Serializable {
 
   private List<String> catalogNames;
 
-  private PropertyList propertyList;
+  private Map<String, String> propertyList = new HashMap<String, String>();;
 
   public MondrianDataSource(final MondrianDataSource copy, final String overrideInfo) {
     this(copy.name, copy.description, copy.url, (null != overrideInfo ? overrideInfo : copy.dataSourceInfo),
@@ -92,7 +96,14 @@ public class MondrianDataSource implements Serializable {
     this.authenticationMode = authenticationMode;
     this.catalogNames = catalogNames;
     if (dataSourceInfo != null) {
-      propertyList = Util.parseConnectString(dataSourceInfo);
+      // convert datasource info over to map so that this object can be
+      // serialized in ehcache
+      PropertyList list = Util.parseConnectString(dataSourceInfo);
+      Iterator<Pair<String, String>> iter = list.iterator();
+      while (iter.hasNext()) {
+        Pair<String, String> pair = iter.next();
+        propertyList.put(pair.getKey(), pair.getValue());
+      }
     }
   }
 
