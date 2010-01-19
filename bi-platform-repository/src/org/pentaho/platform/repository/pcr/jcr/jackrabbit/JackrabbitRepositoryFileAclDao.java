@@ -4,6 +4,8 @@ import java.io.IOException;
 import java.io.Serializable;
 import java.security.Principal;
 import java.security.acl.Group;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.EnumSet;
 import java.util.List;
 
@@ -74,13 +76,14 @@ public class JackrabbitRepositoryFileAclDao implements IRepositoryFileAclDao {
    * 
    * This is a hack since this code must move lock step with any changes in access control on the server.
    */
-  public synchronized List<RepositoryFileAcl.Ace> getEffectiveAces(final Serializable id) {
+  public List<RepositoryFileAcl.Ace> getEffectiveAces(final Serializable id) {
     Assert.notNull(id);
-    RepositoryFileAcl acl = readAclById(id);
-    while (acl.isEntriesInheriting()) {
-      acl = readAclById(acl.getParentId());
+    RepositoryFileAcl acl = getAcl(id);
+    while (acl != null && acl.isEntriesInheriting()) {
+      acl = getParentAcl(acl.getId());
     }
-    return acl.getAces();
+    List<RepositoryFileAcl.Ace> emptyList = Collections.emptyList();
+    return (acl == null ? emptyList : acl.getAces());
   }
 
   /**
@@ -173,12 +176,6 @@ public class JackrabbitRepositoryFileAclDao implements IRepositoryFileAclDao {
     AccessControlManager acMgr = jrSession.getAccessControlManager();
     AccessControlPolicy acPolicy = getAccessControlPolicy(acMgr, absPath);
 
-    Serializable parentId = null;
-
-    if (!node.getParent().isSame(jrSession.getRootNode())) {
-      parentId = node.getParent().getUUID();
-    }
-
     Assert.isInstanceOf(IPentahoJackrabbitAccessControlList.class, acPolicy);
 
     IPentahoJackrabbitAccessControlList acList = (IPentahoJackrabbitAccessControlList) acPolicy;
@@ -191,7 +188,7 @@ public class JackrabbitRepositoryFileAclDao implements IRepositoryFileAclDao {
       owner = new RepositoryFileSid(ownerPrincipal.getName());
     }
 
-    RepositoryFileAcl.Builder aclBuilder = new RepositoryFileAcl.Builder(id, parentId, owner);
+    RepositoryFileAcl.Builder aclBuilder = new RepositoryFileAcl.Builder(id, owner);
     aclBuilder.entriesInheriting(acList.isEntriesInheriting());
     AccessControlEntry[] acEntries = acList.getAccessControlEntries();
     for (int i = 0; i < acEntries.length; i++) {
@@ -234,7 +231,7 @@ public class JackrabbitRepositoryFileAclDao implements IRepositoryFileAclDao {
     Assert.notNull(id);
     Assert.notNull(recipient);
     Assert.notNull(permission);
-    RepositoryFileAcl acl = readAclById(id);
+    RepositoryFileAcl acl = getAcl(id);
     Assert.notNull(acl);
     // TODO mlowery find an ACE with the recipient and update that rather than adding a new ACE
     RepositoryFileAcl updatedAcl = new RepositoryFileAcl.Builder(acl).ace(recipient, permission).build();
@@ -254,7 +251,7 @@ public class JackrabbitRepositoryFileAclDao implements IRepositoryFileAclDao {
     return updateAcl(aclBuilder.build());
   }
 
-  public RepositoryFileAcl readAclById(final Serializable id) {
+  public RepositoryFileAcl getAcl(final Serializable id) {
     return (RepositoryFileAcl) jcrTemplate.execute(new JcrCallback() {
       public Object doInJcr(final Session session) throws RepositoryException, IOException {
         PentahoJcrConstants pentahoJcrConstants = new PentahoJcrConstants(session);
@@ -262,6 +259,22 @@ public class JackrabbitRepositoryFileAclDao implements IRepositoryFileAclDao {
         SessionImpl jrSession = (SessionImpl) session;
 
         return toAcl(jrSession, pentahoJcrConstants, id);
+      }
+    });
+  }
+
+  protected RepositoryFileAcl getParentAcl(final Serializable id) {
+    return (RepositoryFileAcl) jcrTemplate.execute(new JcrCallback() {
+      public Object doInJcr(final Session session) throws RepositoryException, IOException {
+        PentahoJcrConstants pentahoJcrConstants = new PentahoJcrConstants(session);
+        Assert.isTrue(session instanceof SessionImpl);
+        SessionImpl jrSession = (SessionImpl) session;
+        Node node = jrSession.getNodeByUUID(id.toString());
+        if (!node.getParent().isSame(jrSession.getRootNode())) {
+          return toAcl(jrSession, pentahoJcrConstants, node.getParent().getUUID());
+        } else {
+          return null;
+        }
       }
     });
   }
@@ -299,19 +312,21 @@ public class JackrabbitRepositoryFileAclDao implements IRepositoryFileAclDao {
         for (int i = 0; i < acEntries.length; i++) {
           acList.removeAccessControlEntry(acEntries[i]);
         }
-        // add entries
-        for (RepositoryFileAcl.Ace ace : acl.getAces()) {
-          Principal principal = null;
+        // add entries to now empty list but only if not inheriting; force user to start with clean slate 
+        if (!acl.isEntriesInheriting()) {
+          for (RepositoryFileAcl.Ace ace : acl.getAces()) {
+            Principal principal = null;
 
-          principal = jrSession.getPrincipalManager().getPrincipal(ace.getSid().getName());
-          acList.addEntry(principal, permissionConversionHelper.pentahoPermissionsToJackrabbitPrivileges(jrSession, ace
-              .getPermissions()), true);
+            principal = jrSession.getPrincipalManager().getPrincipal(ace.getSid().getName());
+            acList.addEntry(principal, permissionConversionHelper.pentahoPermissionsToJackrabbitPrivileges(jrSession,
+                ace.getPermissions()), true);
+          }
         }
         acMgr.setPolicy(absPath, acList);
         session.save();
         JcrRepositoryFileUtils.checkinNearestVersionableNodeIfNecessary(session, pentahoJcrConstants, node,
             "[system] updated ACL");
-        return readAclById(acl.getId());
+        return getAcl(acl.getId());
       }
     });
 

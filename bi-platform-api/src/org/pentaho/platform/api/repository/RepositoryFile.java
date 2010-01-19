@@ -36,8 +36,6 @@ public class RepositoryFile implements Comparable<RepositoryFile>/*, Serializabl
 
   private Serializable id;
 
-  private Serializable parentId;
-
   /**
    * Read-only.
    */
@@ -124,11 +122,10 @@ public class RepositoryFile implements Comparable<RepositoryFile>/*, Serializabl
     this.name = name;
   }
 
-  public RepositoryFile(final String name, final Serializable id, final Serializable parentId) {
+  public RepositoryFile(final Serializable id, final String name) {
     super();
     this.name = name;
     this.id = id;
-    this.parentId = parentId;
   }
 
   // ~ Methods =========================================================================================================
@@ -139,10 +136,6 @@ public class RepositoryFile implements Comparable<RepositoryFile>/*, Serializabl
 
   public Serializable getId() {
     return id;
-  }
-
-  public Serializable getParentId() {
-    return parentId;
   }
 
   public Date getCreatedDate() {
@@ -233,8 +226,6 @@ public class RepositoryFile implements Comparable<RepositoryFile>/*, Serializabl
 
     private Serializable id;
 
-    private Serializable parentId;
-
     private Date createdDate;
 
     private Date lastModifiedDate;
@@ -275,17 +266,16 @@ public class RepositoryFile implements Comparable<RepositoryFile>/*, Serializabl
       this.clearTitleMap();
     }
 
-    public Builder(final String name, final Serializable id, final Serializable parentId) {
+    public Builder(final Serializable id, final String name) {
       assertHasText(name);
       assertNotNull(id);
       this.name = name;
       this.id = id;
-      this.parentId = parentId;
       this.clearTitleMap();
     }
 
     public Builder(final RepositoryFile other) {
-      this(other.name, other.id, other.parentId);
+      this(other.id, other.name);
       this.absolutePath(other.absolutePath).createdDate(other.createdDate).folder(other.folder).lastModificationDate(
           other.lastModifiedDate).versioned(other.versioned).hidden(other.hidden).versionId(other.versionId).locked(
           other.locked).lockDate(other.lockDate).lockOwner(other.lockOwner).lockMessage(other.lockMessage).owner(
@@ -294,7 +284,7 @@ public class RepositoryFile implements Comparable<RepositoryFile>/*, Serializabl
     }
 
     public RepositoryFile build() {
-      RepositoryFile result = new RepositoryFile(name, id, parentId);
+      RepositoryFile result = new RepositoryFile(id, name);
       result.createdDate = this.createdDate;
       result.lastModifiedDate = this.lastModifiedDate;
       result.folder = this.folder;

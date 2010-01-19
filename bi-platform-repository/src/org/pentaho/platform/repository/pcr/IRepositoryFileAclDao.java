@@ -9,12 +9,20 @@ import org.pentaho.platform.api.repository.RepositoryFilePermission;
 import org.pentaho.platform.api.repository.RepositoryFileSid;
 
 /**
- * A data access object for reading and writing {@code RepositoryFileAcl} instances.
+ * A data access object for reading and writing {@code RepositoryFileAcl} instances. The methods in this interface might 
+ * closely resemble those in {@link IUnifiedRepository} but this interface is not part of the public Pentaho API and
+ * can evolve independently.
  * 
  * @author mlowery
  */
 public interface IRepositoryFileAclDao {
 
+  /**
+   * Returns the list of access control entries that will be used to make an access control decision.
+   * 
+   * @param fileId file id
+   * @return list of ACEs
+   */
   List<RepositoryFileAcl.Ace> getEffectiveAces(final Serializable id);
 
   /**
@@ -27,8 +35,20 @@ public interface IRepositoryFileAclDao {
    */
   boolean hasAccess(final String absPath, final EnumSet<RepositoryFilePermission> permissions);
 
-  RepositoryFileAcl readAclById(final Serializable id);
+  /**
+   * Returns ACL for file.
+   * 
+   * @param fileId file id
+   * @return access control list
+   */
+  RepositoryFileAcl getAcl(final Serializable id);
 
+  /**
+   * Updates an ACL.
+   * 
+   * @param acl ACL to set; must have non-null id
+   * @return updated ACL
+   */
   RepositoryFileAcl updateAcl(final RepositoryFileAcl acl);
 
   /**

@@ -8,7 +8,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.pentaho.platform.api.engine.IPentahoSession;
 import org.pentaho.platform.api.repository.IRepositoryFileData;
-import org.pentaho.platform.api.repository.IRepositoryService;
+import org.pentaho.platform.api.repository.IUnifiedRepository;
 import org.pentaho.platform.api.repository.RepositoryFile;
 import org.pentaho.platform.api.repository.RepositoryFileAcl;
 import org.pentaho.platform.api.repository.RepositoryFilePermission;
@@ -19,16 +19,16 @@ import org.pentaho.platform.engine.core.system.PentahoSessionHolder;
 import org.springframework.util.Assert;
 
 /**
- * Default implementation of {@link IRepositoryService}. Delegates to {@link IRepositoryFileDao} and 
+ * Default implementation of {@link IUnifiedRepository}. Delegates to {@link IRepositoryFileDao} and 
  * {@link IRepositoryFileAclDao}.
  * 
  * @author mlowery
  */
-public class DefaultRepositoryService implements IRepositoryService {
+public class DefaultUnifiedRepository implements IUnifiedRepository {
 
   // ~ Static fields/initializers ======================================================================================
 
-  private static final Log logger = LogFactory.getLog(DefaultRepositoryService.class);
+  private static final Log logger = LogFactory.getLog(DefaultUnifiedRepository.class);
 
   // ~ Instance fields =================================================================================================
 
@@ -36,12 +36,12 @@ public class DefaultRepositoryService implements IRepositoryService {
 
   private IRepositoryFileAclDao repositoryFileAclDao;
 
-  private IRepositoryEventHandler repositoryEventHandler;
+  private IRepositoryLifecycleManager repositoryEventHandler;
 
   // ~ Constructors ====================================================================================================
 
-  public DefaultRepositoryService(final IRepositoryFileDao contentDao, final IRepositoryFileAclDao aclDao,
-      final IRepositoryEventHandler repositoryEventHandler) {
+  public DefaultUnifiedRepository(final IRepositoryFileDao contentDao, final IRepositoryFileAclDao aclDao,
+      final IRepositoryLifecycleManager repositoryEventHandler) {
     super();
     Assert.notNull(contentDao);
     Assert.notNull(aclDao);
@@ -56,36 +56,37 @@ public class DefaultRepositoryService implements IRepositoryService {
   /**
    * {@inheritDoc}
    */
-  public synchronized List<Ace> getEffectiveAces(final Serializable fileId) {
+  public List<Ace> getEffectiveAces(final Serializable fileId) {
     return repositoryFileAclDao.getEffectiveAces(fileId);
   }
 
   /**
    * {@inheritDoc}
    */
-  public synchronized boolean hasAccess(final String absPath, final EnumSet<RepositoryFilePermission> permissions) {
+  public boolean hasAccess(final String absPath, final EnumSet<RepositoryFilePermission> permissions) {
     return repositoryFileAclDao.hasAccess(absPath, permissions);
   }
 
   /**
    * {@inheritDoc}
    */
-  public synchronized IRepositoryEventHandler getRepositoryEventHandler() {
+  public IRepositoryLifecycleManager getRepositoryEventHandler() {
     return repositoryEventHandler;
   }
 
   /**
    * {@inheritDoc}
    */
-  public synchronized RepositoryFile getFile(final String absPath) {
+  public RepositoryFile getFile(final String absPath) {
     Assert.hasText(absPath);
+    assertNotRoot(absPath);
     return repositoryFileDao.getFile(absPath, false);
   }
 
   /**
    * {@inheritDoc}
    */
-  public synchronized RepositoryFile getFileById(final Serializable fileId) {
+  public RepositoryFile getFileById(final Serializable fileId) {
     Assert.notNull(fileId);
     return repositoryFileDao.getFileById(fileId, false);
   }
@@ -93,15 +94,16 @@ public class DefaultRepositoryService implements IRepositoryService {
   /**
    * {@inheritDoc}
    */
-  public synchronized RepositoryFile getFile(final String absPath, final boolean loadMaps) {
+  public RepositoryFile getFile(final String absPath, final boolean loadMaps) {
     Assert.hasText(absPath);
+    assertNotRoot(absPath);
     return repositoryFileDao.getFile(absPath, loadMaps);
   }
 
   /**
    * {@inheritDoc}
    */
-  public synchronized RepositoryFile getFileById(final Serializable fileId, final boolean loadMaps) {
+  public RepositoryFile getFileById(final Serializable fileId, final boolean loadMaps) {
     Assert.notNull(fileId);
     return repositoryFileDao.getFileById(fileId, loadMaps);
   }
@@ -109,28 +111,28 @@ public class DefaultRepositoryService implements IRepositoryService {
   /**
    * {@inheritDoc}
    */
-  public synchronized RepositoryFile createFile(final Serializable parentFolderId, final RepositoryFile file,
-      final IRepositoryFileData data, final String... versionMessageAndLabel) {
+  public RepositoryFile createFile(final Serializable parentFolderId, final RepositoryFile file,
+      final IRepositoryFileData data, final String versionMessage) {
     Assert.notNull(file);
     Assert.isTrue(!file.isFolder());
     Assert.hasText(file.getName());
     Assert.notNull(data);
     // external callers never allowed to create files at repo root
     Assert.notNull(parentFolderId);
-    return internalCreateFile(parentFolderId, file, data, true, versionMessageAndLabel);
+    return internalCreateFile(parentFolderId, file, data, true, versionMessage);
   }
 
   /**
    * {@inheritDoc}
    */
-  public synchronized RepositoryFile createFolder(final Serializable parentFolderId, final RepositoryFile file,
-      final String... versionMessageAndLabel) {
+  public RepositoryFile createFolder(final Serializable parentFolderId, final RepositoryFile file,
+      final String versionMessage) {
     Assert.notNull(file);
     Assert.isTrue(file.isFolder());
     Assert.hasText(file.getName());
     // external callers never allowed to create folders at repo root
     Assert.notNull(parentFolderId);
-    return internalCreateFolder(parentFolderId, file, true, versionMessageAndLabel);
+    return internalCreateFolder(parentFolderId, file, true, versionMessage);
   }
 
   /**
@@ -148,32 +150,30 @@ public class DefaultRepositoryService implements IRepositoryService {
    * 
    * @see #getDataForRead(RepositoryFile, Class)
    */
-  public synchronized <T extends IRepositoryFileData> T getDataForExecute(final Serializable fileId,
-      final Class<T> dataClass) {
+  public <T extends IRepositoryFileData> T getDataForExecute(final Serializable fileId, final Class<T> dataClass) {
     return getDataForExecute(fileId, null, dataClass);
   }
 
   /**
    * {@inheritDoc}
    */
-  public synchronized <T extends IRepositoryFileData> T getDataForExecute(final Serializable fileId,
-      final Serializable versionId, final Class<T> dataClass) {
+  public <T extends IRepositoryFileData> T getDataForExecute(final Serializable fileId, final Serializable versionId,
+      final Class<T> dataClass) {
     return getDataForRead(fileId, versionId, dataClass);
   }
 
   /**
    * {@inheritDoc}
    */
-  public synchronized <T extends IRepositoryFileData> T getDataForRead(final Serializable fileId,
-      final Class<T> dataClass) {
+  public <T extends IRepositoryFileData> T getDataForRead(final Serializable fileId, final Class<T> dataClass) {
     return getDataForRead(fileId, null, dataClass);
   }
 
   /**
    * {@inheritDoc}
    */
-  public synchronized <T extends IRepositoryFileData> T getDataForRead(final Serializable fileId,
-      final Serializable versionId, final Class<T> dataClass) {
+  public <T extends IRepositoryFileData> T getDataForRead(final Serializable fileId, final Serializable versionId,
+      final Class<T> dataClass) {
     Assert.notNull(fileId);
     return repositoryFileDao.getData(fileId, versionId, dataClass);
   }
@@ -181,14 +181,14 @@ public class DefaultRepositoryService implements IRepositoryService {
   /**
    * {@inheritDoc}
    */
-  public synchronized List<RepositoryFile> getChildren(final Serializable folderId) {
+  public List<RepositoryFile> getChildren(final Serializable folderId) {
     return getChildren(folderId, null);
   }
 
   /**
    * {@inheritDoc}
    */
-  public synchronized List<RepositoryFile> getChildren(final Serializable folderId, final String filter) {
+  public List<RepositoryFile> getChildren(final Serializable folderId, final String filter) {
     Assert.notNull(folderId);
     return repositoryFileDao.getChildren(folderId, filter);
   }
@@ -196,34 +196,45 @@ public class DefaultRepositoryService implements IRepositoryService {
   /**
    * {@inheritDoc}
    */
-  public synchronized RepositoryFile updateFile(final RepositoryFile file, final IRepositoryFileData data,
-      final String... versionMessageAndLabel) {
+  public RepositoryFile updateFile(final RepositoryFile file, final IRepositoryFileData data,
+      final String versionMessage) {
     Assert.notNull(file);
     Assert.notNull(data);
 
-    return internalUpdateFile(file, data, versionMessageAndLabel);
+    return internalUpdateFile(file, data, versionMessage);
   }
 
   /**
    * {@inheritDoc}
    */
-  public synchronized void deleteFile(final Serializable fileId, final String... versionMessageAndLabel) {
+  public void deleteFile(final Serializable fileId, final boolean permanent, final String versionMessage) {
     Assert.notNull(fileId);
-    // acl deleted when file node is deleted
-    repositoryFileDao.deleteFile(fileId, versionMessageAndLabel);
+    if (permanent) {
+      // fyi: acl deleted when file node is deleted
+      repositoryFileDao.permanentlyDeleteFile(fileId, versionMessage);
+    } else {
+      repositoryFileDao.deleteFile(fileId, versionMessage);
+    }
   }
 
   /**
    * {@inheritDoc}
    */
-  public synchronized List<RepositoryFile> getDeletedFiles(final Serializable folderId) {
+  public void deleteFile(final Serializable fileId, final String versionMessage) {
+    deleteFile(fileId, false, versionMessage);
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  public List<RepositoryFile> getDeletedFiles(final Serializable folderId) {
     return getDeletedFiles(folderId, null);
   }
 
   /**
    * {@inheritDoc}
    */
-  public synchronized List<RepositoryFile> getDeletedFiles(final Serializable folderId, final String filter) {
+  public List<RepositoryFile> getDeletedFiles(final Serializable folderId, final String filter) {
     Assert.notNull(folderId);
     return repositoryFileDao.getDeletedFiles(folderId, filter);
   }
@@ -231,38 +242,30 @@ public class DefaultRepositoryService implements IRepositoryService {
   /**
    * {@inheritDoc}
    */
-  public synchronized List<RepositoryFile> getDeletedFiles() {
+  public List<RepositoryFile> getDeletedFiles() {
     return repositoryFileDao.getDeletedFiles();
   }
 
   /**
    * {@inheritDoc}
    */
-  public synchronized void permanentlyDeleteFile(final Serializable fileId, final String... versionMessageAndLabel) {
+  public void undeleteFile(final Serializable fileId, final String versionMessage) {
     Assert.notNull(fileId);
-    repositoryFileDao.permanentlyDeleteFile(fileId, versionMessageAndLabel);
+    repositoryFileDao.undeleteFile(fileId, versionMessage);
   }
 
   /**
    * {@inheritDoc}
    */
-  public synchronized void undeleteFile(final Serializable fileId, final String... versionMessageAndLabel) {
+  public RepositoryFileAcl getAcl(final Serializable fileId) {
     Assert.notNull(fileId);
-    repositoryFileDao.undeleteFile(fileId, versionMessageAndLabel);
+    return repositoryFileAclDao.getAcl(fileId);
   }
 
   /**
    * {@inheritDoc}
    */
-  public synchronized RepositoryFileAcl getAcl(final Serializable fileId) {
-    Assert.notNull(fileId);
-    return repositoryFileAclDao.readAclById(fileId);
-  }
-
-  /**
-   * {@inheritDoc}
-   */
-  public synchronized void lockFile(final Serializable fileId, final String message) {
+  public void lockFile(final Serializable fileId, final String message) {
     Assert.notNull(fileId);
     repositoryFileDao.lockFile(fileId, message);
   }
@@ -270,7 +273,7 @@ public class DefaultRepositoryService implements IRepositoryService {
   /**
    * {@inheritDoc}
    */
-  public synchronized void unlockFile(final Serializable fileId) {
+  public void unlockFile(final Serializable fileId) {
     Assert.notNull(fileId);
     repositoryFileDao.unlockFile(fileId);
   }
@@ -278,7 +281,7 @@ public class DefaultRepositoryService implements IRepositoryService {
   /**
    * {@inheritDoc}
    */
-  public synchronized VersionSummary getVersionSummary(Serializable fileId, Serializable versionId) {
+  public VersionSummary getVersionSummary(Serializable fileId, Serializable versionId) {
     Assert.notNull(fileId);
     return repositoryFileDao.getVersionSummary(fileId, versionId);
   }
@@ -286,7 +289,7 @@ public class DefaultRepositoryService implements IRepositoryService {
   /**
    * {@inheritDoc}
    */
-  public synchronized List<VersionSummary> getVersionSummaries(final Serializable fileId) {
+  public List<VersionSummary> getVersionSummaries(final Serializable fileId) {
     Assert.notNull(fileId);
     return repositoryFileDao.getVersionSummaries(fileId);
   }
@@ -294,7 +297,7 @@ public class DefaultRepositoryService implements IRepositoryService {
   /**
    * {@inheritDoc}
    */
-  public synchronized RepositoryFile getFile(final Serializable fileId, final Serializable versionId) {
+  public RepositoryFile getFile(final Serializable fileId, final Serializable versionId) {
     Assert.notNull(fileId);
     Assert.notNull(versionId);
     return repositoryFileDao.getFile(fileId, versionId);
@@ -303,18 +306,18 @@ public class DefaultRepositoryService implements IRepositoryService {
   /**
    * {@inheritDoc}
    */
-  public synchronized void updateAcl(final RepositoryFileAcl acl) {
+  public RepositoryFileAcl updateAcl(final RepositoryFileAcl acl) {
     Assert.notNull(acl);
-    repositoryFileAclDao.updateAcl(acl);
+    return repositoryFileAclDao.updateAcl(acl);
   }
 
   /**
    * {@inheritDoc}
    */
-  public void moveFile(Serializable fileId, String destAbsPath, String... versionMessageAndLabel) {
+  public void moveFile(Serializable fileId, String destAbsPath, String versionMessage) {
     Assert.notNull(fileId);
     Assert.hasText(destAbsPath);
-    repositoryFileDao.moveFile(fileId, destAbsPath, versionMessageAndLabel);
+    repositoryFileDao.moveFile(fileId, destAbsPath, versionMessage);
   }
 
   /**
@@ -327,32 +330,32 @@ public class DefaultRepositoryService implements IRepositoryService {
   }
 
   private RepositoryFile internalCreateFile(final Serializable parentFolderId, final RepositoryFile file,
-      final IRepositoryFileData data, final boolean inheritAces, final String... versionMessageAndLabel) {
+      final IRepositoryFileData data, final boolean inheritAces, final String versionMessage) {
     Assert.notNull(file);
     Assert.notNull(data);
 
-    RepositoryFile newFile = repositoryFileDao.createFile(parentFolderId, file, data, versionMessageAndLabel);
+    RepositoryFile newFile = repositoryFileDao.createFile(parentFolderId, file, data, versionMessage);
     internalCreateAcl(newFile.getId(), inheritAces);
 
     return newFile;
   }
 
   private RepositoryFile internalCreateFolder(final Serializable parentFolderId, final RepositoryFile file,
-      final boolean inheritAces, final String... versionMessageAndLabel) {
+      final boolean inheritAces, final String versionMessage) {
     Assert.notNull(file);
 
-    RepositoryFile newFile = repositoryFileDao.createFolder(parentFolderId, file, versionMessageAndLabel);
+    RepositoryFile newFile = repositoryFileDao.createFolder(parentFolderId, file, versionMessage);
     internalCreateAcl(newFile.getId(), inheritAces);
 
     return newFile;
   }
 
   private RepositoryFile internalUpdateFile(final RepositoryFile file, final IRepositoryFileData data,
-      final String... versionMessageAndLabel) {
+      final String versionMessage) {
     Assert.notNull(file);
     Assert.notNull(data);
 
-    return repositoryFileDao.updateFile(file, data, versionMessageAndLabel);
+    return repositoryFileDao.updateFile(file, data, versionMessage);
   }
 
   private RepositoryFileAcl internalCreateAcl(final Serializable fileId, final boolean entriesInheriting) {
@@ -360,6 +363,10 @@ public class DefaultRepositoryService implements IRepositoryService {
 
     return repositoryFileAclDao.createAcl(fileId, entriesInheriting, new RepositoryFileSid(internalGetUsername()),
         RepositoryFilePermission.ALL);
+  }
+  
+  protected void assertNotRoot(final String absPath) {
+    Assert.isTrue(absPath != null && !absPath.trim().equals(RepositoryFile.SEPARATOR), "root folder is illegal");
   }
 
 }

@@ -6,12 +6,11 @@ import java.util.EnumSet;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.pentaho.platform.api.engine.IPentahoSession;
-import org.pentaho.platform.api.repository.IRepositoryService;
 import org.pentaho.platform.api.repository.RepositoryFile;
 import org.pentaho.platform.api.repository.RepositoryFileAcl;
 import org.pentaho.platform.api.repository.RepositoryFilePermission;
 import org.pentaho.platform.api.repository.RepositoryFileSid;
-import org.pentaho.platform.api.repository.IRepositoryService.IRepositoryEventHandler;
+import org.pentaho.platform.api.repository.IUnifiedRepository.IRepositoryLifecycleManager;
 import org.pentaho.platform.engine.core.system.PentahoSessionHolder;
 import org.pentaho.platform.engine.core.system.StandaloneSession;
 import org.pentaho.platform.engine.security.SecurityHelper;
@@ -28,7 +27,7 @@ import org.springframework.transaction.support.TransactionTemplate;
 import org.springframework.util.Assert;
 
 /**
- * Default {@link IRepositoryEventHandler} implementation.
+ * Default {@link IRepositoryLifecycleManager} implementation.
  * 
  * <ul>
  * <li>Runs as the repository admin. (Actually method is called as a regular user and the context is switched.)</li>
@@ -38,7 +37,7 @@ import org.springframework.util.Assert;
  * 
  * @author mlowery
  */
-public class DefaultRepositoryEventHandler implements IRepositoryService.IRepositoryEventHandler {
+public class DefaultRepositoryEventHandler implements IRepositoryLifecycleManager {
 
   // ~ Static fields/initializers ======================================================================================
 
@@ -101,37 +100,37 @@ public class DefaultRepositoryEventHandler implements IRepositoryService.IReposi
 
   // ~ Methods =========================================================================================================
 
-  public synchronized void onNewTenant(final String tenantId) {
+  public synchronized void newTenant(final String tenantId) {
     assertStartedUp();
     createTenantRootFolder(tenantId);
     createInitialTenantFolders(tenantId);
   }
 
-  public synchronized void onNewUser(final String tenantId, final String username) {
+  public synchronized void newUser(final String tenantId, final String username) {
     assertStartedUp();
     createUserHomeFolder(tenantId, username);
   }
 
-  public synchronized void onShutdown() {
+  public synchronized void shutdown() {
     assertStartedUp();
   }
 
-  public synchronized void onStartup() {
+  public synchronized void startup() {
     createPentahoRootFolder();
     startedUp = true;
   }
 
-  public synchronized void onNewTenant() {
-    onNewTenant(internalGetTenantId());
+  public synchronized void newTenant() {
+    newTenant(internalGetTenantId());
   }
 
-  public synchronized void onNewUser() {
-    onNewUser(internalGetTenantId(), internalGetUsername());
+  public synchronized void newUser() {
+    newUser(internalGetTenantId(), internalGetUsername());
   }
 
   /**
    * Throws an {@code IllegalStateException} if not started up.  Should be called from all public methods (except 
-   * {@link #onStartup()}).
+   * {@link #startup()}).
    */
   private void assertStartedUp() {
     Assert.state(startedUp, "startup must be called first");
@@ -298,7 +297,7 @@ public class DefaultRepositoryEventHandler implements IRepositoryService.IReposi
     final GrantedAuthority[] repositoryAdminAuthorities = new GrantedAuthority[2];
     // necessary for AclAuthorizationStrategyImpl
     repositoryAdminAuthorities[0] = new GrantedAuthorityImpl(repositoryAdminAuthorityName);
-    // necessary for unit test (Spring Security requires Authenticated role on all methods of DefaultRepositoryService)
+    // necessary for unit test (Spring Security requires Authenticated role on all methods of DefaultUnifiedRepository)
     repositoryAdminAuthorities[1] = new GrantedAuthorityImpl(commonAuthenticatedAuthorityName);
     final String password = "ignored"; //$NON-NLS-1$
     UserDetails repositoryAdminUserDetails = new User(repositoryAdminUsername, password, true, true, true, true,
@@ -328,7 +327,7 @@ public class DefaultRepositoryEventHandler implements IRepositoryService.IReposi
     Assert.notNull(file);
     Assert.notNull(owner);
 
-    RepositoryFileAcl acl = repositoryFileAclDao.readAclById(file.getId());
+    RepositoryFileAcl acl = repositoryFileAclDao.getAcl(file.getId());
     RepositoryFileAcl newAcl = new RepositoryFileAcl.Builder(acl).owner(owner).build();
     repositoryFileAclDao.updateAcl(newAcl);
   }

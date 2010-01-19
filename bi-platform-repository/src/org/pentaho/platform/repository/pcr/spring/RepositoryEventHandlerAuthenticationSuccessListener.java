@@ -2,15 +2,15 @@ package org.pentaho.platform.repository.pcr.spring;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.pentaho.platform.api.repository.IRepositoryService;
+import org.pentaho.platform.api.repository.IUnifiedRepository;
 import org.springframework.context.ApplicationEvent;
 import org.springframework.context.ApplicationListener;
 import org.springframework.security.event.authentication.InteractiveAuthenticationSuccessEvent;
 import org.springframework.util.Assert;
 
 /**
- * {@link ApplicationListener} that invokes {@link IRepositoryService.IRepositoryEventHandler#onNewTenant()} and
- * {@link IRepositoryService.IRepositoryEventHandler#onNewUser()}.
+ * {@link ApplicationListener} that invokes {@link IUnifiedRepository.IRepositoryLifecycleManager#newTenant()} and
+ * {@link IUnifiedRepository.IRepositoryLifecycleManager#newUser()}.
  * 
  * @author mlowery
  */
@@ -22,14 +22,14 @@ public class RepositoryEventHandlerAuthenticationSuccessListener implements Appl
 
   // ~ Instance fields =================================================================================================
 
-  private IRepositoryService repositoryService;
+  private IUnifiedRepository repo;
 
   // ~ Constructors ====================================================================================================
 
-  public RepositoryEventHandlerAuthenticationSuccessListener(final IRepositoryService repositoryService) {
+  public RepositoryEventHandlerAuthenticationSuccessListener(final IUnifiedRepository repo) {
     super();
-    Assert.notNull(repositoryService);
-    this.repositoryService = repositoryService;
+    Assert.notNull(repo);
+    this.repo = repo;
   }
 
   // ~ Methods =========================================================================================================
@@ -40,8 +40,8 @@ public class RepositoryEventHandlerAuthenticationSuccessListener implements Appl
     if (event instanceof InteractiveAuthenticationSuccessEvent) {
       logger.debug("heard interactive authentication success event; creating user home folder (if necessary)");
       try {
-        repositoryService.getRepositoryEventHandler().onNewTenant();
-        repositoryService.getRepositoryEventHandler().onNewUser();
+        repo.getRepositoryEventHandler().newTenant();
+        repo.getRepositoryEventHandler().newUser();
       } catch (Exception e) {
         logger.error("an exception occurred while creating user home folder", e);
       }

@@ -61,7 +61,7 @@ public class JcrRepositoryFileDao implements IRepositoryFileDao {
   // ~ Methods =========================================================================================================
 
   private RepositoryFile internalCreateFolder(final Serializable parentFolderId, final RepositoryFile folder,
-      final String... versionMessageAndLabel) {
+      final String versionMessage) {
     Assert.notNull(folder);
     Assert.hasText(folder.getName());
     Assert.isTrue(!folder.getName().contains(RepositoryFile.SEPARATOR));
@@ -75,7 +75,7 @@ public class JcrRepositoryFileDao implements IRepositoryFileDao {
         session.save();
         if (folder.isVersioned()) {
           JcrRepositoryFileUtils.checkinNearestVersionableNodeIfNecessary(session, pentahoJcrConstants, folderNode,
-              versionMessageAndLabel);
+              versionMessage);
         }
         JcrRepositoryFileUtils.checkinNearestVersionableFileIfNecessary(session, pentahoJcrConstants, parentFolderId,
             "[system] added child folder '" + folder.getName() + "' to " + parentFolderId);
@@ -85,7 +85,7 @@ public class JcrRepositoryFileDao implements IRepositoryFileDao {
   }
 
   private RepositoryFile internalCreateFile(final Serializable parentFolderId, final RepositoryFile file,
-      final IRepositoryFileData content, final String... versionMessageAndLabel) {
+      final IRepositoryFileData content, final String versionMessage) {
     Assert.notNull(file);
     Assert.hasText(file.getName());
     Assert.isTrue(!file.isFolder());
@@ -100,7 +100,7 @@ public class JcrRepositoryFileDao implements IRepositoryFileDao {
         session.save();
         if (file.isVersioned()) {
           JcrRepositoryFileUtils.checkinNearestVersionableNodeIfNecessary(session, pentahoJcrConstants, fileNode,
-              versionMessageAndLabel);
+              versionMessage);
         }
         JcrRepositoryFileUtils.checkinNearestVersionableFileIfNecessary(session, pentahoJcrConstants, parentFolderId,
             "[system] added child file '" + file.getName() + "' to "
@@ -111,7 +111,7 @@ public class JcrRepositoryFileDao implements IRepositoryFileDao {
   }
 
   private RepositoryFile internalUpdateFile(final RepositoryFile file, final IRepositoryFileData content,
-      final String... versionMessageAndLabel) {
+      final String versionMessage) {
     Assert.notNull(file);
     Assert.hasText(file.getName());
     Assert.isTrue(!file.isFolder());
@@ -125,7 +125,7 @@ public class JcrRepositoryFileDao implements IRepositoryFileDao {
             JcrRepositoryFileUtils.getFileExtension(session, file.getId()), content.getClass()));
         session.save();
         JcrRepositoryFileUtils.checkinNearestVersionableFileIfNecessary(session, pentahoJcrConstants, file.getId(),
-            versionMessageAndLabel);
+            versionMessage);
         return JcrRepositoryFileUtils.nodeIdToFile(session, pentahoJcrConstants, ownerLookupHelper, file.getId());
       }
     });
@@ -146,20 +146,20 @@ public class JcrRepositoryFileDao implements IRepositoryFileDao {
    * {@inheritDoc}
    */
   public RepositoryFile createFile(final Serializable parentFolderId, final RepositoryFile file,
-      final IRepositoryFileData content, final String... versionMessageAndLabel) {
+      final IRepositoryFileData content, final String versionMessage) {
     Assert.notNull(file);
     Assert.isTrue(!file.isFolder());
-    return internalCreateFile(parentFolderId, file, content, versionMessageAndLabel);
+    return internalCreateFile(parentFolderId, file, content, versionMessage);
   }
 
   /**
    * {@inheritDoc}
    */
   public RepositoryFile createFolder(final Serializable parentFolderId, final RepositoryFile folder,
-      final String... versionMessageAndLabel) {
+      final String versionMessage) {
     Assert.notNull(folder);
     Assert.isTrue(folder.isFolder());
-    return internalCreateFolder(parentFolderId, folder, versionMessageAndLabel);
+    return internalCreateFolder(parentFolderId, folder, versionMessage);
   }
 
   /**
@@ -257,10 +257,10 @@ public class JcrRepositoryFileDao implements IRepositoryFileDao {
    * {@inheritDoc}
    */
   public RepositoryFile updateFile(final RepositoryFile file, final IRepositoryFileData content,
-      final String... versionMessageAndLabel) {
+      final String versionMessage) {
     Assert.notNull(file);
     Assert.isTrue(!file.isFolder());
-    return internalUpdateFile(file, content, versionMessageAndLabel);
+    return internalUpdateFile(file, content, versionMessage);
   }
 
   /**
@@ -343,7 +343,7 @@ public class JcrRepositoryFileDao implements IRepositoryFileDao {
   /**
    * {@inheritDoc}
    */
-  public void deleteFile(final Serializable fileId, final String... versionMessageAndLabel) {
+  public void deleteFile(final Serializable fileId, final String versionMessage) {
     Assert.notNull(fileId);
     jcrTemplate.execute(new JcrCallback() {
       public Object doInJcr(final Session session) throws RepositoryException, IOException {
@@ -353,7 +353,7 @@ public class JcrRepositoryFileDao implements IRepositoryFileDao {
         deleteHelper.deleteFile(session, pentahoJcrConstants, fileId);
         session.save();
         JcrRepositoryFileUtils.checkinNearestVersionableFileIfNecessary(session, pentahoJcrConstants, parentFolderId,
-            versionMessageAndLabel);
+            versionMessage);
         return null;
       }
     });
@@ -393,7 +393,7 @@ public class JcrRepositoryFileDao implements IRepositoryFileDao {
    * No checkout needed as .trash is not versioned.
    * </p>
    */
-  public void permanentlyDeleteFile(final Serializable fileId, final String... versionMessageAndLabel) {
+  public void permanentlyDeleteFile(final Serializable fileId, final String versionMessage) {
     Assert.notNull(fileId);
     jcrTemplate.execute(new JcrCallback() {
       public Object doInJcr(final Session session) throws RepositoryException, IOException {
@@ -408,7 +408,7 @@ public class JcrRepositoryFileDao implements IRepositoryFileDao {
   /**
    * {@inheritDoc}
    */
-  public void undeleteFile(final Serializable fileId, final String... versionMessageAndLabel) {
+  public void undeleteFile(final Serializable fileId, final String versionMessage) {
     Assert.notNull(fileId);
     jcrTemplate.execute(new JcrCallback() {
       public Object doInJcr(final Session session) throws RepositoryException, IOException {
@@ -418,7 +418,7 @@ public class JcrRepositoryFileDao implements IRepositoryFileDao {
         deleteHelper.undeleteFile(session, pentahoJcrConstants, fileId);
         session.save();
         JcrRepositoryFileUtils.checkinNearestVersionableFileIfNecessary(session, pentahoJcrConstants, parentFolderId,
-            versionMessageAndLabel);
+            versionMessage);
         return null;
       }
     });
@@ -427,7 +427,7 @@ public class JcrRepositoryFileDao implements IRepositoryFileDao {
   /**
    * {@inheritDoc}
    */
-  public void moveFile(final Serializable fileId, final String destAbsPath, final String... versionMessageAndLabel) {
+  public void moveFile(final Serializable fileId, final String destAbsPath, final String versionMessage) {
     Assert.notNull(fileId);
     jcrTemplate.execute(new JcrCallback() {
       public Object doInJcr(final Session session) throws RepositoryException, IOException {
@@ -486,11 +486,11 @@ public class JcrRepositoryFileDao implements IRepositoryFileDao {
             + srcFileNode.getName() : cleanDestAbsPath);
         session.save();
         JcrRepositoryFileUtils.checkinNearestVersionableNodeIfNecessary(session, pentahoJcrConstants,
-            destParentFolderNode, versionMessageAndLabel);
+            destParentFolderNode, versionMessage);
         // if it's a move within the same folder, then the next checkin is unnecessary
         if (!destParentFolderNode.getUUID().equals(srcParentFolderId.toString())) {
           JcrRepositoryFileUtils.checkinNearestVersionableFileIfNecessary(session, pentahoJcrConstants,
-              srcParentFolderId, versionMessageAndLabel);
+              srcParentFolderId, versionMessage);
         }
         return null;
       }

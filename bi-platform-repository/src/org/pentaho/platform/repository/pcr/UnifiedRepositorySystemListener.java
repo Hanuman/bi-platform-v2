@@ -4,7 +4,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.pentaho.platform.api.engine.IPentahoSession;
 import org.pentaho.platform.api.engine.IPentahoSystemListener;
-import org.pentaho.platform.api.repository.IRepositoryService;
+import org.pentaho.platform.api.repository.IUnifiedRepository;
 import org.pentaho.platform.engine.core.system.PentahoSystem;
 
 /**
@@ -13,17 +13,17 @@ import org.pentaho.platform.engine.core.system.PentahoSystem;
  * @author wseyler
  * @author mlowery
  */
-public class RepositoryServiceSystemListener implements IPentahoSystemListener {
+public class UnifiedRepositorySystemListener implements IPentahoSystemListener {
 
   // ~ Static fields/initializers ======================================================================================
 
-  private static final Log logger = LogFactory.getLog(RepositoryServiceSystemListener.class);
+  private static final Log logger = LogFactory.getLog(UnifiedRepositorySystemListener.class);
 
   // ~ Instance fields =================================================================================================
 
   // ~ Constructors ====================================================================================================
 
-  public RepositoryServiceSystemListener() {
+  public UnifiedRepositorySystemListener() {
     super();
   }
 
@@ -31,7 +31,7 @@ public class RepositoryServiceSystemListener implements IPentahoSystemListener {
 
   public boolean startup(IPentahoSession session) {
     try {
-      PentahoSystem.get(IRepositoryService.class).getRepositoryEventHandler().onStartup();
+      PentahoSystem.get(IUnifiedRepository.class).getRepositoryEventHandler().startup();
       return true;
     } catch (Exception e) {
       logger.error("", e); //$NON-NLS-1$

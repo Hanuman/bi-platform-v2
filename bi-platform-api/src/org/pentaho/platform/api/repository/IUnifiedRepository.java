@@ -10,7 +10,7 @@ import java.util.List;
  * 
  * @author mlowery
  */
-public interface IRepositoryService {
+public interface IUnifiedRepository {
 
   /**
    * Gets file. Use this method to test for file existence too.
@@ -34,10 +34,10 @@ public interface IRepositoryService {
    * for editing purposes.
    * 
    * @param absPath absolute path to file
-   * @param loadMaps {@code true} to load localized string maps
+   * @param loadLocaleMaps {@code true} to load localized string maps
    * @return file or {@code null} if the file does not exist or access is denied
    */
-  RepositoryFile getFile(final String absPath, final boolean loadMaps);
+  RepositoryFile getFile(final String absPath, final boolean loadLocaleMaps);
 
   /**
    * Same as {@link #getFile(String)} except that if {@code loadMaps} is {@code true}, the maps for localized strings 
@@ -45,10 +45,10 @@ public interface IRepositoryService {
    * for editing purposes.
    * 
    * @param fileId file id
-   * @param loadMaps {@code true} to load localized string maps
+   * @param loadLocaleMaps {@code true} to load localized string maps
    * @return file or {@code null} if the file does not exist or access is denied
    */
-  RepositoryFile getFileById(final Serializable fileId, final boolean loadMaps);
+  RepositoryFile getFileById(final Serializable fileId, final boolean loadLocaleMaps);
 
   /**
    * Gets data at base version for read.
@@ -96,22 +96,22 @@ public interface IRepositoryService {
    * @param parentFolderId parent folder id
    * @param file file to create
    * @param content file content
-   * @param versionMessageAndLabel optional version comment [0] and label [1] to be applied to parentFolder
+   * @param versionMessage optional version comment to be applied to parentFolder
    * @return file that is equal to given file except with id populated
    */
   RepositoryFile createFile(final Serializable parentFolderId, final RepositoryFile file,
-      final IRepositoryFileData content, final String... versionMessageAndLabel);
+      final IRepositoryFileData content, final String versionMessage);
 
   /**
    * Creates a folder.
    * 
    * @param parentFolderId parent folder id
    * @param file file to create
-   * @param versionMessageAndLabel optional version comment [0] and label [1] to be applied to parentFolder
+   * @param versionMessage optional version comment to be applied to parentFolder
    * @return file that is equal to given file except with id populated
    */
   RepositoryFile createFolder(final Serializable parentFolderId, final RepositoryFile file,
-      final String... versionMessageAndLabel);
+      final String versionMessage);
 
   /**
    * Returns the children of this folder.
@@ -125,7 +125,8 @@ public interface IRepositoryService {
    * Returns the children of this folder that match the specified filter.
    * 
    * @param folderId id of folder whose children to fetch
-   * @param filter filter may be a full name or a partial name with one or more wildcard characters ("*")
+   * @param filter filter may be a full name or a partial name with one or more wildcard characters ("*"), or a 
+   * disjunction (using the "|" character to represent logical OR) of these
    * @return list of children (never {@code null})
    */
   List<RepositoryFile> getChildren(final Serializable folderId, final String filter);
@@ -135,29 +136,36 @@ public interface IRepositoryService {
    * 
    * @param file updated file (not a folder); must have non-null id
    * @param content updated content
-   * @param versionMessageAndLabel optional version comment [0] and label [1]
+   * @param versionMessageoptional version comment
    * @return updated file (possible with new version number)
    */
   RepositoryFile updateFile(final RepositoryFile file, final IRepositoryFileData content,
-      final String... versionMessageAndLabel);
+      final String versionMessage);
+
+  /**
+   * Deletes a file.
+   * 
+   * @param fileId file id
+   * @param permanent if {@code true}, once file is deleted, it cannot be undeleted
+   * @param versionMessage optional version comment
+   */
+  void deleteFile(final Serializable fileId, final boolean permanent, final String versionMessage);
 
   /**
    * Deletes a file in a recoverable manner.
    * 
    * @param fileId file id
-   * @param versionMessageAndLabel optional version comment [0] and label [1]
+   * @param versionMessage optional version comment
    */
-  void deleteFile(final Serializable fileId, final String... versionMessageAndLabel);
-
-  void undeleteFile(final Serializable fileId, final String... versionMessageAndLabel);
+  void deleteFile(final Serializable fileId, final String versionMessage);
   
   /**
-   * Deletes a file in an unrecoverable manner.
+   * Recovers a deleted file if it was not permanently deleted. File is recovered to its original folder.
    * 
-   * @param fileId file id
-   * @param versionMessageAndLabel optional version comment [0] and label [1]
+   * @param fileId deleted file id
+   * @param versionMessage optional version comment to be applied to original parent folder
    */
-  void permanentlyDeleteFile(final Serializable fileId, final String... versionMessageAndLabel);
+  void undeleteFile(final Serializable fileId, final String versionMessage);
   
   /**
    * Gets all deleted files for the current user in this folder.
@@ -171,7 +179,8 @@ public interface IRepositoryService {
    * Gets all deleted files for the current user in this folder.
    * 
    * @param folderId folder id
-   * @param filter filter may be a full name or a partial name with one or more wildcard characters ("*")
+   * @param filter filter may be a full name or a partial name with one or more wildcard characters ("*"), or a 
+   * disjunction (using the "|" character to represent logical OR) of these
    * @return list of deleted files
    */
   List<RepositoryFile> getDeletedFiles(final Serializable folderId, final String filter);
@@ -188,9 +197,9 @@ public interface IRepositoryService {
    * 
    * @param fileId if of file or folder to move and/or rename
    * @param destAbsPath absolute path to destination; if only moving then destAbsPath will be an existing path
-   * @param versionMessageAndLabel optional version comment [0] and label [1]
+   * @param versionMessageAndLabel optional version comment to be applied to source and destination parent folders
    */
-  void moveFile(final Serializable fileId, final String destAbsPath, final String... versionMessageAndLabel);
+  void moveFile(final Serializable fileId, final String destAbsPath, final String versionMessage);
   
   // ~ Lock methods ====================================================================================================
 
@@ -223,8 +232,9 @@ public interface IRepositoryService {
    * Updates an ACL.
    * 
    * @param acl ACL to set; must have non-null id
+   * @return updated ACL as it would be if calling {@link #getAcl(Serializable)}
    */
-  void updateAcl(final RepositoryFileAcl acl);
+  RepositoryFileAcl updateAcl(final RepositoryFileAcl acl);
 
   /**
    * Returns {@code true} if user has all permissions given.
@@ -236,7 +246,7 @@ public interface IRepositoryService {
   boolean hasAccess(final String absPath, final EnumSet<RepositoryFilePermission> permissions);
 
   /**
-   * Returns the list of access control entries that will be used to make an access control decision.
+   * Returns the list of access control entries (ACEs) that will be used to make an access control decision.
    * 
    * @param fileId file id
    * @return list of ACEs
@@ -273,61 +283,61 @@ public interface IRepositoryService {
   RepositoryFile getFile(final Serializable fileId, final Serializable versionId);
 
   /**
-   * Returns the associated {@link IRepositoryEventHandler}.
+   * Returns the associated {@link IRepositoryLifecycleManager}.
    * @return repository event handler
    */
-  IRepositoryEventHandler getRepositoryEventHandler();
+  IRepositoryLifecycleManager getRepositoryEventHandler();
 
   /**
-   * Handles various events like startup and new user. 
+   * Allows external code to alert the repository of lifecycle events like startup and new user.
    * 
    * <p>
-   * Methods in this class are not called by the {@link IRepositoryService} implementation; they must be called 
-   * by an external caller. A caller can get a reference to the {@link IRepositoryEventHandler} by calling 
-   * {@link IRepositoryService#getRepositoryEventHandler()}. Methods should be able to be called more than once 
+   * Methods in this class are not called by the {@link IUnifiedRepository} implementation; they must be called 
+   * by an external caller. A caller can get a reference to the {@link IRepositoryLifecycleManager} by calling 
+   * {@link IUnifiedRepository#getRepositoryEventHandler()}. Methods should be able to be called more than once 
    * with the same arguments with no adverse effects.
    * </p>
    * 
    * <p>
-   * Example: When a servlet-based application starts up, a {@code ServletContextListener} calls {@link #onStartup()}. 
-   * When a user logs in, {@link #onNewTenant(String)} and {@link #onNewUser(String)} are called. Finally, the 
-   * {@code ServletContextListener} calls {@link #onShutdown()}.
+   * Example: When a servlet-based application starts up, a {@code ServletContextListener} calls {@link #startup()}. 
+   * When a user logs in, {@link #newTenant(String)} and {@link #onNewUser(String)} are called. Finally, the 
+   * {@code ServletContextListener} calls {@link #shutdown()}.
    * </p>
    */
-  interface IRepositoryEventHandler {
+  interface IRepositoryLifecycleManager {
 
     /**
-     * To be called before any users call into the {@link IRepositoryService}.
+     * To be called before any users call into the {@link IUnifiedRepository}.
      */
-    void onStartup();
+    void startup();
 
     /**
      * To be called on repository shutdown.
      */
-    void onShutdown();
+    void shutdown();
 
     /**
-     * To be called before any users belonging to a particular tenant call into the {@link IRepositoryService}.
+     * To be called before any users belonging to a particular tenant call into the {@link IUnifiedRepository}.
      * @param tenantId new tenant id
      */
-    void onNewTenant(final String tenantId);
+    void newTenant(final String tenantId);
 
     /**
-     * To be called before any users belonging to the current tenant call into the {@link IRepositoryService}. 
+     * To be called before any users belonging to the current tenant call into the {@link IUnifiedRepository}. 
      */
-    void onNewTenant();
+    void newTenant();
 
     /**
-     * To be called before user indicated by {@code username} calls into the {@link IRepositoryService}.
+     * To be called before user indicated by {@code username} calls into the {@link IUnifiedRepository}.
      * @param tenantId tenant to which the user belongs
      * @param username new username
      */
-    void onNewUser(final String tenantId, final String username);
+    void newUser(final String tenantId, final String username);
 
     /**
-     * To be called before current user calls into the {@link IRepositoryService}.
+     * To be called before current user calls into the {@link IUnifiedRepository}.
      */
-    void onNewUser();
+    void newUser();
   }
 
 }

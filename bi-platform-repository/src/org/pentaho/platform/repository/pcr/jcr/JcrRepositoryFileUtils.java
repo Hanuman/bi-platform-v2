@@ -1,6 +1,5 @@
 package org.pentaho.platform.repository.pcr.jcr;
 
-import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -55,7 +54,6 @@ public class JcrRepositoryFileUtils {
     Assert.isTrue(isSupportedNodeType(pentahoJcrConstants, node));
 
     Serializable id = null;
-    Serializable parentId = null;
     String name = null;
     String absolutePath = null;
     Date created = null;
@@ -75,7 +73,6 @@ public class JcrRepositoryFileUtils {
     String locale = null;
 
     id = getNodeId(session, pentahoJcrConstants, node);
-    parentId = getParentId(session, pentahoJcrConstants, node);
     name = getNodeName(session, pentahoJcrConstants, node);
     absolutePath = getAbsolutePath(session, pentahoJcrConstants, node);
 
@@ -139,10 +136,10 @@ public class JcrRepositoryFileUtils {
 
     owner = getRepositoryFileSid(session, pentahoJcrConstants, ownerLookupHelper, node);
 
-    RepositoryFile file = new RepositoryFile.Builder(name, id, parentId).createdDate(created).lastModificationDate(
-        lastModified).folder(folder).versioned(versioned).absolutePath(absolutePath).versionId(versionId)
-        .locked(locked).lockDate(lockDate).lockMessage(lockMessage).lockOwner(lockOwner).owner(owner).title(title)
-        .description(description).titleMap(titleMap).descriptionMap(descriptionMap).locale(locale).build();
+    RepositoryFile file = new RepositoryFile.Builder(id, name).createdDate(created).lastModificationDate(lastModified)
+        .folder(folder).versioned(versioned).absolutePath(absolutePath).versionId(versionId).locked(locked).lockDate(
+            lockDate).lockMessage(lockMessage).lockOwner(lockOwner).owner(owner).title(title).description(description)
+        .titleMap(titleMap).descriptionMap(descriptionMap).locale(locale).build();
 
     return file;
   }
@@ -216,7 +213,7 @@ public class JcrRepositoryFileUtils {
     }
 
     for (Map.Entry<String, String> entry : map.entrySet()) {
-      localizedStringNode.setProperty(prefix + ":" + entry.getKey(), entry.getValue());
+      localizedStringNode.setProperty(prefix + ":" + entry.getKey(), entry.getValue()); //$NON-NLS-1$
     }
 
   }
@@ -240,17 +237,6 @@ public class JcrRepositoryFileUtils {
     } else {
       return node.getPath();
     }
-  }
-
-  private static Serializable getParentId(final Session session, final PentahoJcrConstants pentahoJcrConstants,
-      final Node node) throws RepositoryException {
-    Node nonFrozenNode = null;
-    if (node.isNodeType(pentahoJcrConstants.getNT_FROZENNODE())) {
-      nonFrozenNode = session.getNodeByUUID(node.getProperty(pentahoJcrConstants.getJCR_FROZENUUID()).getString());
-    } else {
-      nonFrozenNode = node;
-    }
-    return !nonFrozenNode.getParent().isSame(session.getRootNode()) ? nonFrozenNode.getParent().getUUID() : null;
   }
 
   private static Serializable getNodeId(final Session session, final PentahoJcrConstants pentahoJcrConstants,
@@ -397,7 +383,8 @@ public class JcrRepositoryFileUtils {
   }
 
   public static List<RepositoryFile> getChildren(final Session session, final PentahoJcrConstants pentahoJcrConstants,
-      final IOwnerLookupHelper ownerLookupHelper, final Serializable folderId, final String filter) throws RepositoryException {
+      final IOwnerLookupHelper ownerLookupHelper, final Serializable folderId, final String filter)
+      throws RepositoryException {
     Node folderNode = session.getNodeByUUID(folderId.toString());
     Assert.isTrue(isPentahoFolder(pentahoJcrConstants, folderNode));
 
@@ -409,7 +396,7 @@ public class JcrRepositoryFileUtils {
     } else {
       nodeIterator = folderNode.getNodes();
     }
-    
+
     while (nodeIterator.hasNext()) {
       Node node = nodeIterator.nextNode();
       if (isSupportedNodeType(pentahoJcrConstants, node)) {
@@ -541,21 +528,23 @@ public class JcrRepositoryFileUtils {
    * Conditionally checks in node representing file if node is versionable.
    */
   public static void checkinNearestVersionableFileIfNecessary(final Session session,
-      final PentahoJcrConstants pentahoJcrConstants, final Serializable fileId, final String... versionMessageAndLabel)
+      final PentahoJcrConstants pentahoJcrConstants, final Serializable fileId, final String versionMessage)
       throws RepositoryException {
     // file could be null meaning the caller is using null as the parent folder; that's OK; in this case the node in
     // question would be the repository root node and that is never versioned
     if (fileId != null) {
       Node node = session.getNodeByUUID(fileId.toString());
-      checkinNearestVersionableNodeIfNecessary(session, pentahoJcrConstants, node, versionMessageAndLabel);
+      checkinNearestVersionableNodeIfNecessary(session, pentahoJcrConstants, node, versionMessage);
     }
   }
 
   /**
    * Conditionally checks in node if node is versionable.
+   * 
+   * TODO mlowery move commented out version labeling to its own method
    */
   public static void checkinNearestVersionableNodeIfNecessary(final Session session,
-      final PentahoJcrConstants pentahoJcrConstants, final Node node, final String... versionMessageAndLabel)
+      final PentahoJcrConstants pentahoJcrConstants, final Node node, final String versionMessage)
       throws RepositoryException {
     Assert.notNull(node);
 
@@ -563,16 +552,16 @@ public class JcrRepositoryFileUtils {
 
     if (versionableNode != null) {
       versionableNode.setProperty(pentahoJcrConstants.getPHO_VERSIONAUTHOR(), getUsername());
-      if (versionMessageAndLabel.length > 0 && StringUtils.hasText(versionMessageAndLabel[0])) {
-        versionableNode.setProperty(pentahoJcrConstants.getPHO_VERSIONMESSAGE(), versionMessageAndLabel[0]);
+      if (StringUtils.hasText(versionMessage)) {
+        versionableNode.setProperty(pentahoJcrConstants.getPHO_VERSIONMESSAGE(), versionMessage);
       } else {
         versionableNode.setProperty(pentahoJcrConstants.getPHO_VERSIONMESSAGE(), (String) null);
       }
       session.save(); // required before checkin since we set some properties above
       Version newVersion = versionableNode.checkin();
-      if (versionMessageAndLabel.length > 1 && StringUtils.hasText(versionMessageAndLabel[1])) {
-        newVersion.getContainingHistory().addVersionLabel(newVersion.getName(), versionMessageAndLabel[1], true);
-      }
+//      if (versionMessageAndLabel.length > 1 && StringUtils.hasText(versionMessageAndLabel[1])) {
+//        newVersion.getContainingHistory().addVersionLabel(newVersion.getName(), versionMessageAndLabel[1], true);
+//      }
     }
   }
 

@@ -10,13 +10,13 @@ import java.util.List;
  * Immutable repository file access control list (ACL). Use the {@link Builder} to create instances.
  * 
  * <p>
- * Same abstraction as {@code org.springframework.security.acls.Acl} although it contains no logic and is 
+ * Same abstraction as {@code org.springframework.security.acls.Acl} except it contains no logic and is 
  * GWT-compatible.
  * </p>
  * 
  * @author mlowery
  */
-public class RepositoryFileAcl /*implements Serializable*/ {
+public class RepositoryFileAcl /*implements Serializable*/{
 
   // ~ Static fields/initializers ======================================================================================
 
@@ -36,10 +36,9 @@ public class RepositoryFileAcl /*implements Serializable*/ {
 
   // ~ Constructors ====================================================================================================
 
-  public RepositoryFileAcl(final Serializable id, final Serializable parentId, final RepositoryFileSid owner) {
+  public RepositoryFileAcl(final Serializable id, final RepositoryFileSid owner) {
     super();
     this.id = id;
-    this.parentId = parentId;
     this.owner = owner;
   }
 
@@ -51,10 +50,6 @@ public class RepositoryFileAcl /*implements Serializable*/ {
 
   public Serializable getId() {
     return id;
-  }
-
-  public Serializable getParentId() {
-    return parentId;
   }
 
   public RepositoryFileSid getOwner() {
@@ -124,7 +119,8 @@ public class RepositoryFileAcl /*implements Serializable*/ {
 
     private EnumSet<RepositoryFilePermission> permissions;
 
-    public Ace(final RepositoryFileSid recipient, final RepositoryFilePermission first, final RepositoryFilePermission... rest) {
+    public Ace(final RepositoryFileSid recipient, final RepositoryFilePermission first,
+        final RepositoryFilePermission... rest) {
       this(recipient, EnumSet.of(first, rest));
     }
 
@@ -191,19 +187,17 @@ public class RepositoryFileAcl /*implements Serializable*/ {
 
     private boolean entriesInheriting = true;
 
-    public Builder(final Serializable id, final Serializable parentId, final RepositoryFileSid owner) {
+    public Builder(final Serializable id, final RepositoryFileSid owner) {
       this.id = id;
-      this.parentId = parentId;
       this.owner = owner;
     }
 
-    public Builder(final Serializable id, final Serializable parentId, final String name,
-        final RepositoryFileSid.Type type) {
-      this(id, parentId, new RepositoryFileSid(name, type));
+    public Builder(final Serializable id, final String name, final RepositoryFileSid.Type type) {
+      this(id, new RepositoryFileSid(name, type));
     }
 
     public Builder(final RepositoryFileAcl other) {
-      this(other.id, other.parentId, other.owner);
+      this(other.id, other.owner);
       this.entriesInheriting(other.entriesInheriting);
       for (Ace ace : other.aces) {
         this.ace(ace);
@@ -211,7 +205,7 @@ public class RepositoryFileAcl /*implements Serializable*/ {
     }
 
     public RepositoryFileAcl build() {
-      RepositoryFileAcl result = new RepositoryFileAcl(id, parentId, owner);
+      RepositoryFileAcl result = new RepositoryFileAcl(id, owner);
       result.aces = this.aces;
       result.entriesInheriting = this.entriesInheriting;
       return result;
@@ -232,7 +226,8 @@ public class RepositoryFileAcl /*implements Serializable*/ {
       return this;
     }
 
-    public Builder ace(final RepositoryFileSid recipient, final RepositoryFilePermission first, final RepositoryFilePermission... rest) {
+    public Builder ace(final RepositoryFileSid recipient, final RepositoryFilePermission first,
+        final RepositoryFilePermission... rest) {
       return ace(recipient, EnumSet.of(first, rest));
     }
 
@@ -246,10 +241,11 @@ public class RepositoryFileAcl /*implements Serializable*/ {
       return ace(new RepositoryFileSid(name, type), first, rest);
     }
 
-    public Builder ace(final String name, final RepositoryFileSid.Type type, final EnumSet<RepositoryFilePermission> permissions) {
+    public Builder ace(final String name, final RepositoryFileSid.Type type,
+        final EnumSet<RepositoryFilePermission> permissions) {
       return ace(new RepositoryFileSid(name, type), permissions);
     }
-    
+
     public Builder clearAces() {
       this.aces.clear();
       return this;

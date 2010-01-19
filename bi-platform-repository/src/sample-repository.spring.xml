@@ -22,42 +22,41 @@
     <property name="sessionFactory" ref="jcrSessionFactory" />
   </bean>
 
-  <bean id="repositoryServiceTransactionInterceptor" class="org.springframework.transaction.interceptor.TransactionInterceptor">
+  <bean id="unifiedRepositoryTransactionInterceptor" class="org.springframework.transaction.interceptor.TransactionInterceptor">
     <property name="transactionManager" ref="jcrTransactionManager" />
     <property name="transactionAttributeSource">
       <value>
-        org.pentaho.platform.api.repository.IRepositoryService.getFile=PROPAGATION_REQUIRED,readOnly
-        org.pentaho.platform.api.repository.IRepositoryService.getFileById=PROPAGATION_REQUIRED,readOnly
-        org.pentaho.platform.api.repository.IRepositoryService.getDataForRead=PROPAGATION_REQUIRED,readOnly
-        org.pentaho.platform.api.repository.IRepositoryService.getDataForExecute=PROPAGATION_REQUIRED,readOnly
-        org.pentaho.platform.api.repository.IRepositoryService.createFile=PROPAGATION_REQUIRED
-        org.pentaho.platform.api.repository.IRepositoryService.createFolder=PROPAGATION_REQUIRED
-        org.pentaho.platform.api.repository.IRepositoryService.getChildren=PROPAGATION_REQUIRED,readOnly
-        org.pentaho.platform.api.repository.IRepositoryService.updateFile=PROPAGATION_REQUIRED
-        org.pentaho.platform.api.repository.IRepositoryService.getAcl=PROPAGATION_REQUIRED,readOnly
-        org.pentaho.platform.api.repository.IRepositoryService.hasAccess=PROPAGATION_REQUIRED,readOnly
-        org.pentaho.platform.api.repository.IRepositoryService.getEffectiveAces=PROPAGATION_REQUIRED,readOnly
-        org.pentaho.platform.api.repository.IRepositoryService.updateAcl=PROPAGATION_REQUIRED
-        org.pentaho.platform.api.repository.IRepositoryService.lockFile=PROPAGATION_REQUIRED
-        org.pentaho.platform.api.repository.IRepositoryService.unlockFile=PROPAGATION_REQUIRED
-        org.pentaho.platform.api.repository.IRepositoryService.getVersionSummary=PROPAGATION_REQUIRED,readOnly
-        org.pentaho.platform.api.repository.IRepositoryService.getVersionSummaries=PROPAGATION_REQUIRED,readOnly
-        org.pentaho.platform.api.repository.IRepositoryService.deleteFile=PROPAGATION_REQUIRED
-        org.pentaho.platform.api.repository.IRepositoryService.undeleteFile=PROPAGATION_REQUIRED
-        org.pentaho.platform.api.repository.IRepositoryService.permanentlyDeleteFile=PROPAGATION_REQUIRED
-        org.pentaho.platform.api.repository.IRepositoryService.getDeletedFiles=PROPAGATION_REQUIRED,readOnly
-        org.pentaho.platform.api.repository.IRepositoryService.getDeletedFiles=PROPAGATION_REQUIRED,readOnly
-        org.pentaho.platform.api.repository.IRepositoryService.moveFile=PROPAGATION_REQUIRED
+        org.pentaho.platform.api.repository.IUnifiedRepository.getFile=PROPAGATION_REQUIRED,readOnly
+        org.pentaho.platform.api.repository.IUnifiedRepository.getFileById=PROPAGATION_REQUIRED,readOnly
+        org.pentaho.platform.api.repository.IUnifiedRepository.getDataForRead=PROPAGATION_REQUIRED,readOnly
+        org.pentaho.platform.api.repository.IUnifiedRepository.getDataForExecute=PROPAGATION_REQUIRED,readOnly
+        org.pentaho.platform.api.repository.IUnifiedRepository.createFile=PROPAGATION_REQUIRED
+        org.pentaho.platform.api.repository.IUnifiedRepository.createFolder=PROPAGATION_REQUIRED
+        org.pentaho.platform.api.repository.IUnifiedRepository.getChildren=PROPAGATION_REQUIRED,readOnly
+        org.pentaho.platform.api.repository.IUnifiedRepository.updateFile=PROPAGATION_REQUIRED
+        org.pentaho.platform.api.repository.IUnifiedRepository.getAcl=PROPAGATION_REQUIRED,readOnly
+        org.pentaho.platform.api.repository.IUnifiedRepository.hasAccess=PROPAGATION_REQUIRED,readOnly
+        org.pentaho.platform.api.repository.IUnifiedRepository.getEffectiveAces=PROPAGATION_REQUIRED,readOnly
+        org.pentaho.platform.api.repository.IUnifiedRepository.updateAcl=PROPAGATION_REQUIRED
+        org.pentaho.platform.api.repository.IUnifiedRepository.lockFile=PROPAGATION_REQUIRED
+        org.pentaho.platform.api.repository.IUnifiedRepository.unlockFile=PROPAGATION_REQUIRED
+        org.pentaho.platform.api.repository.IUnifiedRepository.getVersionSummary=PROPAGATION_REQUIRED,readOnly
+        org.pentaho.platform.api.repository.IUnifiedRepository.getVersionSummaries=PROPAGATION_REQUIRED,readOnly
+        org.pentaho.platform.api.repository.IUnifiedRepository.deleteFile=PROPAGATION_REQUIRED
+        org.pentaho.platform.api.repository.IUnifiedRepository.undeleteFile=PROPAGATION_REQUIRED
+        org.pentaho.platform.api.repository.IUnifiedRepository.getDeletedFiles=PROPAGATION_REQUIRED,readOnly
+        org.pentaho.platform.api.repository.IUnifiedRepository.getDeletedFiles=PROPAGATION_REQUIRED,readOnly
+        org.pentaho.platform.api.repository.IUnifiedRepository.moveFile=PROPAGATION_REQUIRED
       </value>
     </property>
   </bean>
 
-  <bean id="repositoryService" class="org.springframework.aop.framework.ProxyFactoryBean">
-    <property name="target" ref="repositoryServiceTarget" />
+  <bean id="unifiedRepository" class="org.springframework.aop.framework.ProxyFactoryBean">
+    <property name="target" ref="unifiedRepositoryTarget" />
     <property name="interceptorNames">
       <list>
-        <idref local="repositoryServiceTransactionInterceptor" />
-        <idref local="repositoryServiceMethodInterceptor" />
+        <idref local="unifiedRepositoryTransactionInterceptor" />
+        <idref local="unifiedRepositoryMethodInterceptor" />
       </list>
     </property>
   </bean>
@@ -92,7 +91,7 @@
     <constructor-arg value="_Admin" />
   </bean>
 
-  <bean id="repositoryServiceTarget" class="org.pentaho.platform.repository.pcr.DefaultRepositoryService">
+  <bean id="unifiedRepositoryTarget" class="org.pentaho.platform.repository.pcr.DefaultUnifiedRepository">
     <constructor-arg ref="repositoryFileDao" />
     <constructor-arg ref="repositoryFileAclDao" />
     <constructor-arg>
@@ -115,7 +114,7 @@
   </bean>
 
   <!-- In create[File|Folder], the first parameter is the parentFolder. This is the object whose ACL is checked. -->
-  <bean id="repositoryServiceMethodInterceptor" class="org.springframework.security.intercept.method.aopalliance.MethodSecurityInterceptor">
+  <bean id="unifiedRepositoryMethodInterceptor" class="org.springframework.security.intercept.method.aopalliance.MethodSecurityInterceptor">
     <property name="validateConfigAttributes">
       <value>true</value>
     </property>
@@ -127,28 +126,27 @@
     </property>
     <property name="objectDefinitionSource">
       <value>
-        org.pentaho.platform.api.repository.IRepositoryService.getFile=VOTE_ROLE_FILE_Authenticated
-        org.pentaho.platform.api.repository.IRepositoryService.getFileById=VOTE_ROLE_FILE_Authenticated
-        org.pentaho.platform.api.repository.IRepositoryService.getDataForRead=VOTE_ROLE_FILE_Authenticated
-        org.pentaho.platform.api.repository.IRepositoryService.getDataForExecute=VOTE_ROLE_FILE_Authenticated
-        org.pentaho.platform.api.repository.IRepositoryService.createFile=VOTE_ROLE_FILE_Authenticated
-        org.pentaho.platform.api.repository.IRepositoryService.createFolder=VOTE_ROLE_FILE_Authenticated
-        org.pentaho.platform.api.repository.IRepositoryService.getChildren=VOTE_ROLE_FILE_Authenticated
-        org.pentaho.platform.api.repository.IRepositoryService.updateFile=VOTE_ROLE_FILE_Authenticated
-        org.pentaho.platform.api.repository.IRepositoryService.getAcl=VOTE_ROLE_FILE_Authenticated
-        org.pentaho.platform.api.repository.IRepositoryService.hasAccess=VOTE_ROLE_FILE_Authenticated
-        org.pentaho.platform.api.repository.IRepositoryService.getEffectiveAces=VOTE_ROLE_FILE_Authenticated
-        org.pentaho.platform.api.repository.IRepositoryService.updateAcl=VOTE_ROLE_FILE_Authenticated
-        org.pentaho.platform.api.repository.IRepositoryService.lockFile=VOTE_ROLE_FILE_Authenticated
-        org.pentaho.platform.api.repository.IRepositoryService.unlockFile=VOTE_ROLE_FILE_Authenticated
-        org.pentaho.platform.api.repository.IRepositoryService.getVersionSummary=VOTE_ROLE_FILE_Authenticated
-        org.pentaho.platform.api.repository.IRepositoryService.getVersionSummaries=VOTE_ROLE_FILE_Authenticated
-        org.pentaho.platform.api.repository.IRepositoryService.deleteFile=VOTE_ROLE_FILE_Authenticated
-        org.pentaho.platform.api.repository.IRepositoryService.undeleteFile=VOTE_ROLE_FILE_Authenticated
-        org.pentaho.platform.api.repository.IRepositoryService.permanentlyDeleteFile=VOTE_ROLE_FILE_Authenticated
-        org.pentaho.platform.api.repository.IRepositoryService.getDeletedFiles=VOTE_ROLE_FILE_Authenticated
-        org.pentaho.platform.api.repository.IRepositoryService.getDeletedFiles=VOTE_ROLE_FILE_Authenticated
-        org.pentaho.platform.api.repository.IRepositoryService.moveFile=VOTE_ROLE_FILE_Authenticated
+        org.pentaho.platform.api.repository.IUnifiedRepository.getFile=VOTE_ROLE_FILE_Authenticated
+        org.pentaho.platform.api.repository.IUnifiedRepository.getFileById=VOTE_ROLE_FILE_Authenticated
+        org.pentaho.platform.api.repository.IUnifiedRepository.getDataForRead=VOTE_ROLE_FILE_Authenticated
+        org.pentaho.platform.api.repository.IUnifiedRepository.getDataForExecute=VOTE_ROLE_FILE_Authenticated
+        org.pentaho.platform.api.repository.IUnifiedRepository.createFile=VOTE_ROLE_FILE_Authenticated
+        org.pentaho.platform.api.repository.IUnifiedRepository.createFolder=VOTE_ROLE_FILE_Authenticated
+        org.pentaho.platform.api.repository.IUnifiedRepository.getChildren=VOTE_ROLE_FILE_Authenticated
+        org.pentaho.platform.api.repository.IUnifiedRepository.updateFile=VOTE_ROLE_FILE_Authenticated
+        org.pentaho.platform.api.repository.IUnifiedRepository.getAcl=VOTE_ROLE_FILE_Authenticated
+        org.pentaho.platform.api.repository.IUnifiedRepository.hasAccess=VOTE_ROLE_FILE_Authenticated
+        org.pentaho.platform.api.repository.IUnifiedRepository.getEffectiveAces=VOTE_ROLE_FILE_Authenticated
+        org.pentaho.platform.api.repository.IUnifiedRepository.updateAcl=VOTE_ROLE_FILE_Authenticated
+        org.pentaho.platform.api.repository.IUnifiedRepository.lockFile=VOTE_ROLE_FILE_Authenticated
+        org.pentaho.platform.api.repository.IUnifiedRepository.unlockFile=VOTE_ROLE_FILE_Authenticated
+        org.pentaho.platform.api.repository.IUnifiedRepository.getVersionSummary=VOTE_ROLE_FILE_Authenticated
+        org.pentaho.platform.api.repository.IUnifiedRepository.getVersionSummaries=VOTE_ROLE_FILE_Authenticated
+        org.pentaho.platform.api.repository.IUnifiedRepository.deleteFile=VOTE_ROLE_FILE_Authenticated
+        org.pentaho.platform.api.repository.IUnifiedRepository.undeleteFile=VOTE_ROLE_FILE_Authenticated
+        org.pentaho.platform.api.repository.IUnifiedRepository.getDeletedFiles=VOTE_ROLE_FILE_Authenticated
+        org.pentaho.platform.api.repository.IUnifiedRepository.getDeletedFiles=VOTE_ROLE_FILE_Authenticated
+        org.pentaho.platform.api.repository.IUnifiedRepository.moveFile=VOTE_ROLE_FILE_Authenticated
       </value>
     </property>
   </bean>
@@ -219,7 +217,7 @@
   <bean id="ownerLookupHelper" class="org.pentaho.platform.repository.pcr.jcr.DefaultOwnerLookupHelper" />
 
   <bean class="org.pentaho.platform.repository.pcr.spring.RepositoryEventHandlerAuthenticationSuccessListener">
-    <constructor-arg ref="repositoryService" />
+    <constructor-arg ref="unifiedRepository" />
   </bean>
 
   <bean id="repositoryFileAclDao" class="org.pentaho.platform.repository.pcr.jcr.jackrabbit.JackrabbitRepositoryFileAclDao">
