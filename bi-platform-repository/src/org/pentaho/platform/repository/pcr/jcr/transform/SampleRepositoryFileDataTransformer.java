@@ -7,7 +7,7 @@ import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
 import org.pentaho.platform.api.repository.IRepositoryFileData;
-import org.pentaho.platform.repository.pcr.SampleRepositoryFileData;
+import org.pentaho.platform.repository.pcr.data.sample.SampleRepositoryFileData;
 import org.pentaho.platform.repository.pcr.jcr.ITransformer;
 import org.pentaho.platform.repository.pcr.jcr.PentahoJcrConstants;
 

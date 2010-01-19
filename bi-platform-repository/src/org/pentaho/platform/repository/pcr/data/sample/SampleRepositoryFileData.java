@@ -1,4 +1,4 @@
-package org.pentaho.platform.repository.pcr;
+package org.pentaho.platform.repository.pcr.data.sample;
 
 import org.pentaho.platform.api.repository.IRepositoryFileData;
 

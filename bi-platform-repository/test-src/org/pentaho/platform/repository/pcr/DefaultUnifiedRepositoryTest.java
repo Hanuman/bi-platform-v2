@@ -42,6 +42,8 @@ import org.pentaho.platform.repository.pcr.data.node.DataNode;
 import org.pentaho.platform.repository.pcr.data.node.DataNodeRef;
 import org.pentaho.platform.repository.pcr.data.node.DataProperty;
 import org.pentaho.platform.repository.pcr.data.node.NodeRepositoryFileData;
+import org.pentaho.platform.repository.pcr.data.sample.SampleRepositoryFileData;
+import org.pentaho.platform.repository.pcr.data.simple.SimpleRepositoryFileData;
 import org.pentaho.platform.repository.pcr.jcr.SimpleJcrTestUtils;
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;

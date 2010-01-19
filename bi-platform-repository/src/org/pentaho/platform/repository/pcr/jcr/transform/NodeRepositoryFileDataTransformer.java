@@ -1,4 +1,4 @@
-package org.pentaho.platform.repository.pcr.data.node;
+package org.pentaho.platform.repository.pcr.jcr.transform;
 
 import java.util.Calendar;
 
@@ -11,11 +11,15 @@ import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
 import org.pentaho.platform.api.repository.IRepositoryFileData;
+import org.pentaho.platform.repository.pcr.data.node.DataNode;
+import org.pentaho.platform.repository.pcr.data.node.DataNodeRef;
+import org.pentaho.platform.repository.pcr.data.node.DataProperty;
+import org.pentaho.platform.repository.pcr.data.node.NodeRepositoryFileData;
 import org.pentaho.platform.repository.pcr.jcr.ITransformer;
 import org.pentaho.platform.repository.pcr.jcr.PentahoJcrConstants;
 import org.springframework.util.Assert;
 
-public class NodeTransformer implements ITransformer<NodeRepositoryFileData> {
+public class NodeRepositoryFileDataTransformer implements ITransformer<NodeRepositoryFileData> {
 
   protected void createOrUpdateContentNode(final Session session, final PentahoJcrConstants pentahoJcrConstants,
       final NodeRepositoryFileData data, final Node fileNode) throws RepositoryException {

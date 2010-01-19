@@ -1,4 +1,4 @@
-package org.pentaho.platform.repository.pcr;
+package org.pentaho.platform.repository.pcr.data.simple;
 
 import java.io.InputStream;
 

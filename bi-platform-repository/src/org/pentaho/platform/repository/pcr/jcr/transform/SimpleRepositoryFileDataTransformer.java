@@ -9,7 +9,7 @@ import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
 import org.pentaho.platform.api.repository.IRepositoryFileData;
-import org.pentaho.platform.repository.pcr.SimpleRepositoryFileData;
+import org.pentaho.platform.repository.pcr.data.simple.SimpleRepositoryFileData;
 import org.pentaho.platform.repository.pcr.jcr.ITransformer;
 import org.pentaho.platform.repository.pcr.jcr.PentahoJcrConstants;
 import org.springframework.util.StringUtils;
