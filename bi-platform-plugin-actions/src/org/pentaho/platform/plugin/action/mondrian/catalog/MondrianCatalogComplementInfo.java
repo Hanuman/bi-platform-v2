@@ -1,5 +1,6 @@
 package org.pentaho.platform.plugin.action.mondrian.catalog;
 
+import java.io.Serializable;
 import java.util.HashMap;
 
 /**
@@ -7,7 +8,9 @@ import java.util.HashMap;
  *
  * @author Pedro Alves
  */
-public class MondrianCatalogComplementInfo {
+public class MondrianCatalogComplementInfo implements Serializable {
+
+  private static final long serialVersionUID = 6753216762906769486L;
 
   private HashMap<String, WhereConditionBean> whereConditions;
 
@@ -30,7 +33,9 @@ public class MondrianCatalogComplementInfo {
     return null;
   }
 
-  private class WhereConditionBean {
+  private class WhereConditionBean implements Serializable {
+
+    private static final long serialVersionUID = -5108507671581605262L;
 
     private String cube;
     private String condition;
