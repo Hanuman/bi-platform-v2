@@ -2,6 +2,10 @@
     page
   language="java"
   import="java.io.InputStream,
+      java.util.Map,
+      java.util.HashMap,
+      java.util.List,
+      java.util.ArrayList,
       java.util.Locale,
       java.util.PropertyResourceBundle,
       java.util.ResourceBundle,
@@ -159,21 +163,7 @@ A:hover {
   height: 56px;
 }
 
-.ql_new_report {
-  width: 120px;
-  height: 130px;
-  padding-bottom: 13px;
-  cursor: pointer;
-}
-
-.ql_new_analysis {
-  width: 120px;
-  height: 130px;
-  padding-bottom: 13px;
-  cursor: pointer;
-}
-
-.ql_manage {
+.ql_btn_cntr {
   width: 120px;
   height: 130px;
   padding-bottom: 13px;
@@ -380,9 +370,6 @@ function loader(){
     tableWrapperDiv.id = "buttonWrapperDiv";
   }
   // End IE_6_FIX
-  
-    new Button("<%=Messages.getString( "UI.PUC.LAUNCH.NEW_REPORT" )%>", "launch_new_report").onClick("openWAQR()");
-    new Button("<%=Messages.getString( "UI.PUC.LAUNCH.NEW_ANALYSIS" )%>", "launch_new_analysis").onClick("openAnalysis()");
 <%!
   private static ResourceBundle getBundle(String messageUri) {
     Locale locale = LocaleHelper.getLocale();
@@ -398,18 +385,45 @@ function loader(){
     }
     return null;
   }
+
+  static class ButtonInfo {
+    String buttonLabel;
+    String buttonImage;
+    String buttonCommand;
+  }
 %><% 
-  boolean pluginButton = false;
-  String buttonLabel = "";
-  String buttonCommand = "";
-  String buttonImage = "";
-  IPluginManager pluginManager = PentahoSystem.get(IPluginManager.class, PentahoHttpSessionHelper.getPentahoSession(request)); //$NON-NLS-1$
-    if (pluginManager != null) {
-        for(XulOverlay overlayObj : pluginManager.getOverlays()) {
-          if (overlayObj.getId() != null && overlayObj.getId().equals("launch")) {
-      ResourceBundle bundle = getBundle(overlayObj.getResourceBundleUri());
+  Map<String, ButtonInfo> buttonOverlays = new HashMap<String, ButtonInfo>();
+
+  List<String> buttonIds = new ArrayList<String>();
+  buttonIds.add("launch_new_report"); //$NON-NLS-1$
+  buttonIds.add("launch_new_analysis"); //$NON-NLS-1$
+  buttonIds.add("manage_content"); //$NON-NLS-1$
+
+  ButtonInfo newReportButton = new ButtonInfo();
+  newReportButton.buttonCommand = "openWAQR()"; //$NON-NLS-1$
+  newReportButton.buttonLabel = Messages.getString( "UI.PUC.LAUNCH.NEW_REPORT" ); //$NON-NLS-1$
+  newReportButton.buttonImage = "images/btn_ql_newreport.png"; //$NON-NLS-1$
+  buttonOverlays.put(buttonIds.get(0), newReportButton);
+	
+  ButtonInfo newAnalysisButton = new ButtonInfo();
+  newAnalysisButton.buttonCommand = "openAnalysis()"; //$NON-NLS-1$
+  newAnalysisButton.buttonLabel = Messages.getString( "UI.PUC.LAUNCH.NEW_ANALYSIS" ); //$NON-NLS-1$
+  newAnalysisButton.buttonImage = "images/btn_ql_newanalysis.png"; //$NON-NLS-1$
+  buttonOverlays.put(buttonIds.get(1), newAnalysisButton);
+	
+  ButtonInfo launchContentButton = new ButtonInfo();
+  launchContentButton.buttonCommand = "openManage()"; //$NON-NLS-1$
+  launchContentButton.buttonLabel = Messages.getString( "UI.PUC.LAUNCH.MANAGE_CONTENT" ); //$NON-NLS-1$
+  launchContentButton.buttonImage = "images/btn_ql_manage.png"; //$NON-NLS-1$
+  buttonOverlays.put(buttonIds.get(2), launchContentButton);
+
+  IPluginManager pluginManager = PentahoSystem.get(IPluginManager.class, PentahoHttpSessionHelper.getPentahoSession(request)); 
+  if (pluginManager != null) {
+    for(XulOverlay overlayObj : pluginManager.getOverlays()) {
+      if (overlayObj.getId() != null && overlayObj.getId().equals("launch")) { //$NON-NLS-1$
+        ResourceBundle bundle = getBundle(overlayObj.getResourceBundleUri());
         // replace I18N parameters
-        Pattern p = Pattern.compile("\\$\\{([^\\}]*)\\}");
+        Pattern p = Pattern.compile("\\$\\{([^\\}]*)\\}"); //$NON-NLS-1$
         Matcher m = p.matcher(overlayObj.getOverlayXml());
         StringBuffer sb = new StringBuffer();
         while (m.find()) {
@@ -418,32 +432,43 @@ function loader(){
         }
         m.appendTail(sb);
         String overlay = sb.toString();
-      
-      if (overlay.indexOf("id=\"manage_content\"") >= 0) {
-        int startButtonLabel = overlay.indexOf("label=\"");
-        int endButtonLabel = overlay.indexOf("\"", startButtonLabel + 7);
-        buttonLabel = overlay.substring(startButtonLabel + 7, endButtonLabel);
         
-        int startButtonImage = overlay.indexOf("image=\"");
-        int endButtonImage = overlay.indexOf("\"", startButtonImage + 7);
-        buttonImage = overlay.substring(startButtonImage + 7, endButtonImage);
-  
-        int startButtonCommand = overlay.indexOf("command=\"");
-        int endButtonCommand = overlay.indexOf("\"", startButtonCommand + 9);
-        buttonCommand = overlay.substring(startButtonCommand + 9, endButtonCommand);
-        pluginButton = true;
-        break;
-      }
+        String button = null;
+        int id = overlay.indexOf("id=\""); //$NON-NLS-1$
+        if (id >= 0) {
+          button = overlay.substring(id + 4, overlay.indexOf("\"", id + 4)); //$NON-NLS-1$
+        }
+        if (button != null) {
+          ButtonInfo buttonInfo = new ButtonInfo();
+          int startButtonLabel = overlay.indexOf("label=\""); //$NON-NLS-1$
+          int endButtonLabel = overlay.indexOf("\"", startButtonLabel + 7); //$NON-NLS-1$
+          buttonInfo.buttonLabel = overlay.substring(startButtonLabel + 7, endButtonLabel);
+	        
+          int startButtonImage = overlay.indexOf("image=\""); //$NON-NLS-1$
+          int endButtonImage = overlay.indexOf("\"", startButtonImage + 7); //$NON-NLS-1$
+          // relative path change is to handle images from plugins
+          buttonInfo.buttonImage = "../../" + overlay.substring(startButtonImage + 7, endButtonImage); //$NON-NLS-1$
+	  
+          int startButtonCommand = overlay.indexOf("command=\""); //$NON-NLS-1$
+          int endButtonCommand = overlay.indexOf("\"", startButtonCommand + 9); //$NON-NLS-1$
+          buttonInfo.buttonCommand = overlay.substring(startButtonCommand + 9, endButtonCommand);
+          if (!buttonOverlays.containsKey(button)) {
+            buttonIds.add(button);
           }
+          buttonOverlays.put(button, buttonInfo);
+        }
       }
     }
-  if (pluginButton) {
-%>    new Button("<%=buttonLabel%>", "manage_content").onClick("<%= buttonCommand%>");
+  }
+%><%
+  // button javascript 
+  for (String buttonId : buttonIds) {
+    ButtonInfo info = buttonOverlays.get(buttonId);
+%>  new Button("<%=info.buttonLabel%>", "<%=buttonId%>").onClick("<%= info.buttonCommand%>");
 <%
-  } else {
-%>    new Button("<%=Messages.getString( "UI.PUC.LAUNCH.MANAGE_CONTENT" )%>", "manage_content").onClick("openManage()");
-<%  }  %>
-    fixPNGs();
+  }
+%>
+  fixPNGs();
 }
 
 </script>
@@ -461,10 +486,10 @@ function loader(){
   <tr>
     <td style="vertical-align: middle;" align="center">
 
-    <table width="564" border="0" align="center" cellpadding="0"
+    <table width="<%= 188 * buttonIds.size() %>" border="0" align="center" cellpadding="0"
       cellspacing="0" class="ql_container">
       <tr>
-        <td colspan="3" align="center"><img
+        <td colspan="<%= buttonIds.size() %>" align="center"><img
           src="images/ql_logo.png" alt="Pentaho.com"
           class="ql_logo" /></td>
       </tr>
@@ -477,41 +502,32 @@ function loader(){
             <table id="buttonTable" width="100%" border="0" cellspacing="0" cellpadding="0"
               height="100%">
               <tr>
-                <td align="center" valign="top" onClick="window.parent.openWAQR()"><img
-                  src="images/btn_ql_newreport.png"
-                  class="ql_new_report" /></td>
-                <td align="center" valign="top">&nbsp;</td>
-                <td align="center" valign="top"
-                  onClick="window.parent.openAnalysis()"><img
-                  src="images/btn_ql_newanalysis.png"
-                  class="ql_new_analysis" /></td>
-                <td align="center" valign="top">&nbsp;</td>
-<% if (pluginButton) { %>
-                <td align="center" valign="top"
-                  onClick="window.parent.<%=buttonCommand %>"><img
-                  src="../../<%=buttonImage %>"
-                  class="ql_manage" /></td>
-<% } else { %>
-                <td align="center" valign="top"
-                  onClick="window.parent.openManage()"><img
-                  src="images/btn_ql_manage.png"
-                  class="ql_manage" /></td>
-<% } %>
+<% 
+  // container for image icon
+  for (int i = 0; i < buttonIds.size(); i++) {
+    ButtonInfo info = buttonOverlays.get(buttonIds.get(i));
+%>                <td align="center" valign="top"
+                  onClick="window.parent.<%=info.buttonCommand %>"><img
+                  src="<%=info.buttonImage %>"
+                  class="ql_btn_cntr" /></td>
+<%  if (i < buttonIds.size() - 1) { 
+%>                <td align="center" valign="top">&nbsp;</td>
+<%  } 
+  } %>
               </tr>
               <tr>
-                <td id="launch_new_report" height="100%"><!--  container for New Report Button -->
+<% 
+  // container for buttons
+  for (int i = 0; i < buttonIds.size(); i++) {
+    ButtonInfo info = buttonOverlays.get(buttonIds.get(i));
+%>                <td id="<%=buttonIds.get(i) %>" height="100%">
                 </td>
-                <td><img src="images/ql_spacer.png"
-                  class="ql_spacer" /></td>
-                <td id="launch_new_analysis"><!--  container for New Analysis Button -->
-                </td>
-                <td><img src="images/ql_spacer.png"
-                  class="ql_spacer" /></td>
-                <td id="manage_content"><!--  container for manage content Button -->
-                </td>
+<%  if (i < buttonIds.size() - 1) { 
+%>                <td><img src="images/ql_spacer.png" class="ql_spacer" /></td>
+<%  }
+  } %>
               </tr>
           </table>
-        
         </td>
         <td class="ql_icon_bar_right"><img
           src="images/ql_icon_bar_right.png"
