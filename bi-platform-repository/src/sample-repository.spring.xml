@@ -95,7 +95,7 @@
     <constructor-arg ref="repositoryFileDao" />
     <constructor-arg ref="repositoryFileAclDao" />
     <constructor-arg>
-      <bean class="org.pentaho.platform.repository.pcr.DefaultRepositoryEventHandler">
+      <bean class="org.pentaho.platform.repository.pcr.DefaultRepositoryLifecycleManager">
         <constructor-arg ref="repositoryFileDao" />
         <constructor-arg ref="repositoryFileAclDao" />
         <constructor-arg>

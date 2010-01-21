@@ -49,8 +49,20 @@ public class JcrRepositoryFileUtils {
     return nodeToFile(session, pentahoJcrConstants, ownerLookupHelper, node, false);
   }
 
+  private static RepositoryFile getRootFolder(final Session session) throws RepositoryException {
+    Node node = session.getRootNode();
+    RepositoryFile file = new RepositoryFile.Builder(node.getUUID(), "").folder(true).versioned(false).absolutePath( //$NON-NLS-1$
+        node.getPath()).build();
+    return file;
+  }
+  
   public static RepositoryFile nodeToFile(final Session session, final PentahoJcrConstants pentahoJcrConstants,
       final IOwnerLookupHelper ownerLookupHelper, final Node node, final boolean loadMaps) throws RepositoryException {
+
+    if (session.getRootNode().isSame(node)) {
+      return getRootFolder(session);
+    }
+    
     Assert.isTrue(isSupportedNodeType(pentahoJcrConstants, node));
 
     Serializable id = null;
@@ -386,7 +398,7 @@ public class JcrRepositoryFileUtils {
       final IOwnerLookupHelper ownerLookupHelper, final Serializable folderId, final String filter)
       throws RepositoryException {
     Node folderNode = session.getNodeByUUID(folderId.toString());
-    Assert.isTrue(isPentahoFolder(pentahoJcrConstants, folderNode));
+    Assert.isTrue(isPentahoFolder(pentahoJcrConstants, folderNode) || session.getRootNode().isSame(folderNode));
 
     List<RepositoryFile> children = new ArrayList<RepositoryFile>();
     // get all immediate child nodes that are of type PHO_NT_PENTAHOFOLDER or PHO_NT_PENTAHOFILE

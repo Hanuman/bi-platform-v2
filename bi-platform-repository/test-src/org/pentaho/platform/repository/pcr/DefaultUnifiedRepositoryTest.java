@@ -311,13 +311,6 @@ public class DefaultUnifiedRepositoryTest implements ApplicationContextAware {
     login(USERNAME_TIFFANY, TENANT_ID_ACME);
     RepositoryFile file2 = repo.getFile("/doesnotexist");
     assertNull(file2);
-
-    try {
-      repo.getFile("/");
-      fail();
-    } catch (IllegalArgumentException e) {
-
-    }
   }
 
   @Test
@@ -1021,6 +1014,23 @@ public class DefaultUnifiedRepositoryTest implements ApplicationContextAware {
     assertEquals(1, fetchedAcl.getAces().size());
   }
 
+  @Test(expected = DataRetrievalFailureException.class)
+  public void testGetAclAccessDenied() throws Exception {
+    repo.getRepositoryLifecycleManager().startup();
+    login(USERNAME_SUZY, TENANT_ID_ACME);
+    RepositoryFile parentFolder = repo.getFile(RepositoryPaths.getTenantPublicFolderPath());
+    RepositoryFile newFolder = new RepositoryFile.Builder("test").folder(true).versioned(true).build();
+    newFolder = repo.createFolder(parentFolder.getId(), newFolder, null);
+    RepositoryFileAcl acl = repo.getAcl(newFolder.getId());
+    RepositoryFileAcl newAcl = new RepositoryFileAcl.Builder(acl).entriesInheriting(false).ace(
+        new RepositoryFileSid(USERNAME_SUZY), RepositoryFilePermission.ALL).ace(
+        new RepositoryFileSid(USERNAME_TIFFANY), RepositoryFilePermission.READ).build();
+    repo.updateAcl(newAcl);
+    login(USERNAME_TIFFANY, TENANT_ID_ACME);
+    assertNotNull(repo.getFileById(newFolder.getId())); // tiffany can read file
+    repo.getAcl(newFolder.getId()); // but tiffany cannot read acl
+  }
+
   @Test
   public void testHasAccess() throws Exception {
     repo.getRepositoryLifecycleManager().startup();
@@ -1104,6 +1114,17 @@ public class DefaultUnifiedRepositoryTest implements ApplicationContextAware {
       // moving a folder to a file is illegal
     }
 
+  }
+
+  @Test
+  public void testGetRoot() throws Exception {
+    repo.getRepositoryLifecycleManager().startup();
+    login(USERNAME_SUZY, TENANT_ID_ACME);
+    RepositoryFile rootFolder = repo.getFile("/");
+    assertNotNull(rootFolder);
+    assertNotNull(rootFolder.getId());
+    assertNotNull(repo.getChildren(rootFolder.getId()));
+    RepositoryFileAcl rootFolderAcl = repo.getAcl(rootFolder.getId());
   }
 
   private RepositoryFile createSampleFile(final String parentFolderPath, final String fileName,

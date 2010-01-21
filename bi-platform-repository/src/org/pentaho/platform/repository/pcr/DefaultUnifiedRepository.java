@@ -79,7 +79,6 @@ public class DefaultUnifiedRepository implements IUnifiedRepository {
    */
   public RepositoryFile getFile(final String absPath) {
     Assert.hasText(absPath);
-    assertNotRoot(absPath);
     return repositoryFileDao.getFile(absPath, false);
   }
 
@@ -96,7 +95,6 @@ public class DefaultUnifiedRepository implements IUnifiedRepository {
    */
   public RepositoryFile getFile(final String absPath, final boolean loadMaps) {
     Assert.hasText(absPath);
-    assertNotRoot(absPath);
     return repositoryFileDao.getFile(absPath, loadMaps);
   }
 
@@ -363,10 +361,6 @@ public class DefaultUnifiedRepository implements IUnifiedRepository {
 
     return repositoryFileAclDao.createAcl(fileId, entriesInheriting, new RepositoryFileSid(internalGetUsername()),
         RepositoryFilePermission.ALL);
-  }
-  
-  protected void assertNotRoot(final String absPath) {
-    Assert.isTrue(absPath != null && !absPath.trim().equals(RepositoryFile.SEPARATOR), "root folder is illegal");
   }
 
 }

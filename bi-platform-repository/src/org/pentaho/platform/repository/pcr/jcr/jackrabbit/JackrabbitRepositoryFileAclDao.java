@@ -182,14 +182,28 @@ public class JackrabbitRepositoryFileAclDao implements IRepositoryFileAclDao {
 
     RepositoryFileSid owner = null;
     Principal ownerPrincipal = acList.getOwner();
-    if (ownerPrincipal instanceof Group) {
-      owner = new RepositoryFileSid(ownerPrincipal.getName(), RepositoryFileSid.Type.ROLE);
+
+    // special handling for root node; it doesn't have a "pentaho acl" so we make some assumptions; see 
+    // PentahoAccessControlEditor#createAclNode
+    if (ownerPrincipal == null) {
+      owner = null;
     } else {
-      owner = new RepositoryFileSid(ownerPrincipal.getName());
+      if (ownerPrincipal instanceof Group) {
+        owner = new RepositoryFileSid(ownerPrincipal.getName(), RepositoryFileSid.Type.ROLE);
+      } else {
+        owner = new RepositoryFileSid(ownerPrincipal.getName());
+      }
     }
 
     RepositoryFileAcl.Builder aclBuilder = new RepositoryFileAcl.Builder(id, owner);
-    aclBuilder.entriesInheriting(acList.isEntriesInheriting());
+
+    // special handling for root node; it doesn't have a "pentaho acl" so we make some assumptions; see 
+    // PentahoAccessControlEditor#createAclNode
+    if (!jrSession.getRootNode().isSame(node)) {
+      aclBuilder.entriesInheriting(acList.isEntriesInheriting());
+    } else {
+      aclBuilder.entriesInheriting(false);
+    }
     AccessControlEntry[] acEntries = acList.getAccessControlEntries();
     for (int i = 0; i < acEntries.length; i++) {
       Assert.isInstanceOf(JackrabbitAccessControlEntry.class, acEntries[i]);

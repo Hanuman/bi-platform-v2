@@ -37,44 +37,44 @@ import org.springframework.util.Assert;
  * 
  * @author mlowery
  */
-public class DefaultRepositoryEventHandler implements IRepositoryLifecycleManager {
+public class DefaultRepositoryLifecycleManager implements IRepositoryLifecycleManager {
 
   // ~ Static fields/initializers ======================================================================================
 
-  private static final Log logger = LogFactory.getLog(DefaultRepositoryEventHandler.class);
+  protected static final Log logger = LogFactory.getLog(DefaultRepositoryLifecycleManager.class);
 
   // ~ Instance fields =================================================================================================
 
   /**
    * Repository super user.
    */
-  private String repositoryAdminUsername;
+  protected String repositoryAdminUsername;
 
   /**
    * Repository super user authority.
    */
-  private String repositoryAdminAuthorityName;
+  protected String repositoryAdminAuthorityName;
 
   /**
    * The name of the authority which is granted to all authenticated users, regardless of tenant.
    */
-  private String commonAuthenticatedAuthorityName;
+  protected String commonAuthenticatedAuthorityName;
 
-  private String tenantAuthenticatedAuthorityNameSuffix;
+  protected String tenantAuthenticatedAuthorityNameSuffix;
 
-  private String tenantAdminAuthorityNameSuffix;
+  protected String tenantAdminAuthorityNameSuffix;
 
-  private TransactionTemplate txnTemplate;
+  protected TransactionTemplate txnTemplate;
 
-  private IRepositoryFileDao repositoryFileDao;
+  protected IRepositoryFileDao repositoryFileDao;
 
-  private IRepositoryFileAclDao repositoryFileAclDao;
+  protected IRepositoryFileAclDao repositoryFileAclDao;
 
-  private boolean startedUp;
+  protected boolean startedUp;
 
   // ~ Constructors ====================================================================================================
 
-  public DefaultRepositoryEventHandler(final IRepositoryFileDao contentDao,
+  public DefaultRepositoryLifecycleManager(final IRepositoryFileDao contentDao,
       final IRepositoryFileAclDao repositoryFileAclDao, final TransactionTemplate txnTemplate,
       final String repositoryAdminUsername, final String repositoryAdminAuthorityName,
       final String commonAuthenticatedAuthorityName, final String tenantAuthenticatedAuthorityNameSuffix,
@@ -132,11 +132,11 @@ public class DefaultRepositoryEventHandler implements IRepositoryLifecycleManage
    * Throws an {@code IllegalStateException} if not started up.  Should be called from all public methods (except 
    * {@link #startup()}).
    */
-  private void assertStartedUp() {
+  protected void assertStartedUp() {
     Assert.state(startedUp, "startup must be called first");
   }
 
-  private void createPentahoRootFolder() {
+  protected void createPentahoRootFolder() {
     IPentahoSession origPentahoSession = PentahoSessionHolder.getSession();
     PentahoSessionHolder.setSession(createRepositoryAdminPentahoSession());
     try {
@@ -162,7 +162,7 @@ public class DefaultRepositoryEventHandler implements IRepositoryLifecycleManage
 
   }
 
-  private void createTenantRootFolder(final String tenantId) {
+  protected void createTenantRootFolder(final String tenantId) {
     final String tenantAdminAuthorityName = internalGetTenantAdminAuthorityName(tenantId);
     final String tenantAuthenticatedAuthorityName = internalGetTenantAuthenticatedAuthorityName(tenantId);
     IPentahoSession origPentahoSession = PentahoSessionHolder.getSession();
@@ -190,7 +190,7 @@ public class DefaultRepositoryEventHandler implements IRepositoryLifecycleManage
     }
   }
 
-  private void createInitialTenantFolders(final String tenantId) {
+  protected void createInitialTenantFolders(final String tenantId) {
     final String tenantAdminAuthorityName = internalGetTenantAdminAuthorityName(tenantId);
     final String tenantAuthenticatedAuthorityName = internalGetTenantAuthenticatedAuthorityName(tenantId);
 
@@ -228,7 +228,7 @@ public class DefaultRepositoryEventHandler implements IRepositoryLifecycleManage
     }
   }
 
-  private void createUserHomeFolder(final String tenantId, final String username) {
+  protected void createUserHomeFolder(final String tenantId, final String username) {
     IPentahoSession origPentahoSession = PentahoSessionHolder.getSession();
     PentahoSessionHolder.setSession(createRepositoryAdminPentahoSession());
     try {
@@ -252,12 +252,12 @@ public class DefaultRepositoryEventHandler implements IRepositoryLifecycleManage
     }
   }
 
-  private void initTransactionTemplate() {
+  protected void initTransactionTemplate() {
     // a new transaction must be created (in order to run with the correct user privileges)
     txnTemplate.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRES_NEW);
   }
 
-  private RepositoryFile internalCreateFolder(final Serializable parentFolderId, final RepositoryFile file,
+  protected RepositoryFile internalCreateFolder(final Serializable parentFolderId, final RepositoryFile file,
       final boolean inheritAces, final String ownerUsername, final String versionMessage) {
     Assert.notNull(file);
 
@@ -267,13 +267,13 @@ public class DefaultRepositoryEventHandler implements IRepositoryLifecycleManage
     return newFile;
   }
 
-  private void internalSetFullControl(final Serializable fileId, final RepositoryFileSid sid) {
+  protected void internalSetFullControl(final Serializable fileId, final RepositoryFileSid sid) {
     Assert.notNull(fileId);
     Assert.notNull(sid);
     repositoryFileAclDao.setFullControl(fileId, sid, RepositoryFilePermission.ALL);
   }
 
-  private RepositoryFileAcl internalCreateAcl(final Serializable fileId, final boolean entriesInheriting,
+  protected RepositoryFileAcl internalCreateAcl(final Serializable fileId, final boolean entriesInheriting,
       final String ownerUsername) {
     Assert.notNull(fileId);
 
@@ -281,7 +281,7 @@ public class DefaultRepositoryEventHandler implements IRepositoryLifecycleManage
         RepositoryFilePermission.ALL);
   }
 
-  private void internalAddPermission(final Serializable fileId, final RepositoryFileSid recipient,
+  protected void internalAddPermission(final Serializable fileId, final RepositoryFileSid recipient,
       final EnumSet<RepositoryFilePermission> permissions) {
     Assert.notNull(fileId);
     Assert.notNull(recipient);
@@ -291,7 +291,7 @@ public class DefaultRepositoryEventHandler implements IRepositoryLifecycleManage
     repositoryFileAclDao.addPermission(fileId, recipient, permissions);
   }
 
-  private IPentahoSession createRepositoryAdminPentahoSession() {
+  protected IPentahoSession createRepositoryAdminPentahoSession() {
     StandaloneSession pentahoSession = new StandaloneSession(repositoryAdminUsername);
     pentahoSession.setAuthenticated(repositoryAdminUsername);
     final GrantedAuthority[] repositoryAdminAuthorities = new GrantedAuthority[2];
@@ -312,18 +312,18 @@ public class DefaultRepositoryEventHandler implements IRepositoryLifecycleManage
    * @return name of authority granted to all authenticated users of the given tenant; must not be the same as
    * {@link #commonAuthenticatedAuthorityName}.
    */
-  private String internalGetTenantAuthenticatedAuthorityName(final String tenantId) {
+  protected String internalGetTenantAuthenticatedAuthorityName(final String tenantId) {
     return tenantId + tenantAuthenticatedAuthorityNameSuffix;
   }
 
   /**
    * @return name of authority granted to the admin of the given tenant
    */
-  private String internalGetTenantAdminAuthorityName(final String tenantId) {
+  protected String internalGetTenantAdminAuthorityName(final String tenantId) {
     return tenantId + tenantAdminAuthorityNameSuffix;
   }
 
-  private void internalSetOwner(final RepositoryFile file, final RepositoryFileSid owner) {
+  protected void internalSetOwner(final RepositoryFile file, final RepositoryFileSid owner) {
     Assert.notNull(file);
     Assert.notNull(owner);
 
@@ -335,7 +335,7 @@ public class DefaultRepositoryEventHandler implements IRepositoryLifecycleManage
   /**
    * Returns the username of the current user.
    */
-  private String internalGetUsername() {
+  protected String internalGetUsername() {
     IPentahoSession pentahoSession = PentahoSessionHolder.getSession();
     Assert.state(pentahoSession != null);
     return pentahoSession.getName();
@@ -344,7 +344,7 @@ public class DefaultRepositoryEventHandler implements IRepositoryLifecycleManage
   /**
    * Returns the tenant ID of the current user.
    */
-  private String internalGetTenantId() {
+  protected String internalGetTenantId() {
     IPentahoSession pentahoSession = PentahoSessionHolder.getSession();
     Assert.state(pentahoSession != null);
     return (String) pentahoSession.getAttribute(IPentahoSession.TENANT_ID_KEY);
