@@ -267,7 +267,6 @@ public class RepositoryFile implements Comparable<RepositoryFile>/*, Serializabl
     }
 
     public Builder(final Serializable id, final String name) {
-      assertHasText(name);
       assertNotNull(id);
       this.name = name;
       this.id = id;
