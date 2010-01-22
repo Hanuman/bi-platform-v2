@@ -238,7 +238,10 @@ function doSave( id, url, createNew ) {
 		hasSchedules = true;
 	}
 	
- 	var destination = form.elements['destination'].value;
+    var destination = form.elements['destination'];
+    if (destination != null) {
+      destination = destination.value;
+    }
 /*
 	if( destination == '' && hasSchedules ) {
 		alert( 'You must enter a destination email address' );
