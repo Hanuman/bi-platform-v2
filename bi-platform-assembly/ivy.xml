@@ -98,7 +98,7 @@
     <exclude org="commons-logging" module="commons-logging-api" />
     
     <!-- Temporary overrides for pentaho commons projects.  This section will be removed prior to release -->
-    <override org="pentaho-library" rev="${dependency.pentaho-reporting.revision}"/>
+<!--    <override org="pentaho-library" rev="${dependency.pentaho-reporting.revision}"/>-->
 
   </dependencies>
 
