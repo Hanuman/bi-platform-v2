@@ -95,12 +95,12 @@ public interface IUnifiedRepository {
    * 
    * @param parentFolderId parent folder id
    * @param file file to create
-   * @param content file content
+   * @param data file data
    * @param versionMessage optional version comment to be applied to parentFolder
    * @return file that is equal to given file except with id populated
    */
   RepositoryFile createFile(final Serializable parentFolderId, final RepositoryFile file,
-      final IRepositoryFileData content, final String versionMessage);
+      final IRepositoryFileData data, final String versionMessage);
 
   /**
    * Creates a folder.
@@ -132,14 +132,14 @@ public interface IUnifiedRepository {
   List<RepositoryFile> getChildren(final Serializable folderId, final String filter);
 
   /**
-   * Updates a file and/or the content of a file.
+   * Updates a file and/or the data of a file.
    * 
    * @param file updated file (not a folder); must have non-null id
-   * @param content updated content
+   * @param data updated data
    * @param versionMessageoptional version comment
    * @return updated file (possible with new version number)
    */
-  RepositoryFile updateFile(final RepositoryFile file, final IRepositoryFileData content,
+  RepositoryFile updateFile(final RepositoryFile file, final IRepositoryFileData data,
       final String versionMessage);
 
   /**
