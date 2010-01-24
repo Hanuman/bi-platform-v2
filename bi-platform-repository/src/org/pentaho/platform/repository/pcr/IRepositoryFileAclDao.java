@@ -4,6 +4,8 @@ import java.io.Serializable;
 import java.util.EnumSet;
 import java.util.List;
 
+import org.pentaho.platform.api.repository.IUnifiedRepository;
+import org.pentaho.platform.api.repository.RepositoryFileAce;
 import org.pentaho.platform.api.repository.RepositoryFileAcl;
 import org.pentaho.platform.api.repository.RepositoryFilePermission;
 import org.pentaho.platform.api.repository.RepositoryFileSid;
@@ -23,7 +25,7 @@ public interface IRepositoryFileAclDao {
    * @param fileId file id
    * @return list of ACEs
    */
-  List<RepositoryFileAcl.Ace> getEffectiveAces(final Serializable id);
+  List<RepositoryFileAce> getEffectiveAces(final Serializable id);
 
   /**
    * Returns {@code true} if the user has all of the permissions. The implementation should return {@code false} if 

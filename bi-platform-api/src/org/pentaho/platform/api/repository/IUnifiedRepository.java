@@ -214,7 +214,7 @@ public interface IUnifiedRepository {
   /**
    * Unlocks a file.
    * 
-   * @param absPath absolute path to file
+   * @param fileId file id
    */
   void unlockFile(final Serializable fileId);
 
@@ -251,7 +251,7 @@ public interface IUnifiedRepository {
    * @param fileId file id
    * @return list of ACEs
    */
-  List<RepositoryFileAcl.Ace> getEffectiveAces(final Serializable fileId);
+  List<RepositoryFileAce> getEffectiveAces(final Serializable fileId);
 
   // ~ Version methods =================================================================================================
 

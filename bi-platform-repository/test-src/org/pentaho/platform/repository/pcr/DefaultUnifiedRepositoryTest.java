@@ -11,7 +11,6 @@ import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.EnumSet;
@@ -31,6 +30,7 @@ import org.pentaho.platform.api.engine.IPentahoSession;
 import org.pentaho.platform.api.repository.IRepositoryFileData;
 import org.pentaho.platform.api.repository.IUnifiedRepository;
 import org.pentaho.platform.api.repository.RepositoryFile;
+import org.pentaho.platform.api.repository.RepositoryFileAce;
 import org.pentaho.platform.api.repository.RepositoryFileAcl;
 import org.pentaho.platform.api.repository.RepositoryFilePermission;
 import org.pentaho.platform.api.repository.RepositoryFileSid;
@@ -1049,10 +1049,10 @@ public class DefaultUnifiedRepositoryTest implements ApplicationContextAware {
     repo.getRepositoryLifecycleManager().startup();
     login(USERNAME_SUZY, TENANT_ID_ACME);
     RepositoryFile acmePublicFolder = repo.getFile(RepositoryPaths.getTenantPublicFolderPath());
-    List<RepositoryFileAcl.Ace> effectiveAces1 = repo.getEffectiveAces(acmePublicFolder.getId());
+    List<RepositoryFileAce> effectiveAces1 = repo.getEffectiveAces(acmePublicFolder.getId());
     RepositoryFile newFolder = new RepositoryFile.Builder("test").folder(true).versioned(true).build();
     newFolder = repo.createFolder(acmePublicFolder.getId(), newFolder, null);
-    List<RepositoryFileAcl.Ace> effectiveAces2 = repo.getEffectiveAces(newFolder.getId());
+    List<RepositoryFileAce> effectiveAces2 = repo.getEffectiveAces(newFolder.getId());
     assertEquals(effectiveAces1, effectiveAces2);
   }
 
@@ -1146,9 +1146,9 @@ public class DefaultUnifiedRepositoryTest implements ApplicationContextAware {
       final EnumSet<RepositoryFilePermission> permissions) {
     RepositoryFileAcl acl = repo.getAcl(file.getId());
 
-    List<RepositoryFileAcl.Ace> aces = acl.getAces();
+    List<RepositoryFileAce> aces = acl.getAces();
     for (int i = 0; i < aces.size(); i++) {
-      RepositoryFileAcl.Ace ace = aces.get(i);
+      RepositoryFileAce ace = aces.get(i);
       if (sid.equals(ace.getSid()) && permissions.equals(ace.getPermissions())) {
         return;
       }

@@ -12,13 +12,13 @@ public class DataNode {
   public enum DataPropertyType {
     BOOLEAN, DATE, DOUBLE, LONG, STRING, REF
   };
-  
+
   private String name;
-  
+
   private Serializable id;
 
   private Map<String, DataNode> nodeNameToNodeMap = new HashMap<String, DataNode>();
-  
+
   private List<DataNode> childNodes = new ArrayList<DataNode>();
 
   private Map<String, DataProperty> propNameToPropMap = new HashMap<String, DataProperty>();
@@ -33,11 +33,11 @@ public class DataNode {
     internalAddNode(child);
     return child;
   }
-  
+
   public void addNode(final DataNode child) {
     internalAddNode(child);
   }
-  
+
   protected void internalAddNode(final DataNode child) {
     childNodes.add(child);
     nodeNameToNodeMap.put(child.getName(), child);
@@ -78,27 +78,37 @@ public class DataNode {
   public void setProperty(final String name, DataNodeRef value) {
     propNameToPropMap.put(name, new DataProperty(name, value, DataPropertyType.REF));
   }
-  
+
   public boolean hasProperty(final String name) {
     return propNameToPropMap.containsKey(name);
   }
-  
+
   public boolean hasNode(final String name) {
     return nodeNameToNodeMap.containsKey(name);
   }
-  
+
   public DataProperty getProperty(final String name) {
     return propNameToPropMap.get(name);
   }
-  
+
   public Iterable<DataProperty> getProperties() {
     return propNameToPropMap.values();
+  }
+
+  public void setId(Serializable id) {
+    this.id = id;
+  }
+
+  public Serializable getId() {
+    return id;
   }
 
   @Override
   public int hashCode() {
     final int prime = 31;
     int result = 1;
+    result = prime * result + ((childNodes == null) ? 0 : childNodes.hashCode());
+    result = prime * result + ((id == null) ? 0 : id.hashCode());
     result = prime * result + ((name == null) ? 0 : name.hashCode());
     result = prime * result + ((nodeNameToNodeMap == null) ? 0 : nodeNameToNodeMap.hashCode());
     result = prime * result + ((propNameToPropMap == null) ? 0 : propNameToPropMap.hashCode());
@@ -114,6 +124,16 @@ public class DataNode {
     if (getClass() != obj.getClass())
       return false;
     DataNode other = (DataNode) obj;
+    if (childNodes == null) {
+      if (other.childNodes != null)
+        return false;
+    } else if (!childNodes.equals(other.childNodes))
+      return false;
+    if (id == null) {
+      if (other.id != null)
+        return false;
+    } else if (!id.equals(other.id))
+      return false;
     if (name == null) {
       if (other.name != null)
         return false;
@@ -134,22 +154,8 @@ public class DataNode {
 
   @Override
   public String toString() {
-    return "DataNode [name=" + name + ", nodeMap=" + nodeNameToNodeMap + ", propMap="
-        + propNameToPropMap + "]";
+    return "DataNode [id=" + id + ", name=" + name + ", childNodes=" + childNodes + ", nodeNameToNodeMap="
+        + nodeNameToNodeMap + ", propNameToPropMap=" + propNameToPropMap + "]";
   }
 
-  public void setId(Serializable id) {
-    
-        this.id = id;
-      
-  }
-
-  public Serializable getId() {
-    
-        return id;
-      
-  }
-
-  
-  
 }

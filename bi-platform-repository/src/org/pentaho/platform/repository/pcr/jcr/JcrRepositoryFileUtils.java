@@ -55,14 +55,14 @@ public class JcrRepositoryFileUtils {
         node.getPath()).build();
     return file;
   }
-  
+
   public static RepositoryFile nodeToFile(final Session session, final PentahoJcrConstants pentahoJcrConstants,
       final IOwnerLookupHelper ownerLookupHelper, final Node node, final boolean loadMaps) throws RepositoryException {
 
     if (session.getRootNode().isSame(node)) {
       return getRootFolder(session);
     }
-    
+
     Assert.isTrue(isSupportedNodeType(pentahoJcrConstants, node));
 
     Serializable id = null;
@@ -143,7 +143,9 @@ public class JcrRepositoryFileUtils {
       Lock lock = node.getLock();
       lockOwner = lock.getLockOwner();
       lockDate = node.getProperty(pentahoJcrConstants.getPHO_LOCKDATE()).getDate().getTime();
-      lockMessage = node.getProperty(pentahoJcrConstants.getPHO_LOCKMESSAGE()).getString();
+      if (node.hasProperty(pentahoJcrConstants.getPHO_LOCKMESSAGE())) {
+        lockMessage = node.getProperty(pentahoJcrConstants.getPHO_LOCKMESSAGE()).getString();
+      }
     }
 
     owner = getRepositoryFileSid(session, pentahoJcrConstants, ownerLookupHelper, node);
@@ -571,9 +573,9 @@ public class JcrRepositoryFileUtils {
       }
       session.save(); // required before checkin since we set some properties above
       Version newVersion = versionableNode.checkin();
-//      if (versionMessageAndLabel.length > 1 && StringUtils.hasText(versionMessageAndLabel[1])) {
-//        newVersion.getContainingHistory().addVersionLabel(newVersion.getName(), versionMessageAndLabel[1], true);
-//      }
+      //      if (versionMessageAndLabel.length > 1 && StringUtils.hasText(versionMessageAndLabel[1])) {
+      //        newVersion.getContainingHistory().addVersionLabel(newVersion.getName(), versionMessageAndLabel[1], true);
+      //      }
     }
   }
 

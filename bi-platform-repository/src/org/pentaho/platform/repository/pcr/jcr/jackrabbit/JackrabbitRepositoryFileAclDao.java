@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.io.Serializable;
 import java.security.Principal;
 import java.security.acl.Group;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.EnumSet;
 import java.util.List;
@@ -26,6 +25,7 @@ import org.apache.jackrabbit.core.security.authorization.JackrabbitAccessControl
 import org.apache.jackrabbit.core.security.authorization.JackrabbitAccessControlList;
 import org.pentaho.commons.security.jackrabbit.IPentahoJackrabbitAccessControlList;
 import org.pentaho.platform.api.engine.IPentahoSession;
+import org.pentaho.platform.api.repository.RepositoryFileAce;
 import org.pentaho.platform.api.repository.RepositoryFileAcl;
 import org.pentaho.platform.api.repository.RepositoryFilePermission;
 import org.pentaho.platform.api.repository.RepositoryFileSid;
@@ -76,13 +76,13 @@ public class JackrabbitRepositoryFileAclDao implements IRepositoryFileAclDao {
    * 
    * This is a hack since this code must move lock step with any changes in access control on the server.
    */
-  public List<RepositoryFileAcl.Ace> getEffectiveAces(final Serializable id) {
+  public List<RepositoryFileAce> getEffectiveAces(final Serializable id) {
     Assert.notNull(id);
     RepositoryFileAcl acl = getAcl(id);
     while (acl != null && acl.isEntriesInheriting()) {
       acl = getParentAcl(acl.getId());
     }
-    List<RepositoryFileAcl.Ace> emptyList = Collections.emptyList();
+    List<RepositoryFileAce> emptyList = Collections.emptyList();
     return (acl == null ? emptyList : acl.getAces());
   }
 
@@ -328,7 +328,7 @@ public class JackrabbitRepositoryFileAclDao implements IRepositoryFileAclDao {
         }
         // add entries to now empty list but only if not inheriting; force user to start with clean slate 
         if (!acl.isEntriesInheriting()) {
-          for (RepositoryFileAcl.Ace ace : acl.getAces()) {
+          for (RepositoryFileAce ace : acl.getAces()) {
             Principal principal = null;
 
             principal = jrSession.getPrincipalManager().getPrincipal(ace.getSid().getName());

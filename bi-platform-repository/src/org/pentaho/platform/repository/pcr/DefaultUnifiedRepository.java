@@ -10,11 +10,11 @@ import org.pentaho.platform.api.engine.IPentahoSession;
 import org.pentaho.platform.api.repository.IRepositoryFileData;
 import org.pentaho.platform.api.repository.IUnifiedRepository;
 import org.pentaho.platform.api.repository.RepositoryFile;
+import org.pentaho.platform.api.repository.RepositoryFileAce;
 import org.pentaho.platform.api.repository.RepositoryFileAcl;
 import org.pentaho.platform.api.repository.RepositoryFilePermission;
 import org.pentaho.platform.api.repository.RepositoryFileSid;
 import org.pentaho.platform.api.repository.VersionSummary;
-import org.pentaho.platform.api.repository.RepositoryFileAcl.Ace;
 import org.pentaho.platform.engine.core.system.PentahoSessionHolder;
 import org.springframework.util.Assert;
 
@@ -56,7 +56,7 @@ public class DefaultUnifiedRepository implements IUnifiedRepository {
   /**
    * {@inheritDoc}
    */
-  public List<Ace> getEffectiveAces(final Serializable fileId) {
+  public List<RepositoryFileAce> getEffectiveAces(final Serializable fileId) {
     return repositoryFileAclDao.getEffectiveAces(fileId);
   }
 
