@@ -41,6 +41,8 @@ public class DefaultRepositoryLifecycleManager implements IRepositoryLifecycleMa
 
   // ~ Static fields/initializers ======================================================================================
 
+  private static final String TENANTID_SINGLE_TENANT = "tenant0"; //$NON-NLS-1$
+
   protected static final Log logger = LogFactory.getLog(DefaultRepositoryLifecycleManager.class);
 
   // ~ Instance fields =================================================================================================
@@ -204,8 +206,8 @@ public class DefaultRepositoryLifecycleManager implements IRepositoryLifecycleMa
           Assert.notNull(tenantRootFolder);
           if (repositoryFileDao.getFile(RepositoryPaths.getTenantPublicFolderPath(tenantId)) == null) {
             RepositoryFile tenantPublicFolder = internalCreateFolder(tenantRootFolder.getId(),
-                new RepositoryFile.Builder(RepositoryPaths.getTenantPublicFolderName()).folder(true)
-                    .build(), false, tenantAdminAuthorityName, "[system] created tenant public folder");
+                new RepositoryFile.Builder(RepositoryPaths.getTenantPublicFolderName()).folder(true).build(), false,
+                tenantAdminAuthorityName, "[system] created tenant public folder");
             RepositoryFileSid ownerSid = new RepositoryFileSid(tenantAdminAuthorityName, RepositoryFileSid.Type.ROLE);
             internalSetOwner(tenantPublicFolder, ownerSid);
             internalAddPermission(tenantPublicFolder.getId(), new RepositoryFileSid(tenantAuthenticatedAuthorityName,
@@ -309,18 +311,27 @@ public class DefaultRepositoryLifecycleManager implements IRepositoryLifecycleMa
   }
 
   /**
-   * @return name of authority granted to all authenticated users of the given tenant; must not be the same as
-   * {@link #commonAuthenticatedAuthorityName}.
+   * @return name of authority granted to all authenticated users of the given tenant; in a single tenant environment, 
+   * this is the same as commonAuthenticatedAuthorityName
    */
   protected String internalGetTenantAuthenticatedAuthorityName(final String tenantId) {
-    return tenantId + tenantAuthenticatedAuthorityNameSuffix;
+    if (!TENANTID_SINGLE_TENANT.equals(tenantId)) {
+      return tenantId + "_" + tenantAuthenticatedAuthorityNameSuffix; //$NON-NLS-1$
+    } else {
+      return tenantAuthenticatedAuthorityNameSuffix;
+    }
   }
 
   /**
-   * @return name of authority granted to the admin of the given tenant
+   * @return name of authority granted to the admin of the given tenant; in a single tenant environment, this is the
+   * same as repositoryAdminAuthorityName
    */
   protected String internalGetTenantAdminAuthorityName(final String tenantId) {
-    return tenantId + tenantAdminAuthorityNameSuffix;
+    if (!TENANTID_SINGLE_TENANT.equals(tenantId)) {
+      return tenantId + "_" + tenantAdminAuthorityNameSuffix; //$NON-NLS-1$
+    } else {
+      return tenantAdminAuthorityNameSuffix;
+    }
   }
 
   protected void internalSetOwner(final RepositoryFile file, final RepositoryFileSid owner) {
@@ -347,7 +358,12 @@ public class DefaultRepositoryLifecycleManager implements IRepositoryLifecycleMa
   protected String internalGetTenantId() {
     IPentahoSession pentahoSession = PentahoSessionHolder.getSession();
     Assert.state(pentahoSession != null);
-    return (String) pentahoSession.getAttribute(IPentahoSession.TENANT_ID_KEY);
+    // TODO mlowery make this configurable
+    String tenantId = (String) pentahoSession.getAttribute(IPentahoSession.TENANT_ID_KEY);
+    if (tenantId == null) {
+      tenantId = TENANTID_SINGLE_TENANT;
+    }
+    return tenantId;
   }
 
 }

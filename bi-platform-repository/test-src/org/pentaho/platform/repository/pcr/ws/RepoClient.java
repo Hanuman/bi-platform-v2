@@ -12,6 +12,7 @@ import java.util.EnumSet;
 import java.util.List;
 
 import javax.xml.namespace.QName;
+import javax.xml.ws.BindingProvider;
 import javax.xml.ws.Service;
 
 import org.junit.Before;
@@ -31,25 +32,27 @@ public class RepoClient {
 
   @Before
   public void setUp() throws Exception {
-    System.setProperty("com.sun.xml.ws.monitoring.endpoint", "true");
-    System.setProperty("com.sun.xml.ws.monitoring.client", "true");
-    System.setProperty("com.sun.xml.ws.monitoring.registrationDebug", "FINE");
-    System.setProperty("com.sun.xml.ws.monitoring.runtimeDebug", "true");
-    Service service = Service.create(new URL("http://localhost:9000/repo?wsdl"), new QName(
+//    System.setProperty("com.sun.xml.ws.monitoring.endpoint", "true");
+//    System.setProperty("com.sun.xml.ws.monitoring.client", "true");
+//    System.setProperty("com.sun.xml.ws.monitoring.registrationDebug", "FINE");
+//    System.setProperty("com.sun.xml.ws.monitoring.runtimeDebug", "true");
+    
+    Service service = Service.create(new URL("http://localhost:8080/pentaho/webservices/repo?wsdl"), new QName(
         "http://www.pentaho.org/ws/1.0", "DefaultUnifiedRepositoryWebServiceService"));
+
     IUnifiedRepositoryWebService repoWebService = service.getPort(IUnifiedRepositoryWebService.class);
 
     // TODO mlowery uncomment this in the real client
     // repoWebService.startup();
     // basic auth
-    // ((BindingProvider) repoWebService).getRequestContext().put(BindingProvider.USERNAME_PROPERTY, "suzy");
-    // ((BindingProvider) repoWebService).getRequestContext().put(BindingProvider.PASSWORD_PROPERTY, "password");
+    ((BindingProvider) repoWebService).getRequestContext().put(BindingProvider.USERNAME_PROPERTY, "suzy");
+    ((BindingProvider) repoWebService).getRequestContext().put(BindingProvider.PASSWORD_PROPERTY, "password");
     repo = new UnifiedRepositoryToWebServiceAdapter(repoWebService);
     cleanup();
   }
 
   protected void cleanup() throws Exception {
-    RepositoryFile folder1 = repo.getFile("/pentaho/acme/home/suzy/folder1");
+    RepositoryFile folder1 = repo.getFile("/pentaho/tenant0/home/suzy/folder1");
     if (folder1 != null) {
       repo.deleteFile(folder1.getId(), true, null);
     }
@@ -57,9 +60,12 @@ public class RepoClient {
 
   @Test
   public void testEverything() {
-    RepositoryFile f = repo.getFile("/pentaho/acme/home/suzy");
+    RepositoryFile f0 = repo.getFile("/pentaho");
+    assertNotNull(f0);
+    assertEquals("pentaho", f0.getName());
+    RepositoryFile f = repo.getFile("/pentaho/tenant0/home/suzy");
     assertNotNull(f.getId());
-    assertEquals("/pentaho/acme/home/suzy", f.getAbsolutePath());
+    assertEquals("/pentaho/tenant0/home/suzy", f.getAbsolutePath());
     assertNotNull(f.getCreatedDate());
     assertEquals("suzy", f.getName());
     assertTrue(f.isFolder());
@@ -122,17 +128,17 @@ public class RepoClient {
     assertTrue(updatedFile1.getLastModifiedDate().after(beforeUpdate));
     assertFalse(file1.isLocked());
     repo.lockFile(file1.getId(), "I locked this file");
-    file1 = repo.getFile("/pentaho/acme/home/suzy/folder1/file1.whatever");
+    file1 = repo.getFile("/pentaho/tenant0/home/suzy/folder1/file1.whatever");
     assertTrue(file1.isLocked());
     repo.unlockFile(file1.getId());
-    file1 = repo.getFile("/pentaho/acme/home/suzy/folder1/file1.whatever");
+    file1 = repo.getFile("/pentaho/tenant0/home/suzy/folder1/file1.whatever");
     assertFalse(file1.isLocked());
-    repo.moveFile(file1.getId(), "/pentaho/acme/home/suzy", null);
-    assertNull(repo.getFile("/pentaho/acme/home/suzy/folder1/file1.whatever"));
-    assertNotNull(repo.getFile("/pentaho/acme/home/suzy/file1.whatever"));
-    repo.moveFile(file1.getId(), "/pentaho/acme/home/suzy/folder1", null);
-    assertNotNull(repo.getFile("/pentaho/acme/home/suzy/folder1/file1.whatever"));
-    assertNull(repo.getFile("/pentaho/acme/home/suzy/file1.whatever"));
+    repo.moveFile(file1.getId(), "/pentaho/tenant0/home/suzy", null);
+    assertNull(repo.getFile("/pentaho/tenant0/home/suzy/folder1/file1.whatever"));
+    assertNotNull(repo.getFile("/pentaho/tenant0/home/suzy/file1.whatever"));
+    repo.moveFile(file1.getId(), "/pentaho/tenant0/home/suzy/folder1", null);
+    assertNotNull(repo.getFile("/pentaho/tenant0/home/suzy/folder1/file1.whatever"));
+    assertNull(repo.getFile("/pentaho/tenant0/home/suzy/file1.whatever"));
     List<VersionSummary> versionSummaries = repo.getVersionSummaries(file1.getId());
     assertNotNull(versionSummaries);
     assertTrue(versionSummaries.size() >= 2);

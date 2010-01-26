@@ -4,7 +4,7 @@
   xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-2.0.xsd">
 
   <!-- An access decision voter that reads VOTE_ROLE_FILE_* configuration settings -->
-  <bean id="roleVoter" class="org.pentaho.platform.engine.security.PentahoSubstringRoleVoter">
+  <bean id="roleFileVoter" class="org.pentaho.platform.engine.security.PentahoSubstringRoleVoter">
     <constructor-arg value="VOTE_ROLE_FILE_" />
   </bean>
 
@@ -13,7 +13,7 @@
     <property name="allowIfAllAbstainDecisions" value="false" />
     <property name="decisionVoters">
       <list>
-        <ref local="roleVoter" />
+        <ref local="roleFileVoter" />
       </list>
     </property>
   </bean>
@@ -81,14 +81,22 @@
     <constructor-arg value="Admin" />
   </bean>
 
-  <!-- The suffix appended to the tenantId to create a role granted to all authenticated users of a certain tenant. -->
+  <!-- 
+       The suffix appended to the tenantId to create a role granted to all authenticated users of a certain tenant.
+       An underscore is appended between the tenantId and this suffix. In a single tenant environment, this is the same 
+       as commonAuthenticatedAuthorityName.  
+  -->
   <bean id="tenantAuthenticatedAuthorityNameSuffix" class="java.lang.String">
-    <constructor-arg value="_Authenticated" />
+    <constructor-arg value="Authenticated" />
   </bean>
 
-  <!-- The suffix appended to the tenantId to create a role granted to all admin users of a certain tenant. -->
+  <!-- 
+       The suffix appended to the tenantId to create a role granted to all admin users of a certain tenant.
+       An underscore is appended between the tenantId and this suffix. In a single tenant environment, this is the same 
+       as repositoryAdminAuthorityName.  
+  -->
   <bean id="tenantAdminAuthorityNameSuffix" class="java.lang.String">
-    <constructor-arg value="_Admin" />
+    <constructor-arg value="Admin" />
   </bean>
 
   <bean id="unifiedRepositoryTarget" class="org.pentaho.platform.repository.pcr.DefaultUnifiedRepository">
@@ -216,7 +224,7 @@
 
   <bean id="ownerLookupHelper" class="org.pentaho.platform.repository.pcr.jcr.DefaultOwnerLookupHelper" />
 
-  <bean class="org.pentaho.platform.repository.pcr.spring.RepositoryEventHandlerAuthenticationSuccessListener">
+  <bean class="org.pentaho.platform.repository.pcr.spring.RepositoryLifecycleManagerAuthenticationSuccessListener">
     <constructor-arg ref="unifiedRepository" />
   </bean>
 

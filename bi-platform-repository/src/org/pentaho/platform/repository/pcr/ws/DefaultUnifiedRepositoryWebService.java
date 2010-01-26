@@ -12,6 +12,7 @@ import org.pentaho.platform.api.repository.RepositoryFileAce;
 import org.pentaho.platform.api.repository.RepositoryFileAcl;
 import org.pentaho.platform.api.repository.RepositoryFilePermission;
 import org.pentaho.platform.api.repository.VersionSummary;
+import org.pentaho.platform.engine.core.system.PentahoSystem;
 import org.pentaho.platform.repository.pcr.data.node.NodeRepositoryFileData;
 
 @WebService(endpointInterface = "org.pentaho.platform.repository.pcr.ws.IUnifiedRepositoryWebService", name = "UnifiedRepositoryWebService", portName = "UnifiedRepositoryWebServicePort", targetNamespace = "http://www.pentaho.org/ws/1.0")
@@ -24,6 +25,17 @@ public class DefaultUnifiedRepositoryWebService implements IUnifiedRepositoryWeb
   private IUnifiedRepository repo;
 
   // ~ Constructors ====================================================================================================
+
+  /**
+   * No-arg constructor for when in Pentaho BI Server.
+   */
+  public DefaultUnifiedRepositoryWebService() {
+    super();
+    repo = PentahoSystem.get(IUnifiedRepository.class);
+    if (repo == null) {
+      throw new IllegalStateException("no IUnifiedRepository implementation");
+    }
+  }
 
   public DefaultUnifiedRepositoryWebService(final IUnifiedRepository repo) {
     super();

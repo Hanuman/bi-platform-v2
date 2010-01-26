@@ -22,6 +22,8 @@ public class RepositoryPaths {
   public static final String DEFAULT = "DEFAULT"; //$NON-NLS-1$
 
   public static final String SYSTEM_PROPERTY = "pentaho.repositoryPaths.strategy"; //$NON-NLS-1$
+  
+  private static final String TENANTID_SINGLE_TENANT = "tenant0"; //$NON-NLS-1$
 
   private static String strategyName = System.getProperty(SYSTEM_PROPERTY);
 
@@ -151,7 +153,12 @@ public class RepositoryPaths {
   private static String internalGetTenantId() {
     IPentahoSession pentahoSession = PentahoSessionHolder.getSession();
     Assert.state(pentahoSession != null);
-    return (String) pentahoSession.getAttribute(IPentahoSession.TENANT_ID_KEY);
+    // TODO mlowery make this configurable
+    String tenantId = (String) pentahoSession.getAttribute(IPentahoSession.TENANT_ID_KEY);
+    if (tenantId == null) {
+      tenantId = TENANTID_SINGLE_TENANT;
+    }
+    return tenantId;
   }
 
 }

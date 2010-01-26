@@ -16,6 +16,7 @@
 			<value>
         <![CDATA[CONVERT_URL_TO_LOWERCASE_BEFORE_COMPARISON
         PATTERN_TYPE_APACHE_ANT
+        /webservices/**=securityContextHolderAwareRequestFilterForWS,httpSessionContextIntegrationFilter,basicProcessingFilter,anonymousProcessingFilter,exceptionTranslationFilterForWS,filterInvocationInterceptorForWS
         /**=securityContextHolderAwareRequestFilter,httpSessionContextIntegrationFilter,httpSessionReuseDetectionFilter,logoutFilter,authenticationProcessingFilter,basicProcessingFilter,requestParameterProcessingFilter,anonymousProcessingFilter,pentahoSecurityStartupFilter,exceptionTranslationFilter,filterInvocationInterceptor]]>
 			</value>
 		</property>
@@ -88,6 +89,14 @@
 	</bean>
 	<bean id="securityContextHolderAwareRequestFilter"
 		class="org.springframework.security.wrapper.SecurityContextHolderAwareRequestFilter" />
+
+  <bean id="securityContextHolderAwareRequestFilterForWS" class="org.springframework.security.wrapper.SecurityContextHolderAwareRequestFilter">
+    <!-- override so that SavedRequestAwareWrapper is not used -->
+    <property name="wrapperClass" value="org.springframework.security.wrapper.SecurityContextHolderAwareRequestWrapper" />
+  </bean>
+
+    
+    
 	<bean id="httpSessionReuseDetectionFilter"
 		class="org.pentaho.platform.web.http.security.HttpSessionReuseDetectionFilter">
 		<property name="filterProcessesUrl" value="/j_spring_security_check" />
@@ -105,6 +114,17 @@
 			<bean class="org.springframework.security.ui.AccessDeniedHandlerImpl" />
 		</property>
 	</bean>
+  
+  <bean id="exceptionTranslationFilterForWS" class="org.springframework.security.ui.ExceptionTranslationFilter">
+    <property name="authenticationEntryPoint">
+      <ref local="basicProcessingFilterEntryPoint" />
+    </property>
+    <property name="accessDeniedHandler">
+      <bean class="org.springframework.security.ui.AccessDeniedHandlerImpl" />
+    </property>
+  </bean>
+
+  
 	<bean id="authenticationProcessingFilter"
 		class="org.springframework.security.ui.webapp.AuthenticationProcessingFilter">
 		<property name="authenticationManager">
@@ -212,4 +232,24 @@ CONVERT_URL_TO_LOWERCASE_BEFORE_COMPARISON
 			</value>
 		</property>
 	</bean>
+  
+  <bean id="filterInvocationInterceptorForWS" class="org.springframework.security.intercept.web.FilterSecurityInterceptor">
+  <property name="authenticationManager">
+    <ref local="authenticationManager" />
+  </property>
+  <property name="accessDecisionManager">
+    <ref local="httpRequestAccessDecisionManager" />
+  </property>
+  <!-- allow anyone to see the wsdl of various services -->
+  <property name="objectDefinitionSource">
+    <value>
+      <![CDATA[CONVERT_URL_TO_LOWERCASE_BEFORE_COMPARISON
+\A/webservices/repo\?wsdl.*\Z=Anonymous
+\A/webservices/.*\Z=Authenticated
+      ]]>
+    </value>
+  </property>
+</bean>
+
+  
 </beans>

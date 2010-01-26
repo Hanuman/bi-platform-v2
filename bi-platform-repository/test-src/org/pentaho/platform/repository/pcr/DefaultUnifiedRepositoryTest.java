@@ -206,10 +206,10 @@ public class DefaultUnifiedRepositoryTest implements ApplicationContextAware {
    */
   @Test
   public void testAclsOnDefaultFolders() throws Exception {
-    final RepositoryFileSid acmeAdminSid = new RepositoryFileSid(TENANT_ID_ACME + tenantAdminAuthorityNameSuffix,
+    final RepositoryFileSid acmeAdminSid = new RepositoryFileSid(TENANT_ID_ACME + "_" + tenantAdminAuthorityNameSuffix,
         RepositoryFileSid.Type.ROLE);
     final RepositoryFileSid suzySid = new RepositoryFileSid(USERNAME_SUZY, RepositoryFileSid.Type.USER);
-    final RepositoryFileSid acmeAuthenticatedAuthoritySid = new RepositoryFileSid(TENANT_ID_ACME
+    final RepositoryFileSid acmeAuthenticatedAuthoritySid = new RepositoryFileSid(TENANT_ID_ACME + "_"
         + tenantAuthenticatedAuthorityNameSuffix, RepositoryFileSid.Type.ROLE);
     final RepositoryFileSid repositoryAdminSid = new RepositoryFileSid(repositoryAdminUsername,
         RepositoryFileSid.Type.USER);
