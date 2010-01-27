@@ -19,26 +19,29 @@ public class DataProperty {
   }
 
   public String getString() {
-    return String.valueOf(value);
+    return value != null ? String.valueOf(value) : null;
   }
 
   public boolean getBoolean() {
-    return Boolean.valueOf(getString());
+    return value != null ? Boolean.valueOf(getString()) : null;
   }
 
   public long getLong() {
-    return Long.valueOf(getString());
+    return value != null ? Long.valueOf(getString()) : null;
   }
 
   public double getDouble() {
-    return Double.valueOf(getString());
+    return value != null ? Double.valueOf(getString()) : null;
   }
   
   public DataNodeRef getRef() {
-    return new DataNodeRef(value.toString());
+    return value != null ? new DataNodeRef(value.toString()) : null;
   }
 
   public Date getDate() {
+    if (value == null) {
+      return null;
+    }
     if (!(value instanceof Date)) {
       throw new IllegalArgumentException();
     }

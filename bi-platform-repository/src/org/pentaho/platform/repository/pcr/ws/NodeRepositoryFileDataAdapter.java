@@ -1,11 +1,13 @@
 package org.pentaho.platform.repository.pcr.ws;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import javax.xml.bind.annotation.adapters.XmlAdapter;
+import javax.xml.datatype.XMLGregorianCalendar;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.pentaho.platform.repository.pcr.data.node.DataNode;
 import org.pentaho.platform.repository.pcr.data.node.DataNodeRef;
 import org.pentaho.platform.repository.pcr.data.node.DataProperty;
@@ -13,15 +15,23 @@ import org.pentaho.platform.repository.pcr.data.node.NodeRepositoryFileData;
 
 public class NodeRepositoryFileDataAdapter extends XmlAdapter<JaxbSafeNodeRepositoryFileData, NodeRepositoryFileData> {
 
+  private static final Log logger = LogFactory.getLog(NodeRepositoryFileDataAdapter.class);
+
   @Override
   public JaxbSafeNodeRepositoryFileData marshal(final NodeRepositoryFileData v) throws Exception {
-    System.out.println("incoming data: " + v);
-    JaxbSafeNodeRepositoryFileData d = new JaxbSafeNodeRepositoryFileData();
-    JaxbSafeDataNode node = new JaxbSafeDataNode();
-    d.node = node;
-    toJaxbSafeDataNode(node, v.getNode());
-    System.out.println("outgoing jaxb data: " + d);
-    return d;
+    try {
+      System.out.println("incoming data: " + v);
+      JaxbSafeNodeRepositoryFileData d = new JaxbSafeNodeRepositoryFileData();
+      JaxbSafeDataNode node = new JaxbSafeDataNode();
+      d.node = node;
+      toJaxbSafeDataNode(node, v.getNode());
+      System.out.println("outgoing jaxb data: " + d);
+      return d;
+    } catch (Exception e) {
+      logger.error(String.format("error marshalling %s to %s", NodeRepositoryFileData.class.getName(),
+          JaxbSafeNodeRepositoryFileData.class.getName()), e);
+      throw e;
+    }
   }
 
   protected void toJaxbSafeDataNode(final JaxbSafeDataNode jaxbNode, final DataNode node) {
@@ -77,11 +87,17 @@ public class NodeRepositoryFileDataAdapter extends XmlAdapter<JaxbSafeNodeReposi
 
   @Override
   public NodeRepositoryFileData unmarshal(final JaxbSafeNodeRepositoryFileData v) throws Exception {
-    System.out.println("incoming jaxb data: " + v);
-    DataNode node = toDataNode(v.node);
-    NodeRepositoryFileData data = new NodeRepositoryFileData(node);
-    System.out.println("outgoing data: " + data);
-    return data;
+    try {
+      System.out.println("incoming jaxb data: " + v);
+      DataNode node = toDataNode(v.node);
+      NodeRepositoryFileData data = new NodeRepositoryFileData(node);
+      System.out.println("outgoing data: " + data);
+      return data;
+    } catch (Exception e) {
+      logger.error(String.format("error unmarshalling %s to %s", JaxbSafeNodeRepositoryFileData.class.getName(),
+          NodeRepositoryFileData.class.getName()), e);
+      throw e;
+    }
   }
 
   protected DataNode toDataNode(final JaxbSafeDataNode jaxbNode) {
@@ -95,7 +111,8 @@ public class NodeRepositoryFileDataAdapter extends XmlAdapter<JaxbSafeNodeReposi
           break;
         }
         case DATE: {
-          node.setProperty(jaxbProp.name, (Date) jaxbProp.value);
+          // by default, jaxb turns java.util.Date instances into XMLGregorianCalendar
+          node.setProperty(jaxbProp.name, ((XMLGregorianCalendar) jaxbProp.value).toGregorianCalendar().getTime());
           break;
         }
         case DOUBLE: {
