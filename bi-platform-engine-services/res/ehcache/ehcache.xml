@@ -100,6 +100,17 @@
 		/>
 		
 	<!-- Defines a cache used by libloader. This cache holds the parsed object loaded via libloader. -->
+	<cache name="libloader-bundles"
+          maxElementsInMemory="100"
+          eternal="false"
+          overflowToDisk="false"
+          timeToIdleSeconds="0"
+          timeToLiveSeconds="0"
+          diskPersistent="false"
+          diskExpiryThreadIntervalSeconds="120"
+        />
+ 
+	<!-- Defines a cache used by libloader. This cache holds the parsed object loaded via libloader. -->
     <!--  This cache will replace the improperly named 'liblayout-factory' cache in the near future  -->
     <!--  so it is being added now so it doesn't get forgotten                                       -->
 	<cache name="libloader-factory"
@@ -121,4 +132,5 @@
         diskPersistent="false"
         diskExpiryThreadIntervalSeconds="120"
 		/>		
+
 </ehcache>
