@@ -238,7 +238,7 @@ function doSave( id, url, createNew ) {
 		hasSchedules = true;
 	}
 	
- 	var destination = form.elements['destination'];
+    var destination = form.elements['destination'];
     if (destination != null) {
       destination = destination.value;
     }

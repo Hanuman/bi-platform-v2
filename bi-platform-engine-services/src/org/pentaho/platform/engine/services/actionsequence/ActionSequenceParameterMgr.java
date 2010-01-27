@@ -109,5 +109,4 @@ public class ActionSequenceParameterMgr implements IActionParameterMgr {
     // TODO Auto-generated method stub
     return null;
   }
-
 }

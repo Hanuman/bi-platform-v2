@@ -556,15 +556,50 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IPers
       ContentTypePlugin plugin = getContentTypePlugin(selectedFileItem.getName());
       if (plugin != null && plugin.hasCommand(mode)) {
         // load the editor for this plugin
-        String url = selectedFileItem.getURL();
+        String url = plugin.getCommandUrl(selectedFileItem, mode);
         if (StringUtils.isEmpty(url)) {
-          url = plugin.getCommandUrl(selectedFileItem, mode);
+          url = selectedFileItem.getURL();
         }
         if (GWT.isScript()) {
           if (url != null && !"".equals(url)) { //$NON-NLS-1$
             // we have a URL so open it in a new tab
             if (mode == FileCommand.COMMAND.NEWWINDOW) {
               Window.open(url, "_blank", "menubar=yes,location=no,resizable=yes,scrollbars=yes,status=no"); //$NON-NLS-1$ //$NON-NLS-2$
+            } else if (mode == FileCommand.COMMAND.BACKGROUND) {
+              RequestBuilder builder = new RequestBuilder(RequestBuilder.GET, url);
+              try {
+                builder.sendRequest(null, new RequestCallback() {
+
+                  public void onError(Request request, Throwable exception) {
+                    MessageDialogBox dialogBox = new MessageDialogBox(
+                        Messages.getString("error"), Messages.getString("couldNotBackgroundExecute"), false, false, true); //$NON-NLS-1$ //$NON-NLS-2$
+                    dialogBox.center();
+                  }
+
+                  public void onResponseReceived(Request request, Response response) {
+                    MessageDialogBox dialogBox = new MessageDialogBox(Messages.getString("info"), //$NON-NLS-1$
+                        Messages.getString("backgroundExecutionWarning"), //$NON-NLS-1$
+                        true, false, true);
+                    dialogBox.setCallback(new IDialogCallback() {
+                      public void cancelPressed() {
+                      }
+
+                      public void okPressed() {
+                        if (isWorkspaceShowing()) {
+                          workspacePanel.refreshWorkspace();
+                        }
+                      }
+                    });
+                    dialogBox.center();
+                  }
+
+                });
+              } catch (RequestException e) {
+                MessageDialogBox dialogBox = new MessageDialogBox(Messages.getString("error"), //$NON-NLS-1$
+                    e.getMessage(), //$NON-NLS-1$
+                    true, false, true);
+                dialogBox.center();
+              }
             } else {
               UrlCommand cmd = new UrlCommand(this, url, selectedFileItem.localizedName);
               cmd.execute(new CommandCallback() {
@@ -1955,7 +1990,18 @@ public class SolutionBrowserPerspective extends HorizontalPanel implements IPers
     }
 
     public String getCommandUrl(FileItem item, COMMAND cmd) {
-      return replacePattern(urlCommands.get(cmd), item);
+      String url = replacePattern(urlCommands.get(cmd), item);
+      if (!StringUtils.isEmpty(url)) {
+        if (!url.startsWith("http")) {
+          String href = Window.Location.getHref().substring(0, Window.Location.getHref().indexOf("Home"));
+          if (href.endsWith("/") || url.startsWith("/")) {
+            url = href += url;
+          } else {
+            url = href + "/" + url;
+          }
+        }
+      }
+      return url;
     }
 
     public String getFileIcon() {
