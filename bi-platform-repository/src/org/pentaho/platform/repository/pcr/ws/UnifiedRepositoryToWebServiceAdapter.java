@@ -13,6 +13,12 @@ import org.pentaho.platform.api.repository.RepositoryFilePermission;
 import org.pentaho.platform.api.repository.VersionSummary;
 import org.pentaho.platform.repository.pcr.data.node.NodeRepositoryFileData;
 
+/**
+ * Converts calls to {@link IUnifiedRepository} into {@link IUnifiedRepositoryWebService}. This is how client code 
+ * remains unaware of server code location.
+ * 
+ * @author mlowery
+ */
 public class UnifiedRepositoryToWebServiceAdapter implements IUnifiedRepository {
 
   private IUnifiedRepositoryWebService repoWebService;

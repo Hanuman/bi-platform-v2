@@ -62,10 +62,23 @@ import org.springframework.security.userdetails.UserDetails;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
+/**
+ * JUnit 4 test. Not actually a unit test as it tests the {@link DefaultUnifiedRepository} fully configured behind 
+ * Spring Security's method security and Spring's transaction interceptor.
+ * 
+ * <p>
+ * Note the RunWith annotation that uses a special runner that knows how to setup a Spring application context. The 
+ * application context config files are listed in the ContextConfiguration annotation. By implementing 
+ * {@link ApplicationContextAware}, this unit test can access various beans defined in the application context, 
+ * including the bean under test.
+ * </p>
+ * 
+ * @author mlowery
+ */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = { "classpath:/sample-repository.spring.xml",
     "classpath:/sample-repository-test-override.spring.xml" })
-//@SuppressWarnings("nls")
+@SuppressWarnings("nls")
 public class DefaultUnifiedRepositoryTest implements ApplicationContextAware {
   // ~ Static fields/initializers ======================================================================================
 

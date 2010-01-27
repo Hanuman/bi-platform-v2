@@ -15,6 +15,11 @@ import org.pentaho.platform.api.repository.VersionSummary;
 import org.pentaho.platform.engine.core.system.PentahoSystem;
 import org.pentaho.platform.repository.pcr.data.node.NodeRepositoryFileData;
 
+/**
+ * Implementation of {@link IUnifiedRepositoryWebService} that delegates to an {@link IUnifiedRepository} instance.
+ * 
+ * @author mlowery
+ */
 @WebService(endpointInterface = "org.pentaho.platform.repository.pcr.ws.IUnifiedRepositoryWebService", name = "UnifiedRepositoryWebService", portName = "UnifiedRepositoryWebServicePort", targetNamespace = "http://www.pentaho.org/ws/1.0")
 public class DefaultUnifiedRepositoryWebService implements IUnifiedRepositoryWebService {
 

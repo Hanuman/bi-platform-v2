@@ -1,0 +1,18 @@
+<html>
+<head>
+<title>package.html</title>
+</head>
+<body>
+<p>
+This package contains a <a href="https://jax-ws.dev.java.net/">JAX-WS</a>-safe version of the IUnifiedRepository 
+interface. JAX-WS cannot handle interfaces in method signatures or return values, method overloading, or static inner 
+classes, and possibly other features of the Java language. In addition, JAXB, the default serialization technology of
+JAX-WS, cannot automatically marshal and unmarshal all objects. To help it, XmlJavaTypeAdapters are employed.
+</p>
+<p>
+Clients should never use the JAX-WS-safe version of the IUnifiedRepository interface. Instead, clients should code to 
+the IUnifiedRepository interface and use the adapter layer to convert the calls into calls on the web service client. In
+this way, the client code is location unaware--it can be calling code in the same JVM or a remote JVM.
+</p>
+</body>
+</html>
