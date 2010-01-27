@@ -61,6 +61,8 @@ public interface IUnifiedRepositoryWebService {
   void deleteFileWithPermanentFlag(final String fileId, final boolean permanent, final String versionMessage);
 
   void deleteFile(final String fileId, final String versionMessage);
+  
+  void deleteFileAtVersion(final String fileId, final String versionId);
 
   void undeleteFile(final String fileId, final String versionMessage);
 

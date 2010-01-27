@@ -358,6 +358,22 @@ public class JcrRepositoryFileDao implements IRepositoryFileDao {
       }
     });
   }
+  
+  /**
+   * {@inheritDoc}
+   */
+  public void deleteFileAtVersion(final Serializable fileId, final Serializable versionId) {
+    Assert.notNull(fileId);
+    Assert.notNull(versionId);
+    jcrTemplate.execute(new JcrCallback() {
+      public Object doInJcr(final Session session) throws RepositoryException, IOException {
+        Node fileToDeleteNode = session.getNodeByUUID(fileId.toString());
+        fileToDeleteNode.getVersionHistory().removeVersion(versionId.toString());
+        session.save();
+        return null;
+      }
+    });
+  }
 
   /**
    * {@inheritDoc}

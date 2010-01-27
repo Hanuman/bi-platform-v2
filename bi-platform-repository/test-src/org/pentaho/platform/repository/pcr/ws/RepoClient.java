@@ -149,10 +149,10 @@ public class RepoClient {
     versionSummary = repo.getVersionSummary(file1.getId(), versionSummaries.get(versionSummaries.size() - 1).getId());
     assertNotNull(versionSummary);
     assertNotNull(versionSummary.getId());
-    RepositoryFile file1AtVersion = repo.getFile(file1.getId(), versionSummary.getId());
+    RepositoryFile file1AtVersion = repo.getFileAtVersion(file1.getId(), versionSummary.getId());
     assertNotNull(file1AtVersion);
     assertEquals(versionSummary.getId(), file1AtVersion.getVersionId());
-    NodeRepositoryFileData file1DataAtVersion = repo.getDataForRead(file1.getId(), versionSummary.getId(),
+    NodeRepositoryFileData file1DataAtVersion = repo.getDataForReadAtVersion(file1.getId(), versionSummary.getId(),
         NodeRepositoryFileData.class);
     assertNotNull(file1DataAtVersion);
     assertEquals("ciao world", file1DataAtVersion.getNode().getProperty("prop1").getString());

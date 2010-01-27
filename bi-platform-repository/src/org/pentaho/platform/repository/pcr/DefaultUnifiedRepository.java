@@ -149,28 +149,28 @@ public class DefaultUnifiedRepository implements IUnifiedRepository {
    * @see #getDataForRead(RepositoryFile, Class)
    */
   public <T extends IRepositoryFileData> T getDataForExecute(final Serializable fileId, final Class<T> dataClass) {
-    return getDataForExecute(fileId, null, dataClass);
+    return getDataForExecuteAtVersion(fileId, null, dataClass);
   }
 
   /**
    * {@inheritDoc}
    */
-  public <T extends IRepositoryFileData> T getDataForExecute(final Serializable fileId, final Serializable versionId,
+  public <T extends IRepositoryFileData> T getDataForExecuteAtVersion(final Serializable fileId, final Serializable versionId,
       final Class<T> dataClass) {
-    return getDataForRead(fileId, versionId, dataClass);
+    return getDataForReadAtVersion(fileId, versionId, dataClass);
   }
 
   /**
    * {@inheritDoc}
    */
   public <T extends IRepositoryFileData> T getDataForRead(final Serializable fileId, final Class<T> dataClass) {
-    return getDataForRead(fileId, null, dataClass);
+    return getDataForReadAtVersion(fileId, null, dataClass);
   }
 
   /**
    * {@inheritDoc}
    */
-  public <T extends IRepositoryFileData> T getDataForRead(final Serializable fileId, final Serializable versionId,
+  public <T extends IRepositoryFileData> T getDataForReadAtVersion(final Serializable fileId, final Serializable versionId,
       final Class<T> dataClass) {
     Assert.notNull(fileId);
     return repositoryFileDao.getData(fileId, versionId, dataClass);
@@ -214,14 +214,23 @@ public class DefaultUnifiedRepository implements IUnifiedRepository {
       repositoryFileDao.deleteFile(fileId, versionMessage);
     }
   }
-
+  
   /**
    * {@inheritDoc}
    */
   public void deleteFile(final Serializable fileId, final String versionMessage) {
     deleteFile(fileId, false, versionMessage);
   }
-
+  
+  /**
+   * {@inheritDoc}
+   */
+  public void deleteFileAtVersion(final Serializable fileId, final Serializable versionId) {
+    Assert.notNull(fileId);
+    Assert.notNull(versionId);
+    repositoryFileDao.deleteFileAtVersion(fileId, versionId);
+  }
+  
   /**
    * {@inheritDoc}
    */
@@ -295,7 +304,7 @@ public class DefaultUnifiedRepository implements IUnifiedRepository {
   /**
    * {@inheritDoc}
    */
-  public RepositoryFile getFile(final Serializable fileId, final Serializable versionId) {
+  public RepositoryFile getFileAtVersion(final Serializable fileId, final Serializable versionId) {
     Assert.notNull(fileId);
     Assert.notNull(versionId);
     return repositoryFileDao.getFile(fileId, versionId);

@@ -40,6 +40,8 @@ public interface IRepositoryFileDao {
       final String versionMessage);
 
   void deleteFile(final Serializable fileId, final String versionMessage);
+  
+  void deleteFileAtVersion(final Serializable fileId, final Serializable versionId);
 
   void undeleteFile(final Serializable fileId, final String versionMessage);
   

@@ -60,6 +60,10 @@ public class DefaultUnifiedRepositoryWebService implements IUnifiedRepositoryWeb
   public void deleteFile(String fileId, String versionMessage) {
     repo.deleteFile(fileId, versionMessage);
   }
+  
+  public void deleteFileAtVersion(String fileId, String versionId) {
+    repo.deleteFileAtVersion(fileId, versionId);
+  }
 
   public void deleteFileWithPermanentFlag(String fileId, boolean permanent, String versionMessage) {
     repo.deleteFile(fileId, permanent, versionMessage);
@@ -82,7 +86,7 @@ public class DefaultUnifiedRepositoryWebService implements IUnifiedRepositoryWeb
   }
 
   public NodeRepositoryFileData getDataAsNodeForReadAtVersion(String fileId, String versionId) {
-    return repo.getDataForRead(fileId, versionId, NodeRepositoryFileData.class);
+    return repo.getDataForReadAtVersion(fileId, versionId, NodeRepositoryFileData.class);
   }
 
   public List<RepositoryFile> getDeletedFiles() {
@@ -106,7 +110,7 @@ public class DefaultUnifiedRepositoryWebService implements IUnifiedRepositoryWeb
   }
 
   public RepositoryFile getFileAtVersion(String fileId, String versionId) {
-    return repo.getFile(fileId, versionId);
+    return repo.getFileAtVersion(fileId, versionId);
   }
 
   public RepositoryFile getFileById(String fileId) {

@@ -335,8 +335,14 @@ public class DefaultUnifiedRepositoryTest implements ApplicationContextAware {
     login(USERNAME_SUZY, TENANT_ID_ACME);
     RepositoryFile parentFolder = repo.getFile(RepositoryPaths.getUserHomeFolderPath());
     RepositoryFile newFolder = new RepositoryFile.Builder("test").folder(true).build();
+    
     Date beginTime = Calendar.getInstance().getTime();
+    
+    // Sleep for 1 second for time comparison
+    Thread.sleep(1000);
     newFolder = repo.createFolder(parentFolder.getId(), newFolder, null);
+    Thread.sleep(1000);
+    
     Date endTime = Calendar.getInstance().getTime();
     assertTrue(beginTime.before(newFolder.getCreatedDate()));
     assertTrue(endTime.after(newFolder.getCreatedDate()));
@@ -823,6 +829,61 @@ public class DefaultUnifiedRepositoryTest implements ApplicationContextAware {
     assertNull(SimpleJcrTestUtils.getItem(testJcrTemplate, RepositoryPaths.getUserHomeFolderPath() + "/.lockTokens/"
         + newFile.getId()));
   }
+  
+  @Test
+  public void testDeleteFileAtVersion() throws Exception {
+    // Startup and login to repository
+    repo.getRepositoryLifecycleManager().startup();
+    login(USERNAME_SUZY, TENANT_ID_ACME);
+    
+    // Create a simple file
+    RepositoryFile parentFolder = repo.getFile(RepositoryPaths.getUserHomeFolderPath());
+    final String expectedDataString = "Hello World!";
+    final String expectedModDataString = "Ciao World!";
+    final String expectedEncoding = "UTF-8";
+    byte[] data = expectedDataString.getBytes(expectedEncoding);
+    byte[] modData = expectedModDataString.getBytes(expectedEncoding);
+    ByteArrayInputStream dataStream = new ByteArrayInputStream(data);
+    ByteArrayInputStream modDataStream = new ByteArrayInputStream(modData);
+    final String expectedMimeType = "text/plain";
+    final String expectedName = "helloworld.xaction";
+    final String expectedAbsolutePath = RepositoryPaths.getUserHomeFolderPath() + "/helloworld.xaction";
+
+    final SimpleRepositoryFileData content = new SimpleRepositoryFileData(dataStream, expectedEncoding,
+        expectedMimeType);
+    RepositoryFile newFile = repo.createFile(parentFolder.getId(), new RepositoryFile.Builder(expectedName).versioned(true).build(),
+        content, null);
+    
+    // Make sure the file was created
+    RepositoryFile foundFile = repo.getFile(expectedAbsolutePath);
+    assertNotNull(foundFile);
+    
+    // Modify file
+    final SimpleRepositoryFileData modContent = new SimpleRepositoryFileData(modDataStream, expectedEncoding,
+        expectedMimeType);
+    repo.updateFile(foundFile, modContent, null);
+    
+    // Verify versions
+    List<VersionSummary> origVerList = repo.getVersionSummaries(foundFile.getId());
+    assertEquals(4, origVerList.size());
+    
+    SimpleRepositoryFileData result = repo.getDataForReadAtVersion(foundFile.getId(), origVerList.get(2).getId(), SimpleRepositoryFileData.class);
+    SimpleRepositoryFileData modResult = repo.getDataForReadAtVersion(foundFile.getId(), origVerList.get(3).getId(), SimpleRepositoryFileData.class);
+    
+    assertEquals(expectedDataString, IOUtils.toString(result.getStream(), expectedEncoding));
+    assertEquals(expectedModDataString, IOUtils.toString(modResult.getStream(), expectedEncoding));
+    
+    // Remove first version
+    repo.deleteFileAtVersion(foundFile.getId(), origVerList.get(2).getId());
+    
+    // Verify version removal
+    List<VersionSummary> newVerList = repo.getVersionSummaries(foundFile.getId());
+    assertEquals(3, newVerList.size());
+    
+    SimpleRepositoryFileData newModResult = repo.getDataForReadAtVersion(foundFile.getId(), newVerList.get(2).getId(), SimpleRepositoryFileData.class);
+    
+    assertEquals(expectedModDataString, IOUtils.toString(newModResult.getStream(), expectedEncoding));
+  }
 
   @Test
   public void testGetVersionSummaries() throws Exception {
@@ -929,8 +990,8 @@ public class DefaultUnifiedRepositoryTest implements ApplicationContextAware {
     repo.updateFile(builder.build(), modData, null);
 
     List<VersionSummary> versionSummaries = repo.getVersionSummaries(newFile.getId());
-    RepositoryFile v1 = repo.getFile(newFile.getId(), versionSummaries.get(0).getId());
-    RepositoryFile v2 = repo.getFile(newFile.getId(), versionSummaries.get(versionSummaries.size() - 1).getId());
+    RepositoryFile v1 = repo.getFileAtVersion(newFile.getId(), versionSummaries.get(0).getId());
+    RepositoryFile v2 = repo.getFileAtVersion(newFile.getId(), versionSummaries.get(versionSummaries.size() - 1).getId());
     assertEquals(fileName, v1.getName());
     assertEquals(fileName, v2.getName());
     assertEquals(fileId, v1.getId());
@@ -945,8 +1006,8 @@ public class DefaultUnifiedRepositoryTest implements ApplicationContextAware {
     System.out.println("or: " + newFile);
     System.out.println("v1: " + v1);
     System.out.println("v2: " + v2);
-    SampleRepositoryFileData c1 = repo.getDataForRead(v1.getId(), v1.getVersionId(), SampleRepositoryFileData.class);
-    SampleRepositoryFileData c2 = repo.getDataForRead(v2.getId(), v2.getVersionId(), SampleRepositoryFileData.class);
+    SampleRepositoryFileData c1 = repo.getDataForReadAtVersion(v1.getId(), v1.getVersionId(), SampleRepositoryFileData.class);
+    SampleRepositoryFileData c2 = repo.getDataForReadAtVersion(v2.getId(), v2.getVersionId(), SampleRepositoryFileData.class);
     assertEquals(origSampleString, c1.getSampleString());
     assertEquals(origSampleBoolean, c1.getSampleBoolean());
     assertEquals(origSampleInteger, c1.getSampleInteger());

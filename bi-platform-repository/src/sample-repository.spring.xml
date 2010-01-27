@@ -27,9 +27,12 @@
     <property name="transactionAttributeSource">
       <value>
         org.pentaho.platform.api.repository.IUnifiedRepository.getFile=PROPAGATION_REQUIRED,readOnly
+        org.pentaho.platform.api.repository.IUnifiedRepository.getFileAtVersion=PROPAGATION_REQUIRED,readOnly
         org.pentaho.platform.api.repository.IUnifiedRepository.getFileById=PROPAGATION_REQUIRED,readOnly
         org.pentaho.platform.api.repository.IUnifiedRepository.getDataForRead=PROPAGATION_REQUIRED,readOnly
+        org.pentaho.platform.api.repository.IUnifiedRepository.getDataForReadAtVersion=PROPAGATION_REQUIRED,readOnly
         org.pentaho.platform.api.repository.IUnifiedRepository.getDataForExecute=PROPAGATION_REQUIRED,readOnly
+        org.pentaho.platform.api.repository.IUnifiedRepository.getDataForExecuteAtVersion=PROPAGATION_REQUIRED,readOnly
         org.pentaho.platform.api.repository.IUnifiedRepository.createFile=PROPAGATION_REQUIRED
         org.pentaho.platform.api.repository.IUnifiedRepository.createFolder=PROPAGATION_REQUIRED
         org.pentaho.platform.api.repository.IUnifiedRepository.getChildren=PROPAGATION_REQUIRED,readOnly
@@ -43,6 +46,7 @@
         org.pentaho.platform.api.repository.IUnifiedRepository.getVersionSummary=PROPAGATION_REQUIRED,readOnly
         org.pentaho.platform.api.repository.IUnifiedRepository.getVersionSummaries=PROPAGATION_REQUIRED,readOnly
         org.pentaho.platform.api.repository.IUnifiedRepository.deleteFile=PROPAGATION_REQUIRED
+        org.pentaho.platform.api.repository.IUnifiedRepository.deleteFileAtVersion=PROPAGATION_REQUIRED
         org.pentaho.platform.api.repository.IUnifiedRepository.undeleteFile=PROPAGATION_REQUIRED
         org.pentaho.platform.api.repository.IUnifiedRepository.getDeletedFiles=PROPAGATION_REQUIRED,readOnly
         org.pentaho.platform.api.repository.IUnifiedRepository.getDeletedFiles=PROPAGATION_REQUIRED,readOnly
@@ -135,9 +139,12 @@
     <property name="objectDefinitionSource">
       <value>
         org.pentaho.platform.api.repository.IUnifiedRepository.getFile=VOTE_ROLE_FILE_Authenticated
+        org.pentaho.platform.api.repository.IUnifiedRepository.getFileAtVersion=VOTE_ROLE_FILE_Authenticated
         org.pentaho.platform.api.repository.IUnifiedRepository.getFileById=VOTE_ROLE_FILE_Authenticated
         org.pentaho.platform.api.repository.IUnifiedRepository.getDataForRead=VOTE_ROLE_FILE_Authenticated
+        org.pentaho.platform.api.repository.IUnifiedRepository.getDataForReadAtVersion=VOTE_ROLE_FILE_Authenticated
         org.pentaho.platform.api.repository.IUnifiedRepository.getDataForExecute=VOTE_ROLE_FILE_Authenticated
+        org.pentaho.platform.api.repository.IUnifiedRepository.getDataForExecuteAtVersion=VOTE_ROLE_FILE_Authenticated
         org.pentaho.platform.api.repository.IUnifiedRepository.createFile=VOTE_ROLE_FILE_Authenticated
         org.pentaho.platform.api.repository.IUnifiedRepository.createFolder=VOTE_ROLE_FILE_Authenticated
         org.pentaho.platform.api.repository.IUnifiedRepository.getChildren=VOTE_ROLE_FILE_Authenticated
@@ -151,6 +158,7 @@
         org.pentaho.platform.api.repository.IUnifiedRepository.getVersionSummary=VOTE_ROLE_FILE_Authenticated
         org.pentaho.platform.api.repository.IUnifiedRepository.getVersionSummaries=VOTE_ROLE_FILE_Authenticated
         org.pentaho.platform.api.repository.IUnifiedRepository.deleteFile=VOTE_ROLE_FILE_Authenticated
+        org.pentaho.platform.api.repository.IUnifiedRepository.deleteFileAtVersion=VOTE_ROLE_FILE_Authenticated
         org.pentaho.platform.api.repository.IUnifiedRepository.undeleteFile=VOTE_ROLE_FILE_Authenticated
         org.pentaho.platform.api.repository.IUnifiedRepository.getDeletedFiles=VOTE_ROLE_FILE_Authenticated
         org.pentaho.platform.api.repository.IUnifiedRepository.getDeletedFiles=VOTE_ROLE_FILE_Authenticated

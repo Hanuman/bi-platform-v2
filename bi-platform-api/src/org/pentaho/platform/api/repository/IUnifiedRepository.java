@@ -67,7 +67,7 @@ public interface IUnifiedRepository {
    * @param dataClass class that implements {@link IRepositoryFileData}
    * @return data
    */
-  <T extends IRepositoryFileData> T getDataForRead(final Serializable fileId, final Serializable versionId,
+  <T extends IRepositoryFileData> T getDataForReadAtVersion(final Serializable fileId, final Serializable versionId,
       final Class<T> dataClass);
 
   /**
@@ -87,7 +87,7 @@ public interface IUnifiedRepository {
    * @param dataClass class that implements {@link IRepositoryFileData}
    * @return data
    */
-  <T extends IRepositoryFileData> T getDataForExecute(final Serializable fileId, final Serializable versionId,
+  <T extends IRepositoryFileData> T getDataForExecuteAtVersion(final Serializable fileId, final Serializable versionId,
       final Class<T> dataClass);
 
   /**
@@ -150,7 +150,7 @@ public interface IUnifiedRepository {
    * @param versionMessage optional version comment
    */
   void deleteFile(final Serializable fileId, final boolean permanent, final String versionMessage);
-
+  
   /**
    * Deletes a file in a recoverable manner.
    * 
@@ -158,6 +158,15 @@ public interface IUnifiedRepository {
    * @param versionMessage optional version comment
    */
   void deleteFile(final Serializable fileId, final String versionMessage);
+  
+  /**
+   * Permanently deletes a specific version of a file. The version is removed from the
+   * version history of the given file.
+   * 
+   * @param fileId file id
+   * @param versionId version id (MUST not be null)
+   */
+  void deleteFileAtVersion(final Serializable fileId, final Serializable versionId);
   
   /**
    * Recovers a deleted file if it was not permanently deleted. File is recovered to its original folder.
@@ -280,7 +289,7 @@ public interface IUnifiedRepository {
    * @param versionId version id
    * @return file at version
    */
-  RepositoryFile getFile(final Serializable fileId, final Serializable versionId);
+  RepositoryFile getFileAtVersion(final Serializable fileId, final Serializable versionId);
 
   /**
    * Returns the associated {@link IRepositoryLifecycleManager}.

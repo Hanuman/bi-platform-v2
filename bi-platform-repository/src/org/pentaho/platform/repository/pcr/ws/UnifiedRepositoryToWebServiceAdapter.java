@@ -41,6 +41,10 @@ public class UnifiedRepositoryToWebServiceAdapter implements IUnifiedRepository 
   public void deleteFile(Serializable fileId, String versionMessage) {
     repoWebService.deleteFile(fileId.toString(), versionMessage);
   }
+  
+  public void deleteFileAtVersion(Serializable fileId, Serializable versionId) {
+    repoWebService.deleteFileAtVersion(fileId.toString(), versionId.toString());
+  }
 
   public RepositoryFileAcl getAcl(Serializable fileId) {
     return repoWebService.getAcl(fileId.toString());
@@ -58,7 +62,7 @@ public class UnifiedRepositoryToWebServiceAdapter implements IUnifiedRepository 
     throw new UnsupportedOperationException();
   }
 
-  public <T extends IRepositoryFileData> T getDataForExecute(Serializable fileId, Serializable versionId,
+  public <T extends IRepositoryFileData> T getDataForExecuteAtVersion(Serializable fileId, Serializable versionId,
       Class<T> dataClass) {
     throw new UnsupportedOperationException();
   }
@@ -67,7 +71,7 @@ public class UnifiedRepositoryToWebServiceAdapter implements IUnifiedRepository 
     return (T) repoWebService.getDataAsNodeForRead(fileId.toString());
   }
 
-  public <T extends IRepositoryFileData> T getDataForRead(Serializable fileId, Serializable versionId,
+  public <T extends IRepositoryFileData> T getDataForReadAtVersion(Serializable fileId, Serializable versionId,
       Class<T> dataClass) {
     return (T) repoWebService.getDataAsNodeForReadAtVersion(fileId.toString(), versionId != null ? versionId.toString()
         : null);
@@ -97,7 +101,7 @@ public class UnifiedRepositoryToWebServiceAdapter implements IUnifiedRepository 
     throw new UnsupportedOperationException();
   }
 
-  public RepositoryFile getFile(Serializable fileId, Serializable versionId) {
+  public RepositoryFile getFileAtVersion(Serializable fileId, Serializable versionId) {
     return repoWebService.getFileAtVersion(fileId.toString(), versionId != null ? versionId.toString() : null);
   }
 
