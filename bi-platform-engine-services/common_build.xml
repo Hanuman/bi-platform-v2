@@ -1064,7 +1064,7 @@ TYPICAL TARGET SEQUENCE
     <javac destdir="${classes.dir}"
            debug="${javac.debug}"
            deprecation="${javac.deprecation}"
-           fork="true"
+           fork="false"
            source="${javac.source}"
            target="${javac.target}">
       <classpath>

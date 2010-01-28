@@ -37,7 +37,7 @@
     <javac destdir="${classes.dir}"
            debug="${javac.debug}"
            deprecation="${javac.deprecation}"
-           fork="true"
+           fork="false"
            source="${javac.source}"
            target="${javac.target}">
       <classpath>
@@ -135,7 +135,7 @@
            optimize="false"
            source="${javac.source}"
            target="${javac.target}"
-           fork="true">
+           fork="false">
       <classpath refid="test.classpath" />
       <src path="cache/test-src" />
       <src path="connections/test-src" />
