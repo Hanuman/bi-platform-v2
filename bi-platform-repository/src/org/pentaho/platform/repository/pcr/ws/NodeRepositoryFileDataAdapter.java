@@ -20,12 +20,10 @@ public class NodeRepositoryFileDataAdapter extends XmlAdapter<JaxbSafeNodeReposi
   @Override
   public JaxbSafeNodeRepositoryFileData marshal(final NodeRepositoryFileData v) throws Exception {
     try {
-      System.out.println("incoming data: " + v);
       JaxbSafeNodeRepositoryFileData d = new JaxbSafeNodeRepositoryFileData();
       JaxbSafeDataNode node = new JaxbSafeDataNode();
       d.node = node;
       toJaxbSafeDataNode(node, v.getNode());
-      System.out.println("outgoing jaxb data: " + d);
       return d;
     } catch (Exception e) {
       logger.error(String.format("error marshalling %s to %s", NodeRepositoryFileData.class.getName(),
@@ -88,10 +86,8 @@ public class NodeRepositoryFileDataAdapter extends XmlAdapter<JaxbSafeNodeReposi
   @Override
   public NodeRepositoryFileData unmarshal(final JaxbSafeNodeRepositoryFileData v) throws Exception {
     try {
-      System.out.println("incoming jaxb data: " + v);
       DataNode node = toDataNode(v.node);
       NodeRepositoryFileData data = new NodeRepositoryFileData(node);
-      System.out.println("outgoing data: " + data);
       return data;
     } catch (Exception e) {
       logger.error(String.format("error unmarshalling %s to %s", JaxbSafeNodeRepositoryFileData.class.getName(),
