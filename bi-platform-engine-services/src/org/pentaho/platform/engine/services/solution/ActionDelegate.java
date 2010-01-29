@@ -108,21 +108,6 @@ public class ActionDelegate extends ComponentBase {
   @Override
   protected boolean executeAction() throws Throwable {
     //
-    //Provide output stream for the streaming action.  We are going to look for all outputs where
-    //type = "content", and derive output streams to hand to the IStreamingAction.
-    //
-    Map<String, IContentItem> outputContentItems = new HashMap<String, IContentItem>();
-    StreamingOutputOps streamOutputOps = new StreamingOutputOps(outputContentItems);
-
-    IActionOutput[] contentOutputs = getActionDefinition().getOutputs(ActionSequenceDocument.CONTENT_TYPE);
-    if (contentOutputs.length > 0) {
-      for (IActionOutput contentOutput : contentOutputs) {
-        streamOutputOps.setOutputStream(contentOutput);
-      }
-    }
-    //else, This is not necessarily an error condition. Let the action bean decide.
-
-    //
     //Create a map for passing undeclared inputs if an IVarArgsAction
     //
     Map<String, Object> varArgsMap = null;
@@ -147,6 +132,21 @@ public class ActionDelegate extends ComponentBase {
     for (IActionResource res : getActionDefinition().getResources()) {
       resOps.setResource(res);
     }
+
+    //
+    //Provide output stream for the streaming action.  We are going to look for all outputs where
+    //type = "content", and derive output streams to hand to the IStreamingAction.
+    //
+    Map<String, IContentItem> outputContentItems = new HashMap<String, IContentItem>();
+    StreamingOutputOps streamOutputOps = new StreamingOutputOps(outputContentItems);
+
+    IActionOutput[] contentOutputs = getActionDefinition().getOutputs(ActionSequenceDocument.CONTENT_TYPE);
+    if (contentOutputs.length > 0) {
+      for (IActionOutput contentOutput : contentOutputs) {
+        streamOutputOps.setOutputStream(contentOutput);
+      }
+    }
+    //else, This is not necessarily an error condition. Let the action bean decide.
 
     //
     //Execute the Action if the bean is executable
