@@ -231,6 +231,7 @@ public class DefaultRepositoryLifecycleManager implements IRepositoryLifecycleMa
   }
 
   protected void createUserHomeFolder(final String tenantId, final String username) {
+    final String tenantAdminAuthorityName = internalGetTenantAdminAuthorityName(tenantId);
     IPentahoSession origPentahoSession = PentahoSessionHolder.getSession();
     PentahoSessionHolder.setSession(createRepositoryAdminPentahoSession());
     try {
@@ -246,6 +247,9 @@ public class DefaultRepositoryLifecycleManager implements IRepositoryLifecycleMa
             RepositoryFileSid ownerSid = new RepositoryFileSid(username);
             internalSetOwner(userHomeFolder, ownerSid);
             internalSetFullControl(userHomeFolder.getId(), ownerSid);
+            internalAddPermission(userHomeFolder.getId(), new RepositoryFileSid(tenantAdminAuthorityName,
+                RepositoryFileSid.Type.ROLE), EnumSet.of(RepositoryFilePermission.ALL));
+
           }
         }
       });

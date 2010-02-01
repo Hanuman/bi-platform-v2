@@ -133,7 +133,6 @@ public class DefaultUnifiedRepositoryTest implements ApplicationContextAware {
 
   @AfterClass
   public static void tearDownClass() throws Exception {
-
   }
 
   @Before
@@ -314,8 +313,10 @@ public class DefaultUnifiedRepositoryTest implements ApplicationContextAware {
     login(USERNAME_TIFFANY, TENANT_ID_ACME);
     RepositoryFile tiffanyHomeFolder = repo.getFile(RepositoryPaths.getUserHomeFolderPath());
     repo.createFolder(tiffanyHomeFolder.getId(), new RepositoryFile.Builder("test").folder(true).build(), null);
+    RepositoryFileAcl acl = repo.getAcl(tiffanyHomeFolder.getId());
     login(USERNAME_JOE, TENANT_ID_ACME, true);
-    repo.getFile(RepositoryPaths.getTenantHomeFolderPath() + "/tiffany/test");
+    assertNotNull(repo.getFile(RepositoryPaths.getTenantHomeFolderPath() + "/tiffany"));
+    assertNotNull(repo.getFile(RepositoryPaths.getTenantHomeFolderPath() + "/tiffany/test"));
   }
 
   @Test
@@ -1268,9 +1269,9 @@ public class DefaultUnifiedRepositoryTest implements ApplicationContextAware {
 
     List<GrantedAuthority> authList = new ArrayList<GrantedAuthority>();
     authList.add(new GrantedAuthorityImpl(commonAuthenticatedAuthorityName));
-    authList.add(new GrantedAuthorityImpl(tenantId + tenantAuthenticatedAuthorityNameSuffix));
+    authList.add(new GrantedAuthorityImpl(tenantId + "_" + tenantAuthenticatedAuthorityNameSuffix));
     if (tenantAdmin) {
-      authList.add(new GrantedAuthorityImpl(tenantId + tenantAdminAuthorityNameSuffix));
+      authList.add(new GrantedAuthorityImpl(tenantId + "_" + tenantAdminAuthorityNameSuffix));
     }
     GrantedAuthority[] authorities = authList.toArray(new GrantedAuthority[0]);
     UserDetails userDetails = new User(username, password, true, true, true, true, authorities);
