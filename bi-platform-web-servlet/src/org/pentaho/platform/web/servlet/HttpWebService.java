@@ -22,9 +22,9 @@
 
 package org.pentaho.platform.web.servlet;
 
+import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -40,7 +40,10 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.dom4j.Document;
+import org.dom4j.DocumentHelper;
+import org.dom4j.Element;
 import org.dom4j.Node;
+import org.dom4j.tree.DefaultElement;
 import org.pentaho.platform.api.engine.IMessageFormatter;
 import org.pentaho.platform.api.engine.IParameterProvider;
 import org.pentaho.platform.api.engine.IPentahoAclEntry;
@@ -97,22 +100,14 @@ public class HttpWebService extends ServletBase {
   }
 
   public String getPayloadAsString(final HttpServletRequest request) throws IOException {
-    InputStream is = request.getInputStream();
-    ByteArrayOutputStream os = new ByteArrayOutputStream();
-    String content = null;
-    try {
-      byte buffer[] = new byte[2048];
-      int b = is.read(buffer);
-      while (b > 0) {
-        os.write(buffer, 0, b);
-        b = is.read(buffer);
-      }
-      content = os.toString(LocaleHelper.getSystemEncoding());
-    } catch (Exception e) {
-      // TODO Auto-generated catch block
-      e.printStackTrace();
+    BufferedReader reader = request.getReader();
+    StringBuffer stringBuffer = new StringBuffer();
+    char buffer[] = new char[2048];
+    int b = reader.read(buffer);
+    while (b > 0) {
+      stringBuffer.append(buffer, 0, b);
     }
-    return content;
+    return stringBuffer.toString();
   }
 
   public void doGetFixMe(final HttpServletRequest request, final HttpServletResponse response) throws ServletException, IOException {
@@ -188,12 +183,10 @@ public class HttpWebService extends ServletBase {
           debug(Messages.getInstance().getString("HttpWebService.DEBUG_WEB_SERVICE_START")); //$NON-NLS-1$
         }
         IRuntimeContext runtime = null;
-        outputStream.write(SoapHelper.getSoapHeader().getBytes(LocaleHelper.getSystemEncoding()));
         try {
           runtime = requestHandler.handleActionRequest(0, 0);
-          SoapHelper.generateSoapResponse(runtime, outputStream, outputHandler, contentStream, requestHandler
-              .getMessages());
-          outputStream.write(SoapHelper.getSoapFooter().getBytes(LocaleHelper.getSystemEncoding()));
+          Document responseDoc = SoapHelper.createSoapResponseDocument(runtime, outputHandler, contentStream, requestHandler.getMessages());
+          XmlDom4JHelper.saveDom(responseDoc, outputStream, PentahoSystem.getSystemSetting("web-service-encoding", "utf-8"), true);
         } finally {
           if (runtime != null) {
             runtime.dispose();
@@ -253,30 +246,12 @@ public class HttpWebService extends ServletBase {
     navigate.validate(userSession, null);
     navigate.setParameterProvider(HttpRequestParameterProvider.SCOPE_REQUEST, parameterProvider);
 
-    Document doc = navigate.getXmlContent();
     try {
-      writeDocumentAsSoapResponse(outputStream, doc);
+      XmlDom4JHelper.saveDom(SoapHelper.createSoapResponseDocument(navigate.getXmlContent()), outputStream, PentahoSystem.getSystemSetting("web-service-encoding", "utf-8"), true);
     } catch (IOException e) {
       // not much we can do here...
     }
 
-  }
-
-  public void writeDocumentAsSoapResponse(final OutputStream outputStream, final Document doc) throws IOException {
-    // we wrap the root element of the document rather than the document, otherwise the result
-    // will be invalid, as it may contain XML encoding information at a point when specifying this
-    // not allowed
-    writeStringAsSoapResponse(outputStream, doc.getRootElement().asXML());
-  }
-
-  public void writeStringAsSoapResponse(final OutputStream outputStream, final String doc) throws IOException {
-    outputStream.write(SoapHelper.getSoapHeader().getBytes(LocaleHelper.getSystemEncoding()));
-    outputStream.write(SoapHelper.openSoapResponse().getBytes(LocaleHelper.getSystemEncoding()));
-    outputStream.write("<content>".getBytes(LocaleHelper.getSystemEncoding())); //$NON-NLS-1$
-    outputStream.write(doc.getBytes(LocaleHelper.getSystemEncoding()));
-    outputStream.write("</content>".getBytes(LocaleHelper.getSystemEncoding())); //$NON-NLS-1$
-    outputStream.write(SoapHelper.closeSoapResponse().getBytes(LocaleHelper.getSystemEncoding()));
-    outputStream.write(SoapHelper.getSoapFooter().getBytes(LocaleHelper.getSystemEncoding()));
   }
 
   @SuppressWarnings("deprecation")
@@ -293,7 +268,7 @@ public class HttpWebService extends ServletBase {
     }
 
     try {
-      writeStringAsSoapResponse(outputStream, buffer.toString());
+      XmlDom4JHelper.saveDom(SoapHelper.createSoapResponseDocument(buffer.toString()), outputStream, PentahoSystem.getSystemSetting("web-service-encoding", "utf-8"), true);
     } catch (IOException e) {
       // not much we can do here...
     }
@@ -376,7 +351,7 @@ public class HttpWebService extends ServletBase {
     }
 
     try {
-      writeStringAsSoapResponse(outputStream, buffer.toString());
+      XmlDom4JHelper.saveDom(SoapHelper.createSoapResponseDocument(buffer.toString()), outputStream, PentahoSystem.getSystemSetting("web-service-encoding", "utf-8"), true);
     } catch (IOException e) {
       // not much we can do here...
     }
@@ -458,7 +433,7 @@ public class HttpWebService extends ServletBase {
     }
 
     try {
-      writeStringAsSoapResponse(outputStream, buffer.toString());
+      XmlDom4JHelper.saveDom(SoapHelper.createSoapResponseDocument(buffer.toString()), outputStream, PentahoSystem.getSystemSetting("web-service-encoding", "utf-8"), true);
     } catch (IOException e) {
       // not much we can do here...
     }
@@ -592,31 +567,24 @@ public class HttpWebService extends ServletBase {
       return;
     }
 
+    
+    String responseEncoding = PentahoSystem.getSystemSetting("web-service-encoding", "utf-8");
     response.setContentType("text/xml"); //$NON-NLS-1$
-    response.setCharacterEncoding(LocaleHelper.getSystemEncoding());
+    response.setCharacterEncoding(responseEncoding);
 
     String details = getDetailsParameter(request);
     if ("users".equalsIgnoreCase(details)) { //$NON-NLS-1$
-
-      // Send users and ACLs
-      StringBuffer buf = new StringBuffer();
-      doUsers(request, response, buf);
-      doACLs(request, response, buf);
-      writeStringAsSoapResponse(response.getOutputStream(), buf.toString());
-
+      Document usersDoc = getUsers();
+      Document aclsDoc = getACLs();
+      XmlDom4JHelper.saveDom(SoapHelper.createSoapResponseDocument(new Document[]{usersDoc, aclsDoc}), response.getOutputStream(), responseEncoding, true);
     } else if ("roles".equalsIgnoreCase(details)) { //$NON-NLS-1$
 
-      // Send roles and ACLs
-      StringBuffer buf = new StringBuffer();
-      doRoles(request, response, buf);
-      doACLs(request, response, buf);
-      writeStringAsSoapResponse(response.getOutputStream(), buf.toString());
-
+      Document rolesDoc = getRoles();
+      Document aclsDoc = getACLs();
+      XmlDom4JHelper.saveDom(SoapHelper.createSoapResponseDocument(new Document[]{rolesDoc, aclsDoc}), response.getOutputStream(), responseEncoding, true);
     } else if ("acls".equalsIgnoreCase(details)) { //$NON-NLS-1$
-      StringBuffer buf = new StringBuffer();
-      doACLs(request, response, buf);
-      writeStringAsSoapResponse(response.getOutputStream(), buf.toString());
-
+      Document aclsDoc = getACLs();
+      XmlDom4JHelper.saveDom(SoapHelper.createSoapResponseDocument(aclsDoc), response.getOutputStream(), responseEncoding, true);
     } else {
 
       if (!"all".equalsIgnoreCase(details)) { //$NON-NLS-1$
@@ -624,10 +592,10 @@ public class HttpWebService extends ServletBase {
           HttpWebService.logger.warn(Messages.getInstance().getString("HttpWebService.WARN_MISSING_DETAILS_PARAMETER")); //$NON-NLS-1$
         }
       }
-      StringBuffer buf = new StringBuffer();
-      doAll(request, response, buf);
-      writeStringAsSoapResponse(response.getOutputStream(), buf.toString());
-
+      Document usersDoc = getUsers();
+      Document rolesDoc = getRoles();
+      Document aclsDoc = getACLs();
+      XmlDom4JHelper.saveDom(SoapHelper.createSoapResponseDocument(new Document[]{usersDoc, rolesDoc, aclsDoc}), response.getOutputStream(), responseEncoding, true);
     }
     } finally {
       PentahoSystem.systemExitPoint();
@@ -731,60 +699,53 @@ public class HttpWebService extends ServletBase {
   }
 
   /**
-   * Returns XML for lists of users, roles, and ACLs.
-   */
-  protected void doAll(final HttpServletRequest request, final HttpServletResponse response, final StringBuffer buf)
-      throws ServletException, IOException {
-    doUsers(request, response, buf);
-    doRoles(request, response, buf);
-    doACLs(request, response, buf);
-  }
-
-  /**
    * Returns XML for list of users.
    */
-  protected void doUsers(final HttpServletRequest request, final HttpServletResponse response, final StringBuffer buf)
+  protected Document getUsers()
       throws ServletException, IOException {
     IUserDetailsRoleListService service = PentahoSystem.get(IUserDetailsRoleListService.class);
-    buf.append("<users>"); //$NON-NLS-1$
+    Element rootElement = new DefaultElement("users"); 
+    Document doc = DocumentHelper.createDocument(rootElement);
     if (service != null) {
       List users = service.getAllUsers();
       for (Iterator usersIterator = users.iterator(); usersIterator.hasNext();) {
         String username = usersIterator.next().toString();
         if ((null != username) && (username.length() > 0)) {
-          buf.append("<user>" + username + "</user>"); //$NON-NLS-1$ //$NON-NLS-2$
+          rootElement.addElement("user").setText(username);
         }
       }
     }
-    buf.append("</users>"); //$NON-NLS-1$
+    return doc;
   }
 
   /**
    * Returns XML for list of roles.
    */
-  protected void doRoles(final HttpServletRequest request, final HttpServletResponse response, final StringBuffer buf)
+  protected Document getRoles()
       throws ServletException, IOException {
     IUserDetailsRoleListService service = PentahoSystem.get(IUserDetailsRoleListService.class);
-    buf.append("<roles>"); //$NON-NLS-1$
+    Element rootElement = new DefaultElement("roles"); 
+    Document doc = DocumentHelper.createDocument(rootElement);
     if (service != null) {
       List roles = service.getAllRoles();
       for (Iterator rolesIterator = roles.iterator(); rolesIterator.hasNext();) {
         String roleName = rolesIterator.next().toString();
         if ((null != roleName) && (roleName.length() > 0)) {
-          buf.append("<role>" + roleName + "</role>"); //$NON-NLS-1$ //$NON-NLS-2$
+          rootElement.addElement("role").setText(roleName);
         }
       }
     }
-    buf.append("</roles>"); //$NON-NLS-1$
+    return doc;
   }
 
   /**
    * Returns XML for list of ACLs.
    */
-  protected void doACLs(final HttpServletRequest request, final HttpServletResponse response, final StringBuffer buf)
+  protected Document getACLs()
       throws ServletException, IOException {
     Map validPermissionsNameMap = PentahoAclEntry.getValidPermissionsNameMap(IPentahoAclEntry.PERMISSIONS_LIST_ALL);
-    buf.append("<acls>"); //$NON-NLS-1$
+    Element rootElement = new DefaultElement("acls");
+    Document doc = DocumentHelper.createDocument(rootElement);
     if (validPermissionsNameMap != null) {
       Set aclsKeySet = validPermissionsNameMap.keySet();
       for (Iterator aclsIterator = aclsKeySet.iterator(); aclsIterator.hasNext();) {
@@ -793,19 +754,14 @@ public class HttpWebService extends ServletBase {
             : null;
 
         if ((null != aclName) && (aclName.length() > 0) && (null != aclMask) && (aclMask.length() > 0)) {
-          buf.append("<acl>"); //$NON-NLS-1$
-          buf.append("<name>"); //$NON-NLS-1$
-          buf.append(aclName);
-          buf.append("</name>"); //$NON-NLS-1$
-          buf.append("<mask>"); //$NON-NLS-1$
-          buf.append(aclMask);
-          buf.append("</mask>"); //$NON-NLS-1$
-          buf.append("</acl>"); //$NON-NLS-1$
+          Element aclElement = rootElement.addElement("acl");
+          aclElement.addElement("name").setText(aclName);
+          aclElement.addElement("mask").setText(aclMask);
         }
 
       }
     }
-    buf.append("</acls>"); //$NON-NLS-1$
+    return doc;
   }
 
 }

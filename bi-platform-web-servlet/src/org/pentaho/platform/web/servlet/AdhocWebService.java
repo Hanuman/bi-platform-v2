@@ -22,6 +22,7 @@
 
 package org.pentaho.platform.web.servlet;
 
+import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -60,6 +61,7 @@ import org.dom4j.Node;
 import org.dom4j.dom.DOMDocumentFactory;
 import org.dom4j.io.OutputFormat;
 import org.dom4j.io.XMLWriter;
+import org.dom4j.tree.DefaultElement;
 import org.pentaho.commons.connection.IPentahoResultSet;
 import org.pentaho.jfreereport.castormodel.jfree.types.AlignmentEnum;
 import org.pentaho.jfreereport.castormodel.jfree.types.PageFormats;
@@ -99,6 +101,7 @@ import org.pentaho.platform.engine.core.solution.ActionInfo;
 import org.pentaho.platform.engine.core.solution.SimpleParameterProvider;
 import org.pentaho.platform.engine.core.system.PentahoSystem;
 import org.pentaho.platform.engine.core.system.StandaloneApplicationContext;
+import org.pentaho.platform.engine.services.SoapHelper;
 import org.pentaho.platform.engine.services.WebServiceUtil;
 import org.pentaho.platform.engine.services.solution.PentahoEntityResolver;
 import org.pentaho.platform.engine.services.solution.SolutionReposHelper;
@@ -170,24 +173,20 @@ public class AdhocWebService extends ServletBase {
   }
 
   public String getPayloadAsString(final HttpServletRequest request) throws IOException {
-    InputStream is = request.getInputStream();
-    ByteArrayOutputStream os = new ByteArrayOutputStream();
-    String content = null;
-
-    byte buffer[] = new byte[2048];
-    int b = is.read(buffer);
+    BufferedReader reader = request.getReader();
+    StringBuffer stringBuffer = new StringBuffer();
+    char buffer[] = new char[2048];
+    int b = reader.read(buffer);
     while (b > 0) {
-      os.write(buffer, 0, b);
-      b = is.read(buffer);
+      stringBuffer.append(buffer, 0, b);
     }
-    content = os.toString(LocaleHelper.getSystemEncoding());
-
-    return content;
+    return stringBuffer.toString();
   }
 
   @Override
   protected void doGet(final HttpServletRequest request, final HttpServletResponse response) throws ServletException, IOException {
-
+    String responseEncoding = PentahoSystem.getSystemSetting("web-service-encoding", "utf-8");
+    
     PentahoSystem.systemEntryPoint();
     OutputStream outputStream = response.getOutputStream();
     try {
@@ -197,27 +196,12 @@ public class AdhocWebService extends ServletBase {
       String actionPath = request.getParameter("path"); //$NON-NLS-1$
       String actionName = request.getParameter("action"); //$NON-NLS-1$
       String component = request.getParameter("component"); //$NON-NLS-1$
-      String content = null;
-      try {
-        content = getPayloadAsString(request);
-      } catch (IOException ioEx) {
-        String msg = Messages.getInstance().getErrorString("AdhocWebService.ERROR_0006_FAILED_TO_GET_PAYLOAD_FROM_REQUEST"); //$NON-NLS-1$
-        error(msg, ioEx);
-        WebServiceUtil.writeString(outputStream,
-            WebServiceUtil.getErrorXml(msg + " " + ioEx.getLocalizedMessage()), false); //$NON-NLS-1$
-      }
+      String content = getPayloadAsString(request);
       IParameterProvider parameterProvider = null;
       HashMap parameters = new HashMap();
 
       if (!StringUtils.isEmpty(content)) {
-        Document doc = null;
-        try {
-          doc = XmlDom4JHelper.getDocFromString(content, new PentahoEntityResolver() );  
-        } catch (XmlParseException e) {
-          String msg = Messages.getInstance().getErrorString("HttpWebService.ERROR_0001_ERROR_DURING_WEB_SERVICE"); //$NON-NLS-1$
-          error(msg, e);
-          WebServiceUtil.writeString(response.getOutputStream(), WebServiceUtil.getErrorXml(msg), false);
-        }
+        Document doc = XmlDom4JHelper.getDocFromString(content, new PentahoEntityResolver() );  
         List parameterNodes = doc.selectNodes("//SOAP-ENV:Body/*/*"); //$NON-NLS-1$
         for (int i = 0; i < parameterNodes.size(); i++) {
           Node parameterNode = (Node) parameterNodes.get(i);
@@ -246,7 +230,7 @@ public class AdhocWebService extends ServletBase {
 
       if (!"generatePreview".equals(component)) { //$NON-NLS-1$
         response.setContentType("text/xml"); //$NON-NLS-1$
-        response.setCharacterEncoding(LocaleHelper.getSystemEncoding());
+        response.setCharacterEncoding(responseEncoding);
       }
 
       // PentahoHttpSession userSession = new PentahoHttpSession(
@@ -257,24 +241,23 @@ public class AdhocWebService extends ServletBase {
       // send the header of the message to prevent time-outs while we are working
       response.setHeader("expires", "0"); //$NON-NLS-1$ //$NON-NLS-2$
 
-      dispatch(request, response, component, parameterProvider, outputStream, userSession, wrapWithSoap);
+      dispatch(request, response, component, parameterProvider, outputStream, responseEncoding, userSession, wrapWithSoap);
 
     } catch (IOException ioEx) {
       String msg = Messages.getInstance().getErrorString("HttpWebService.ERROR_0001_ERROR_DURING_WEB_SERVICE"); //$NON-NLS-1$
       error(msg, ioEx);
-      WebServiceUtil.writeString(outputStream, WebServiceUtil.getErrorXml(msg), false);
-    } catch (AdhocWebServiceException ex) {
+      response.setCharacterEncoding(responseEncoding);
+      XmlDom4JHelper.saveDom(WebServiceUtil.createErrorDocument(msg), outputStream, responseEncoding, true);
+    } catch (XmlParseException e) {
+      String msg = Messages.getInstance().getErrorString("HttpWebService.ERROR_0001_ERROR_DURING_WEB_SERVICE"); //$NON-NLS-1$
+      error(msg, e);
+      response.setCharacterEncoding(responseEncoding);
+      XmlDom4JHelper.saveDom(WebServiceUtil.createErrorDocument(msg), outputStream, responseEncoding, true);
+    } catch (Exception ex) {
       String msg = ex.getLocalizedMessage();
       error(msg, ex);
-      WebServiceUtil.writeString(outputStream, WebServiceUtil.getErrorXml(msg), false);
-    } catch (PentahoMetadataException ex) {
-      String msg = ex.getLocalizedMessage();
-      error(msg, ex);
-      WebServiceUtil.writeString(outputStream, WebServiceUtil.getErrorXml(msg), false);
-    } catch (PentahoAccessControlException ex) {
-      String msg = ex.getLocalizedMessage();
-      error(msg, ex);
-      WebServiceUtil.writeString(outputStream, WebServiceUtil.getErrorXml(msg), false);
+      response.setCharacterEncoding(responseEncoding);
+      XmlDom4JHelper.saveDom(WebServiceUtil.createErrorDocument(msg), outputStream, responseEncoding, true);
     } finally {
       PentahoSystem.systemExitPoint();
     }
@@ -284,47 +267,45 @@ public class AdhocWebService extends ServletBase {
   }
 
   protected void dispatch(final HttpServletRequest request, final HttpServletResponse response, final String component,
-      final IParameterProvider parameterProvider, final OutputStream outputStream, final IPentahoSession userSession, final boolean wrapWithSoap)
+      final IParameterProvider parameterProvider, final OutputStream outputStream, String responseEncoding, final IPentahoSession userSession, final boolean wrapWithSoap)
       throws IOException, AdhocWebServiceException, PentahoMetadataException, PentahoAccessControlException {
+    Document doc = null;
     if ("listbusinessmodels".equals(component)) { //$NON-NLS-1$
-      listBusinessModels(parameterProvider, outputStream, userSession, wrapWithSoap);
+      doc = listBusinessModels(parameterProvider, userSession);
     } else if ("getbusinessmodel".equals(component)) { //$NON-NLS-1$
-      getBusinessModel(parameterProvider, outputStream, userSession, wrapWithSoap);
+      doc = getBusinessModel(parameterProvider, userSession);
     } else if ("generatePreview".equals(component)) { //$NON-NLS-1$
-      generatePreview( request, response, parameterProvider, outputStream, userSession, wrapWithSoap );
-      
+      generatePreview( request, response, parameterProvider, outputStream, userSession, wrapWithSoap );      
     } else if ("saveFile".equals(component)) { //$NON-NLS-1$
-      saveFile(parameterProvider, outputStream, userSession, wrapWithSoap);
+      doc = saveFile(parameterProvider, userSession);
     } else if ("searchTable".equals(component)) { //$NON-NLS-1$
-      searchTable(parameterProvider, outputStream, userSession, wrapWithSoap);
-      
+      doc = searchTable(parameterProvider, userSession);
     } else if ("getWaqrReportSpecDoc".equals(component)) { //$NON-NLS-1$
-      getWaqrReportSpecDoc(parameterProvider, outputStream, userSession, wrapWithSoap);
-      
+      doc = getWaqrReportSpecDoc(parameterProvider, userSession);
     } else if ("getTemplateReportSpec".equals(component)) { //$NON-NLS-1$
-      getTemplateReportSpec(parameterProvider, outputStream, userSession, wrapWithSoap);
-      
+      doc = getTemplateReportSpec(parameterProvider, userSession);
     } else if ("getSolutionRepositoryDoc".equals(component)) { //$NON-NLS-1$
       String path = parameterProvider.getStringParameter("path", null); //$NON-NLS-1$
-      //path = StringUtils.isEmpty( path ) ? null : path;
       String solutionName = parameterProvider.getStringParameter("solution", null); //$NON-NLS-1$
-      //solutionName = StringUtils.isEmpty( solutionName ) ? null : solutionName;
-      Document doc = getSolutionRepositoryDoc( solutionName, path, userSession );
-      WebServiceUtil.writeDocument(outputStream, doc, wrapWithSoap);
-      
+      doc = getSolutionRepositoryDoc( solutionName, path, userSession );
     } else if ("getWaqrRepositoryDoc".equals(component)) { //$NON-NLS-1$
       String folderPath = parameterProvider.getStringParameter("folderPath", null); //$NON-NLS-1$
-      Document doc = getWaqrRepositoryDoc( folderPath, userSession );
-      WebServiceUtil.writeDocument(outputStream, doc, wrapWithSoap);
-
+      doc = getWaqrRepositoryDoc( folderPath, userSession );
     } else if ("getWaqrRepositoryIndexDoc".equals(component)) { //$NON-NLS-1$
-      getWaqrRepositoryIndexDoc(parameterProvider, outputStream, userSession, wrapWithSoap);
+      doc = getWaqrRepositoryIndexDoc(parameterProvider, userSession);
     } else if ("deleteWaqrReport".equals(component)) { //$NON-NLS-1$
-      deleteWaqrReport(parameterProvider, outputStream, userSession, wrapWithSoap);
+      deleteWaqrReport(parameterProvider, outputStream, responseEncoding, userSession, wrapWithSoap);
     } else if ("getJFreePaperSizes".equals(component)) { //$NON-NLS-1$
-      getJFreePaperSizes(parameterProvider, outputStream, userSession, wrapWithSoap);
+      doc = getJFreePaperSizes(parameterProvider, userSession);
     } else {
       throw new RuntimeException(Messages.getInstance().getErrorString("HttpWebService.UNRECOGNIZED_COMPONENT_REQUEST", component)); //$NON-NLS-1$
+    }
+    if (doc != null) {
+      if (wrapWithSoap) {
+        XmlDom4JHelper.saveDom(SoapHelper.createSoapResponseDocument(doc), outputStream, responseEncoding, true);
+      } else {
+        XmlDom4JHelper.saveDom(doc, outputStream, responseEncoding, true);
+      }
     }
   }
 
@@ -349,22 +330,20 @@ public class AdhocWebService extends ServletBase {
    * @param wrapWithSoap
    * @throws IOException
    */
-  private void getJFreePaperSizes(final IParameterProvider parameterProvider, final OutputStream outputStream,
-      final IPentahoSession userSession, final boolean wrapWithSoap) throws IOException
+  private Document getJFreePaperSizes(final IParameterProvider parameterProvider,
+      final IPentahoSession userSession) throws IOException
   {
-    StringBuffer xmlStr = new StringBuffer();
+    Element rootElement = new DefaultElement("pageFormats");
+    Document doc = DocumentHelper.createDocument(rootElement);    
     Enumeration pageFormatsEnum = PageFormats.enumerate();
-    xmlStr.append( "<pageFormats>\n" ); //$NON-NLS-1$
     while ( pageFormatsEnum.hasMoreElements() )
     {
       PageFormats pf = (PageFormats)pageFormatsEnum.nextElement();
-      xmlStr.append( "\t<pageFormat name='"  //$NON-NLS-1$
-          + AdhocWebService.toFriendlyName( pf.toString() )
-          + "' value='" + pf.toString() + "'/>\n" );  //$NON-NLS-1$//$NON-NLS-2$
+      Element element = rootElement.addElement("pageFormat");
+      element.addAttribute("name", AdhocWebService.toFriendlyName( pf.toString()));
+      element.addAttribute("value", pf.toString());
     }
-    xmlStr.append( "</pageFormats>\n" ); //$NON-NLS-1$
-    
-    WebServiceUtil.writeString( outputStream, xmlStr.toString(), wrapWithSoap );
+    return doc;
   }
   
   // for a really friendly name, see:
@@ -1351,28 +1330,7 @@ public class AdhocWebService extends ServletBase {
     return xactionOutputStream;
   }
 
-  public void lookupValues(final IParameterProvider parameterProvider, final OutputStream outputStream,
-      final IPentahoSession userSession, final boolean wrapWithSoap) throws IOException {
-
-    String domainName = parameterProvider.getStringParameter("model", null); //$NON-NLS-1$
-    String viewId = parameterProvider.getStringParameter("view", null); //$NON-NLS-1$
-    String columnId = parameterProvider.getStringParameter("column", null); //$NON-NLS-1$
-
-    IPentahoUrlFactory urlFactory = new SimpleUrlFactory(""); //$NON-NLS-1$
-
-    PMDUIComponent component = new PMDUIComponent(urlFactory, new ArrayList());
-    component.validate(userSession, null);
-    component.setAction(PMDUIComponent.ACTION_LOOKUP);
-    component.setDomainName(domainName);
-    component.setModelId(viewId);
-    component.setColumnId(columnId);
-
-    Document doc = component.getXmlContent();
-    WebServiceUtil.writeDocument(outputStream, doc, wrapWithSoap);
-  }
-  
-  private void getWaqrRepositoryIndexDoc(final IParameterProvider parameterProvider, final OutputStream outputStream,
-      final IPentahoSession userSession, final boolean wrapWithSoap) throws IOException, AdhocWebServiceException {
+  private Document getWaqrRepositoryIndexDoc(final IParameterProvider parameterProvider, final IPentahoSession userSession) throws IOException, AdhocWebServiceException {
 
     String templateFolderPath = parameterProvider.getStringParameter("templateFolderPath", null); //$NON-NLS-1$
     if ( StringUtil.doesPathContainParentPathSegment( templateFolderPath )) {
@@ -1382,26 +1340,31 @@ public class AdhocWebService extends ServletBase {
     
     ISolutionRepository repository = PentahoSystem.get(ISolutionRepository.class, userSession);
     String templateFilename = "system/waqr" + templateFolderPath + "/" + ISolutionRepository.INDEX_FILENAME; //$NON-NLS-1$ //$NON-NLS-2$
+    Document indexDoc = null;
     try {
       InputStream inStrm = repository.getResourceInputStream(templateFilename, false, ISolutionRepository.ACTION_EXECUTE);
-      Document indexDoc = XmlDom4JHelper.getDocFromStream(inStrm, new PentahoEntityResolver());
+      indexDoc = XmlDom4JHelper.getDocFromStream(inStrm, new PentahoEntityResolver());
       ISolutionFile templateFile = repository.getSolutionFile(templateFilename, ISolutionRepository.ACTION_EXECUTE);
       repository.localizeDoc(indexDoc, templateFile);
       
-      WebServiceUtil.writeDocument(outputStream, indexDoc, wrapWithSoap);
     } catch (Exception e) {
       String msg = Messages.getInstance().getString("AdhocWebService.ERROR_0010_OPEN_INDEX_DOC_FAILED"); //$NON-NLS-1$
       msg = msg + " " + e.getLocalizedMessage(); //$NON-NLS-1$
       throw new AdhocWebServiceException( msg );
     }
+    return indexDoc;
   }
 
-  private void deleteWaqrReport(final IParameterProvider parameterProvider, final OutputStream outputStream,
+  private void deleteWaqrReport(final IParameterProvider parameterProvider, final OutputStream outputStream, String responseEncoding,
       final IPentahoSession userSession, final boolean wrapWithSoap) throws IOException, AdhocWebServiceException {
     
     if ("true".equals(PentahoSystem.getSystemSetting("kiosk-mode", "false"))) {  //$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$
-      String msg = WebServiceUtil.getErrorXml(Messages.getInstance().getString("PentahoGeneral.USER_FEATURE_DISABLED")); //$NON-NLS-1$
-      WebServiceUtil.writeString(outputStream, msg, wrapWithSoap);
+      Document errorDoc = WebServiceUtil.createErrorDocument(Messages.getInstance().getString("PentahoGeneral.USER_FEATURE_DISABLED")); //$NON-NLS-1$
+      if (wrapWithSoap) {
+        XmlDom4JHelper.saveDom(SoapHelper.createSoapResponseDocument(errorDoc), outputStream, responseEncoding, true);
+      } else {
+        XmlDom4JHelper.saveDom(errorDoc, outputStream, responseEncoding, true);
+      }
       return;
     }
 //    ISolutionRepository repository = PentahoSystem.get(ISolutionRepository.class, userSession);
@@ -1439,39 +1402,45 @@ public class AdhocWebService extends ServletBase {
     }
 
     if (msg.length() == 0) {
-      msg = WebServiceUtil.getStatusXml(Messages.getInstance().getString("AdhocWebService.USER_DELETE_SUCCESSFUL")); //$NON-NLS-1$
+      Document doc = WebServiceUtil.createStatusDocument(Messages.getInstance().getString("AdhocWebService.USER_DELETE_SUCCESSFUL")); //$NON-NLS-1$
+      if (wrapWithSoap) {
+        XmlDom4JHelper.saveDom(SoapHelper.createSoapResponseDocument(doc), outputStream, responseEncoding, true);
+      } else {
+        XmlDom4JHelper.saveDom(doc, outputStream, responseEncoding);
+      }
     } else {
       msg = Messages.getInstance().getString("AdhocWebService.ERROR_0007_FAILED_TO_DELETE_FILES", msg); //$NON-NLS-1$
       throw new AdhocWebServiceException( msg );
     }
 
-    WebServiceUtil.writeString(outputStream, msg, wrapWithSoap);
+    if (wrapWithSoap) {
+      Document doc = SoapHelper.createSoapResponseDocument(msg);
+      XmlDom4JHelper.saveDom(doc, outputStream, responseEncoding, true);
+    } else {
+      outputStream.write(msg.getBytes(responseEncoding));
+    }
   }
 
-  private void saveFile(final IParameterProvider parameterProvider, final OutputStream outputStream, final IPentahoSession userSession,
-      final boolean wrapWithSoap) throws AdhocWebServiceException, IOException, PentahoMetadataException, PentahoAccessControlException {
+  private Document saveFile(final IParameterProvider parameterProvider, final IPentahoSession userSession) throws AdhocWebServiceException, IOException, PentahoMetadataException, PentahoAccessControlException {
 
-  if ("true".equals(PentahoSystem.getSystemSetting("kiosk-mode", "false"))) { //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-    String msg = WebServiceUtil.getErrorXml(Messages.getInstance().getString("PentahoGeneral.USER_FEATURE_DISABLED")); //$NON-NLS-1$
-    WebServiceUtil.writeString(outputStream, msg, wrapWithSoap);
-    return;
-  }
+    if ("true".equals(PentahoSystem.getSystemSetting("kiosk-mode", "false"))) { //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+      return WebServiceUtil.createErrorDocument(Messages.getInstance().getString("PentahoGeneral.USER_FEATURE_DISABLED"));
+    }
     
     String fileName = parameterProvider.getStringParameter("name", null); //$NON-NLS-1$
     if (AdhocWebService.isWaqrFilename(fileName)) {
-      saveReportSpec(fileName, parameterProvider, outputStream, userSession, wrapWithSoap);
+      return saveReportSpec(fileName, parameterProvider, userSession);
     } else {
       throw new RuntimeException("saveFile is only implemented for WAQR files, stay tuned."); //$NON-NLS-1$
     }
   }
 
-  protected void preSaveActions(final String fileName, final IParameterProvider parameterProvider, final OutputStream outputStream,
-      final IPentahoSession userSession, final boolean wrapWithSoap) throws AdhocWebServiceException, IOException,
+  protected void preSaveActions(final String fileName, final IParameterProvider parameterProvider, final IPentahoSession userSession) throws AdhocWebServiceException, IOException,
       PentahoMetadataException, PentahoAccessControlException {
   }
   
-  protected void postSaveActions(final String fileName, final IParameterProvider parameterProvider, final OutputStream outputStream,
-      final IPentahoSession userSession, final boolean wrapWithSoap, int xActionSaveStatus) throws AdhocWebServiceException, IOException,
+  protected void postSaveActions(final String fileName, final IParameterProvider parameterProvider,
+      final IPentahoSession userSession, int xActionSaveStatus) throws AdhocWebServiceException, IOException,
       PentahoMetadataException, PentahoAccessControlException {
   }
   
@@ -1487,11 +1456,10 @@ public class AdhocWebService extends ServletBase {
    * @throws PentahoMetadataException 
    * @throws PentahoAccessControlException 
    */
-  protected void saveReportSpec(final String fileName, final IParameterProvider parameterProvider, final OutputStream outputStream,
-      final IPentahoSession userSession, final boolean wrapWithSoap) throws AdhocWebServiceException, IOException,
+  protected Document saveReportSpec(final String fileName, final IParameterProvider parameterProvider, final IPentahoSession userSession) throws AdhocWebServiceException, IOException,
       PentahoMetadataException, PentahoAccessControlException {
 
-    preSaveActions(fileName, parameterProvider, outputStream, userSession, wrapWithSoap);
+    preSaveActions(fileName, parameterProvider, userSession);
     
     // TODO sbarkdull, all parameters coming in from the client need to be validated, and error msgs returned to the client when a parameter does not validate
     String reportXML = parameterProvider.getStringParameter("content", null); //$NON-NLS-1$    
@@ -1574,13 +1542,12 @@ public class AdhocWebService extends ServletBase {
         xreportSpecSaveStatus = repository.publish(baseUrl, path, xreportSpecFilename, reportXML
             .getBytes(LocaleHelper.getSystemEncoding()), overwrite);
       }
-      postSaveActions(fileName, parameterProvider, outputStream, userSession, wrapWithSoap, xactionSaveStatus);
+      postSaveActions(fileName, parameterProvider, userSession, xactionSaveStatus);
     }
     int[] errorStatusAr = { xactionSaveStatus, jfreeSaveStatus, xreportSpecSaveStatus };
     int errorStatus = AdhocWebService.getSaveErrorStatus(errorStatusAr);
     if (errorStatus == ISolutionRepository.FILE_ADD_SUCCESSFUL) {
-      String msg = WebServiceUtil.getStatusXml(Messages.getInstance().getString("AdhocWebService.USER_REPORT_SAVED")); //$NON-NLS-1$
-      WebServiceUtil.writeString(outputStream, msg, wrapWithSoap);
+      Document doc = WebServiceUtil.createStatusDocument(Messages.getInstance().getString("AdhocWebService.USER_REPORT_SAVED")); //$NON-NLS-1$
 
       // Force a refresh of the cached solution tree. This will cause the
       // newly saved files to show up in the next directory listing.
@@ -1588,7 +1555,7 @@ public class AdhocWebService extends ServletBase {
       // will already be in the cached sol. repos. tree.
       invalidateSolutionRepositoryTree( userSession );
       repository.reloadSolutionRepository( userSession, repository.getLoggingLevel() );
-      
+      return doc;
     } else {
       // TODO sbarkdull, if any of the saves fails, remove the saved files
       // that succeeded (simulate a transaction)
@@ -1608,8 +1575,7 @@ public class AdhocWebService extends ServletBase {
     }
   }
 
-  public void listBusinessModels(final IParameterProvider parameterProvider, final OutputStream outputStream,
-      final IPentahoSession userSession, final boolean wrapWithSoap) throws IOException {
+  public Document listBusinessModels(final IParameterProvider parameterProvider, final IPentahoSession userSession) throws IOException {
 
     String domainName = parameterProvider.getStringParameter("domain", null); //$NON-NLS-1$
 
@@ -1620,13 +1586,10 @@ public class AdhocWebService extends ServletBase {
     component.setAction(PMDUIComponent.ACTION_LIST_MODELS);
     component.setDomainName(domainName);
 
-    Document doc = component.getXmlContent();
-
-    WebServiceUtil.writeDocument(outputStream, doc, wrapWithSoap);
+    return component.getXmlContent();
   }
 
-  public void getBusinessModel(final IParameterProvider parameterProvider, final OutputStream outputStream,
-      final IPentahoSession userSession, final boolean wrapWithSoap) throws IOException {
+  public Document getBusinessModel(final IParameterProvider parameterProvider, final IPentahoSession userSession) throws IOException {
 
     String domainName = parameterProvider.getStringParameter("domain", null); //$NON-NLS-1$
     String modelId = parameterProvider.getStringParameter("model", null); //$NON-NLS-1$
@@ -1639,13 +1602,11 @@ public class AdhocWebService extends ServletBase {
     component.setDomainName(domainName);
     component.setModelId(modelId);
 
-    Document doc = component.getXmlContent();
-    WebServiceUtil.writeDocument(outputStream, doc, wrapWithSoap);
+    return component.getXmlContent();
   }
 
   // TODO sbarkdull, this has been partially upgraded to new naming convention, delete comment
-  public void searchTable(final IParameterProvider parameterProvider, final OutputStream outputStream, final IPentahoSession userSession,
-      final boolean wrapWithSoap) throws IOException {
+  public Document searchTable(final IParameterProvider parameterProvider, final IPentahoSession userSession) throws IOException {
     String domainId = (String) parameterProvider.getParameter("modelId"); //$NON-NLS-1$
     String modelId = (String) parameterProvider.getParameter("viewId"); //$NON-NLS-1$
     String tableId = (String) parameterProvider.getParameter("tableId"); //$NON-NLS-1$
@@ -1656,7 +1617,6 @@ public class AdhocWebService extends ServletBase {
     createMQLQueryActionSequence(domainId, modelId, tableId, columnId, searchStr, xactionOutputStream, userSession
         .getName());
     Document document = DocumentHelper.createDocument();
-    document.setXMLEncoding(LocaleHelper.getSystemEncoding());
     Element resultsElement = document.addElement("results"); //$NON-NLS-1$
 
     IRuntimeContext runtimeContext = AdhocWebService.executeActionSequence(xactionOutputStream.toString(),
@@ -1676,11 +1636,10 @@ public class AdhocWebService extends ServletBase {
       }
       runtimeContext.dispose();
     }
-    WebServiceUtil.writeString(outputStream, document.asXML(), wrapWithSoap);
+    return document;
   }
 
-  public void getTemplateReportSpec(final IParameterProvider parameterProvider, final OutputStream outputStream,
-      final IPentahoSession userSession, final boolean wrapWithSoap) throws AdhocWebServiceException, IOException {
+  public Document getTemplateReportSpec(final IParameterProvider parameterProvider, final IPentahoSession userSession) throws AdhocWebServiceException, IOException {
     
     ISolutionRepository repository = PentahoSystem.get(ISolutionRepository.class, userSession);
     String reportSpecName = parameterProvider.getStringParameter("reportSpecPath", null); //$NON-NLS-1$
@@ -1697,11 +1656,10 @@ public class AdhocWebService extends ServletBase {
       String msg = Messages.getInstance().getString("AdhocWebService.ERROR_0005_MISSING_REPORTSPEC_NAME"); //$NON-NLS-1$
       throw new AdhocWebServiceException(msg);
     }
-    WebServiceUtil.writeDocument(outputStream, reportSpecDoc, wrapWithSoap);
+    return reportSpecDoc;
   }
 
-  public void getWaqrReportSpecDoc(final IParameterProvider parameterProvider, final OutputStream outputStream,
-      final IPentahoSession userSession, final boolean wrapWithSoap) throws AdhocWebServiceException, IOException {
+  public Document getWaqrReportSpecDoc(final IParameterProvider parameterProvider, final IPentahoSession userSession) throws AdhocWebServiceException, IOException {
     
     ISolutionRepository repository = PentahoSystem.get(ISolutionRepository.class, userSession);
     String solution = parameterProvider.getStringParameter("solution", null); //$NON-NLS-1$
@@ -1723,7 +1681,7 @@ public class AdhocWebService extends ServletBase {
       String msg = Messages.getInstance().getString("AdhocWebService.ERROR_0005_MISSING_REPORTSPEC_NAME"); //$NON-NLS-1$
       throw new AdhocWebServiceException(msg);
     }
-    WebServiceUtil.writeDocument(outputStream, reportSpecDoc, wrapWithSoap);
+    return reportSpecDoc;
   }
   
   private static String getErrorHtml(HttpServletRequest request, final Exception e, String errorMsg) {

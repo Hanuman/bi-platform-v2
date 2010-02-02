@@ -16,19 +16,12 @@
  */
 package org.pentaho.platform.util.xml.dom4j;
 
-import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.io.OutputStream;
-import java.io.OutputStreamWriter;
 import java.io.StringWriter;
-import java.io.UnsupportedEncodingException;
-import java.io.Writer;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
@@ -47,13 +40,10 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.dom4j.Document;
 import org.dom4j.DocumentException;
-import org.dom4j.DocumentHelper;
-import org.dom4j.Element;
 import org.dom4j.Node;
 import org.dom4j.io.OutputFormat;
 import org.dom4j.io.SAXReader;
 import org.dom4j.io.XMLWriter;
-import org.dom4j.tree.DefaultElement;
 import org.pentaho.platform.api.util.XmlParseException;
 import org.pentaho.platform.util.messages.Messages;
 import org.xml.sax.EntityResolver;
@@ -286,17 +276,28 @@ public class XmlDom4JHelper {
    * @throws IOException
    */
   public static void saveDom(final Document doc, final OutputStream outputStream, String encoding) throws IOException {
-    OutputFormat format = OutputFormat.createPrettyPrint();
+    saveDom(doc, outputStream, encoding, false);
+  }
+
+  public static void saveDom(final Document doc, final OutputStream outputStream, String encoding, boolean suppressDeclaration) throws IOException {
+    saveDom(doc, outputStream, encoding, suppressDeclaration, false);
+  }
+  
+  public static void saveDom(final Document doc, final OutputStream outputStream, String encoding, boolean suppressDeclaration, boolean prettyPrint) throws IOException {
+    OutputFormat format = prettyPrint ? OutputFormat.createPrettyPrint() : OutputFormat.createCompactFormat();
+    format.setSuppressDeclaration(suppressDeclaration);
     if (encoding != null) {
-      doc.setXMLEncoding(encoding);
-      format.setEncoding(encoding);
+      format.setEncoding(encoding.toLowerCase());
+    }
+    if (!suppressDeclaration) {
+      doc.setXMLEncoding(encoding.toUpperCase());
     }
     
     XMLWriter writer = new XMLWriter(outputStream, format);
     writer.write(doc);
-    writer.close();
+    writer.flush();
   }
-
+  
   /**
    * Convenience method to close an input stream and handle (log and throw away)
    * any exceptions. Helps keep code uncluttered.

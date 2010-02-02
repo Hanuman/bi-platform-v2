@@ -36,6 +36,9 @@ import org.apache.commons.logging.LogFactory;
 import org.dom4j.Document;
 import org.dom4j.DocumentException;
 import org.dom4j.Node;
+import org.dom4j.DocumentHelper;
+import org.dom4j.tree.DefaultElement;
+import org.dom4j.Element;
 import org.dom4j.io.SAXReader;
 import org.pentaho.actionsequence.dom.ActionInputConstant;
 import org.pentaho.actionsequence.dom.ActionSequenceDocument;
@@ -52,6 +55,7 @@ import org.pentaho.platform.api.util.XmlParseException;
 import org.pentaho.platform.engine.core.solution.ActionInfo;
 import org.pentaho.platform.engine.core.solution.SimpleParameterProvider;
 import org.pentaho.platform.engine.core.system.PentahoSystem;
+import org.pentaho.platform.engine.services.SoapHelper;
 import org.pentaho.platform.engine.services.WebServiceUtil;
 import org.pentaho.platform.engine.services.solution.PentahoEntityResolver;
 import org.pentaho.platform.plugin.action.mondrian.catalog.IMondrianCatalogService;
@@ -84,6 +88,7 @@ public class AnalysisViewService extends ServletBase {
   @Override
   protected void doGet(final HttpServletRequest request, final HttpServletResponse response) throws ServletException, IOException {
 
+    String responseEncoding = PentahoSystem.getSystemSetting("web-service-encoding", "utf-8");
     String component = request.getParameter("component"); //$NON-NLS-1$
     
     //Check if we need to forward off before getting output stream. Fixes JasperException
@@ -106,8 +111,7 @@ public class AnalysisViewService extends ServletBase {
       } catch (IOException ioEx) {
         String msg = Messages.getInstance().getErrorString("AdhocWebService.ERROR_0006_FAILED_TO_GET_PAYLOAD_FROM_REQUEST"); //$NON-NLS-1$
         error(msg, ioEx);
-        WebServiceUtil.writeString(response.getOutputStream(),
-            WebServiceUtil.getErrorXml(msg + " " + ioEx.getLocalizedMessage()), false); //$NON-NLS-1$
+        XmlDom4JHelper.saveDom(WebServiceUtil.createErrorDocument(msg + " " + ioEx.getLocalizedMessage()), response.getOutputStream(), responseEncoding, true);
       }
       IParameterProvider parameterProvider = null;
       HashMap parameters = new HashMap();
@@ -119,7 +123,7 @@ public class AnalysisViewService extends ServletBase {
         } catch (XmlParseException e) {
           String msg = Messages.getInstance().getErrorString("HttpWebService.ERROR_0001_ERROR_DURING_WEB_SERVICE"); //$NON-NLS-1$
           error(msg, e);
-          WebServiceUtil.writeString(response.getOutputStream(), WebServiceUtil.getErrorXml(msg), false);
+          XmlDom4JHelper.saveDom(WebServiceUtil.createErrorDocument(msg), response.getOutputStream(), responseEncoding, true);
         } 
         
         List parameterNodes = doc.selectNodes("//SOAP-ENV:Body/*/*"); //$NON-NLS-1$
@@ -150,7 +154,7 @@ public class AnalysisViewService extends ServletBase {
 
       if (!"generatePreview".equals(component)) { //$NON-NLS-1$
         response.setContentType("text/xml"); //$NON-NLS-1$
-        response.setCharacterEncoding(LocaleHelper.getSystemEncoding());
+        response.setCharacterEncoding(responseEncoding);
       }
 
       
@@ -167,15 +171,15 @@ public class AnalysisViewService extends ServletBase {
     } catch (IOException ioEx) {
       String msg = Messages.getInstance().getErrorString("HttpWebService.ERROR_0001_ERROR_DURING_WEB_SERVICE"); //$NON-NLS-1$
       error(msg, ioEx);
-      WebServiceUtil.writeString(response.getOutputStream(), WebServiceUtil.getErrorXml(msg), false);
+      XmlDom4JHelper.saveDom(WebServiceUtil.createErrorDocument(msg), response.getOutputStream(), responseEncoding, true);
     } catch (PentahoSystemException ex) {
       String msg = ex.getLocalizedMessage();
       error(msg, ex);
-      WebServiceUtil.writeString(response.getOutputStream(), WebServiceUtil.getErrorXml(msg), false);
+      XmlDom4JHelper.saveDom(WebServiceUtil.createErrorDocument(msg), response.getOutputStream(), responseEncoding, true);
     } catch (PentahoAccessControlException ex) {
       String msg = ex.getLocalizedMessage();
       error(msg, ex);
-      WebServiceUtil.writeString(response.getOutputStream(), WebServiceUtil.getErrorXml(msg), false);
+      XmlDom4JHelper.saveDom(WebServiceUtil.createErrorDocument(msg), response.getOutputStream(), responseEncoding, true);
     } finally {
       PentahoSystem.systemExitPoint();
     }
@@ -195,16 +199,16 @@ public class AnalysisViewService extends ServletBase {
 	  
     PentahoSystem.systemEntryPoint();
     try {
-    List<MondrianCatalog> catalogs = mondrianCatalogService.listCatalogs(getPentahoSession(request), true);
-    request.setAttribute("catalog", catalogs);  //$NON-NLS-1$
-    try{
-      RequestDispatcher dispatcher = request.getRequestDispatcher("NewAnalysisView"); //$NON-NLS-1$
-      if (dispatcher != null){
-        dispatcher.forward(request, response);
+      List<MondrianCatalog> catalogs = mondrianCatalogService.listCatalogs(getPentahoSession(request), true);
+      request.setAttribute("catalog", catalogs);  //$NON-NLS-1$
+      try{
+        RequestDispatcher dispatcher = request.getRequestDispatcher("NewAnalysisView"); //$NON-NLS-1$
+        if (dispatcher != null){
+          dispatcher.forward(request, response);
+        }
+      } catch(ServletException e){
+        XmlDom4JHelper.saveDom(WebServiceUtil.createErrorDocument(e.getMessage()), response.getOutputStream(), LocaleHelper.getSystemEncoding(), true);
       }
-    } catch(ServletException e){
-      WebServiceUtil.writeString(response.getOutputStream(), WebServiceUtil.getErrorXml(e.getMessage()), false);
-    }
     } finally {
       PentahoSystem.systemExitPoint();
     }
@@ -213,20 +217,21 @@ public class AnalysisViewService extends ServletBase {
   public void listCatalogs(final IPentahoSession userSession, final OutputStream outputStream, final boolean wrapWithSoap) throws IOException {
     StringBuilder builder = new StringBuilder();
     List<MondrianCatalog> catalogs = mondrianCatalogService.listCatalogs(userSession, true);
-    builder.append("<catalogs>"); //$NON-NLS-1$
+    Element rootElement = new DefaultElement("catalogs"); //$NON-NLS-1$
+    Document doc = DocumentHelper.createDocument(rootElement);
     for (MondrianCatalog catalog : catalogs) {
-      builder.append("<catalog name=\"" + catalog.getName() + "\">"); //$NON-NLS-1$ //$NON-NLS-2$
-      builder.append("<schema name=\"" + catalog.getSchema().getName() + "\">"); //$NON-NLS-1$ //$NON-NLS-2$
-      builder.append("<cubes>"); //$NON-NLS-1$
+      Element catalogElement = rootElement.addElement("catalog").addAttribute("name", catalog.getName()); //$NON-NLS-1$ //$NON-NLS-2$
+      Element schemaElement = catalogElement.addElement("schema").addAttribute("name", catalog.getSchema().getName()); //$NON-NLS-1$ //$NON-NLS-2$
+      Element cubesElement = schemaElement.addElement("cubes"); //$NON-NLS-1$
       for (MondrianCube cube : catalog.getSchema().getCubes()) {
-        builder.append("<cube name=\"" + cube.getName() + "\" />"); //$NON-NLS-1$ //$NON-NLS-2$
+        cubesElement.addElement("cube").addAttribute("name", cube.getName()); //$NON-NLS-1$ //$NON-NLS-2$
       }
-      builder.append("</cubes>"); //$NON-NLS-1$
-      builder.append("</schema>"); //$NON-NLS-1$
-      builder.append("</catalog>"); //$NON-NLS-1$
     }
-    builder.append("</catalogs>"); //$NON-NLS-1$
-    WebServiceUtil.writeString(outputStream, builder.toString(), wrapWithSoap);
+    if (wrapWithSoap) {
+      XmlDom4JHelper.saveDom(SoapHelper.createSoapResponseDocument(doc), outputStream, PentahoSystem.getSystemSetting("web-service-encoding", "utf-8"), true);
+    } else {
+      XmlDom4JHelper.saveDom(doc, outputStream, PentahoSystem.getSystemSetting("web-service-encoding", "utf-8"), true);
+    }
   }
 
   public void saveXAction(final IPentahoSession session, final IParameterProvider parameterProvider, final HttpServletRequest request, final HttpServletResponse response, final boolean wrapWithSoap) throws IOException, PentahoSystemException, PentahoAccessControlException {
