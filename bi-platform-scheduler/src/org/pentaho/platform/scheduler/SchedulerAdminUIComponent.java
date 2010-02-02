@@ -224,16 +224,7 @@ public class SchedulerAdminUIComponent extends XmlComponent {
       // TODO sbarkdull, lame attempt to start to get some error info returned to caller,
       // should be much more robust, and clients need to be coded to respond to error xml message
       logger.error( e.getMessage() );
-      String strXml = WebServiceUtil.getErrorXml( e.getMessage() );
-      Document document;
-      try {
-        document = XmlDom4JHelper.getDocFromString( strXml, null );        
-      } catch(XmlParseException ee) {
-        error(Messages.getInstance().getErrorString("SchedulerAdminUIComponent.ERROR_0424_UNABLE_TO_READ_DOCUMENT_FROM_STRING"), ee); //$NON-NLS-1$
-        return null;
-      }
-
-      return document;
+      return WebServiceUtil.createErrorDocument( e.getMessage() );
     }
   }
 
@@ -265,25 +256,9 @@ public class SchedulerAdminUIComponent extends XmlComponent {
     strReturn = helper.backgroundExecuteAction(getSession(), (IParameterProvider) getParameterProviders().get(
         IParameterProvider.SCOPE_REQUEST));
     } catch(BackgroundExecutionException bex) {
-      String errorXml = WebServiceUtil.getErrorXml(bex.getLocalizedMessage());
-      Document d = null;
-      try {
-        d = XmlDom4JHelper.getDocFromString(errorXml, null);  
-      } catch(XmlParseException e) {
-        error(Messages.getInstance().getErrorString("SchedulerAdminUIComponent.ERROR_0424_UNABLE_TO_READ_DOCUMENT_FROM_STRING"), e); //$NON-NLS-1$
-        return null;        
-      }
-      return d;
+      return WebServiceUtil.createErrorDocument(bex.getLocalizedMessage());
     }
-    String strXml = WebServiceUtil.getStatusXml("ok");
-    Document d = null;
-    try {
-      d = XmlDom4JHelper.getDocFromString(strXml, null);  
-    } catch(XmlParseException e) {
-      error(Messages.getInstance().getErrorString("SchedulerAdminUIComponent.ERROR_0424_UNABLE_TO_READ_DOCUMENT_FROM_STRING"), e); //$NON-NLS-1$
-      return null;        
-    }
-    return d;
+    return WebServiceUtil.createStatusDocument("ok");
   }
 
   private Document doUpdateJob() throws ComponentException {
@@ -312,29 +287,10 @@ public class SchedulerAdminUIComponent extends XmlComponent {
     	strReturn = helper.backgroundExecuteAction(getSession(), (IParameterProvider) getParameterProviders().get(
         IParameterProvider.SCOPE_REQUEST));
     } catch(BackgroundExecutionException bex) {
-      String errorXml = WebServiceUtil.getErrorXml(bex.getLocalizedMessage());
-      Document d = null;
-      try {
-        d = XmlDom4JHelper.getDocFromString(errorXml, null);  
-      } catch(Exception e) {
-        error(Messages.getInstance().getErrorString("SchedulerAdminUIComponent.ERROR_0424_UNABLE_TO_READ_DOCUMENT_FROM_STRING"), e); //$NON-NLS-1$
-        return null;        
-      }
-
-      
-      return d;
+      return WebServiceUtil.createErrorDocument(bex.getLocalizedMessage());
     }
 
-    String strXml = WebServiceUtil.getStatusXml("ok");
-    Document d = null;
-    try {
-      d = XmlDom4JHelper.getDocFromString(strXml, null);  
-    } catch(XmlParseException e) {
-      error(Messages.getInstance().getErrorString("SchedulerAdminUIComponent.ERROR_0424_UNABLE_TO_READ_DOCUMENT_FROM_STRING"), e); //$NON-NLS-1$
-      return null;        
-    }
-
-    return d;
+    return WebServiceUtil.createStatusDocument("ok");
   }
 
   private Document doDeleteJob() throws ComponentException {
