@@ -38,8 +38,8 @@
         </dependency>
 		<dependency org="org.springframework" name="spring"              rev="2.5.6"   transitive="false"/>
     <dependency org="net.sf.ehcache" name="ehcache-core" rev="1.7.0" />
-		<dependency org="org.hibernate"       name="hibernate"           rev="3.2.6.ga">
     <dependency org="log4j" name="log4j" rev="1.2.14"/>
+		<dependency org="org.hibernate"       name="hibernate"           rev="3.2.6.ga">
 			<!--
 			 
 			 include these jars, needed for unit tests.  child projects may choose
