@@ -246,6 +246,7 @@ CONVERT_URL_TO_LOWERCASE_BEFORE_COMPARISON
       <![CDATA[CONVERT_URL_TO_LOWERCASE_BEFORE_COMPARISON
 \A/webservices/repo\?wsdl.*\Z=Anonymous,Authenticated
 \A/webservices/userdetailsrolelistservice\?wsdl.*\Z=Anonymous,Authenticated
+\A/webservices/userroleadmin\?wsdl.*\Z=Anonymous,Authenticated
 \A/webservices/.*\Z=Authenticated
       ]]>
     </value>

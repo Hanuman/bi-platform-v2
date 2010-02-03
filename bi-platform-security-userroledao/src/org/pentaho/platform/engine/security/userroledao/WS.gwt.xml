@@ -1,0 +1,7 @@
+<module>
+    <!--  query model -->
+    <source path="ws">
+      <exclude name="IUserRoleWebService.java"/>
+      <exclude name="UserRoleWebService.java"/>
+    </source>
+</module>
