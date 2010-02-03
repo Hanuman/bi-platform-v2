@@ -26,17 +26,14 @@ public interface IUserDetailsRoleListService {
 
   public void afterPropertiesSet() throws Exception;
 
-  @SuppressWarnings("unchecked")
-  public List getAllRoles();
 
-  @SuppressWarnings("unchecked")
-  public List getAllUsers();
+  public List<String> getAllRoles();
 
-  @SuppressWarnings("unchecked")
-  public List getAllUsersInRole(String role);
+  public List<String> getAllUsers();
 
-  @SuppressWarnings("unchecked")
-  public List getRolesForUser(String userName);
+  public List<String> getAllUsersInRole(String role);
+
+  public List<String> getRolesForUser(String userName);
 
   public IPentahoSession getEffectiveUserSession(String userName, IParameterProvider sessionParameters);
 }

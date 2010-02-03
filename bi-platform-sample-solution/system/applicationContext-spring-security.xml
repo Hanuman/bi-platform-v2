@@ -244,7 +244,8 @@ CONVERT_URL_TO_LOWERCASE_BEFORE_COMPARISON
   <property name="objectDefinitionSource">
     <value>
       <![CDATA[CONVERT_URL_TO_LOWERCASE_BEFORE_COMPARISON
-\A/webservices/repo\?wsdl.*\Z=Anonymous
+\A/webservices/repo\?wsdl.*\Z=Anonymous,Authenticated
+\A/webservices/userdetailsrolelistservice\?wsdl.*\Z=Anonymous,Authenticated
 \A/webservices/.*\Z=Authenticated
       ]]>
     </value>

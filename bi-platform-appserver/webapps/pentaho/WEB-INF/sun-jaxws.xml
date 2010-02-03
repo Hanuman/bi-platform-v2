@@ -1,0 +1,7 @@
+<endpoints xmlns='http://java.sun.com/xml/ns/jax-ws/ri/runtime' version='2.0'>
+    <endpoint
+        name='UserDetailsRoleListWebService'
+        implementation='org.pentaho.platform.engine.security.userrole.ws.DefaultUserDetailsRoleListWebService'
+        url-pattern='/webservices/userDetailsRoleListService'/>
+        
+</endpoints>

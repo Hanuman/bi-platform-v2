@@ -1,44 +1,48 @@
 /*
  * This program is free software; you can redistribute it and/or modify it under the 
- * terms of the GNU General Public License, version 2 as published by the Free Software 
+ * terms of the GNU Lesser General Public License, version 2.1 as published by the Free Software 
  * Foundation.
  *
- * You should have received a copy of the GNU General Public License along with this 
- * program; if not, you can obtain a copy at http://www.gnu.org/licenses/gpl-2.0.html 
+ * You should have received a copy of the GNU Lesser General Public License along with this 
+ * program; if not, you can obtain a copy at http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html 
  * or from the Free Software Foundation, Inc., 
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  *
  * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; 
  * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * See the GNU General Public License for more details.
+ * See the GNU Lesser General Public License for more details.
  *
- * Copyright 2005 - 2008 Pentaho Corporation.  All rights reserved. 
+ * Copyright 2006 - 2008 Pentaho Corporation.  All rights reserved. 
  * 
+ * Created Apr 18, 2006
+ *
+ * @author mbatchel
  */
-package org.pentaho.platform.engine.security.userrole;
+package org.pentaho.platform.engine.security.userrole.ws;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.pentaho.platform.api.engine.IParameterProvider;
 import org.pentaho.platform.api.engine.IPentahoSession;
 import org.pentaho.platform.api.engine.IUserDetailsRoleListService;
 import org.pentaho.platform.api.engine.IUserRoleListService;
+import org.pentaho.platform.engine.core.system.PentahoSystem;
 import org.pentaho.platform.engine.core.system.UserSession;
 import org.pentaho.platform.engine.security.SecurityHelper;
 import org.pentaho.platform.engine.security.messages.Messages;
-import org.springframework.beans.factory.InitializingBean;
 import org.springframework.security.Authentication;
 import org.springframework.security.GrantedAuthority;
 import org.springframework.security.GrantedAuthorityImpl;
 import org.springframework.security.providers.UsernamePasswordAuthenticationToken;
 
-public class UserDetailsRoleListService implements InitializingBean, IUserDetailsRoleListService {
-
+public class MockUserDetailsRoleListService implements IUserDetailsRoleListService {
+  
   private IUserRoleListService userRoleListService;
 
-  public UserDetailsRoleListService() {
-    super();
+  public MockUserDetailsRoleListService() {
+    userRoleListService = new MockUserRoleListService();
   }
 
   public void setUserRoleListService(final IUserRoleListService value) {
@@ -55,27 +59,17 @@ public class UserDetailsRoleListService implements InitializingBean, IUserDetail
     }
   }
 
-  public List<String> getAllRoles() {
-    List<String> rtn = new ArrayList<String>();
-    GrantedAuthority[] auths = userRoleListService.getAllAuthorities();
-    for (GrantedAuthority element : auths) {
-      rtn.add(element.getAuthority());
-    }
-    return rtn;
+  public List getAllRoles() {
+    return Arrays.asList(userRoleListService.getAllAuthorities());
   }
 
-  public List<String> getAllUsers() {
-    List<String> rtn = new ArrayList<String>();
-    String[] users = userRoleListService.getAllUsernames();
-    for (String element : users) {
-      rtn.add(element);
-    }
-    return rtn;
+  public List getAllUsers() {
+    return Arrays.asList(userRoleListService.getAllUsernames());
   }
 
-  public List<String> getAllUsersInRole(final String role) {
+  public List getAllUsersInRole(final String role) {
     String[] users = userRoleListService.getUsernamesInRole(new GrantedAuthorityImpl(role));
-    List<String> rtn = new ArrayList<String>();
+    List rtn = new ArrayList();
     for (String element : users) {
       rtn.add(element);
     }
@@ -83,13 +77,8 @@ public class UserDetailsRoleListService implements InitializingBean, IUserDetail
 
   }
 
-  public List<String> getRolesForUser(final String userName) {
-    List<String> rtn = new ArrayList<String>();
-    GrantedAuthority[] auths = userRoleListService.getAuthoritiesForUser(userName);
-    for (GrantedAuthority element : auths) {
-      rtn.add(element.getAuthority());
-    }
-    return rtn;
+  public List getRolesForUser(final String userName) {
+    return Arrays.asList(userRoleListService.getAuthoritiesForUser(userName));
   }
 
   public IPentahoSession getEffectiveUserSession(final String userName, final IParameterProvider paramProvider) {
@@ -106,4 +95,7 @@ public class UserDetailsRoleListService implements InitializingBean, IUserDetail
     // OK - Return back to the user.
     return session;
   }
+  
+  
+
 }
