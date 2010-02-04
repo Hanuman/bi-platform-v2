@@ -28,8 +28,4 @@
       THE TASKS THAT NEED TO DIFFER FROM THE DEFAULT IMPLEMENTATION OF THE TASKS
       FOUND IN common_build.xml.
     --> 
-	
-	<!-- override test until tests are added to this project-->
-	<target name="test"/>
-
 </project>
