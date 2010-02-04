@@ -549,7 +549,7 @@
 	<!-- insert additional servlets -->
 	 <servlet-mapping>
 	    <servlet-name>jaxwsEndpoint</servlet-name>
-	    <url-pattern>/webservices/userDetailsRoleListService</url-pattern>
+	    <url-pattern>/webservices/userrolelist</url-pattern>
 	  </servlet-mapping>
 
 

@@ -2,6 +2,6 @@
     <endpoint
         name='UserDetailsRoleListWebService'
         implementation='org.pentaho.platform.engine.security.userrole.ws.DefaultUserDetailsRoleListWebService'
-        url-pattern='/webservices/userDetailsRoleListService'/>
+        url-pattern='/webservices/userrolelist'/>
         
 </endpoints>
